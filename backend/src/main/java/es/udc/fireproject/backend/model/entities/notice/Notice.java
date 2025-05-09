@@ -16,8 +16,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.Point;
 
 @Entity
@@ -40,8 +38,7 @@ public class Notice extends BaseEntity {
   @JoinColumn(name = "user_id")
   private User user;
 
-  @JdbcTypeCode(SqlTypes.BINARY)
-  @Column(name = "location", columnDefinition = "geometry(Point)")
+  @Column(name = "location", columnDefinition = "geometry(Point, 25828)")
   @NotNull
   private Point location;
 

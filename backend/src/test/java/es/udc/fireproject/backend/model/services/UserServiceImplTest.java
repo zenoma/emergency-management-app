@@ -1,11 +1,20 @@
 package es.udc.fireproject.backend.model.services;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import es.udc.fireproject.backend.model.entities.user.User;
 import es.udc.fireproject.backend.model.entities.user.UserRepository;
 import es.udc.fireproject.backend.model.entities.user.UserRole;
-import es.udc.fireproject.backend.model.exceptions.*;
+import es.udc.fireproject.backend.model.exceptions.DuplicateInstanceException;
+import es.udc.fireproject.backend.model.exceptions.IncorrectLoginException;
+import es.udc.fireproject.backend.model.exceptions.IncorrectPasswordException;
+import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
+import es.udc.fireproject.backend.model.exceptions.InsufficientRolePermissionException;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementServiceImpl;
 import es.udc.fireproject.backend.utils.UserOM;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,297 +22,306 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 @Transactional
 class UserServiceImplTest {
 
-    private final Long INVALID_USER_ID = -1L;
-    @Mock
-    UserRepository userRepository;
+  private final Long INVALID_USER_ID = -1L;
+  @Mock
+  UserRepository userRepository;
 
-    @InjectMocks
-    PersonalManagementServiceImpl personalManagementService;
+  @InjectMocks
+  PersonalManagementServiceImpl personalManagementService;
 
-    @Mock
-    private BCryptPasswordEncoder passwordEncoder;
+  @MockBean
+  private BCryptPasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    public void setUp() {
-        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
-        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(UserOM.withDefaultValues()));
-        Mockito.when(passwordEncoder.encode(("password"))).thenReturn("password");
-        Mockito.when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(UserOM.withDefaultValues()));
-    }
+  @BeforeEach
+  public void setUp() {
+    when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
+    when(userRepository.findById(any())).thenReturn(Optional.of(UserOM.withDefaultValues()));
+    when(passwordEncoder.encode(any())).thenReturn("encryptedPassword");
+    when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(UserOM.withDefaultValues()));
+  }
 
 
-    @Test
-    void givenValidData_whenSignUpAndLoginFromId_thenUserIsFound() throws DuplicateInstanceException, InstanceNotFoundException {
+  @Test
+  void givenValidData_whenSignUpAndLoginFromId_thenUserIsFound()
+      throws DuplicateInstanceException, InstanceNotFoundException {
 
-        User user = UserOM.withDefaultValues();
-        personalManagementService.signUp(user);
+    User user = UserOM.withDefaultValues();
+    personalManagementService.signUp(user);
 
-        User loggedInUser = personalManagementService.loginFromId(user.getId());
+    User loggedInUser = personalManagementService.loginFromId(user.getId());
 
-        Assertions.assertEquals(user, loggedInUser, "Users must be the same");
-    }
+    Assertions.assertEquals(user, loggedInUser, "Users must be the same");
+  }
 
-    @Test
-    void givenDuplicatedData_whenSignUp_thenDuplicateInstanceException() {
+  @Test
+  void givenDuplicatedData_whenSignUp_thenDuplicateInstanceException() {
 
-        User user = UserOM.withDefaultValues();
-        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
-        Assertions.assertThrows(DuplicateInstanceException.class, () -> personalManagementService.signUp(user), "DuplicateInstanceException expected");
-    }
+    User user = UserOM.withDefaultValues();
+    when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
+    Assertions.assertThrows(DuplicateInstanceException.class, () -> personalManagementService.signUp(user),
+        "DuplicateInstanceException expected");
+  }
 
-    @Test
-    void givenInvalidData_whenLoginFromId_thenInstanceNotFoundException() {
+  @Test
+  void givenInvalidData_whenLoginFromId_thenInstanceNotFoundException() {
 
-        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(InstanceNotFoundException.class, () -> personalManagementService.loginFromId(INVALID_USER_ID));
-    }
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> personalManagementService.loginFromId(INVALID_USER_ID));
+  }
 
-    @Test
-    void givenValidData_whenLogin_thenUserLoggedSuccessfully() throws DuplicateInstanceException, IncorrectLoginException {
-        Mockito.when(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+  @Test
+  void givenValidData_whenLogin_thenUserLoggedSuccessfully()
+      throws DuplicateInstanceException, IncorrectLoginException {
+    when(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
 
-        User user = UserOM.withDefaultValues();
-        personalManagementService.signUp(user);
+    User user = UserOM.withDefaultValues();
+    personalManagementService.signUp(user);
 
+    String clearPassword = user.getPassword();
 
-        String clearPassword = user.getPassword();
+    User loggedInUser = personalManagementService.login(user.getEmail(), clearPassword);
 
-        User loggedInUser = personalManagementService.login(user.getEmail(), clearPassword);
+    Assertions.assertEquals(user, loggedInUser, "Users must be the same");
 
-        Assertions.assertEquals(user, loggedInUser, "Users must be the same");
+  }
 
-    }
+  @Test
+  void givenInvalidPassword_whenLogin_thenIncorrectLoginException() throws DuplicateInstanceException {
+    when(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
 
-    @Test
-    void givenInvalidPassword_whenLogin_thenIncorrectLoginException() throws DuplicateInstanceException {
-        Mockito.when(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
+    User user = UserOM.withDefaultValues();
 
-        User user = UserOM.withDefaultValues();
+    String clearPassword = user.getPassword();
 
-        String clearPassword = user.getPassword();
+    personalManagementService.signUp(user);
 
-        personalManagementService.signUp(user);
+    Assertions.assertThrows(IncorrectLoginException.class,
+        () -> personalManagementService.login(user.getEmail(), 'X' + clearPassword), " Password must be incorrect");
 
-        Assertions.assertThrows(IncorrectLoginException.class, () -> personalManagementService.login(user.getEmail(), 'X' + clearPassword), " Password must be incorrect");
+  }
 
-    }
+  @Test
+  void givenInvalidEmail_whenLogin_thenIncorrectLoginException() {
+    when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
 
-    @Test
-    void givenInvalidEmail_whenLogin_thenIncorrectLoginException() {
-        Mockito.when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+    Assertions.assertThrows(IncorrectLoginException.class, () -> personalManagementService.login("X", "Y"),
+        " User must not exist");
+  }
 
-        Assertions.assertThrows(IncorrectLoginException.class, () -> personalManagementService.login("X", "Y"), " User must not exist");
-    }
+  @Test
+  void givenValidData_whenUpdateProfile_thenUserUpdatedSuccessfully()
+      throws InstanceNotFoundException, DuplicateInstanceException {
+    when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
+    when(passwordEncoder.encode(("password"))).thenReturn("password");
 
-    @Test
-    void givenValidData_whenUpdateProfile_thenUserUpdatedSuccessfully() throws InstanceNotFoundException, DuplicateInstanceException {
-        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
-        Mockito.when(passwordEncoder.encode(("password"))).thenReturn("password");
+    User user = UserOM.withDefaultValues();
 
+    personalManagementService.signUp(user);
 
-        User user = UserOM.withDefaultValues();
+    User updatedUser = personalManagementService.updateProfile(user.getId(), 'X' + user.getFirstName(),
+        'X' + user.getLastName(), 'X' + user.getEmail(), 111111111, "11111111S");
 
-        personalManagementService.signUp(user);
+    when(userRepository.findById(any())).thenReturn(Optional.of(updatedUser));
 
-        User updatedUser = personalManagementService.updateProfile(user.getId(), 'X' + user.getFirstName(), 'X' + user.getLastName(), 'X' + user.getEmail(), 111111111, "11111111S");
+    user.setFirstName('X' + user.getFirstName());
+    user.setLastName('X' + user.getLastName());
+    user.setEmail('X' + user.getEmail());
+    user.setPhoneNumber(111111111);
+    user.setDni("11111111S");
 
+    Assertions.assertEquals(user, personalManagementService.loginFromId(user.getId()), "User must be updated");
 
-        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(updatedUser));
+  }
 
-        user.setFirstName('X' + user.getFirstName());
-        user.setLastName('X' + user.getLastName());
-        user.setEmail('X' + user.getEmail());
-        user.setPhoneNumber(111111111);
-        user.setDni("11111111S");
+  @Test
+  void givenInvalidData_whenUpdateProfile_thenInstanceNotFoundException() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        Assertions.assertEquals(user, personalManagementService.loginFromId(user.getId()), "User must be updated");
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> personalManagementService.updateProfile(INVALID_USER_ID, "X", "X", "X", 111111111, "11111111S"),
+        "User not existent");
+  }
 
-    }
+  @Test
+  void givenValidData_whenChangePassword_thenPasswordSuccessfullyChanged()
+      throws DuplicateInstanceException, InstanceNotFoundException, IncorrectPasswordException {
 
-    @Test
-    void givenInvalidData_whenUpdateProfile_thenInstanceNotFoundException() {
-        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
+    when(userRepository.findById(any())).thenReturn(Optional.of(UserOM.withDefaultValues()));
+    when(passwordEncoder.encode(("password"))).thenReturn("password");
+    when(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+    when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(UserOM.withDefaultValues()));
 
-        Assertions.assertThrows(InstanceNotFoundException.class, () -> personalManagementService.updateProfile(INVALID_USER_ID, "X", "X", "X", 111111111, "11111111S"), "User not existent");
-    }
+    User user = UserOM.withDefaultValues();
 
-    @Test
-    void givenValidData_whenChangePassword_thenPasswordSuccessfullyChanged() throws DuplicateInstanceException, InstanceNotFoundException, IncorrectPasswordException {
+    String oldPassword = user.getPassword();
+    String newPassword = 'X' + oldPassword;
+    personalManagementService.signUp(user);
 
-        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
-        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(UserOM.withDefaultValues()));
-        Mockito.when(passwordEncoder.encode(("password"))).thenReturn("password");
-        Mockito.when(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-        Mockito.when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(UserOM.withDefaultValues()));
+    personalManagementService.changePassword(user.getId(), oldPassword, newPassword);
+    user.setPassword(newPassword);
 
-        User user = UserOM.withDefaultValues();
+    Assertions.assertDoesNotThrow(() -> personalManagementService.login(user.getEmail(), newPassword));
+  }
 
+  @Test
+  void givenInvalidID_whenChangePassword_thenInstanceNotFoundException() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> personalManagementService.changePassword(INVALID_USER_ID, "X", "Y"), "User non existent");
+  }
 
-        String oldPassword = user.getPassword();
-        String newPassword = 'X' + oldPassword;
-        personalManagementService.signUp(user);
+  @Test
+  void givenIncorrectPassword_whenChangePassword_thenInstanceNotFoundException() throws DuplicateInstanceException {
+    when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
+    when(userRepository.findById(any())).thenReturn(Optional.of(UserOM.withDefaultValues()));
+    when(passwordEncoder.encode(("password"))).thenReturn("password");
+    when(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
+    when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(UserOM.withDefaultValues()));
 
-        personalManagementService.changePassword(user.getId(), oldPassword, newPassword);
-        user.setPassword(newPassword);
+    User user = UserOM.withDefaultValues();
 
-        Assertions.assertDoesNotThrow(() -> personalManagementService.login(user.getEmail(), newPassword));
-    }
+    String oldPassword = user.getPassword();
+    String newPassword = 'X' + oldPassword;
 
-    @Test
-    void givenInvalidID_whenChangePassword_thenInstanceNotFoundException() {
-        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Assertions.assertThrows(InstanceNotFoundException.class, () -> personalManagementService.changePassword(INVALID_USER_ID, "X", "Y"), "User non existent");
-    }
+    personalManagementService.signUp(user);
+    Assertions.assertThrows(IncorrectPasswordException.class,
+        () -> personalManagementService.changePassword(user.getId(), 'Y' + oldPassword, newPassword),
+        "IncorrectPassword Exception expected");
 
-    @Test
-    void givenIncorrectPassword_whenChangePassword_thenInstanceNotFoundException() throws DuplicateInstanceException {
-        Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
-        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(UserOM.withDefaultValues()));
-        Mockito.when(passwordEncoder.encode(("password"))).thenReturn("password");
-        Mockito.when(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
-        Mockito.when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(UserOM.withDefaultValues()));
+  }
 
-        User user = UserOM.withDefaultValues();
+  @Test
+  void givenValidData_whenSignUp_thenUserHasUserRole() throws DuplicateInstanceException {
 
-        String oldPassword = user.getPassword();
-        String newPassword = 'X' + oldPassword;
+    User user = UserOM.withDefaultValues();
 
-        personalManagementService.signUp(user);
-        Assertions.assertThrows(IncorrectPasswordException.class, () -> personalManagementService.changePassword(user.getId(), 'Y' + oldPassword, newPassword), "IncorrectPassword Exception expected");
+    personalManagementService.signUp(user);
 
-    }
+    Assertions.assertEquals(UserRole.USER, user.getUserRole(), "Role must be USER");
 
-    @Test
-    void givenValidData_whenSignUp_thenUserHasUserRole() throws DuplicateInstanceException {
+  }
 
-        User user = UserOM.withDefaultValues();
+  @Test
+  void giveUsersWithHigherRole_whenUpdateLowerRole_thenUpdateRolSuccessfully()
+      throws DuplicateInstanceException, InstanceNotFoundException, InsufficientRolePermissionException {
+    int totalUsers = 2;
+    List<User> userList = UserOM.withRandomNames(totalUsers);
+    User user = userList.get(0);
+    user.setUserRole(UserRole.COORDINATOR);
+    user.setId(0L);
 
-        personalManagementService.signUp(user);
+    User targetUser = userList.get(1);
+    targetUser.setUserRole(UserRole.MANAGER);
+    targetUser.setId(1L);
 
-        Assertions.assertEquals(UserRole.USER, user.getUserRole(), "Role must be USER");
+    when(userRepository.findById(0L)).thenReturn(Optional.of(user));
+    when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
 
-    }
+    personalManagementService.signUp(user);
+    personalManagementService.signUp(targetUser);
 
-    @Test
-    void giveUsersWithHigherRole_whenUpdateLowerRole_thenUpdateRolSuccessfully() throws DuplicateInstanceException, InstanceNotFoundException, InsufficientRolePermissionException {
-        int totalUsers = 2;
-        List<User> userList = UserOM.withRandomNames(totalUsers);
-        User user = userList.get(0);
-        user.setUserRole(UserRole.COORDINATOR);
-        user.setId(0L);
+    personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
 
-        User targetUser = userList.get(1);
-        targetUser.setUserRole(UserRole.MANAGER);
-        targetUser.setId(1L);
+    Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(), "Role must be MANAGER");
 
+  }
 
-        Mockito.when(userRepository.findById(0L)).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
+  @Test
+  void giveUsersWithHigherRole_whenUpdateHigherRole_thenUpdateRolSuccessfully()
+      throws InstanceNotFoundException, InsufficientRolePermissionException {
+    int totalUsers = 2;
+    List<User> userList = UserOM.withRandomNames(totalUsers);
+    User user = userList.get(0);
+    user.setUserRole(UserRole.COORDINATOR);
+    user.setId(0L);
 
+    User targetUser = userList.get(1);
+    targetUser.setUserRole(UserRole.MANAGER);
+    targetUser.setId(1L);
 
-        personalManagementService.signUp(user);
-        personalManagementService.signUp(targetUser);
+    when(userRepository.findById(0L)).thenReturn(Optional.of(user));
+    when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
 
-        personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
+    personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR);
 
-        Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(), "Role must be MANAGER");
+    Assertions.assertEquals(UserRole.COORDINATOR, targetUser.getUserRole(), "Role must be MANAGER");
 
-    }
+  }
 
-    @Test
-    void giveUsersWithHigherRole_whenUpdateHigherRole_thenUpdateRolSuccessfully() throws InstanceNotFoundException, InsufficientRolePermissionException {
-        int totalUsers = 2;
-        List<User> userList = UserOM.withRandomNames(totalUsers);
-        User user = userList.get(0);
-        user.setUserRole(UserRole.COORDINATOR);
-        user.setId(0L);
+  @Test
+  void giveUserWithLessRole_whenUpdateRole_thenInsufficientRolePermissionException() {
+    int totalUsers = 2;
+    List<User> userList = UserOM.withRandomNames(totalUsers);
+    User user = userList.get(0);
+    user.setUserRole(UserRole.USER);
+    user.setId(0L);
 
-        User targetUser = userList.get(1);
-        targetUser.setUserRole(UserRole.MANAGER);
-        targetUser.setId(1L);
+    User targetUser = userList.get(1);
+    targetUser.setUserRole(UserRole.MANAGER);
+    targetUser.setId(1L);
 
+    when(userRepository.findById(0L)).thenReturn(Optional.of(user));
+    when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
 
-        Mockito.when(userRepository.findById(0L)).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
+    Assertions.assertThrows(InsufficientRolePermissionException.class,
+        () -> personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.MANAGER),
+        "User has not enought permission");
 
-        personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR);
+  }
 
-        Assertions.assertEquals(UserRole.COORDINATOR, targetUser.getUserRole(), "Role must be MANAGER");
+  @Test
+  void giveUsersWithSameRole_whenUpdateLowerRole_thenUpdateRolSuccessfully()
+      throws InstanceNotFoundException, InsufficientRolePermissionException {
+    int totalUsers = 2;
+    List<User> userList = UserOM.withRandomNames(totalUsers);
+    User user = userList.get(0);
+    user.setUserRole(UserRole.MANAGER);
+    user.setId(0L);
 
-    }
+    User targetUser = userList.get(1);
+    targetUser.setUserRole(UserRole.MANAGER);
+    targetUser.setId(1L);
 
-    @Test
-    void giveUserWithLessRole_whenUpdateRole_thenInsufficientRolePermissionException() {
-        int totalUsers = 2;
-        List<User> userList = UserOM.withRandomNames(totalUsers);
-        User user = userList.get(0);
-        user.setUserRole(UserRole.USER);
-        user.setId(0L);
+    when(userRepository.findById(0L)).thenReturn(Optional.of(user));
+    when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
 
-        User targetUser = userList.get(1);
-        targetUser.setUserRole(UserRole.MANAGER);
-        targetUser.setId(1L);
+    personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
 
+    Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(), "Updated user role must be USER");
 
-        Mockito.when(userRepository.findById(0L)).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
+  }
 
-        Assertions.assertThrows(InsufficientRolePermissionException.class, () -> personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.MANAGER), "User has not enought permission");
+  @Test
+  void giveUsersWithSameRole_whenUpdateHigherRole_thenInsufficientRolePermissionException() {
+    int totalUsers = 2;
+    List<User> userList = UserOM.withRandomNames(totalUsers);
+    User user = userList.get(0);
+    user.setUserRole(UserRole.MANAGER);
+    user.setId(0L);
 
-    }
+    User targetUser = userList.get(1);
+    targetUser.setUserRole(UserRole.MANAGER);
+    targetUser.setId(1L);
 
-    @Test
-    void giveUsersWithSameRole_whenUpdateLowerRole_thenUpdateRolSuccessfully() throws InstanceNotFoundException, InsufficientRolePermissionException {
-        int totalUsers = 2;
-        List<User> userList = UserOM.withRandomNames(totalUsers);
-        User user = userList.get(0);
-        user.setUserRole(UserRole.MANAGER);
-        user.setId(0L);
+    when(userRepository.findById(0L)).thenReturn(Optional.of(user));
+    when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
 
-        User targetUser = userList.get(1);
-        targetUser.setUserRole(UserRole.MANAGER);
-        targetUser.setId(1L);
+    Assertions.assertThrows(InsufficientRolePermissionException.class,
+        () -> personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR),
+        "User has not enough permission");
 
-
-        Mockito.when(userRepository.findById(0L)).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
-
-        personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
-
-        Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(), "Updated user role must be USER");
-
-    }
-
-    @Test
-    void giveUsersWithSameRole_whenUpdateHigherRole_thenInsufficientRolePermissionException() {
-        int totalUsers = 2;
-        List<User> userList = UserOM.withRandomNames(totalUsers);
-        User user = userList.get(0);
-        user.setUserRole(UserRole.MANAGER);
-        user.setId(0L);
-
-        User targetUser = userList.get(1);
-        targetUser.setUserRole(UserRole.MANAGER);
-        targetUser.setId(1L);
-
-
-        Mockito.when(userRepository.findById(0L)).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
-
-        Assertions.assertThrows(InsufficientRolePermissionException.class, () -> personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR), "User has not enough permission");
-
-    }
+  }
 
 
 }

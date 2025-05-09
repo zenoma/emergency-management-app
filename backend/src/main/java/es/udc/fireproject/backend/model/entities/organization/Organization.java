@@ -11,8 +11,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.Point;
 
 @Entity
@@ -31,8 +29,7 @@ public class Organization extends BaseEntity {
   @Column(name = "headquarters_address")
   private String headquartersAddress;
 
-  @JdbcTypeCode(SqlTypes.BINARY)
-  @Column(name = "location", columnDefinition = "geometry(Point)")
+  @Column(name = "location", columnDefinition = "geometry(Point, 25828)")
   private Point location;
 
   @Column(name = "created_at", nullable = false)
