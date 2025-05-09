@@ -1,0 +1,19 @@
+# Backend build output.
+backend/target/
+
+# Frontend build output.
+frontend/build/
+frontend/node_modules/
+
+# Eclipse configuration.
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/public/images
+
+# IntelliJ IDEA configuration.
+.idea/
+pa-project-backend.iml
+
+# VSCode configuration
+.vscode/

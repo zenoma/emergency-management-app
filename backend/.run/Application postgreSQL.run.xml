@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="Application postgreSQL" type="Application" factoryName="Application">
+        <option name="MAIN_CLASS_NAME" value="es.udc.fireproject.backend.Application"/>
+        <module name="backend"/>
+        <option name="VM_PARAMETERS" value="-Dspring.profiles.active=postgresql"/>
+        <extension name="coverage">
+            <pattern>
+                <option name="PATTERN" value="es.udc.fireproject.backend.*"/>
+                <option name="ENABLED" value="true"/>
+            </pattern>
+        </extension>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
+</component>

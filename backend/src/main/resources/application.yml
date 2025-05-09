@@ -1,0 +1,25 @@
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+spring:
+  devtools:
+    restart:
+      trigger-file: reload
+    livereload:
+      enabled: false
+  jackson:
+    default-property-inclusion: NON_NULL
+  jpa:
+    #database-platform: org.hibernate.spatial.dialect.postgis.PostgisDialect
+    database-platform: org.hibernate.spatial.dialect.h2geodb.GeoDBDialect
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+      format-sql: true
+      use-sql-comments: true
+project:
+  jwt:
+    signKey: Bu:GW8bgPlEw
+    expirationMinutes: 1440

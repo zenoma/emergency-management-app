@@ -1,0 +1,295 @@
+<databaseChangeLog xmlns:spatial="http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog-ext/liquibase-spatial
+                   http://lonnyj.github.io/liquibase-spatial/liquibase-spatial.xsd">
+    <property name="srid" value="25829"/>
+    <property name="now" value="now()" dbms="h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+
+
+    <changeSet author="adriangvazquez" id="Create initial tables">
+        <preConditions>
+            <spatial:spatialSupported/>
+        </preConditions>
+
+        <createTable tableName="fire">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="index" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP(3)" defaultValueComputed="CURRENT_TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="extinguished_at" type="TIMESTAMP(3)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="organization_type">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="organization">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="code" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="headquarters_address" type="VARCHAR(255)">
+            </column>
+            <column name="location" type="GEOMETRY(POINT,${srid})"/>
+            <column name="created_at" type="TIMESTAMP(3)" defaultValueComputed="CURRENT_TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organization_type_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="organization_type_id"
+                                 baseTableName="organization"
+                                 constraintName="fk_organization_type_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="organization_type"/>
+
+        <createTable tableName="quadrants">
+            <column autoIncrement="true" name="gid" type="SERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="clasico" type="VARCHAR(50)"/>
+            <column name="ccff" type="VARCHAR(50)"/>
+            <column name="escala" type="VARCHAR(50)"/>
+            <column name="nombre" type="VARCHAR(50)"/>
+            <column name="folla50" type="VARCHAR(50)"/>
+            <column name="folla25" type="VARCHAR(50)"/>
+            <column name="folla5" type="VARCHAR(50)"/>
+            <column name="revision" type="VARCHAR(50)"/>
+            <column name="GEOM" type="GEOMETRY(MULTIPOLYGON,${srid})"/>
+            <column name="fire_id" type="BIGINT"/>
+            <column name="fire_linked_at" type="TIMESTAMP(3)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="quadrants" baseColumnNames="fire_id"
+                                 referencedTableName="fire"
+                                 referencedColumnNames="id" constraintName="fk_quadrants_fire_id"/>
+
+
+        <createTable tableName="fire_quadrant_log">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="fire_id" type="BIGINT"/>
+            <column name="quadrant_gid" type="BIGINT"/>
+            <column name="linked_at" type="TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="extinguished_at" type="TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="fire_quadrant_log" baseColumnNames="fire_id"
+                                 referencedTableName="fire"
+                                 referencedColumnNames="id" constraintName="fk_vehicle_quadrant_log_fire_id"/>
+        <addForeignKeyConstraint baseTableName="fire_quadrant_log" baseColumnNames="quadrant_gid"
+                                 referencedTableName="quadrants"
+                                 referencedColumnNames="gid" constraintName="fk_fire_quadrant_log_quadrant_gid"/>
+
+
+        <createTable tableName="team">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP(3)" defaultValueComputed="CURRENT_TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organization_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quadrant_gid" type="BIGINT"/>
+            <column name="deploy_at" type="TIMESTAMP(3)"/>
+            <column name="dismantle_at" type="TIMESTAMP(3)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="team" baseColumnNames="organization_id"
+                                 referencedTableName="organization"
+                                 referencedColumnNames="id" constraintName="fk_organization_id"/>
+
+        <addForeignKeyConstraint baseTableName="team" baseColumnNames="quadrant_gid"
+                                 referencedTableName="quadrants"
+                                 referencedColumnNames="gid" constraintName="fk_quadrant_gid"/>
+
+
+        <createTable tableName="team_quadrant_log">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="team_id" type="BIGINT"/>
+            <column name="quadrant_gid" type="BIGINT"/>
+            <column name="deploy_at" type="TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="retract_at" type="TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="team_quadrant_log" baseColumnNames="team_id"
+                                 referencedTableName="team"
+                                 referencedColumnNames="id" constraintName="fk_team_quadrant_log_team_id"/>
+        <addForeignKeyConstraint baseTableName="team_quadrant_log" baseColumnNames="quadrant_gid"
+                                 referencedTableName="quadrants"
+                                 referencedColumnNames="gid" constraintName="fk_team_quadrant_log_quadrant_gid"/>
+
+
+        <createTable tableName="vehicle">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="vehicle_plate" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="created_at" type="TIMESTAMP(3)" defaultValueComputed="CURRENT_TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organization_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quadrant_gid" type="BIGINT"/>
+            <column name="deploy_at" type="TIMESTAMP(3)"/>
+            <column name="dismantle_at" type="TIMESTAMP(3)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="vehicle" baseColumnNames="organization_id"
+                                 referencedTableName="organization"
+                                 referencedColumnNames="id" constraintName="fk_vehicle_organization_id"/>
+
+        <addForeignKeyConstraint baseTableName="vehicle" baseColumnNames="quadrant_gid"
+                                 referencedTableName="quadrants"
+                                 referencedColumnNames="gid" constraintName="fk_vehicle_quadrant_gid"/>
+
+
+        <createTable tableName="vehicle_quadrant_log">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="vehicle_id" type="BIGINT"/>
+            <column name="quadrant_gid" type="BIGINT"/>
+            <column name="deploy_at" type="TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="retract_at" type="TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="vehicle_quadrant_log" baseColumnNames="vehicle_id"
+                                 referencedTableName="vehicle"
+                                 referencedColumnNames="id" constraintName="fk_vehicle_quadrant_log_vehicle_id"/>
+        <addForeignKeyConstraint baseTableName="vehicle_quadrant_log" baseColumnNames="quadrant_gid"
+                                 referencedTableName="quadrants"
+                                 referencedColumnNames="gid" constraintName="fk_vehicle_quadrant_log_quadrant_gid"/>
+
+
+        <createTable tableName="user">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+            <column name="dni" type="VARCHAR(255)"/>
+            <column name="phone_number" type="INT(9)"/>
+            <column name="user_role" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP(3)" defaultValueComputed="CURRENT_TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="team_id" type="BIGINT"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="team_id"
+                                 baseTableName="user"
+                                 constraintName="fk_team_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="team"/>
+        <createTable tableName="notice">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="body" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="location" type="GEOMETRY(POINT,${srid})">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP(3)" defaultValueComputed="CURRENT_TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="notice"
+                                 constraintName="fk_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"/>
+
+        <createTable tableName="image">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="notice_id" type="BIGINT"/>
+            <column name="name" type="VARCHAR(64)"/>
+            <column name="created_at" type="TIMESTAMP(3)" defaultValueComputed="CURRENT_TIMESTAMP(3)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="notice_id"
+                                 baseTableName="image"
+                                 constraintName="fk_notice_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="notice"/>
+    </changeSet>
+
+
+    <changeSet author="adriangvazquez" id="Initialize Data">
+        <sqlFile
+                endDelimiter="\nGO"
+                path="classpath:quadrants_v2.sql"
+                relativeToChangelogFile="false"
+                splitStatements="true"
+                stripComments="true"/>
+        <sqlFile
+                endDelimiter="\nGO"
+                path="classpath:InitData.sql"
+                relativeToChangelogFile="false"
+                splitStatements="true"
+                stripComments="true"/>
+    </changeSet>
+</databaseChangeLog>
