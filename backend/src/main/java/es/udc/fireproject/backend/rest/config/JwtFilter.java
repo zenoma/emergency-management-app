@@ -8,65 +8,65 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 public class JwtFilter extends BasicAuthenticationFilter {
 
-    private final JwtGenerator jwtGenerator;
+  private final JwtGenerator jwtGenerator;
 
-    public JwtFilter(AuthenticationManager authenticationManager, JwtGenerator jwtGenerator) {
+  public JwtFilter(AuthenticationManager authenticationManager, JwtGenerator jwtGenerator) {
 
-        super(authenticationManager);
+    super(authenticationManager);
 
-        this.jwtGenerator = jwtGenerator;
+    this.jwtGenerator = jwtGenerator;
 
+  }
+
+  @Override
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
+
+    String authHeaderValue = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+    if (authHeaderValue == null || !authHeaderValue.startsWith("Bearer ")) {
+      filterChain.doFilter(request, response);
+      return;
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    try {
 
-        String authHeaderValue = request.getHeader(HttpHeaders.AUTHORIZATION);
+      String serviceToken = authHeaderValue.replace("Bearer ", "");
+      JwtInfo jwtInfo = jwtGenerator.getInfo(serviceToken);
 
-        if (authHeaderValue == null || !authHeaderValue.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+      request.setAttribute("serviceToken", serviceToken);
+      request.setAttribute("userId", jwtInfo.getUserId());
 
-        try {
+      configureSecurityContext(jwtInfo.getUserName(), jwtInfo.getRole());
 
-            String serviceToken = authHeaderValue.replace("Bearer ", "");
-            JwtInfo jwtInfo = jwtGenerator.getInfo(serviceToken);
-
-            request.setAttribute("serviceToken", serviceToken);
-            request.setAttribute("userId", jwtInfo.getUserId());
-
-            configureSecurityContext(jwtInfo.getUserName(), jwtInfo.getRole());
-
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-
-        filterChain.doFilter(request, response);
-
+    } catch (Exception e) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      return;
     }
 
-    private void configureSecurityContext(String userName, String role) {
+    filterChain.doFilter(request, response);
 
-        Set<GrantedAuthority> authorities = new HashSet<>();
+  }
 
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+  private void configureSecurityContext(String userName, String role) {
 
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(userName, null, authorities));
+    Set<GrantedAuthority> authorities = new HashSet<>();
 
-    }
+    authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+
+    SecurityContextHolder.getContext().setAuthentication(
+        new UsernamePasswordAuthenticationToken(userName, null, authorities));
+
+  }
 
 }

@@ -1,196 +1,185 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>fire-project-backend</artifactId>
 
-    <groupId>es.udc.fireproject</groupId>
-    <artifactId>fire-project-backend</artifactId>
-    <version>1.0</version>
-    <packaging>jar</packaging>
-
-    <name>Fire Project Backend</name>
-    <description>Fire Project Backend</description>
-
-    <parent>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <profiles>
+            <!--suppress UnresolvedMavenProperty -->
+            <profile>${project.activeProfiles[0].id}</profile>
+          </profiles>
+        </configuration>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.6</version>
-    </parent>
+      </plugin>
+    </plugins>
 
-    <properties>
-        <!--  Compiler options -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+  </build>
+  <dependencies>
+    <!-- Spring Boot Starters -->
+    <dependency>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-starter-validation</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-starter-security</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-devtools</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <scope>runtime</scope>
+    </dependency>
 
-        <!-- Package versions -->
-        <jjwt.version>0.9.1</jjwt.version>
+    <!-- Database -->
+    <dependency>
+      <artifactId>h2</artifactId>
+      <groupId>com.h2database</groupId>
+      <scope>runtime</scope>
+    </dependency>
 
-        <!-- Plugin versions -->
-        <sqlPlugin.version>1.5</sqlPlugin.version>
+    <dependency>
+      <artifactId>hibernate-spatial</artifactId>
+      <groupId>org.hibernate.orm</groupId>
+      <version>6.4.4.Final</version>
+    </dependency>
 
-        <!-- Jackson versions -->
-        <jacksonDatatype.version>1.2.9</jacksonDatatype.version>
-        <jacksonCore.version>1.18.2</jacksonCore.version>
+    <dependency>
+      <artifactId>hibernate-spatial</artifactId>
+      <groupId>org.hibernate</groupId>
+      <version>5.4.32.Final</version>
+    </dependency>
 
-        <!-- PostGis versions -->
-        <postGis.version>2.5.1</postGis.version>
+    <dependency>
+      <artifactId>h2gis</artifactId>
+      <groupId>org.orbisgis</groupId>
+      <version>2.2.0</version>
+    </dependency>
 
-        <!-- Springfox versions -->
-        <springfox.version>3.0.0</springfox.version>
+    <dependency>
+      <artifactId>postgresql</artifactId>
+      <groupId>org.postgresql</groupId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <artifactId>postgis-jdbc</artifactId>
+      <groupId>net.postgis</groupId>
+      <version>${postGis.version}</version>
+    </dependency>
 
-    </properties>
+    <!-- JSON & Geometry -->
+    <dependency>
+      <artifactId>jackson-datatype-jts</artifactId>
+      <groupId>org.n52.jackson</groupId>
+      <version>${jackson-jts.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>jts-core</artifactId>
+      <groupId>org.locationtech.jts</groupId>
+      <version>${jts.version}</version>
+    </dependency>
 
-    <profiles>
-        <profile>
-            <id>h2</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+    <!-- Security -->
+    <dependency>
+      <artifactId>jjwt-api</artifactId>
+      <groupId>io.jsonwebtoken</groupId>
+      <version>${jjwt.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>jjwt-impl</artifactId>
+      <groupId>io.jsonwebtoken</groupId>
+      <scope>runtime</scope>
+      <version>${jjwt.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>jjwt-jackson</artifactId>
+      <groupId>io.jsonwebtoken</groupId>
+      <scope>runtime</scope>
+      <version>${jjwt.version}</version>
+    </dependency>
 
-        </profile>
-        <profile>
-            <id>postgresql</id>
-        </profile>
+    <!-- Database Migration -->
+    <dependency>
+      <artifactId>liquibase-core</artifactId>
+      <groupId>org.liquibase</groupId>
+      <version>${liquibase.version}</version>
+    </dependency>
 
-    </profiles>
+    <dependency>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>spring-security-test</artifactId>
+      <groupId>org.springframework.security</groupId>
+      <scope>test</scope>
+    </dependency>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-spatial</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.jackson</groupId>
-            <artifactId>jackson-datatype-jts</artifactId>
-            <version>${jacksonDatatype.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.locationtech.jts</groupId>
-            <artifactId>jts-core</artifactId>
-            <version>${jacksonCore.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.postgis</groupId>
-            <artifactId>postgis-jdbc</artifactId>
-            <version>${postGis.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>${jjwt.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${springfox.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${springfox.version}</version>
-        </dependency>
+  </dependencies>
+  <description>Fire Project Backend</description>
+  <groupId>es.udc.fireproject</groupId>
 
-    </dependencies>
+  <modelVersion>4.0.0</modelVersion>
+  <name>Fire Project Backend</name>
 
-    <repositories>
-        <repository>
-            <id>gitlab-maven</id>
-            <!--suppress UnresolvedMavenProperty -->
-            <url>${env.CI_API_V4_URL}/projects/${env.CI_PROJECT_ID}/packages/maven</url>
-        </repository>
-    </repositories>
-    <distributionManagement>
-        <repository>
-            <id>gitlab-maven</id>
-            <!--suppress UnresolvedMavenProperty -->
-            <url>${CI_API_V4_URL}/projects/${env.CI_PROJECT_ID}/packages/maven</url>
-        </repository>
-        <snapshotRepository>
-            <id>gitlab-maven</id>
-            <!--suppress UnresolvedMavenProperty -->
-            <url>${CI_API_V4_URL}/projects/${env.CI_PROJECT_ID}/packages/maven</url>
-        </snapshotRepository>
-    </distributionManagement>
+  <packaging>jar</packaging>
+
+  <parent>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <version>3.2.4</version>
+  </parent>
+
+  <profiles>
+    <profile>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <id>h2</id>
+    </profile>
+    <profile>
+      <id>postgresql</id>
+    </profile>
+  </profiles>
+
+  <properties>
+    <!-- Compiler options -->
+    <jackson-jts.version>1.2.7</jackson-jts.version>
+    <java.version>17</java.version>
+    <jjwt.version>0.12.5</jjwt.version>
+
+    <!-- Package versions -->
+    <jts.version>1.19.0</jts.version>
+    <liquibase.version>4.25.0</liquibase.version>
+
+    <!-- Jackson versions -->
+    <postGis.version>2021.1.0</postGis.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- PostGis versions -->
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+  </properties>
 
 
-    <build>
-
-        <!-- When using spring-boot-starter-parent, files under
-             "src/main/resources" are automatically filtered and
-             "@propertyName@" notation is used instead of "${propertyName}". -->
-
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
-
-        <plugins>
-
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <profiles>
-                        <!--suppress UnresolvedMavenProperty -->
-                        <profile>${project.activeProfiles[0].id}</profile>
-                    </profiles>
-                </configuration>
-            </plugin>
-
-        </plugins>
-
-    </build>
-
+  <version>1.0</version>
 </project>

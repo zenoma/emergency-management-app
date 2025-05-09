@@ -3,164 +3,175 @@ package es.udc.fireproject.backend.rest.dtos;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 public class TeamDto extends BaseDto {
 
-    private static final long serialVersionUID = -9141625918440183253L;
+  private static final long serialVersionUID = -9141625918440183253L;
 
-    @Id
-    @NotBlank(groups = {TeamDto.AllValidations.class})
-    private Long id;
+  @Id
+  @NotBlank(groups = {TeamDto.AllValidations.class})
+  private Long id;
 
-    @NotBlank
-    private String code;
+  @NotBlank
+  private String code;
 
-    @NotBlank(groups = {TeamDto.AllValidations.class})
-    @JsonFormat(pattern = "dd-MM-yyy HH:mm:ss")
-    private LocalDateTime createdAt;
+  @NotBlank(groups = {TeamDto.AllValidations.class})
+  @JsonFormat(pattern = "dd-MM-yyy HH:mm:ss")
+  private LocalDateTime createdAt;
 
-    @JsonProperty("organization")
-    private OrganizationDto organizationDto;
+  @JsonProperty("organization")
+  private OrganizationDto organizationDto;
 
-    @JsonProperty("users")
-    private List<UserDto> userDtoList;
-
-
-    private QuadrantInfoDto quadrantInfoDto;
-
-    @JsonFormat(pattern = "dd-MM-yyy HH:mm:ss")
-    private LocalDateTime deployAt;
+  @JsonProperty("users")
+  private List<UserDto> userDtoList;
 
 
-    @JsonFormat(pattern = "dd-MM-yyy HH:mm:ss")
-    private LocalDateTime dismantleAt;
+  private QuadrantInfoDto quadrantInfoDto;
 
-    public TeamDto() {
-    }
-
-    public TeamDto(Long id, String code, LocalDateTime createdAt, OrganizationDto organizationDto, List<UserDto> userDtoList, QuadrantInfoDto quadrantInfoDto, LocalDateTime deployAt,
-                   LocalDateTime dismantleAt) {
-        this.id = id;
-        this.code = code;
-        this.createdAt = createdAt;
-        this.organizationDto = organizationDto;
-        this.userDtoList = userDtoList;
-        this.quadrantInfoDto = quadrantInfoDto;
-        this.deployAt = deployAt;
-        this.dismantleAt = dismantleAt;
-    }
-
-    public TeamDto(Long id, String code, LocalDateTime createdAt, OrganizationDto organizationDto, List<UserDto> userDtoList, LocalDateTime deployAt,
-                   LocalDateTime dismantleAt) {
-        this.id = id;
-        this.code = code;
-        this.createdAt = createdAt;
-        this.organizationDto = organizationDto;
-        this.userDtoList = userDtoList;
-        this.deployAt = deployAt;
-        this.dismantleAt = dismantleAt;
-    }
+  @JsonFormat(pattern = "dd-MM-yyy HH:mm:ss")
+  private LocalDateTime deployAt;
 
 
-    public Long getId() {
-        return id;
-    }
+  @JsonFormat(pattern = "dd-MM-yyy HH:mm:ss")
+  private LocalDateTime dismantleAt;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public TeamDto() {
+  }
 
-    public String getCode() {
-        return code;
-    }
+  public TeamDto(Long id, String code, LocalDateTime createdAt, OrganizationDto organizationDto,
+      List<UserDto> userDtoList, QuadrantInfoDto quadrantInfoDto, LocalDateTime deployAt,
+      LocalDateTime dismantleAt) {
+    this.id = id;
+    this.code = code;
+    this.createdAt = createdAt;
+    this.organizationDto = organizationDto;
+    this.userDtoList = userDtoList;
+    this.quadrantInfoDto = quadrantInfoDto;
+    this.deployAt = deployAt;
+    this.dismantleAt = dismantleAt;
+  }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+  public TeamDto(Long id, String code, LocalDateTime createdAt, OrganizationDto organizationDto,
+      List<UserDto> userDtoList, LocalDateTime deployAt,
+      LocalDateTime dismantleAt) {
+    this.id = id;
+    this.code = code;
+    this.createdAt = createdAt;
+    this.organizationDto = organizationDto;
+    this.userDtoList = userDtoList;
+    this.deployAt = deployAt;
+    this.dismantleAt = dismantleAt;
+  }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public OrganizationDto getOrganizationDto() {
-        return organizationDto;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setOrganizationDto(OrganizationDto organizationDto) {
-        this.organizationDto = organizationDto;
-    }
+  public String getCode() {
+    return code;
+  }
 
-    public List<UserDto> getUserDtoList() {
-        return userDtoList;
-    }
+  public void setCode(String code) {
+    this.code = code;
+  }
 
-    public void setUserDtoList(List<UserDto> userDtoList) {
-        this.userDtoList = userDtoList;
-    }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
 
-    public QuadrantInfoDto getQuadrantInfoDto() {
-        return quadrantInfoDto;
-    }
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setQuadrantInfoDto(QuadrantInfoDto quadrantInfoDto) {
-        this.quadrantInfoDto = quadrantInfoDto;
-    }
+  public OrganizationDto getOrganizationDto() {
+    return organizationDto;
+  }
 
-    public LocalDateTime getDeployAt() {
-        return deployAt;
-    }
+  public void setOrganizationDto(OrganizationDto organizationDto) {
+    this.organizationDto = organizationDto;
+  }
 
-    public void setDeployAt(LocalDateTime deployAt) {
-        this.deployAt = deployAt;
-    }
+  public List<UserDto> getUserDtoList() {
+    return userDtoList;
+  }
 
-    public LocalDateTime getDismantleAt() {
-        return dismantleAt;
-    }
+  public void setUserDtoList(List<UserDto> userDtoList) {
+    this.userDtoList = userDtoList;
+  }
 
-    public void setDismantleAt(LocalDateTime dismantleAt) {
-        this.dismantleAt = dismantleAt;
-    }
+  public QuadrantInfoDto getQuadrantInfoDto() {
+    return quadrantInfoDto;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TeamDto teamDto = (TeamDto) o;
-        return Objects.equals(id, teamDto.id) && Objects.equals(code, teamDto.code) && Objects.equals(createdAt, teamDto.createdAt) && Objects.equals(organizationDto, teamDto.organizationDto) && Objects.equals(userDtoList, teamDto.userDtoList) && Objects.equals(quadrantInfoDto, teamDto.quadrantInfoDto) && Objects.equals(deployAt, teamDto.deployAt) && Objects.equals(dismantleAt, teamDto.dismantleAt);
-    }
+  public void setQuadrantInfoDto(QuadrantInfoDto quadrantInfoDto) {
+    this.quadrantInfoDto = quadrantInfoDto;
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, code, createdAt, organizationDto, userDtoList, quadrantInfoDto, deployAt, dismantleAt);
-    }
+  public LocalDateTime getDeployAt() {
+    return deployAt;
+  }
 
-    @Override
-    public String toString() {
-        return "TeamDto{" +
-                "id=" + id +
-                ", code='" + code + '\'' +
-                ", createdAt=" + createdAt +
-                ", organizationDto=" + organizationDto +
-                ", userDtoList=" + userDtoList +
-                ", quadrantInfoDto=" + quadrantInfoDto +
-                ", deployAt=" + deployAt +
-                ", dismantleAt=" + dismantleAt +
-                '}';
-    }
+  public void setDeployAt(LocalDateTime deployAt) {
+    this.deployAt = deployAt;
+  }
 
-    public interface AllValidations {
-    }
+  public LocalDateTime getDismantleAt() {
+    return dismantleAt;
+  }
 
-    public interface UpdateValidations {
-    }
+  public void setDismantleAt(LocalDateTime dismantleAt) {
+    this.dismantleAt = dismantleAt;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+      if (this == o) {
+          return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+          return false;
+      }
+    TeamDto teamDto = (TeamDto) o;
+    return Objects.equals(id, teamDto.id) && Objects.equals(code, teamDto.code) && Objects.equals(createdAt,
+        teamDto.createdAt) && Objects.equals(organizationDto, teamDto.organizationDto) && Objects.equals(userDtoList,
+        teamDto.userDtoList) && Objects.equals(quadrantInfoDto, teamDto.quadrantInfoDto) && Objects.equals(deployAt,
+        teamDto.deployAt) && Objects.equals(dismantleAt, teamDto.dismantleAt);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, code, createdAt, organizationDto, userDtoList, quadrantInfoDto, deployAt, dismantleAt);
+  }
+
+  @Override
+  public String toString() {
+    return "TeamDto{" +
+        "id=" + id +
+        ", code='" + code + '\'' +
+        ", createdAt=" + createdAt +
+        ", organizationDto=" + organizationDto +
+        ", userDtoList=" + userDtoList +
+        ", quadrantInfoDto=" + quadrantInfoDto +
+        ", deployAt=" + deployAt +
+        ", dismantleAt=" + dismantleAt +
+        '}';
+  }
+
+  public interface AllValidations {
+
+  }
+
+  public interface UpdateValidations {
+
+  }
 }

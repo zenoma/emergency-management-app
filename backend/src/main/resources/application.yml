@@ -12,13 +12,16 @@ spring:
   jackson:
     default-property-inclusion: NON_NULL
   jpa:
-    #database-platform: org.hibernate.spatial.dialect.postgis.PostgisDialect
-    database-platform: org.hibernate.spatial.dialect.h2geodb.GeoDBDialect
     hibernate:
       ddl-auto: update
       show-sql: true
       format-sql: true
       use-sql-comments: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        hibernate.spatial.dialect: h2
+
 project:
   jwt:
     signKey: Bu:GW8bgPlEw
