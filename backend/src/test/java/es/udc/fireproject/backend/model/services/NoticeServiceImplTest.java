@@ -19,7 +19,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -28,159 +28,160 @@ import java.util.Optional;
 class NoticeServiceImplTest {
 
 
-    public final Notice defaultNotice = NoticeOm.withDefaultValues();
-    @Mock
-    NoticeRepository noticeRepository;
+  public final Notice defaultNotice = NoticeOm.withDefaultValues();
+  @Mock
+  NoticeRepository noticeRepository;
 
-    @Mock
-    UserRepository userRepository;
+  @Mock
+  UserRepository userRepository;
 
-    @InjectMocks
-    NoticeServiceImpl noticeService;
+  @InjectMocks
+  NoticeServiceImpl noticeService;
 
-    @BeforeEach
-    public void setUp() {
+  @BeforeEach
+  public void setUp() {
 
-        Mockito.when(noticeRepository.save(Mockito.any())).thenReturn(NoticeOm.withDefaultValues());
-        Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.of(NoticeOm.withDefaultValues()));
-    }
+    Mockito.when(noticeRepository.save(Mockito.any())).thenReturn(NoticeOm.withDefaultValues());
+    Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.of(NoticeOm.withDefaultValues()));
+  }
 
-    @Test
-    void givenValid_whenCreateNotice_thenCreatedSuccessfully() {
+  @Test
+  void givenValid_whenCreateNotice_thenCreatedSuccessfully() {
 
-        Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
 
-        Assertions.assertEquals(NoticeOm.withDefaultValues(), createdNotice);
+    Assertions.assertEquals(NoticeOm.withDefaultValues(), createdNotice);
 
-        Assertions.assertEquals(NoticeStatus.PENDING, createdNotice.getStatus());
+    Assertions.assertEquals(NoticeStatus.PENDING, createdNotice.getStatus());
 
-    }
+  }
 
-    @Test
-    void givenInvalid_whenCreateNotice_thenConstraintViolationException() {
-        String body = defaultNotice.getBody();
-        Assertions.assertThrows(ConstraintViolationException.class,
-                () -> noticeService.create(body,
-                        null),
-                "ConstraintViolationException must be thrown");
+  @Test
+  void givenInvalid_whenCreateNotice_thenConstraintViolationException() {
+    String body = defaultNotice.getBody();
+    Assertions.assertThrows(ConstraintViolationException.class,
+        () -> noticeService.create(body,
+            null),
+        "ConstraintViolationException must be thrown");
 
-    }
+  }
 
-    @Test
-    void givenValid_whenUpdateNotice_thenCreatedSuccessfully() throws NoticeUpdateStatusException, InstanceNotFoundException {
+  @Test
+  void givenValid_whenUpdateNotice_thenCreatedSuccessfully()
+      throws NoticeUpdateStatusException, InstanceNotFoundException {
 
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
+    Notice noticeUpdated = noticeService.update(createdNotice.getId(), "New body", createdNotice.getLocation());
 
-        Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
-        Notice noticeUpdated = noticeService.update(createdNotice.getId(), "New body", createdNotice.getLocation());
+    Assertions.assertEquals(createdNotice, noticeUpdated);
 
-        Assertions.assertEquals(createdNotice, noticeUpdated);
+    Assertions.assertEquals(NoticeStatus.PENDING, noticeUpdated.getStatus());
 
-        Assertions.assertEquals(NoticeStatus.PENDING, noticeUpdated.getStatus());
+  }
 
-    }
+  @Test
+  void givenAcceptedNotice_whenUpdateNotice_thenNoticeStatusException() {
 
-    @Test
-    void givenAcceptedNotice_whenUpdateNotice_thenNoticeStatusException() {
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
+    createdNotice.setStatus(NoticeStatus.ACCEPTED);
+    Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.of(createdNotice));
 
+    Notice finalNotice = createdNotice;
+    Assertions.assertThrows(NoticeUpdateStatusException.class,
+        () -> noticeService.update(finalNotice.getId(), finalNotice.getBody(), finalNotice.getLocation()),
+        "NoticeStatusException must be thrown");
 
-        Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
-        createdNotice.setStatus(NoticeStatus.ACCEPTED);
-        Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.of(createdNotice));
+  }
 
+  @Test
+  void givenNotCreated_whenUpdateNotice_thenInstanceNotFound() {
 
-        Notice finalNotice = createdNotice;
-        Assertions.assertThrows(NoticeUpdateStatusException.class, () -> noticeService.update(finalNotice.getId(), finalNotice.getBody(), finalNotice.getLocation()), "NoticeStatusException must be thrown");
+    Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> noticeService.update(defaultNotice.getId(), defaultNotice.getBody(), defaultNotice.getLocation()),
+        "InstanceNotFoundException must be thrown");
 
-    }
+  }
 
-    @Test
-    void givenNotCreated_whenUpdateNotice_thenInstanceNotFound() {
+  @Test
+  void givenValid_whenDeleteNotice_thenDeletedSuccessfully()
+      throws InstanceNotFoundException, NoticeDeleteStatusException, IOException {
 
-        Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Assertions.assertThrows(InstanceNotFoundException.class,
-                () -> noticeService.update(defaultNotice.getId(), defaultNotice.getBody(), defaultNotice.getLocation()),
-                "InstanceNotFoundException must be thrown");
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
+    noticeService.deleteById(createdNotice.getId());
 
-    }
+    Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
-    @Test
-    void givenValid_whenDeleteNotice_thenDeletedSuccessfully() throws InstanceNotFoundException, NoticeDeleteStatusException, IOException {
+    Notice finalNotice = createdNotice;
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> noticeService.findById(finalNotice.getId()),
+        "InstanceNotFoundException must be thrown");
 
-        Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
-        noticeService.deleteById(createdNotice.getId());
+  }
 
-        Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+  @Test
+  void givenNotCreated_whenDeleteNotice_thenInstanceNotFoundException() {
 
-        Notice finalNotice = createdNotice;
-        Assertions.assertThrows(InstanceNotFoundException.class,
-                () -> noticeService.findById(finalNotice.getId()),
-                "InstanceNotFoundException must be thrown");
+    Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
-    }
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> noticeService.deleteById(-1L),
+        "InstanceNotFoundException must be thrown");
 
-    @Test
-    void givenNotCreated_whenDeleteNotice_thenInstanceNotFoundException() {
+  }
 
-        Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+  @Test
+  void givenAcceptedNotice_whenDeleteNotice_thenNoticeDeleteStatusException() {
 
-        Assertions.assertThrows(InstanceNotFoundException.class,
-                () -> noticeService.deleteById(-1L),
-                "InstanceNotFoundException must be thrown");
+    defaultNotice.setStatus(NoticeStatus.ACCEPTED);
+    Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.of(defaultNotice));
 
-    }
+    Assertions.assertThrows(NoticeDeleteStatusException.class,
+        () -> noticeService.deleteById(defaultNotice.getId()),
+        "NoticeStatusException must be thrown");
 
-    @Test
-    void givenAcceptedNotice_whenDeleteNotice_thenNoticeDeleteStatusException() {
+  }
 
-        defaultNotice.setStatus(NoticeStatus.ACCEPTED);
-        Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.of(defaultNotice));
+  @Test
+  void givenValidNotice_whenCheckNotice_thenStatusChanged()
+      throws NoticeCheckStatusException, InstanceNotFoundException {
 
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
 
-        Assertions.assertThrows(NoticeDeleteStatusException.class,
-                () -> noticeService.deleteById(defaultNotice.getId()),
-                "NoticeStatusException must be thrown");
+    noticeService.checkNotice(createdNotice.getId(), NoticeStatus.ACCEPTED);
+    createdNotice.setStatus(NoticeStatus.ACCEPTED);
+    Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.of(createdNotice));
 
-    }
-
-    @Test
-    void givenValidNotice_whenCheckNotice_thenStatusChanged() throws NoticeCheckStatusException, InstanceNotFoundException {
-
-        Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
-
-        noticeService.checkNotice(createdNotice.getId(), NoticeStatus.ACCEPTED);
-        createdNotice.setStatus(NoticeStatus.ACCEPTED);
-        Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.of(createdNotice));
-
-        Assertions.assertEquals(NoticeStatus.ACCEPTED, noticeService.findById(createdNotice.getId()).getStatus(), "Status must be Accepted");
-
-
-    }
-
-    @Test
-    void givenInvalidNotice_whenCheckNotice_thenInstanceNotFoundException() {
-        Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-
-        Assertions.assertThrows(InstanceNotFoundException.class,
-                () -> noticeService.checkNotice(-1L, NoticeStatus.ACCEPTED),
-                "InstanceNotFoundException must be thrown");
+    Assertions.assertEquals(NoticeStatus.ACCEPTED, noticeService.findById(createdNotice.getId()).getStatus(),
+        "Status must be Accepted");
 
 
-    }
+  }
 
-    @Test
-    void givenAcceptedNotice_whenCheckNotice_thenNoticeCheckStatusException() {
+  @Test
+  void givenInvalidNotice_whenCheckNotice_thenInstanceNotFoundException() {
+    Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> noticeService.checkNotice(-1L, NoticeStatus.ACCEPTED),
+        "InstanceNotFoundException must be thrown");
 
 
-        Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
+  }
 
-        createdNotice.setStatus(NoticeStatus.ACCEPTED);
+  @Test
+  void givenAcceptedNotice_whenCheckNotice_thenNoticeCheckStatusException() {
 
-        Notice finalNotice = createdNotice;
-        Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.of(finalNotice));
-        Assertions.assertThrows(NoticeCheckStatusException.class,
-                () -> noticeService.checkNotice(finalNotice.getId(), NoticeStatus.ACCEPTED),
-                "NoticeStatusException must be thrown");
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
 
-    }
+    createdNotice.setStatus(NoticeStatus.ACCEPTED);
+
+    Notice finalNotice = createdNotice;
+    Mockito.when(noticeRepository.findById(Mockito.any())).thenReturn(Optional.of(finalNotice));
+    Assertions.assertThrows(NoticeCheckStatusException.class,
+        () -> noticeService.checkNotice(finalNotice.getId(), NoticeStatus.ACCEPTED),
+        "NoticeStatusException must be thrown");
+
+  }
 
 }

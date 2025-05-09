@@ -1,9 +1,15 @@
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: debug
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/firedb
+    username: fireuser
+    password: fireuser
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
   devtools:
     restart:
       trigger-file: reload
@@ -11,15 +17,13 @@ spring:
       enabled: false
   jackson:
     default-property-inclusion: NON_NULL
-  jpa:
-    #database-platform: org.hibernate.spatial.dialect.postgis.PostgisDialect
-    database-platform: org.hibernate.spatial.dialect.h2geodb.GeoDBDialect
-    hibernate:
-      ddl-auto: update
-      show-sql: true
-      format-sql: true
-      use-sql-comments: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
 project:
   jwt:
-    signKey: Bu:GW8bgPlEw
+    signKey: YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXo1Njc4OTA=
     expirationMinutes: 1440
+

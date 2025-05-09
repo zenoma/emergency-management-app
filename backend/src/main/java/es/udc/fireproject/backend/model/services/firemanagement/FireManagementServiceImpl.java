@@ -14,263 +14,271 @@ import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.logsmanagement.LogManagementServiceImpl;
 import es.udc.fireproject.backend.model.services.utils.ConstraintValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class FireManagementServiceImpl implements FireManagementService {
 
-    public static final String QUADRANT_NOT_FOUND = "Quadrant not found";
-    public static final String FIRE_NOT_FOUND = "Fire not found";
-    public static final String TEAM_NOT_FOUND = "Team not found";
-    public static final String VEHICLE_NOT_FOUND = "Vehicle not found";
+  public static final String QUADRANT_NOT_FOUND = "Quadrant not found";
+  public static final String FIRE_NOT_FOUND = "Fire not found";
+  public static final String TEAM_NOT_FOUND = "Team not found";
+  public static final String VEHICLE_NOT_FOUND = "Vehicle not found";
 
 
-    @Autowired
-    QuadrantRepository quadrantRepository;
+  @Autowired
+  QuadrantRepository quadrantRepository;
 
-    @Autowired
-    FireRepository fireRepository;
+  @Autowired
+  FireRepository fireRepository;
 
-    @Autowired
-    TeamRepository teamRepository;
+  @Autowired
+  TeamRepository teamRepository;
 
-    @Autowired
-    VehicleRepository vehicleRepository;
+  @Autowired
+  VehicleRepository vehicleRepository;
 
-    @Autowired
-    LogManagementServiceImpl logManagementService;
+  @Lazy
+  @Autowired
+  LogManagementServiceImpl logManagementService;
 
-    // QUADRANT SERVICES
-    @Override
-    public List<Quadrant> findAllQuadrants() {
-        return quadrantRepository.findAll();
+  // QUADRANT SERVICES
+  @Override
+  public List<Quadrant> findAllQuadrants() {
+    return quadrantRepository.findAll();
+  }
+
+  @Override
+  public List<Quadrant> findQuadrantsByEscala(String scale) {
+    return quadrantRepository.findByEscala(scale);
+  }
+
+  @Override
+  public Quadrant findQuadrantById(Integer gid) throws InstanceNotFoundException {
+    return quadrantRepository.findById(gid).orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, gid));
+
+  }
+
+  @Override
+  public List<Quadrant> findQuadrantsWithActiveFire() {
+    return quadrantRepository.findByFireIdNotNull();
+  }
+
+  @Override
+  public Quadrant linkFire(Integer gid, Long id) throws InstanceNotFoundException {
+
+    Quadrant quadrant = quadrantRepository.findById(gid)
+        .orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, gid));
+
+    Fire fire = fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
+
+    if (quadrant.getFire() == null) {
+      quadrant.setFire(fire);
+      quadrant.setLinkedAt(LocalDateTime.now());
     }
 
-    @Override
-    public List<Quadrant> findQuadrantsByEscala(String scale) {
-        return quadrantRepository.findByEscala(scale);
+    return quadrantRepository.save(quadrant);
+
+
+  }
+
+
+  // FIRE SERVICES
+  @Override
+  public List<Fire> findAllFires() {
+    return fireRepository.findAllByOrderByExtinguishedAtDescIdAsc();
+  }
+
+  @Override
+  public Fire findFireById(Long id) throws InstanceNotFoundException {
+
+    return fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
+  }
+
+  @Override
+  public Fire createFire(String description, String type, FireIndex fireIndex) {
+    Fire fire = new Fire(description, type, fireIndex);
+    fire.setCreatedAt((LocalDateTime.now()));
+    fire.setFireIndex(FireIndex.CERO);
+
+    ConstraintValidator.validate(fire);
+
+    return fireRepository.save(fire);
+  }
+
+  @Override
+  public Fire extinguishFire(Long id)
+      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyDismantledException {
+
+    Fire fire = fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
+
+    if (fire.getFireIndex() == FireIndex.EXTINGUIDO) {
+      throw new ExtinguishedFireException(Fire.class.getSimpleName(), fire.getId().toString());
     }
 
-    @Override
-    public Quadrant findQuadrantById(Integer gid) throws InstanceNotFoundException {
-        return quadrantRepository.findById(gid).orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, gid));
+    fire.setFireIndex(FireIndex.EXTINGUIDO);
+    fire.setExtinguishedAt(LocalDateTime.now());
 
+    List<Quadrant> quadrants = quadrantRepository.findByFireId(id);
+
+    for (Quadrant quadrant : quadrants
+    ) {
+      logManagementService.logFire(id, quadrant.getId());
+      quadrant.setFire(null);
+      quadrant.setLinkedAt(null);
+      for (Team team : quadrant.getTeamList()) {
+        retractTeam(team.getId());
+      }
+      for (Vehicle vehicle : quadrant.getVehicleList()) {
+        retractVehicle(vehicle.getId());
+      }
+      quadrantRepository.save(quadrant);
     }
 
-    @Override
-    public List<Quadrant> findQuadrantsWithActiveFire() {
-        return quadrantRepository.findByFireIdNotNull();
+    return fireRepository.save(fire);
+  }
+
+  @Override
+  public Fire extinguishQuadrantByFireId(Long id, Integer quadrantId)
+      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyDismantledException {
+
+    Fire fire = fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
+
+    if (fire.getFireIndex() == FireIndex.EXTINGUIDO) {
+      throw new ExtinguishedFireException(Fire.class.getSimpleName(), fire.getId().toString());
     }
 
-    @Override
-    public Quadrant linkFire(Integer gid, Long id) throws InstanceNotFoundException {
+    Quadrant quadrant = quadrantRepository.findById(quadrantId)
+        .orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, quadrantId));
 
-        Quadrant quadrant = quadrantRepository.findById(gid).orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, gid));
-
-        Fire fire = fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
-
-        if (quadrant.getFire() == null) {
-            quadrant.setFire(fire);
-            quadrant.setLinkedAt(LocalDateTime.now());
-        }
-
-
-        return quadrantRepository.save(quadrant);
-
-
+    if (quadrant.getFire() == null || !Objects.equals(quadrant.getFire().getId(), fire.getId())) {
+      throw new RuntimeException();
     }
 
+    logManagementService.logFire(id, quadrant.getId());
+    quadrant.setFire(null);
+    quadrant.setLinkedAt(null);
+    for (Team team : quadrant.getTeamList()) {
+      retractTeam(team.getId());
+    }
+    for (Vehicle vehicle : quadrant.getVehicleList()) {
+      retractVehicle(vehicle.getId());
+    }
+    quadrantRepository.save(quadrant);
 
-    // FIRE SERVICES
-    @Override
-    public List<Fire> findAllFires() {
-        return fireRepository.findAllByOrderByExtinguishedAtDescIdAsc();
+    return fireRepository.save(fire);
+  }
+
+
+  @Override
+  public Fire updateFire(Long id, String description, String type, FireIndex fireIndex)
+      throws InstanceNotFoundException, ExtinguishedFireException {
+
+    Fire fire = fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
+
+    if (fireIndex == FireIndex.EXTINGUIDO) {
+      throw new ExtinguishedFireException(Fire.class.getSimpleName(), fire.getId().toString());
     }
 
-    @Override
-    public Fire findFireById(Long id) throws InstanceNotFoundException {
-
-        return fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
+    if (fire.getFireIndex() != FireIndex.EXTINGUIDO) {
+      fire.setDescription(description);
+      fire.setType(type);
+      fire.setFireIndex(fireIndex);
+    } else {
+      throw new ExtinguishedFireException(Fire.class.getSimpleName(), fire.getId().toString());
     }
 
-    @Override
-    public Fire createFire(String description, String type, FireIndex fireIndex) {
-        Fire fire = new Fire(description, type, fireIndex);
-        fire.setCreatedAt((LocalDateTime.now()));
-        fire.setFireIndex(FireIndex.CERO);
+    return fireRepository.save(fire);
+  }
 
-        ConstraintValidator.validate(fire);
 
-        return fireRepository.save(fire);
+  // EXTINCTION SERVICES
+  @Override
+  public Team deployTeam(Long teamId, Integer gid) throws InstanceNotFoundException, AlreadyDismantledException {
+    Team team = teamRepository.findById(teamId)
+        .orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, teamId));
+    if (team.getDismantleAt() != null) {
+      throw new AlreadyDismantledException(Team.class.getSimpleName(), team.getCode());
     }
 
-    @Override
-    public Fire extinguishFire(Long id) throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyDismantledException {
+    Quadrant quadrant = quadrantRepository.findById(gid)
+        .orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, gid));
 
-        Fire fire = fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
-
-        if (fire.getFireIndex() == FireIndex.EXTINGUIDO) {
-            throw new ExtinguishedFireException(Fire.class.getSimpleName(), fire.getId().toString());
-        }
-
-        fire.setFireIndex(FireIndex.EXTINGUIDO);
-        fire.setExtinguishedAt(LocalDateTime.now());
-
-        List<Quadrant> quadrants = quadrantRepository.findByFireId(id);
-
-        for (Quadrant quadrant : quadrants
-        ) {
-            logManagementService.logFire(id, quadrant.getId());
-            quadrant.setFire(null);
-            quadrant.setLinkedAt(null);
-            for (Team team : quadrant.getTeamList()) {
-                retractTeam(team.getId());
-            }
-            for (Vehicle vehicle : quadrant.getVehicleList()) {
-                retractVehicle(vehicle.getId());
-            }
-            quadrantRepository.save(quadrant);
-        }
-
-        return fireRepository.save(fire);
+    if (team.getQuadrant() != null && !Objects.equals(team.getQuadrant().getId(), gid)) {
+      retractTeam(teamId);
     }
 
-    @Override
-    public Fire extinguishQuadrantByFireId(Long id, Integer quadrantId) throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyDismantledException {
+    team.setDeployAt(LocalDateTime.now());
+    team.setQuadrant(quadrant);
 
-        Fire fire = fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
+    return teamRepository.save(team);
 
-        if (fire.getFireIndex() == FireIndex.EXTINGUIDO) {
-            throw new ExtinguishedFireException(Fire.class.getSimpleName(), fire.getId().toString());
-        }
+  }
 
-        Quadrant quadrant = quadrantRepository.findById(quadrantId).orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, quadrantId));
-
-        if (quadrant.getFire() == null || !Objects.equals(quadrant.getFire().getId(), fire.getId())) {
-            throw new RuntimeException();
-        }
-
-        logManagementService.logFire(id, quadrant.getId());
-        quadrant.setFire(null);
-        quadrant.setLinkedAt(null);
-        for (Team team : quadrant.getTeamList()) {
-            retractTeam(team.getId());
-        }
-        for (Vehicle vehicle : quadrant.getVehicleList()) {
-            retractVehicle(vehicle.getId());
-        }
-        quadrantRepository.save(quadrant);
-
-        return fireRepository.save(fire);
+  @Override
+  public Team retractTeam(Long teamId) throws InstanceNotFoundException, AlreadyDismantledException {
+    Team team = teamRepository.findById(teamId)
+        .orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, teamId));
+    if (team.getDismantleAt() != null) {
+      throw new AlreadyDismantledException(Team.class.getSimpleName(), team.getCode());
     }
 
-
-    @Override
-    public Fire updateFire(Long id, String description, String type, FireIndex fireIndex) throws InstanceNotFoundException, ExtinguishedFireException {
-
-        Fire fire = fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
-
-        if (fireIndex == FireIndex.EXTINGUIDO) {
-            throw new ExtinguishedFireException(Fire.class.getSimpleName(), fire.getId().toString());
-        }
-
-        if (fire.getFireIndex() != FireIndex.EXTINGUIDO) {
-            fire.setDescription(description);
-            fire.setType(type);
-            fire.setFireIndex(fireIndex);
-        } else {
-            throw new ExtinguishedFireException(Fire.class.getSimpleName(), fire.getId().toString());
-        }
-
-        return fireRepository.save(fire);
+    if (team.getQuadrant() != null) {
+      logManagementService.logTeam(team.getId(), team.getQuadrant().getId());
+      team.setDeployAt(null);
+      team.setQuadrant(null);
     }
 
+    return teamRepository.save(team);
 
-    // EXTINCTION SERVICES
-    @Override
-    public Team deployTeam(Long teamId, Integer gid) throws InstanceNotFoundException, AlreadyDismantledException {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, teamId));
-        if (team.getDismantleAt() != null) {
-            throw new AlreadyDismantledException(Team.class.getSimpleName(), team.getCode());
-        }
+  }
 
-        Quadrant quadrant = quadrantRepository.findById(gid).orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, gid));
-
-        if (team.getQuadrant() != null && !Objects.equals(team.getQuadrant().getId(), gid)) {
-            retractTeam(teamId);
-        }
-
-        team.setDeployAt(LocalDateTime.now());
-        team.setQuadrant(quadrant);
-
-
-        return teamRepository.save(team);
-
+  @Override
+  public Vehicle deployVehicle(Long vehicleId, Integer gid)
+      throws InstanceNotFoundException, AlreadyDismantledException {
+    Vehicle vehicle = vehicleRepository.findById(vehicleId)
+        .orElseThrow(() -> new InstanceNotFoundException(VEHICLE_NOT_FOUND, vehicleId));
+    if (vehicle.getDismantleAt() != null) {
+      throw new AlreadyDismantledException(Vehicle.class.getSimpleName(), vehicle.getVehiclePlate());
     }
 
-    @Override
-    public Team retractTeam(Long teamId) throws InstanceNotFoundException, AlreadyDismantledException {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, teamId));
-        if (team.getDismantleAt() != null) {
-            throw new AlreadyDismantledException(Team.class.getSimpleName(), team.getCode());
-        }
+    Quadrant quadrant = quadrantRepository.findById(gid)
+        .orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, gid));
 
-        if (team.getQuadrant() != null) {
-            logManagementService.logTeam(team.getId(), team.getQuadrant().getId());
-            team.setDeployAt(null);
-            team.setQuadrant(null);
-        }
-
-        return teamRepository.save(team);
-
+    if (vehicle.getQuadrant() != null && !Objects.equals(vehicle.getQuadrant().getId(), gid)) {
+      retractVehicle(vehicleId);
     }
 
-    @Override
-    public Vehicle deployVehicle(Long vehicleId, Integer gid) throws InstanceNotFoundException, AlreadyDismantledException {
-        Vehicle vehicle = vehicleRepository.findById(vehicleId).orElseThrow(() -> new InstanceNotFoundException(VEHICLE_NOT_FOUND, vehicleId));
-        if (vehicle.getDismantleAt() != null) {
-            throw new AlreadyDismantledException(Vehicle.class.getSimpleName(), vehicle.getVehiclePlate());
-        }
+    vehicle.setDeployAt(LocalDateTime.now());
+    vehicle.setQuadrant(quadrant);
 
+    return vehicleRepository.save(vehicle);
 
-        Quadrant quadrant = quadrantRepository.findById(gid).orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, gid));
+  }
 
-
-        if (vehicle.getQuadrant() != null && !Objects.equals(vehicle.getQuadrant().getId(), gid)) {
-            retractVehicle(vehicleId);
-        }
-
-        vehicle.setDeployAt(LocalDateTime.now());
-        vehicle.setQuadrant(quadrant);
-
-
-        return vehicleRepository.save(vehicle);
-
+  @Override
+  public Vehicle retractVehicle(Long vehicleId) throws InstanceNotFoundException, AlreadyDismantledException {
+    Vehicle vehicle = vehicleRepository.findById(vehicleId)
+        .orElseThrow(() -> new InstanceNotFoundException(VEHICLE_NOT_FOUND, vehicleId));
+    if (vehicle.getDismantleAt() != null) {
+      throw new AlreadyDismantledException(Vehicle.class.getSimpleName(), vehicle.getVehiclePlate());
     }
 
-    @Override
-    public Vehicle retractVehicle(Long vehicleId) throws InstanceNotFoundException, AlreadyDismantledException {
-        Vehicle vehicle = vehicleRepository.findById(vehicleId).orElseThrow(() -> new InstanceNotFoundException(VEHICLE_NOT_FOUND, vehicleId));
-        if (vehicle.getDismantleAt() != null) {
-            throw new AlreadyDismantledException(Vehicle.class.getSimpleName(), vehicle.getVehiclePlate());
-        }
-
-        if (vehicle.getQuadrant() != null) {
-            logManagementService.logVehicle(vehicle.getId(), vehicle.getQuadrant().getId());
-            vehicle.setDeployAt(null);
-            vehicle.setQuadrant(null);
-        }
-
-        return vehicleRepository.save(vehicle);
-
+    if (vehicle.getQuadrant() != null) {
+      logManagementService.logVehicle(vehicle.getId(), vehicle.getQuadrant().getId());
+      vehicle.setDeployAt(null);
+      vehicle.setQuadrant(null);
     }
+
+    return vehicleRepository.save(vehicle);
+
+  }
 
 
 }
