@@ -3,7 +3,6 @@ package es.udc.fireproject.backend.rest.dtos;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import es.udc.fireproject.backend.model.entities.notice.NoticeStatus;
-
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;

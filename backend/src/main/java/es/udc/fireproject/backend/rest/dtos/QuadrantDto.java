@@ -1,14 +1,13 @@
 package es.udc.fireproject.backend.rest.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.locationtech.jts.geom.Coordinates;
-
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import org.locationtech.jts.geom.Coordinates;
 
 public class QuadrantDto extends BaseDto {
 

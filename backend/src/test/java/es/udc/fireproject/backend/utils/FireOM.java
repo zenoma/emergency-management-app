@@ -5,8 +5,8 @@ import es.udc.fireproject.backend.model.entities.fire.FireIndex;
 
 public class FireOM {
 
-    public static Fire withDefaultValues() {
+  public static Fire withDefaultValues() {
 
-        return new Fire("Description", "Type 1", FireIndex.UNO);
-    }
+    return new Fire("Description", "Type 1", FireIndex.UNO);
+  }
 }

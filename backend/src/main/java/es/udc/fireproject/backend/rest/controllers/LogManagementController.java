@@ -14,98 +14,104 @@ import es.udc.fireproject.backend.rest.dtos.conversors.FireQuadrantLogConversor;
 import es.udc.fireproject.backend.rest.dtos.conversors.GlobalStatisticsConversor;
 import es.udc.fireproject.backend.rest.dtos.conversors.TeamQuadrantLogConversor;
 import es.udc.fireproject.backend.rest.dtos.conversors.VehicleQuadrantLogConversor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/logs")
 public class LogManagementController {
 
-    @Autowired
-    LogManagementService logManagementService;
+  @Autowired
+  LogManagementService logManagementService;
 
-    @GetMapping("/fires")
-    public List<FireQuadrantLogDto> findAllFiresLogs(@RequestAttribute Long userId) {
+  @GetMapping("/fires")
+  public List<FireQuadrantLogDto> findAllFiresLogs(@RequestAttribute Long userId) {
 
-        List<FireQuadrantLogDto> fireQuadrantLogDtos = new ArrayList<>();
+    List<FireQuadrantLogDto> fireQuadrantLogDtos = new ArrayList<>();
 
-        for (FireQuadrantLog fireQuadrantLog : logManagementService.findAllFireQuadrantLogs()) {
-            fireQuadrantLogDtos.add(FireQuadrantLogConversor.toFireQuadrantLogDto(fireQuadrantLog));
-        }
-
-        return fireQuadrantLogDtos;
+    for (FireQuadrantLog fireQuadrantLog : logManagementService.findAllFireQuadrantLogs()) {
+      fireQuadrantLogDtos.add(FireQuadrantLogConversor.toFireQuadrantLogDto(fireQuadrantLog));
     }
 
-    @GetMapping("/fires/{id}")
+    return fireQuadrantLogDtos;
+  }
 
-    public List<FireQuadrantLogDto> findAllFiresLogsByFireIdAndDate(@RequestAttribute Long userId,
-                                                                    @PathVariable Long id,
-                                                                    @RequestParam(value = "startDate", required = true)
-                                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-                                                                    @RequestParam(value = "endDate", required = true)
-                                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
-            throws InstanceNotFoundException {
+  @GetMapping("/fires/{id}")
 
-        List<FireQuadrantLogDto> fireQuadrantLogDtos = new ArrayList<>();
+  public List<FireQuadrantLogDto> findAllFiresLogsByFireIdAndDate(@RequestAttribute Long userId,
+      @PathVariable Long id,
+      @RequestParam(value = "startDate", required = true)
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+      @RequestParam(value = "endDate", required = true)
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+      throws InstanceNotFoundException {
 
-        for (FireQuadrantLog fireQuadrantLog : logManagementService.findFiresByFireIdAndLinkedAt(id, startDate, endDate)) {
-            fireQuadrantLogDtos.add(FireQuadrantLogConversor.toFireQuadrantLogDto(fireQuadrantLog));
-        }
+    List<FireQuadrantLogDto> fireQuadrantLogDtos = new ArrayList<>();
 
-        return fireQuadrantLogDtos;
+    for (FireQuadrantLog fireQuadrantLog : logManagementService.findFiresByFireIdAndLinkedAt(id, startDate, endDate)) {
+      fireQuadrantLogDtos.add(FireQuadrantLogConversor.toFireQuadrantLogDto(fireQuadrantLog));
     }
 
-    @GetMapping("/teams")
-    public List<TeamQuadrantLogDto> findTeamLogsByQuadrantIdBetweenDates(@RequestAttribute Long userId,
-                                                                         @RequestParam(value = "quadrantId", required = true) Integer quadrantId,
-                                                                         @RequestParam(value = "startDate", required = true)
-                                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-                                                                         @RequestParam(value = "endDate", required = true)
-                                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+    return fireQuadrantLogDtos;
+  }
 
-            throws InstanceNotFoundException {
+  @GetMapping("/teams")
+  public List<TeamQuadrantLogDto> findTeamLogsByQuadrantIdBetweenDates(@RequestAttribute Long userId,
+      @RequestParam(value = "quadrantId", required = true) Integer quadrantId,
+      @RequestParam(value = "startDate", required = true)
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+      @RequestParam(value = "endDate", required = true)
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
 
-        List<TeamQuadrantLogDto> teamQuadrantLogDtos = new ArrayList<>();
+      throws InstanceNotFoundException {
 
-        for (TeamQuadrantLog teamQuadrantLog : logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrantId, startDate, endDate)) {
-            teamQuadrantLogDtos.add(TeamQuadrantLogConversor.toTeamQuadrantLogDto(teamQuadrantLog));
-        }
+    List<TeamQuadrantLogDto> teamQuadrantLogDtos = new ArrayList<>();
 
-        return teamQuadrantLogDtos;
+    for (TeamQuadrantLog teamQuadrantLog : logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(
+        quadrantId, startDate, endDate)) {
+      teamQuadrantLogDtos.add(TeamQuadrantLogConversor.toTeamQuadrantLogDto(teamQuadrantLog));
     }
 
-    @GetMapping("/vehicles")
-    public List<VehicleQuadrantLogDto> findVehicleLogsByQuadrantIdBetweenDates(@RequestAttribute Long userId,
-                                                                               @RequestParam(value = "quadrantId", required = true) Integer quadrantId,
-                                                                               @RequestParam(value = "startDate", required = true)
-                                                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-                                                                               @RequestParam(value = "endDate", required = true)
-                                                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+    return teamQuadrantLogDtos;
+  }
 
-            throws InstanceNotFoundException {
+  @GetMapping("/vehicles")
+  public List<VehicleQuadrantLogDto> findVehicleLogsByQuadrantIdBetweenDates(@RequestAttribute Long userId,
+      @RequestParam(value = "quadrantId", required = true) Integer quadrantId,
+      @RequestParam(value = "startDate", required = true)
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+      @RequestParam(value = "endDate", required = true)
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
 
-        List<VehicleQuadrantLogDto> vehicleQuadrantLogDtos = new ArrayList<>();
+      throws InstanceNotFoundException {
 
-        for (VehicleQuadrantLog vehicleQuadrantLog : logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrantId, startDate, endDate)) {
-            vehicleQuadrantLogDtos.add(VehicleQuadrantLogConversor.toVehicleQuadrantDto(vehicleQuadrantLog));
-        }
+    List<VehicleQuadrantLogDto> vehicleQuadrantLogDtos = new ArrayList<>();
 
-        return vehicleQuadrantLogDtos;
+    for (VehicleQuadrantLog vehicleQuadrantLog : logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(
+        quadrantId, startDate, endDate)) {
+      vehicleQuadrantLogDtos.add(VehicleQuadrantLogConversor.toVehicleQuadrantDto(vehicleQuadrantLog));
     }
 
-    @GetMapping("/statistics")
-    public GlobalStatisticsDto getGlobalStatistics(@RequestAttribute Long userId,
-                                                   @RequestParam(value = "fireId", required = true) Long fireId)
-            throws InstanceNotFoundException, ExtinguishedFireException {
+    return vehicleQuadrantLogDtos;
+  }
 
-        return GlobalStatisticsConversor.toGlobalStatisticsDto(
-                logManagementService.getGlobalStatisticsByFireId(fireId));
-    }
+  @GetMapping("/statistics")
+  public GlobalStatisticsDto getGlobalStatistics(@RequestAttribute Long userId,
+      @RequestParam(value = "fireId", required = true) Long fireId)
+      throws InstanceNotFoundException, ExtinguishedFireException {
+
+    return GlobalStatisticsConversor.toGlobalStatisticsDto(
+        logManagementService.getGlobalStatisticsByFireId(fireId));
+  }
 
 
 }

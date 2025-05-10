@@ -2,31 +2,34 @@ package es.udc.fireproject.backend.model.services.notice;
 
 import es.udc.fireproject.backend.model.entities.notice.Notice;
 import es.udc.fireproject.backend.model.entities.notice.NoticeStatus;
-import es.udc.fireproject.backend.model.exceptions.*;
-import org.locationtech.jts.geom.Point;
-
+import es.udc.fireproject.backend.model.exceptions.ImageAlreadyUploadedException;
+import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
+import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
+import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
+import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
 import java.io.IOException;
 import java.util.List;
+import org.locationtech.jts.geom.Point;
 
 public interface NoticeService {
 
 
-    Notice create(String body, Point location);
+  Notice create(String body, Point location);
 
-    Notice create(String body, Point location, Long userId) throws InstanceNotFoundException;
+  Notice create(String body, Point location, Long userId) throws InstanceNotFoundException;
 
-    Notice update(Long id, String body, Point location) throws NoticeUpdateStatusException, InstanceNotFoundException;
+  Notice update(Long id, String body, Point location) throws NoticeUpdateStatusException, InstanceNotFoundException;
 
-    void deleteById(Long noticeId) throws InstanceNotFoundException, NoticeDeleteStatusException, IOException;
+  void deleteById(Long noticeId) throws InstanceNotFoundException, NoticeDeleteStatusException, IOException;
 
-    List<Notice> findByUserId(Long userId);
+  List<Notice> findByUserId(Long userId);
 
-    Notice findById(Long id) throws InstanceNotFoundException;
+  Notice findById(Long id) throws InstanceNotFoundException;
 
-    List<Notice> findAll();
+  List<Notice> findAll();
 
-    void checkNotice(Long id, NoticeStatus status) throws InstanceNotFoundException, NoticeCheckStatusException;
+  void checkNotice(Long id, NoticeStatus status) throws InstanceNotFoundException, NoticeCheckStatusException;
 
-    Notice addImage(Long id, String name) throws InstanceNotFoundException, ImageAlreadyUploadedException;
+  Notice addImage(Long id, String name) throws InstanceNotFoundException, ImageAlreadyUploadedException;
 
 }

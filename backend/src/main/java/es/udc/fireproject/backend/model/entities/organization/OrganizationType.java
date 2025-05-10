@@ -1,7 +1,6 @@
 package es.udc.fireproject.backend.model.entities.organization;
 
 import es.udc.fireproject.backend.model.entities.BaseEntity;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;

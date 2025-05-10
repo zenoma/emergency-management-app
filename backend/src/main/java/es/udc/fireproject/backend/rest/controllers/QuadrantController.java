@@ -7,61 +7,68 @@ import es.udc.fireproject.backend.rest.dtos.QuadrantDto;
 import es.udc.fireproject.backend.rest.dtos.QuadrantInfoDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.QuadrantConversor;
 import es.udc.fireproject.backend.rest.dtos.conversors.QuadrantInfoConversor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/quadrants")
 public class QuadrantController {
 
-    @Autowired
-    FireManagementService fireManagementService;
+  @Autowired
+  FireManagementService fireManagementService;
 
-    @GetMapping("")
-    public List<QuadrantDto> findAll(@RequestParam(required = false) String scale) {
+  @GetMapping("")
+  public List<QuadrantDto> findAll(@RequestParam(required = false) String scale) {
 
-        List<QuadrantDto> quadrantDtos = new ArrayList<>();
+    List<QuadrantDto> quadrantDtos = new ArrayList<>();
 
-        if (scale != null) {
-            for (Quadrant quadrant : fireManagementService.findQuadrantsByEscala(scale)) {
-                quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
-            }
-        } else {
-            for (Quadrant quadrant : fireManagementService.findAllQuadrants()) {
-                quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
-            }
-        }
-        return quadrantDtos;
+    if (scale != null) {
+      for (Quadrant quadrant : fireManagementService.findQuadrantsByEscala(scale)) {
+        quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
+      }
+    } else {
+      for (Quadrant quadrant : fireManagementService.findAllQuadrants()) {
+        quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
+      }
+    }
+    return quadrantDtos;
+  }
+
+  @GetMapping("/{gid}")
+  public QuadrantInfoDto findQuadrantById(@PathVariable Integer gid)
+      throws InstanceNotFoundException {
+    return QuadrantInfoConversor.toQuadrantDto(fireManagementService.findQuadrantById(gid));
+  }
+
+
+  @GetMapping("/active")
+  public List<QuadrantDto> findQuadrantsWithActiveFire() {
+    List<QuadrantDto> quadrantDtos = new ArrayList<>();
+
+    for (Quadrant quadrant : fireManagementService.findQuadrantsWithActiveFire()) {
+      quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
     }
 
-    @GetMapping("/{gid}")
-    public QuadrantInfoDto findQuadrantById(@PathVariable Integer gid)
-            throws InstanceNotFoundException {
-        return QuadrantInfoConversor.toQuadrantDto(fireManagementService.findQuadrantById(gid));
-    }
+    return quadrantDtos;
+  }
 
+  @PostMapping("/{gid}/linkFire")
+  public void linkFire(@RequestAttribute Long userId, @PathVariable Integer gid,
+      @RequestBody Map<String, String> jsonParams)
+      throws InstanceNotFoundException {
 
-    @GetMapping("/active")
-    public List<QuadrantDto> findQuadrantsWithActiveFire() {
-        List<QuadrantDto> quadrantDtos = new ArrayList<>();
-
-        for (Quadrant quadrant : fireManagementService.findQuadrantsWithActiveFire()) {
-            quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
-        }
-
-        return quadrantDtos;
-    }
-
-    @PostMapping("/{gid}/linkFire")
-    public void linkFire(@RequestAttribute Long userId, @PathVariable Integer gid, @RequestBody Map<String, String> jsonParams)
-            throws InstanceNotFoundException {
-
-        fireManagementService.linkFire(gid, Long.valueOf(jsonParams.get("fireId")));
-    }
+    fireManagementService.linkFire(gid, Long.valueOf(jsonParams.get("fireId")));
+  }
 
 
 }

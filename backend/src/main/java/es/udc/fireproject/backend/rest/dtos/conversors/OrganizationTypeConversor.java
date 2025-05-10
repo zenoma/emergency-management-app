@@ -5,15 +5,15 @@ import es.udc.fireproject.backend.rest.dtos.OrganizationTypeDto;
 
 public class OrganizationTypeConversor {
 
-    private OrganizationTypeConversor() {
+  private OrganizationTypeConversor() {
 
-    }
+  }
 
-    public static OrganizationTypeDto toOrganizationTypeDto(OrganizationType organizationType) {
-        return new OrganizationTypeDto(organizationType.getId(), organizationType.getName());
-    }
+  public static OrganizationTypeDto toOrganizationTypeDto(OrganizationType organizationType) {
+    return new OrganizationTypeDto(organizationType.getId(), organizationType.getName());
+  }
 
-    public static OrganizationType toOrganizationType(OrganizationTypeDto organizationDto) {
-        return new OrganizationType(organizationDto.getName());
-    }
+  public static OrganizationType toOrganizationType(OrganizationTypeDto organizationDto) {
+    return new OrganizationType(organizationDto.getName());
+  }
 }

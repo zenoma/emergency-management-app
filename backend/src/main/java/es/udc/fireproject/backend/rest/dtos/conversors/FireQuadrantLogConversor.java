@@ -7,18 +7,20 @@ import es.udc.fireproject.backend.rest.dtos.QuadrantInfoDto;
 
 public class FireQuadrantLogConversor {
 
-    private FireQuadrantLogConversor() {
-    }
+  private FireQuadrantLogConversor() {
+  }
 
 
-    public static FireQuadrantLogDto toFireQuadrantLogDto(FireQuadrantLog fireQuadrantLog) {
+  public static FireQuadrantLogDto toFireQuadrantLogDto(FireQuadrantLog fireQuadrantLog) {
 
-        FireDto fireDto = FireConversor.toFireDtoWithoutQuadrants(fireQuadrantLog.getFire());
-        QuadrantInfoDto quadrantInfoDto = QuadrantInfoConversor.toQuadrantDtoWithoutTeamsAndVehicles(fireQuadrantLog.getQuadrant());
+    FireDto fireDto = FireConversor.toFireDtoWithoutQuadrants(fireQuadrantLog.getFire());
+    QuadrantInfoDto quadrantInfoDto = QuadrantInfoConversor.toQuadrantDtoWithoutTeamsAndVehicles(
+        fireQuadrantLog.getQuadrant());
 
-        return new FireQuadrantLogDto(fireDto, quadrantInfoDto, fireQuadrantLog.getLinkedAt(), fireQuadrantLog.getExtinguishedAt());
+    return new FireQuadrantLogDto(fireDto, quadrantInfoDto, fireQuadrantLog.getLinkedAt(),
+        fireQuadrantLog.getExtinguishedAt());
 
-    }
+  }
 
 
 }

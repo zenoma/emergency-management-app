@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrganizationTypeRepository extends JpaRepository<OrganizationType, Long> {
 
-    OrganizationType findByName(String name);
+  OrganizationType findByName(String name);
 
 
 }

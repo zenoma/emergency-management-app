@@ -7,18 +7,20 @@ import es.udc.fireproject.backend.rest.dtos.VehicleQuadrantLogDto;
 
 public class VehicleQuadrantLogConversor {
 
-    private VehicleQuadrantLogConversor() {
-    }
+  private VehicleQuadrantLogConversor() {
+  }
 
 
-    public static VehicleQuadrantLogDto toVehicleQuadrantDto(VehicleQuadrantLog vehicleQuadrantLog) {
+  public static VehicleQuadrantLogDto toVehicleQuadrantDto(VehicleQuadrantLog vehicleQuadrantLog) {
 
-        VehicleDto vehicleDto = VehicleConversor.toVehicleDtoWithoutQuadrantInfo(vehicleQuadrantLog.getVehicle());
-        QuadrantInfoDto quadrantInfoDto = QuadrantInfoConversor.toQuadrantDtoWithoutTeamsAndVehicles(vehicleQuadrantLog.getQuadrant());
+    VehicleDto vehicleDto = VehicleConversor.toVehicleDtoWithoutQuadrantInfo(vehicleQuadrantLog.getVehicle());
+    QuadrantInfoDto quadrantInfoDto = QuadrantInfoConversor.toQuadrantDtoWithoutTeamsAndVehicles(
+        vehicleQuadrantLog.getQuadrant());
 
-        return new VehicleQuadrantLogDto(vehicleDto, quadrantInfoDto, vehicleQuadrantLog.getDeployAt(), vehicleQuadrantLog.getRetractAt());
+    return new VehicleQuadrantLogDto(vehicleDto, quadrantInfoDto, vehicleQuadrantLog.getDeployAt(),
+        vehicleQuadrantLog.getRetractAt());
 
-    }
+  }
 
 
 }

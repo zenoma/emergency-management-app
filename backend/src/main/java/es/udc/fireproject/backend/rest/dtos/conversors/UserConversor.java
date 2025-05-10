@@ -7,39 +7,39 @@ import es.udc.fireproject.backend.rest.dtos.UserDto;
 public class UserConversor {
 
 
-    private UserConversor() {
+  private UserConversor() {
+  }
+
+  public static UserDto toUserDto(User user) {
+    Long teamId = null;
+
+    if (user.getTeam() != null) {
+      teamId = user.getTeam().getId();
     }
 
-    public static UserDto toUserDto(User user) {
-        Long teamId = null;
+    return new UserDto(user.getId(),
+        user.getEmail(),
+        user.getFirstName(),
+        user.getLastName(),
+        user.getDni(),
+        user.getPhoneNumber(),
+        user.getUserRole(),
+        teamId);
+  }
 
-        if (user.getTeam() != null) {
-            teamId = user.getTeam().getId();
-        }
+  public static User toUser(UserDto userDto) {
+    return new User(userDto.getEmail(),
+        userDto.getPassword(),
+        userDto.getFirstName(),
+        userDto.getLastName(),
+        userDto.getDni(),
+        userDto.getPhoneNumber());
+  }
 
-        return new UserDto(user.getId(),
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getDni(),
-                user.getPhoneNumber(),
-                user.getUserRole(),
-                teamId);
-    }
+  public static AuthenticatedUserDto toAuthenticatedUserDto(String serviceToken, User user) {
 
-    public static User toUser(UserDto userDto) {
-        return new User(userDto.getEmail(),
-                userDto.getPassword(),
-                userDto.getFirstName(),
-                userDto.getLastName(),
-                userDto.getDni(),
-                userDto.getPhoneNumber());
-    }
+    return new AuthenticatedUserDto(serviceToken, toUserDto(user));
 
-    public static AuthenticatedUserDto toAuthenticatedUserDto(String serviceToken, User user) {
-
-        return new AuthenticatedUserDto(serviceToken, toUserDto(user));
-
-    }
+  }
 
 }

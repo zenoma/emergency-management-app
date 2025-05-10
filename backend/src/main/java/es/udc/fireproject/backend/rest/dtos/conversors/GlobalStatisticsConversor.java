@@ -5,17 +5,17 @@ import es.udc.fireproject.backend.rest.dtos.GlobalStatisticsDto;
 
 public class GlobalStatisticsConversor {
 
-    private GlobalStatisticsConversor() {
+  private GlobalStatisticsConversor() {
 
-    }
+  }
 
-    public static GlobalStatisticsDto toGlobalStatisticsDto(GlobalStatistics globalStatistics) {
+  public static GlobalStatisticsDto toGlobalStatisticsDto(GlobalStatistics globalStatistics) {
 
-        return new GlobalStatisticsDto(globalStatistics.getTeamsMobilized(),
-                globalStatistics.getVehiclesMobilized(),
-                globalStatistics.getMaxBurnedHectares(),
-                globalStatistics.getAffectedQuadrants());
-    }
+    return new GlobalStatisticsDto(globalStatistics.getTeamsMobilized(),
+        globalStatistics.getVehiclesMobilized(),
+        globalStatistics.getMaxBurnedHectares(),
+        globalStatistics.getAffectedQuadrants());
+  }
 
 
 }

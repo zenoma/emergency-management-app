@@ -5,13 +5,13 @@ import es.udc.fireproject.backend.rest.dtos.ImageDto;
 
 public class ImageConversor {
 
-    private ImageConversor() {
+  private ImageConversor() {
 
-    }
+  }
 
-    public static ImageDto toImageDto(Image image) {
+  public static ImageDto toImageDto(Image image) {
 
-        return new ImageDto(image.getId(), image.getName(), image.getCreatedAt());
-    }
+    return new ImageDto(image.getId(), image.getName(), image.getCreatedAt());
+  }
 
 }

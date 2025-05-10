@@ -2,20 +2,20 @@ package es.udc.fireproject.backend.model.exceptions;
 
 public class NoticeUpdateStatusException extends Exception {
 
-    private String id;
-    private String status;
+  private String id;
+  private String status;
 
 
-    public NoticeUpdateStatusException(Long id, String status) {
-        this.id = String.valueOf(id);
-        this.status = status;
-    }
+  public NoticeUpdateStatusException(Long id, String status) {
+    this.id = String.valueOf(id);
+    this.status = status;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public String getStatus() {
+    return status;
+  }
 }

@@ -1,7 +1,6 @@
 package es.udc.fireproject.backend.rest.dtos;
 
 import es.udc.fireproject.backend.model.entities.user.UserRole;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
