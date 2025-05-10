@@ -6,9 +6,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
   devtools:
     restart:
@@ -26,4 +23,6 @@ project:
   jwt:
     signKey: YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXo1Njc4OTA=
     expirationMinutes: 1440
+
+
 

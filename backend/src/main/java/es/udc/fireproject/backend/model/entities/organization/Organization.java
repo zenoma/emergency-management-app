@@ -29,7 +29,7 @@ public class Organization extends BaseEntity {
   @Column(name = "headquarters_address")
   private String headquartersAddress;
 
-  @Column(name = "location", columnDefinition = "geometry(Point, 25828)")
+  @Column(name = "location", columnDefinition = "geometry(Point, 25829)")
   private Point location;
 
   @Column(name = "created_at", nullable = false)

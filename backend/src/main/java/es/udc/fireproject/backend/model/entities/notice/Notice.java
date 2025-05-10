@@ -38,7 +38,7 @@ public class Notice extends BaseEntity {
   @JoinColumn(name = "user_id")
   private User user;
 
-  @Column(name = "location", columnDefinition = "geometry(Point, 25828)")
+  @Column(name = "location", columnDefinition = "geometry(Point, 25829)")
   @NotNull
   private Point location;
 

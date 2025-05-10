@@ -96,13 +96,6 @@
       <version>${jjwt.version}</version>
     </dependency>
 
-    <!-- Migraciones de base de datos -->
-    <dependency>
-      <artifactId>liquibase-core</artifactId>
-      <groupId>org.liquibase</groupId>
-      <version>${liquibase.version}</version>
-    </dependency>
-
     <!-- Testing -->
     <dependency>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -115,6 +108,28 @@
       <groupId>org.springframework.security</groupId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <artifactId>testcontainers</artifactId>
+      <groupId>org.testcontainers</groupId>
+      <scope>test</scope>
+      <version>1.19.1</version>
+    </dependency>
+
+    <dependency>
+      <artifactId>junit-jupiter</artifactId>
+      <groupId>org.testcontainers</groupId>
+      <scope>test</scope>
+      <version>1.19.1</version>
+    </dependency>
+
+    <dependency>
+      <artifactId>postgresql</artifactId>
+      <groupId>org.testcontainers</groupId>
+      <scope>test</scope>
+      <version>1.19.1</version>
+    </dependency>
+
   </dependencies>
   <description>Fire Project Backend</description>
   <groupId>es.udc.fireproject</groupId>
