@@ -14,11 +14,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.locationtech.jts.geom.Point;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class Notice extends BaseEntity {
 
   private static final long serialVersionUID = 1801683026003370692L;
@@ -55,85 +63,6 @@ public class Notice extends BaseEntity {
     this.body = body;
     this.status = status;
     this.location = location;
-    this.createdAt = LocalDateTime.now();
-  }
-
-  public Point getLocation() {
-    return location;
-  }
-
-  public void setLocation(Point location) {
-    this.location = location;
-  }
-
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public NoticeStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(NoticeStatus status) {
-    this.status = status;
-  }
-
-  public String getBody() {
-    return body;
-  }
-
-  public void setBody(String body) {
-    this.body = body;
-  }
-
-  public List<Image> getImageList() {
-    return imageList;
-  }
-
-  public void setImageList(List<Image> imageList) {
-    this.imageList = imageList;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Notice notice = (Notice) o;
-    return Objects.equals(body, notice.body) &&
-        Objects.equals(status, notice.status) &&
-        Objects.equals(location, notice.location);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(body, status, location);
-  }
-
-  @Override
-  public String toString() {
-    return "Notice{" +
-        "id=" + getId() +
-        ", body='" + body + '\'' +
-        ", status=" + status +
-        ", createdAt=" + createdAt +
-        ", user=" + user +
-        ", location=" + location +
-        '}';
+    this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
   }
 }

@@ -31,14 +31,19 @@ public class QuadrantInfoConversor {
 
     return new QuadrantInfoDto(quadrant.getId(),
         quadrant.getEscala(),
-        quadrant.getNombre(), teamDtoList, vehicleDtoList, new ArrayList());
+        quadrant.getNombre(),
+        teamDtoList,
+        vehicleDtoList,
+        //FIXME: Get coordinates, its currently null
+        new ArrayList());
   }
 
   public static QuadrantInfoDto toQuadrantDtoWithoutTeamsAndVehicles(Quadrant quadrant) {
     return new QuadrantInfoDto(quadrant.getId(),
         quadrant.getEscala(),
-        quadrant.getNombre(), new ArrayList());
+        quadrant.getNombre(),
+        //FIXME: Get coordinates, its currently null
+        new ArrayList());
   }
-
 
 }

@@ -10,11 +10,19 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.time.temporal.ChronoUnit;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.locationtech.jts.geom.Point;
 
 @Entity
 @Table(name = "organization", schema = "public")
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class Organization extends BaseEntity {
 
   private static final long serialVersionUID = -4807580144244128235L;
@@ -50,84 +58,6 @@ public class Organization extends BaseEntity {
     this.headquartersAddress = headquartersAddress;
     this.location = location;
     this.organizationType = organizationType;
-    this.createdAt = LocalDateTime.now();
-  }
-
-
-  public String getCode() {
-    return code;
-  }
-
-  public void setCode(String code) {
-    this.code = code;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getHeadquartersAddress() {
-    return headquartersAddress;
-  }
-
-  public void setHeadquartersAddress(String headquartersAddress) {
-    this.headquartersAddress = headquartersAddress;
-  }
-
-  public Point getLocation() {
-    return location;
-  }
-
-  public void setLocation(Point location) {
-    this.location = location;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public OrganizationType getOrganizationType() {
-    return organizationType;
-  }
-
-  public void setOrganizationType(OrganizationType organizationType) {
-    this.organizationType = organizationType;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Organization that = (Organization) o;
-    return name.equals(that.name) && organizationType.equals(that.organizationType);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(name, organizationType);
-  }
-
-  @Override
-  public String toString() {
-    return "Organization{" +
-        "id=" + getId() +
-        ", code='" + code + '\'' +
-        ", name='" + name + '\'' +
-        ", headquartersAddress='" + headquartersAddress + '\'' +
-        ", location=" + location +
-        ", organizationType=" + organizationType +
-        '}';
+    this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
   }
 }

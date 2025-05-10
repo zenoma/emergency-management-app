@@ -17,13 +17,18 @@ import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.locationtech.jts.geom.MultiPolygon;
 
 @Entity
 @Table(name = "quadrants", schema = "public")
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class Quadrant implements Serializable {
 
   private static final long serialVersionUID = 4848346612436497001L;
@@ -49,7 +54,6 @@ public class Quadrant implements Serializable {
   private String folla5;
 
   @Column(name = "location", columnDefinition = "geometry(Point, 25829)")
-  @JdbcTypeCode(SqlTypes.GEOMETRY)
   private MultiPolygon geom;
 
   @OneToMany(
@@ -72,132 +76,5 @@ public class Quadrant implements Serializable {
   private LocalDateTime linkedAt;
 
   public Quadrant() {
-  }
-
-  public Fire getFire() {
-    return fire;
-  }
-
-  public void setFire(Fire fire) {
-    this.fire = fire;
-  }
-
-  public MultiPolygon getGeom() {
-    return geom;
-  }
-
-  public void setGeom(MultiPolygon geom) {
-    this.geom = geom;
-  }
-
-  public String getFolla5() {
-    return folla5;
-  }
-
-  public void setFolla5(String folla5) {
-    this.folla5 = folla5;
-  }
-
-  public String getFolla25() {
-    return folla25;
-  }
-
-  public void setFolla25(String folla25) {
-    this.folla25 = folla25;
-  }
-
-  public String getFolla50() {
-    return folla50;
-  }
-
-  public void setFolla50(String folla50) {
-    this.folla50 = folla50;
-  }
-
-  public String getNombre() {
-    return nombre;
-  }
-
-  public void setNombre(String nombre) {
-    this.nombre = nombre;
-  }
-
-  public String getEscala() {
-    return escala;
-  }
-
-  public void setEscala(String escala) {
-    this.escala = escala;
-  }
-
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-
-  public List<Team> getTeamList() {
-    return teamList;
-  }
-
-  public void setTeamList(List<Team> teamList) {
-    this.teamList = teamList;
-  }
-
-  public List<Vehicle> getVehicleList() {
-    return vehicleList;
-  }
-
-  public void setVehicleList(List<Vehicle> vehicleList) {
-    this.vehicleList = vehicleList;
-  }
-
-  public LocalDateTime getLinkedAt() {
-    return linkedAt;
-  }
-
-  public void setLinkedAt(LocalDateTime linkedAt) {
-    this.linkedAt = linkedAt;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Quadrant quadrant = (Quadrant) o;
-    return Objects.equals(id, quadrant.id) && Objects.equals(escala, quadrant.escala) && Objects.equals(nombre,
-        quadrant.nombre) && Objects.equals(folla50, quadrant.folla50) && Objects.equals(folla25, quadrant.folla25)
-        && Objects.equals(folla5, quadrant.folla5) && Objects.equals(geom, quadrant.geom) && Objects.equals(teamList,
-        quadrant.teamList) && Objects.equals(vehicleList, quadrant.vehicleList) && Objects.equals(fire, quadrant.fire)
-        && Objects.equals(linkedAt, quadrant.linkedAt);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, escala, nombre, folla50, folla25, folla5, geom, teamList, vehicleList, fire, linkedAt);
-  }
-
-  @Override
-  public String toString() {
-    return "Quadrant{" +
-        "id=" + id +
-        ", escala='" + escala + '\'' +
-        ", nombre='" + nombre + '\'' +
-        ", folla50='" + folla50 + '\'' +
-        ", folla25='" + folla25 + '\'' +
-        ", folla5='" + folla5 + '\'' +
-        ", geom=" + geom +
-        ", teamList=" + teamList +
-        ", vehicleList=" + vehicleList +
-        ", fire=" + fire +
-        ", linkedAt=" + linkedAt +
-        '}';
   }
 }

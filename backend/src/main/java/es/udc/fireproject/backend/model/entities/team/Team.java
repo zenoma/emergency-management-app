@@ -13,10 +13,18 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class Team extends BaseEntity {
 
   private static final long serialVersionUID = -6662567578161123656L;
@@ -57,94 +65,8 @@ public class Team extends BaseEntity {
   public Team(String code, Organization organization) {
     this.code = code;
     this.organization = organization;
-    this.createdAt = LocalDateTime.now();
+    this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
   }
 
-  public List<User> getUserList() {
-    return userList;
-  }
-
-  public void setUserList(List<User> userList) {
-    this.userList = userList;
-  }
-
-  public Organization getOrganization() {
-    return organization;
-  }
-
-  public void setOrganization(Organization organization) {
-    this.organization = organization;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public String getCode() {
-    return code;
-  }
-
-  public void setCode(String code) {
-    this.code = code;
-  }
-
-  public Quadrant getQuadrant() {
-    return quadrant;
-  }
-
-  public void setQuadrant(Quadrant quadrant) {
-    this.quadrant = quadrant;
-  }
-
-  public LocalDateTime getDeployAt() {
-    return deployAt;
-  }
-
-  public void setDeployAt(LocalDateTime deployAt) {
-    this.deployAt = deployAt;
-  }
-
-  public LocalDateTime getDismantleAt() {
-    return dismantleAt;
-  }
-
-  public void setDismantleAt(LocalDateTime dismantleAt) {
-    this.dismantleAt = dismantleAt;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Team team = (Team) o;
-    return Objects.equals(code, team.code) && Objects.equals(organization, team.organization) && Objects.equals(
-        userList, team.userList) && Objects.equals(quadrant, team.quadrant) && Objects.equals(deployAt, team.deployAt);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(code, createdAt, organization, userList, quadrant, deployAt, dismantleAt);
-  }
-
-  @Override
-  public String toString() {
-    return "Team{" +
-        "code='" + code + '\'' +
-        ", createdAt=" + createdAt +
-        ", organization=" + organization +
-        ", userList=" + userList +
-        ", quadrant=" + quadrant +
-        ", deployAt=" + deployAt +
-        ", dismantleAt=" + dismantleAt +
-        '}';
-  }
 }
 

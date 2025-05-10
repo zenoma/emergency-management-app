@@ -21,6 +21,7 @@ import es.udc.fireproject.backend.model.exceptions.InsufficientRolePermissionExc
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementServiceImpl;
 import es.udc.fireproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -111,7 +112,7 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
     OrganizationType organizationType = organizationTypeRepository.findByName(organizationTypeName);
     Organization organization = new Organization(code, name, headquartersAddress, location, organizationType);
 
-    organization.setCreatedAt(LocalDateTime.now());
+    organization.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     organization.setOrganizationType(organizationType);
     ConstraintValidator.validate(organization);
     return organizationRepository.save(organization);
@@ -168,7 +169,7 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
       }
     }
     Team team = new Team(code, organization);
-    team.setCreatedAt(LocalDateTime.now());
+    team.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
     ConstraintValidator.validate(team);
 
@@ -189,7 +190,7 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
         }
       }
       fireManagementService.retractTeam(team.getId());
-      team.setDismantleAt(LocalDateTime.now());
+      team.setDismantleAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
       teamRepository.save(team);
     } else {
@@ -305,7 +306,7 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
     Organization organization = findOrganizationById(organizationId);
 
     Vehicle vehicle = new Vehicle(vehiclePlate, type, organization);
-    vehicle.setCreatedAt(LocalDateTime.now());
+    vehicle.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
     ConstraintValidator.validate(vehicle);
 
@@ -319,7 +320,7 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
 
     if (vehicle.getDismantleAt() == null) {
       fireManagementService.retractVehicle(vehicle.getId());
-      vehicle.setDismantleAt(LocalDateTime.now());
+      vehicle.setDismantleAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
       vehicleRepository.save(vehicle);
     } else {
@@ -386,7 +387,7 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
     }
 
     user.setPassword(passwordEncoder.encode(user.getPassword()));
-    user.setCreatedAt(LocalDateTime.now());
+    user.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     user.setUserRole(UserRole.USER);
     userRepository.save(user);
 

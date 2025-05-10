@@ -6,8 +6,15 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class TeamDto extends BaseDto {
 
   private static final long serialVersionUID = -9141625918440183253L;
@@ -65,105 +72,6 @@ public class TeamDto extends BaseDto {
     this.userDtoList = userDtoList;
     this.deployAt = deployAt;
     this.dismantleAt = dismantleAt;
-  }
-
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getCode() {
-    return code;
-  }
-
-  public void setCode(String code) {
-    this.code = code;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public OrganizationDto getOrganizationDto() {
-    return organizationDto;
-  }
-
-  public void setOrganizationDto(OrganizationDto organizationDto) {
-    this.organizationDto = organizationDto;
-  }
-
-  public List<UserDto> getUserDtoList() {
-    return userDtoList;
-  }
-
-  public void setUserDtoList(List<UserDto> userDtoList) {
-    this.userDtoList = userDtoList;
-  }
-
-  public QuadrantInfoDto getQuadrantInfoDto() {
-    return quadrantInfoDto;
-  }
-
-  public void setQuadrantInfoDto(QuadrantInfoDto quadrantInfoDto) {
-    this.quadrantInfoDto = quadrantInfoDto;
-  }
-
-  public LocalDateTime getDeployAt() {
-    return deployAt;
-  }
-
-  public void setDeployAt(LocalDateTime deployAt) {
-    this.deployAt = deployAt;
-  }
-
-  public LocalDateTime getDismantleAt() {
-    return dismantleAt;
-  }
-
-  public void setDismantleAt(LocalDateTime dismantleAt) {
-    this.dismantleAt = dismantleAt;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    TeamDto teamDto = (TeamDto) o;
-    return Objects.equals(id, teamDto.id) && Objects.equals(code, teamDto.code) && Objects.equals(createdAt,
-        teamDto.createdAt) && Objects.equals(organizationDto, teamDto.organizationDto) && Objects.equals(userDtoList,
-        teamDto.userDtoList) && Objects.equals(quadrantInfoDto, teamDto.quadrantInfoDto) && Objects.equals(deployAt,
-        teamDto.deployAt) && Objects.equals(dismantleAt, teamDto.dismantleAt);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, code, createdAt, organizationDto, userDtoList, quadrantInfoDto, deployAt, dismantleAt);
-  }
-
-  @Override
-  public String toString() {
-    return "TeamDto{" +
-        "id=" + id +
-        ", code='" + code + '\'' +
-        ", createdAt=" + createdAt +
-        ", organizationDto=" + organizationDto +
-        ", userDtoList=" + userDtoList +
-        ", quadrantInfoDto=" + quadrantInfoDto +
-        ", deployAt=" + deployAt +
-        ", dismantleAt=" + dismantleAt +
-        '}';
   }
 
   public interface AllValidations {

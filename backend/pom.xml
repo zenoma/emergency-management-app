@@ -37,6 +37,12 @@
       <scope>runtime</scope>
     </dependency>
 
+    <dependency>
+      <artifactId>lombok</artifactId>
+      <groupId>org.projectlombok</groupId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Base de datos -->
     <dependency>
       <artifactId>postgresql</artifactId>
@@ -113,21 +119,21 @@
       <artifactId>testcontainers</artifactId>
       <groupId>org.testcontainers</groupId>
       <scope>test</scope>
-      <version>1.19.1</version>
+      <version>${testcontainers.version}</version>
     </dependency>
 
     <dependency>
       <artifactId>junit-jupiter</artifactId>
       <groupId>org.testcontainers</groupId>
       <scope>test</scope>
-      <version>1.19.1</version>
+      <version>${testcontainers.version}</version>
     </dependency>
 
     <dependency>
       <artifactId>postgresql</artifactId>
       <groupId>org.testcontainers</groupId>
       <scope>test</scope>
-      <version>1.19.1</version>
+      <version>${testcontainers.version}</version>
     </dependency>
 
   </dependencies>
@@ -154,14 +160,14 @@
     <jjwt.version>0.12.5</jjwt.version>
     <jts.version>1.19.0</jts.version>
 
-    <liquibase.version>4.25.0</liquibase.version>
-    <liquibase.version>4.25.0</liquibase.version>
-
     <postgis.version>2.5.1</postgis.version>
     <postgresql.version>42.7.3</postgresql.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <springboot.version>3.2.4</springboot.version>
+    <testcontainers.version>1.19.1</testcontainers.version>
   </properties>
   <version>1.0</version>
 

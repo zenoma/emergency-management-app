@@ -57,6 +57,7 @@ class UserServiceImplTest {
     personalManagementService.signUp(user);
 
     User loggedInUser = personalManagementService.loginFromId(user.getId());
+    loggedInUser.setUserRole(UserRole.USER);
 
     Assertions.assertEquals(user, loggedInUser, "Users must be the same");
   }
@@ -137,6 +138,7 @@ class UserServiceImplTest {
     user.setLastName('X' + user.getLastName());
     user.setEmail('X' + user.getEmail());
     user.setPhoneNumber(111111111);
+    user.setUserRole(UserRole.USER);
     user.setDni("11111111S");
 
     Assertions.assertEquals(user, personalManagementService.loginFromId(user.getId()), "User must be updated");

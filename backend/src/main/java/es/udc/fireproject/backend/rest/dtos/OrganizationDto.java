@@ -8,8 +8,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class OrganizationDto extends BaseDto {
 
 
@@ -63,118 +70,10 @@ public class OrganizationDto extends BaseDto {
   }
 
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getCode() {
-    return code;
-  }
-
-  public void setCode(String code) {
-    this.code = code;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getHeadquartersAddress() {
-    return headquartersAddress;
-  }
-
-  public void setHeadquartersAddress(String headquartersAddress) {
-    this.headquartersAddress = headquartersAddress;
-  }
-
-  public double getLon() {
-    return lon;
-  }
-
-  public void setLon(double lon) {
-    this.lon = lon;
-  }
-
-  public double getLat() {
-    return lat;
-  }
-
-  public void setLat(double lat) {
-    this.lat = lat;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public Long getOrganizationTypeId() {
-    return organizationTypeId;
-  }
-
-  public void getOrganizationTypeId(Long organizationTypeId) {
-    this.organizationTypeId = organizationTypeId;
-  }
-
-  public String getOrganizationTypeName() {
-    return organizationTypeName;
-  }
-
-  public void setOrganizationTypeName(String organizationTypeName) {
-    this.organizationTypeName = organizationTypeName;
-  }
-
   @JsonProperty("coordinates")
   private void unpackNested(Map<String, Double> coordinates) {
     this.lon = coordinates.get("lon");
     this.lat = coordinates.get("lat");
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    OrganizationDto that = (OrganizationDto) o;
-    return Double.compare(that.lon, lon) == 0 && Double.compare(that.lat, lat) == 0 && Objects.equals(id, that.id)
-        && Objects.equals(code, that.code) && Objects.equals(name, that.name) && Objects.equals(headquartersAddress,
-        that.headquartersAddress) && Objects.equals(createdAt, that.createdAt) && Objects.equals(organizationTypeId,
-        that.organizationTypeId) && Objects.equals(organizationTypeName, that.organizationTypeName);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, code, name, headquartersAddress, lon, lat, createdAt, organizationTypeId,
-        organizationTypeName);
-  }
-
-  @Override
-  public String toString() {
-    return "OrganizationDto{" +
-        "id=" + id +
-        ", code='" + code + '\'' +
-        ", name='" + name + '\'' +
-        ", headquartersAddress='" + headquartersAddress + '\'' +
-        ", lon=" + lon +
-        ", lat=" + lat +
-        ", createdAt=" + createdAt +
-        ", organizationTypeId=" + organizationTypeId +
-        ", organizationTypeName='" + organizationTypeName + '\'' +
-        '}';
   }
 
   public interface AllValidations {

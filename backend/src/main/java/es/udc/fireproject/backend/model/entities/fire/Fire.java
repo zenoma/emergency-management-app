@@ -11,11 +11,19 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "fire", schema = "public")
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class Fire extends BaseEntity {
 
   private static final long serialVersionUID = -4072358581910996914L;
@@ -47,85 +55,7 @@ public class Fire extends BaseEntity {
     this.description = description;
     this.type = type;
     this.fireIndex = fireIndex;
-    this.createdAt = LocalDateTime.now();
+    this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
   }
 
-  public LocalDateTime getExtinguishedAt() {
-    return extinguishedAt;
-  }
-
-  public void setExtinguishedAt(LocalDateTime extinguishedAt) {
-    this.extinguishedAt = extinguishedAt;
-  }
-
-  public List<Quadrant> getQuadrantGids() {
-    return quadrantGids;
-  }
-
-  public void setQuadrantGids(List<Quadrant> quadrantGid) {
-    this.quadrantGids = quadrantGid;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public FireIndex getFireIndex() {
-    return fireIndex;
-  }
-
-  public void setFireIndex(FireIndex fireIndex) {
-    this.fireIndex = fireIndex;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Fire fire = (Fire) o;
-    return Objects.equals(description, fire.description) && Objects.equals(type, fire.type)
-        && fireIndex == fire.fireIndex && Objects.equals(createdAt, fire.createdAt) && Objects.equals(quadrantGids,
-        fire.quadrantGids) && Objects.equals(extinguishedAt, fire.extinguishedAt);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(description, type, fireIndex, createdAt, quadrantGids, extinguishedAt);
-  }
-
-  @Override
-  public String toString() {
-    return "Fire{" +
-        "description='" + description + '\'' +
-        ", type='" + type + '\'' +
-        ", fireIndex=" + fireIndex +
-        ", createdAt=" + createdAt +
-        ", cuadrantGids=" + quadrantGids +
-        ", extinguishedAt=" + extinguishedAt +
-        '}';
-  }
 }

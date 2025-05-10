@@ -20,6 +20,7 @@ import es.udc.fireproject.backend.utils.OrganizationTypeOM;
 import es.udc.fireproject.backend.utils.TeamOM;
 import es.udc.fireproject.backend.utils.VehicleOM;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +63,12 @@ class LogManagementServiceImplTest extends IntegrationTest {
     Quadrant quadrant2 = fireManagementService.findQuadrantById(2);
     Quadrant quadrant3 = fireManagementService.findQuadrantById(3);
 
-    LocalDateTime starDate = LocalDateTime.now();
+    LocalDateTime starDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     quadrant = fireManagementService.linkFire(quadrant.getId(), fire.getId());
     quadrant2 = fireManagementService.linkFire(quadrant2.getId(), fire.getId());
     quadrant3 = fireManagementService.linkFire(quadrant3.getId(), fire.getId());
 
-    LocalDateTime endDate = LocalDateTime.now();
+    LocalDateTime endDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
     fire = fireManagementService.extinguishQuadrantByFireId(fire.getId(), quadrant.getId());
     fire = fireManagementService.extinguishQuadrantByFireId(fire.getId(), quadrant2.getId());
@@ -101,7 +102,7 @@ class LogManagementServiceImplTest extends IntegrationTest {
     vehicle = personalManagementService.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
         organization.getId());
 
-    LocalDateTime starDate = LocalDateTime.now();
+    LocalDateTime starDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     quadrant = fireManagementService.linkFire(quadrant.getId(), fire.getId());
     quadrant2 = fireManagementService.linkFire(quadrant2.getId(), fire.getId());
     quadrant3 = fireManagementService.linkFire(quadrant3.getId(), fire.getId());
@@ -114,7 +115,7 @@ class LogManagementServiceImplTest extends IntegrationTest {
 
     vehicle = fireManagementService.deployVehicle(vehicle.getId(), quadrant3.getId());
     team = fireManagementService.deployTeam(team.getId(), quadrant3.getId());
-    LocalDateTime endDate = LocalDateTime.now();
+    LocalDateTime endDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
     Assertions.assertEquals(1,
         logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), starDate, endDate)

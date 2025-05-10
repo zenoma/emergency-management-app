@@ -21,6 +21,7 @@ public class QuadrantConversor {
         quadrant.getFolla50(),
         quadrant.getFolla25(),
         quadrant.getFolla5(),
+        //FIXME: Get coordinates, its currently null
         new ArrayList(),
         fireId,
         quadrant.getLinkedAt());

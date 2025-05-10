@@ -15,6 +15,7 @@ import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.logsmanagement.LogManagementServiceImpl;
 import es.udc.fireproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,7 @@ public class FireManagementServiceImpl implements FireManagementService {
 
     if (quadrant.getFire() == null) {
       quadrant.setFire(fire);
-      quadrant.setLinkedAt(LocalDateTime.now());
+      quadrant.setLinkedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     }
 
     return quadrantRepository.save(quadrant);
@@ -104,7 +105,7 @@ public class FireManagementServiceImpl implements FireManagementService {
   @Override
   public Fire createFire(String description, String type, FireIndex fireIndex) {
     Fire fire = new Fire(description, type, fireIndex);
-    fire.setCreatedAt((LocalDateTime.now()));
+    fire.setCreatedAt((LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
     fire.setFireIndex(FireIndex.CERO);
 
     ConstraintValidator.validate(fire);
@@ -123,7 +124,7 @@ public class FireManagementServiceImpl implements FireManagementService {
     }
 
     fire.setFireIndex(FireIndex.EXTINGUIDO);
-    fire.setExtinguishedAt(LocalDateTime.now());
+    fire.setExtinguishedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
     List<Quadrant> quadrants = quadrantRepository.findByFireId(id);
 
@@ -214,7 +215,7 @@ public class FireManagementServiceImpl implements FireManagementService {
       retractTeam(teamId);
     }
 
-    team.setDeployAt(LocalDateTime.now());
+    team.setDeployAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     team.setQuadrant(quadrant);
 
     return teamRepository.save(team);
@@ -255,7 +256,7 @@ public class FireManagementServiceImpl implements FireManagementService {
       retractVehicle(vehicleId);
     }
 
-    vehicle.setDeployAt(LocalDateTime.now());
+    vehicle.setDeployAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     vehicle.setQuadrant(quadrant);
 
     return vehicleRepository.save(vehicle);

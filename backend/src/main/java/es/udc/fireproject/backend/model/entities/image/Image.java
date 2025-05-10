@@ -9,9 +9,17 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.time.temporal.ChronoUnit;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class Image extends BaseEntity {
 
   private static final long serialVersionUID = 1801683026003370692L;
@@ -34,56 +42,7 @@ public class Image extends BaseEntity {
   public Image(Notice notice, String name) {
     this.notice = notice;
     this.name = name;
-    this.createdAt = LocalDateTime.now();
+    this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
   }
 
-  public Notice getNotice() {
-    return notice;
-  }
-
-  public void setNotice(Notice notice) {
-    this.notice = notice;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Image image = (Image) o;
-    return Objects.equals(notice, image.notice) && Objects.equals(name, image.name);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(notice, name);
-  }
-
-  @Override
-  public String toString() {
-    return "Image{" +
-        "notice=" + notice +
-        ", name='" + name + '\'' +
-        ", createdAt=" + createdAt +
-        '}';
-  }
 }

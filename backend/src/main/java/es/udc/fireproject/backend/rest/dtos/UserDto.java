@@ -4,8 +4,15 @@ import es.udc.fireproject.backend.model.entities.user.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class UserDto extends BaseDto {
 
   private static final long serialVersionUID = -2717277403627016569L;
@@ -48,13 +55,6 @@ public class UserDto extends BaseDto {
     this.teamId = teamId;
   }
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
 
   @NotNull(groups = {AllValidations.class, UpdateValidations.class})
   @Size(min = 1, max = 60, groups = {AllValidations.class, UpdateValidations.class})
@@ -63,18 +63,10 @@ public class UserDto extends BaseDto {
     return email;
   }
 
-  public void setEmail(String email) {
-    this.email = email.trim();
-  }
-
   @NotNull(groups = {AllValidations.class})
   @Size(min = 1, max = 60, groups = {AllValidations.class})
   public String getPassword() {
     return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
   }
 
   @NotNull(groups = {AllValidations.class, UpdateValidations.class})
@@ -83,19 +75,12 @@ public class UserDto extends BaseDto {
     return firstName;
   }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName.trim();
-  }
-
   @NotNull(groups = {AllValidations.class, UpdateValidations.class})
   @Size(min = 1, max = 60, groups = {AllValidations.class, UpdateValidations.class})
   public String getLastName() {
     return lastName;
   }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName.trim();
-  }
 
   @NotNull(groups = {AllValidations.class, UpdateValidations.class})
   @Size(min = 9, max = 9, groups = {AllValidations.class, UpdateValidations.class})
@@ -103,69 +88,11 @@ public class UserDto extends BaseDto {
     return dni;
   }
 
-  public void setDni(String dni) {
-    this.dni = dni;
-  }
 
   @NotNull(groups = {AllValidations.class, UpdateValidations.class})
 //    @Size(min = 9, max = 9, groups = {AllValidations.class, UpdateValidations.class})
   public Integer getPhoneNumber() {
     return phoneNumber;
-  }
-
-  public void setPhoneNumber(Integer phoneNumber) {
-    this.phoneNumber = phoneNumber;
-  }
-
-  public UserRole getUserRole() {
-    return userRole;
-  }
-
-  public void setUserRole(UserRole userRole) {
-    this.userRole = userRole;
-  }
-
-  public Long getTeamId() {
-    return teamId;
-  }
-
-  public void setTeamId(Long teamId) {
-    this.teamId = teamId;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    UserDto userDto = (UserDto) o;
-    return Objects.equals(id, userDto.id) && Objects.equals(email, userDto.email) && Objects.equals(password,
-        userDto.password) && Objects.equals(firstName, userDto.firstName) && Objects.equals(lastName, userDto.lastName)
-        && Objects.equals(dni, userDto.dni) && Objects.equals(phoneNumber, userDto.phoneNumber)
-        && userRole == userDto.userRole;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, email, password, firstName, lastName, dni, phoneNumber, userRole);
-  }
-
-  @Override
-  public String toString() {
-    return "UserDto{" +
-        "id=" + id +
-        ", email='" + email + '\'' +
-        ", password='" + password + '\'' +
-        ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        ", dni='" + dni + '\'' +
-        ", phoneNumber=" + phoneNumber +
-        ", userRole=" + userRole +
-        ", teamId=" + teamId +
-        '}';
   }
 
   public interface AllValidations {

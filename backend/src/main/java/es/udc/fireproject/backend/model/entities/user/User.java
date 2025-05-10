@@ -17,10 +17,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.time.temporal.ChronoUnit;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "user", schema = "public")
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class User extends BaseEntity {
 
   private static final long serialVersionUID = 8394072118760207353L;
@@ -77,115 +85,10 @@ public class User extends BaseEntity {
     this.lastName = lastName;
     this.dni = dni;
     this.phoneNumber = phoneNumber;
-    this.createdAt = LocalDateTime.now();
+    this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
   }
 
-  public Team getTeam() {
-    return team;
-  }
 
-  public void setTeam(Team team) {
-    this.team = team;
-  }
-
-  public UserRole getUserRole() {
-    return userRole;
-  }
-
-  public void setUserRole(UserRole userRole) {
-    this.userRole = userRole;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public Integer getPhoneNumber() {
-    return phoneNumber;
-  }
-
-  public void setPhoneNumber(Integer phoneNumber) {
-    this.phoneNumber = phoneNumber;
-  }
-
-  public String getDni() {
-    return dni;
-  }
-
-  public void setDni(String dni) {
-    this.dni = dni;
-  }
-
-  public String getLastName() {
-    return lastName;
-  }
-
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
-
-  public String getFirstName() {
-    return firstName;
-  }
-
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    User user = (User) o;
-    return Objects.equals(email, user.email)
-        && Objects.equals(firstName, user.firstName)
-        && Objects.equals(lastName, user.lastName)
-        && Objects.equals(dni, user.dni)
-        && Objects.equals(phoneNumber, user.phoneNumber);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(email, firstName, lastName, dni, phoneNumber);
-  }
-
-  @Override
-  public String toString() {
-    return "User{" +
-        "id=" + getId() +
-        ", email='" + email + '\'' +
-        ", password='" + password + '\'' +
-        ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        ", dni='" + dni + '\'' +
-        ", phoneNumber=" + phoneNumber +
-        ", createdAt=" + createdAt +
-        ", userRole=" + userRole + '}';
-  }
 }
 
 

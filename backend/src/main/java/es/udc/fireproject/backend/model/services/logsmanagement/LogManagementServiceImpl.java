@@ -18,6 +18,7 @@ import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementServiceImpl;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementServiceImpl;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +55,8 @@ public class LogManagementServiceImpl implements LogManagementService {
     Fire fire = fireManagementService.findFireById(fireId);
 
     return fireQuadrantLogRepository.save(
-        new FireQuadrantLog(fire, quadrant, quadrant.getLinkedAt(), LocalDateTime.now()));
+        new FireQuadrantLog(fire, quadrant, quadrant.getLinkedAt(),
+            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
 
   }
 
@@ -64,7 +66,8 @@ public class LogManagementServiceImpl implements LogManagementService {
     Quadrant quadrant = fireManagementService.findQuadrantById(quadrantId);
     Team team = personalManagementService.findTeamById(teamId);
 
-    return teamQuadrantLogRepository.save(new TeamQuadrantLog(team, quadrant, team.getDeployAt(), LocalDateTime.now()));
+    return teamQuadrantLogRepository.save(
+        new TeamQuadrantLog(team, quadrant, team.getDeployAt(), LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
 
   }
 
@@ -75,7 +78,8 @@ public class LogManagementServiceImpl implements LogManagementService {
     Vehicle vehicle = personalManagementService.findVehicleById(vehicleId);
 
     return vehicleQuadrantLogRepository.save(
-        new VehicleQuadrantLog(vehicle, quadrant, vehicle.getDeployAt(), LocalDateTime.now()));
+        new VehicleQuadrantLog(vehicle, quadrant, vehicle.getDeployAt(),
+            LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
   }
 
   @Override

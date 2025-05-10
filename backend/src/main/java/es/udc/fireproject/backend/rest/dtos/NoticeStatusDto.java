@@ -1,7 +1,14 @@
 package es.udc.fireproject.backend.rest.dtos;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class NoticeStatusDto extends BaseDto {
 
   private static final long serialVersionUID = 1641437225518108070L;
@@ -10,38 +17,5 @@ public class NoticeStatusDto extends BaseDto {
 
   NoticeStatusDto() {
 
-  }
-
-
-  public String getStatus() {
-    return status;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    NoticeStatusDto that = (NoticeStatusDto) o;
-    return Objects.equals(status, that.status);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(status);
-  }
-
-  @Override
-  public String toString() {
-    return "NoticeStatusDto{" +
-        "status='" + status + '\'' +
-        '}';
   }
 }

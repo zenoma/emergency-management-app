@@ -10,8 +10,15 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class NoticeDto extends BaseDto {
 
   private static final long serialVersionUID = 965287827989720585L;
@@ -67,97 +74,11 @@ public class NoticeDto extends BaseDto {
     this.imageList = imageList;
   }
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getBody() {
-    return body;
-  }
-
-  public void setBody(String body) {
-    this.body = body;
-  }
-
-  public NoticeStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(NoticeStatus status) {
-    this.status = status;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public UserDto getUser() {
-    return user;
-  }
-
-  public void setUser(UserDto user) {
-    this.user = user;
-  }
-
-  public double getLon() {
-    return lon;
-  }
-
-  public void setLon(double lon) {
-    this.lon = lon;
-  }
-
-  public double getLat() {
-    return lat;
-  }
-
-  public void setLat(double lat) {
-    this.lat = lat;
-  }
 
   @JsonProperty("coordinates")
   private void unpackNested(Map<String, Double> coordinates) {
     this.lon = coordinates.get("lon");
     this.lat = coordinates.get("lat");
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    NoticeDto noticeDto = (NoticeDto) o;
-    return Double.compare(noticeDto.lon, lon) == 0 && Double.compare(noticeDto.lat, lat) == 0 && Objects.equals(id,
-        noticeDto.id) && Objects.equals(body, noticeDto.body) && status == noticeDto.status;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, body, status, lon, lat);
-  }
-
-  @Override
-  public String toString() {
-    return "NoticeDto{" +
-        "id=" + id +
-        ", body='" + body + '\'' +
-        ", status=" + status +
-        ", createdAt=" + createdAt +
-        ", user=" + user +
-        ", lon=" + lon +
-        ", lat=" + lat +
-        '}';
   }
 
   public interface AllValidations {

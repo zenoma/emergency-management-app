@@ -17,6 +17,7 @@ import es.udc.fireproject.backend.rest.common.FileUploadUtil;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class NoticeServiceImpl implements NoticeService {
   @Override
   public Notice create(String body, Point location) {
     Notice notice = new Notice(body, NoticeStatus.PENDING, location);
-    notice.setCreatedAt(LocalDateTime.now());
+    notice.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
     ConstraintValidator.validate(notice);
 
@@ -52,7 +53,7 @@ public class NoticeServiceImpl implements NoticeService {
         .orElseThrow(() -> new InstanceNotFoundException(User.class.getSimpleName(), userId));
 
     notice.setUser(user);
-    notice.setCreatedAt(LocalDateTime.now());
+    notice.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
     ConstraintValidator.validate(notice);
 
