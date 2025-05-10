@@ -1,5 +1,6 @@
 package es.udc.fireproject.backend.integration.services;
 
+import es.udc.fireproject.backend.IntegrationTest;
 import es.udc.fireproject.backend.model.entities.organization.Organization;
 import es.udc.fireproject.backend.model.entities.organization.OrganizationType;
 import es.udc.fireproject.backend.model.entities.vehicle.Vehicle;
@@ -15,12 +16,8 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class VehicleServiceImplTest {
+class VehicleServiceImplTest extends IntegrationTest {
 
   private final Long INVALID_VEHICLE_ID = -1L;
 
@@ -259,7 +256,7 @@ class VehicleServiceImplTest {
 
   @Test
   void givenVehicle_whenFindAllActiveVehicles_thenActiveVehiclesFound()
-      throws InstanceNotFoundException, AlreadyExistException, AlreadyDismantledException {
+      throws InstanceNotFoundException, AlreadyDismantledException {
     OrganizationType organizationType = personalManagementService.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();

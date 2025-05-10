@@ -1,5 +1,9 @@
 package es.udc.fireproject.backend.model.services;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
+
 import es.udc.fireproject.backend.model.entities.organization.Organization;
 import es.udc.fireproject.backend.model.entities.organization.OrganizationRepository;
 import es.udc.fireproject.backend.model.entities.organization.OrganizationTypeRepository;
@@ -17,22 +21,20 @@ import es.udc.fireproject.backend.utils.OrganizationOM;
 import es.udc.fireproject.backend.utils.OrganizationTypeOM;
 import es.udc.fireproject.backend.utils.TeamOM;
 import es.udc.fireproject.backend.utils.UserOM;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
-
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class TeamServiceImplTest {
 
   private final Long INVALID_TEAM_ID = -1L;
@@ -57,20 +59,14 @@ class TeamServiceImplTest {
   private BCryptPasswordEncoder passwordEncoder;
 
   @BeforeEach
-  public void setUp() throws InstanceNotFoundException {
+  public void setUp() {
 
-       /* Mockito.when(personalManagementService.createOrganization(OrganizationOM.withDefaultValues())).thenReturn(OrganizationOM.withDefaultValues());
-        Mockito.when(personalManagementService.findOrganizationById(Mockito.any())).thenReturn(OrganizationOM.withDefaultValues());
-        Mockito.when(teamRepository.save(Mockito.any())).thenReturn(TeamOM.withDefaultValues());*/
-
-    Mockito.when(organizationTypeRepository.findByName(Mockito.any()))
-        .thenReturn(OrganizationTypeOM.withDefaultValues());
-    Mockito.when(organizationRepository.findById(Mockito.any()))
-        .thenReturn(Optional.of(OrganizationOM.withDefaultValues()));
-    Mockito.when(organizationRepository.save(Mockito.any())).thenReturn(OrganizationOM.withDefaultValues());
-    Mockito.when(teamRepository.findById(Mockito.any())).thenReturn(Optional.of(TeamOM.withDefaultValues()));
-    Mockito.when(teamRepository.save(Mockito.any())).thenReturn(TeamOM.withDefaultValues());
-    Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(UserOM.withDefaultValues()));
+    lenient().when(organizationTypeRepository.findByName(any())).thenReturn(OrganizationTypeOM.withDefaultValues());
+    lenient().when(organizationRepository.findById(any())).thenReturn(Optional.of(OrganizationOM.withDefaultValues()));
+    lenient().when(organizationRepository.save(any())).thenReturn(OrganizationOM.withDefaultValues());
+    lenient().when(teamRepository.findById(any())).thenReturn(Optional.of(TeamOM.withDefaultValues()));
+    lenient().when(teamRepository.save(any())).thenReturn(TeamOM.withDefaultValues());
+    lenient().when(userRepository.findById(any())).thenReturn(Optional.of(UserOM.withDefaultValues()));
 
   }
 
@@ -86,7 +82,7 @@ class TeamServiceImplTest {
 
     List<Team> resultList = List.of(TeamOM.withDefaultValues());
 
-    Mockito.when(teamRepository.findTeamsByCodeContains(Mockito.anyString())).thenReturn(resultList);
+    when(teamRepository.findTeamsByCodeContains(Mockito.anyString())).thenReturn(resultList);
 
     final List<Team> result = personalManagementService.findTeamByCode("");
 
@@ -120,7 +116,7 @@ class TeamServiceImplTest {
     team = personalManagementService.createTeam(team.getCode(), team.getOrganization().getId());
     team.setId(1L);
 
-    Mockito.when(teamRepository.findById(Mockito.any())).thenReturn(Optional.of(TeamOM.withDefaultValues()));
+    when(teamRepository.findById(any())).thenReturn(Optional.of(TeamOM.withDefaultValues()));
 
     personalManagementService.dismantleTeamById(team.getId());
 
@@ -138,7 +134,7 @@ class TeamServiceImplTest {
     Team team = TeamOM.withDefaultValues();
     team.setCode("");
 
-    Mockito.when(teamRepository.findById(Mockito.any())).thenReturn(java.util.Optional.of(TeamOM.withDefaultValues()));
+    when(teamRepository.findById(any())).thenReturn(java.util.Optional.of(TeamOM.withDefaultValues()));
 
     Long id = team.getId();
     String code = team.getCode();
@@ -148,7 +144,7 @@ class TeamServiceImplTest {
 
   @Test
   void givenInvalidId_whenUpdate_thenInstanceNotFoundException() {
-    Mockito.when(teamRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    when(teamRepository.findById(any())).thenReturn(Optional.empty());
 
     Assertions.assertThrows(InstanceNotFoundException.class, () -> personalManagementService.updateTeam(-1L, ""),
         "InstanceNotFoundException error was expected");
@@ -159,8 +155,8 @@ class TeamServiceImplTest {
     Team team = TeamOM.withDefaultValues();
     team.setCode("New Name");
 
-    Mockito.when(teamRepository.findById(Mockito.any())).thenReturn(java.util.Optional.of(TeamOM.withDefaultValues()));
-    Mockito.when(teamRepository.save(Mockito.any())).thenReturn(team);
+    when(teamRepository.findById(any())).thenReturn(java.util.Optional.of(TeamOM.withDefaultValues()));
+    when(teamRepository.save(any())).thenReturn(team);
 
     Team updatedTeam = personalManagementService.updateTeam(team.getId(), team.getCode());
     Assertions.assertEquals(team, updatedTeam);
@@ -189,8 +185,7 @@ class TeamServiceImplTest {
   @Test
   void givenInvalidUser_whenAddMember_thenConstraintViolationException() throws
       InstanceNotFoundException, DuplicateInstanceException, AlreadyExistException {
-    Mockito.when(teamRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-    Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+    when(teamRepository.findById(any())).thenReturn(Optional.empty());
 
     Organization organization = OrganizationOM.withDefaultValues();
     personalManagementService.createOrganizationType(OrganizationTypeOM.withDefaultValues().getName());
@@ -224,9 +219,6 @@ class TeamServiceImplTest {
     personalManagementService.signUp(user);
     personalManagementService.addMember(user.getTeam().getId(), user.getId());
 
-    Mockito.when(teamRepository.findById(INVALID_USER_ID)).thenReturn(Optional.empty());
-    Mockito.when(userRepository.findById(INVALID_TEAM_ID)).thenReturn(Optional.empty());
-
     personalManagementService.deleteMember(user.getTeam().getId(), user.getId());
 
     Assertions.assertNull(user.getTeam().getUserList(), "User must not belong to the Team");
@@ -249,8 +241,8 @@ class TeamServiceImplTest {
 
     personalManagementService.addMember(team.getId(), user.getId());
 
-    Mockito.when(teamRepository.findById(INVALID_USER_ID)).thenReturn(Optional.empty());
-    Mockito.when(userRepository.findById(INVALID_TEAM_ID)).thenReturn(Optional.empty());
+    when(teamRepository.findById(INVALID_USER_ID)).thenReturn(Optional.empty());
+    when(userRepository.findById(INVALID_TEAM_ID)).thenReturn(Optional.empty());
 
     final Team finalTeam = team;
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
@@ -303,8 +295,7 @@ class TeamServiceImplTest {
       personalManagementService.addMember(team.getId(), user.getId());
     }
 
-    Mockito.when(teamRepository.findById(INVALID_USER_ID)).thenReturn(Optional.empty());
-    Mockito.when(userRepository.findById(INVALID_TEAM_ID)).thenReturn(Optional.empty());
+    when(teamRepository.findById(INVALID_USER_ID)).thenReturn(Optional.empty());
     Assertions.assertThrows(InstanceNotFoundException.class,
         () -> personalManagementService.findAllUsersByTeamId(INVALID_TEAM_ID),
         "InstanceNotFoundException error was expected");

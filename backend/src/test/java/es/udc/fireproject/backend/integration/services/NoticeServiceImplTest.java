@@ -1,28 +1,28 @@
 package es.udc.fireproject.backend.integration.services;
 
+import es.udc.fireproject.backend.IntegrationTest;
 import es.udc.fireproject.backend.model.entities.notice.Notice;
 import es.udc.fireproject.backend.model.entities.notice.NoticeStatus;
 import es.udc.fireproject.backend.model.entities.user.User;
-import es.udc.fireproject.backend.model.exceptions.*;
+import es.udc.fireproject.backend.model.exceptions.DuplicateInstanceException;
+import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
+import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
+import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
+import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
 import es.udc.fireproject.backend.model.services.notice.NoticeService;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
 import es.udc.fireproject.backend.utils.NoticeOm;
 import es.udc.fireproject.backend.utils.UserOM;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Point;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@SpringBootTest
-@Transactional
-class NoticeServiceImplTest {
+class NoticeServiceImplTest extends IntegrationTest {
 
 
   @Autowired

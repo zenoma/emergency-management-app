@@ -1,5 +1,6 @@
 package es.udc.fireproject.backend.integration.services;
 
+import es.udc.fireproject.backend.IntegrationTest;
 import es.udc.fireproject.backend.model.entities.fire.Fire;
 import es.udc.fireproject.backend.model.entities.organization.Organization;
 import es.udc.fireproject.backend.model.entities.organization.OrganizationType;
@@ -13,118 +14,122 @@ import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementServiceImpl;
 import es.udc.fireproject.backend.model.services.logsmanagement.LogManagementService;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementServiceImpl;
-import es.udc.fireproject.backend.utils.*;
+import es.udc.fireproject.backend.utils.FireOM;
+import es.udc.fireproject.backend.utils.OrganizationOM;
+import es.udc.fireproject.backend.utils.OrganizationTypeOM;
+import es.udc.fireproject.backend.utils.TeamOM;
+import es.udc.fireproject.backend.utils.VehicleOM;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+class LogManagementServiceImplTest extends IntegrationTest {
 
-@SpringBootTest
-@Transactional
-public class LogManagementServiceImplTest {
+  private static final Integer VALID_QUADRANT_ID = 1;
 
-    private static final Integer VALID_QUADRANT_ID = 1;
-    private static final Integer INVALID_QUADRANT_ID = -1;
+  @Autowired
+  LogManagementService logManagementService;
 
-    @Autowired
-    LogManagementService logManagementService;
+  @Autowired
+  FireManagementServiceImpl fireManagementService;
 
-    @Autowired
-    FireManagementServiceImpl fireManagementService;
+  @Autowired
+  PersonalManagementServiceImpl personalManagementService;
 
-    @Autowired
-    PersonalManagementServiceImpl personalManagementService;
+  @Test
+  void givenNoData_whenFindAllFireQuadrantLogs_thenReturnNotEmptyList() {
+    Assertions.assertNotNull(logManagementService.findAllFireQuadrantLogs());
+  }
 
-    @Test
-    void givenNoData_whenFindAllFireQuadrantLogs_thenReturnNotEmptyList() {
-        Assertions.assertNotNull(logManagementService.findAllFireQuadrantLogs());
-    }
+  @Test
+  void givenNoData_whenFindAllTeamQuadrantLogs_thenReturnNotEmptyList() {
+    Assertions.assertNotNull(logManagementService.findAllTeamQuadrantLogs());
+  }
 
-    @Test
-    void givenNoData_whenFindAllTeamQuadrantLogs_thenReturnNotEmptyList() {
-        Assertions.assertNotNull(logManagementService.findAllTeamQuadrantLogs());
-    }
+  @Test
+  void givenNoData_whenFindAllVehicleQuadrantLogs_thenReturnNotEmptyList() {
+    Assertions.assertNotNull(logManagementService.findAllVehicleQuadrantLogs());
+  }
 
-    @Test
-    void givenNoData_whenFindAllVehicleQuadrantLogs_thenReturnNotEmptyList() {
-        Assertions.assertNotNull(logManagementService.findAllVehicleQuadrantLogs());
-    }
+  @Test
+  void givenValidData_whenFindFiresLogByFireIdAndLinkedAt_thenReturnValidLogs()
+      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException {
+    Fire fire = FireOM.withDefaultValues();
+    fire = fireManagementService.createFire(fire.getDescription(), fire.getType(), fire.getFireIndex());
 
-    @Test
-    void givenValidData_whenFindFiresLogByFireIdAndLinkedAt_thenReturnValidLogs() throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException {
-        Fire fire = FireOM.withDefaultValues();
-        fire = fireManagementService.createFire(fire.getDescription(), fire.getType(), fire.getFireIndex());
+    Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
+    Quadrant quadrant2 = fireManagementService.findQuadrantById(2);
+    Quadrant quadrant3 = fireManagementService.findQuadrantById(3);
 
-        Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
-        Quadrant quadrant2 = fireManagementService.findQuadrantById(2);
-        Quadrant quadrant3 = fireManagementService.findQuadrantById(3);
+    LocalDateTime starDate = LocalDateTime.now();
+    quadrant = fireManagementService.linkFire(quadrant.getId(), fire.getId());
+    quadrant2 = fireManagementService.linkFire(quadrant2.getId(), fire.getId());
+    quadrant3 = fireManagementService.linkFire(quadrant3.getId(), fire.getId());
 
+    LocalDateTime endDate = LocalDateTime.now();
 
-        LocalDateTime starDate = LocalDateTime.now();
-        quadrant = fireManagementService.linkFire(quadrant.getId(), fire.getId());
-        quadrant2 = fireManagementService.linkFire(quadrant2.getId(), fire.getId());
-        quadrant3 = fireManagementService.linkFire(quadrant3.getId(), fire.getId());
+    fire = fireManagementService.extinguishQuadrantByFireId(fire.getId(), quadrant.getId());
+    fire = fireManagementService.extinguishQuadrantByFireId(fire.getId(), quadrant2.getId());
 
-        LocalDateTime endDate = LocalDateTime.now();
+    logManagementService.findFiresByFireIdAndLinkedAt(fire.getId(), starDate, endDate);
 
+    Assertions.assertNotNull(logManagementService.findFiresByFireIdAndLinkedAt(fire.getId(), starDate, endDate));
+  }
 
-        fire = fireManagementService.extinguishQuadrantByFireId(fire.getId(), quadrant.getId());
-        fire = fireManagementService.extinguishQuadrantByFireId(fire.getId(), quadrant2.getId());
+  @Test
+  void givenValidData_whenFindTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt_thenReturnValidLogs()
+      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyExistException {
+    Fire fire = FireOM.withDefaultValues();
+    fire = fireManagementService.createFire(fire.getDescription(), fire.getType(), fire.getFireIndex());
 
-        logManagementService.findFiresByFireIdAndLinkedAt(fire.getId(), starDate, endDate);
+    OrganizationType organizationType = personalManagementService.createOrganizationType(
+        OrganizationTypeOM.withDefaultValues().getName());
+    Organization organization = OrganizationOM.withDefaultValues();
+    organization.setOrganizationType(organizationType);
+    organization = personalManagementService.createOrganization(organization);
 
-        Assertions.assertNotNull(logManagementService.findFiresByFireIdAndLinkedAt(fire.getId(), starDate, endDate));
-    }
+    Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
+    Quadrant quadrant2 = fireManagementService.findQuadrantById(2);
+    Quadrant quadrant3 = fireManagementService.findQuadrantById(3);
 
-    @Test
-    void givenValidData_whenFindTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt_thenReturnValidLogs() throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyExistException {
-        Fire fire = FireOM.withDefaultValues();
-        fire = fireManagementService.createFire(fire.getDescription(), fire.getType(), fire.getFireIndex());
+    Team team = TeamOM.withDefaultValues();
+    team = personalManagementService.createTeam(team.getCode(),
+        organization.getId());
 
-        OrganizationType organizationType = personalManagementService.createOrganizationType(OrganizationTypeOM.withDefaultValues().getName());
-        Organization organization = OrganizationOM.withDefaultValues();
-        organization.setOrganizationType(organizationType);
-        organization = personalManagementService.createOrganization(organization);
+    Vehicle vehicle = VehicleOM.withDefaultValues();
+    vehicle = personalManagementService.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
+        organization.getId());
 
-        Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
-        Quadrant quadrant2 = fireManagementService.findQuadrantById(2);
-        Quadrant quadrant3 = fireManagementService.findQuadrantById(3);
+    LocalDateTime starDate = LocalDateTime.now();
+    quadrant = fireManagementService.linkFire(quadrant.getId(), fire.getId());
+    quadrant2 = fireManagementService.linkFire(quadrant2.getId(), fire.getId());
+    quadrant3 = fireManagementService.linkFire(quadrant3.getId(), fire.getId());
 
-        Team team = TeamOM.withDefaultValues();
-        team = personalManagementService.createTeam(team.getCode(),
-                organization.getId());
+    vehicle = fireManagementService.deployVehicle(vehicle.getId(), quadrant.getId());
+    team = fireManagementService.deployTeam(team.getId(), quadrant.getId());
 
-        Vehicle vehicle = VehicleOM.withDefaultValues();
-        vehicle = personalManagementService.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
-                organization.getId());
+    vehicle = fireManagementService.deployVehicle(vehicle.getId(), quadrant2.getId());
+    team = fireManagementService.deployTeam(team.getId(), quadrant2.getId());
 
+    vehicle = fireManagementService.deployVehicle(vehicle.getId(), quadrant3.getId());
+    team = fireManagementService.deployTeam(team.getId(), quadrant3.getId());
+    LocalDateTime endDate = LocalDateTime.now();
 
-        LocalDateTime starDate = LocalDateTime.now();
-        quadrant = fireManagementService.linkFire(quadrant.getId(), fire.getId());
-        quadrant2 = fireManagementService.linkFire(quadrant2.getId(), fire.getId());
-        quadrant3 = fireManagementService.linkFire(quadrant3.getId(), fire.getId());
+    Assertions.assertEquals(1,
+        logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), starDate, endDate)
+            .size());
+    Assertions.assertEquals(1,
+        logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2.getId(), starDate,
+            endDate).size());
 
-        vehicle = fireManagementService.deployVehicle(vehicle.getId(), quadrant.getId());
-        team = fireManagementService.deployTeam(team.getId(), quadrant.getId());
+    Assertions.assertEquals(1,
+        logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), starDate,
+            endDate).size());
+    Assertions.assertEquals(1,
+        logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2.getId(), starDate,
+            endDate).size());
 
-        vehicle = fireManagementService.deployVehicle(vehicle.getId(), quadrant2.getId());
-        team = fireManagementService.deployTeam(team.getId(), quadrant2.getId());
-
-        vehicle = fireManagementService.deployVehicle(vehicle.getId(), quadrant3.getId());
-        team = fireManagementService.deployTeam(team.getId(), quadrant3.getId());
-        LocalDateTime endDate = LocalDateTime.now();
-
-
-        Assertions.assertEquals(1, logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), starDate, endDate).size());
-        Assertions.assertEquals(1, logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2.getId(), starDate, endDate).size());
-
-
-        Assertions.assertEquals(1, logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), starDate, endDate).size());
-        Assertions.assertEquals(1, logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2.getId(), starDate, endDate).size());
-
-    }
+  }
 
 }

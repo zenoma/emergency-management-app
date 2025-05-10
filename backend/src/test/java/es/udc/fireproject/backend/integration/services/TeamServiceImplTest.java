@@ -1,5 +1,6 @@
 package es.udc.fireproject.backend.integration.services;
 
+import es.udc.fireproject.backend.IntegrationTest;
 import es.udc.fireproject.backend.model.entities.organization.Organization;
 import es.udc.fireproject.backend.model.entities.organization.OrganizationType;
 import es.udc.fireproject.backend.model.entities.team.Team;
@@ -13,19 +14,14 @@ import es.udc.fireproject.backend.utils.OrganizationOM;
 import es.udc.fireproject.backend.utils.OrganizationTypeOM;
 import es.udc.fireproject.backend.utils.TeamOM;
 import es.udc.fireproject.backend.utils.UserOM;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-
 import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@SpringBootTest
-@Transactional
-class TeamServiceImplTest {
+class TeamServiceImplTest extends IntegrationTest {
 
   private final Long INVALID_TEAM_ID = -1L;
   private final Long INVALID_USER_ID = -1L;
