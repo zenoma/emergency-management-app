@@ -22,7 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,7 @@ class UserServiceImplTest {
   @InjectMocks
   PersonalManagementServiceImpl personalManagementService;
 
-  @MockBean
+  @Mock
   private BCryptPasswordEncoder passwordEncoder;
 
   @BeforeEach

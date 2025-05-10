@@ -10,14 +10,13 @@ import es.udc.fireproject.backend.model.services.personalmanagement.PersonalMana
 import es.udc.fireproject.backend.utils.OrganizationOM;
 import es.udc.fireproject.backend.utils.OrganizationTypeOM;
 import es.udc.fireproject.backend.utils.VehicleOM;
+import jakarta.validation.ConstraintViolationException;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.validation.ConstraintViolationException;
-import java.util.ArrayList;
 
 @SpringBootTest
 @Transactional
@@ -250,8 +249,8 @@ class VehicleServiceImplTest {
 
     ArrayList<Vehicle> vehicles = new ArrayList<>();
 
-    vehicles.add(vehicle);
     vehicles.add(vehicle2);
+    vehicles.add(vehicle);
     vehicles.add(vehicle3);
 
     Assertions.assertEquals(vehicles, personalManagementService.findAllVehicles());
