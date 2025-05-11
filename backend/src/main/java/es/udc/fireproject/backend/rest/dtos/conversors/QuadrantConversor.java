@@ -3,6 +3,7 @@ package es.udc.fireproject.backend.rest.dtos.conversors;
 import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.fireproject.backend.rest.dtos.QuadrantDto;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class QuadrantConversor {
 
@@ -21,8 +22,7 @@ public class QuadrantConversor {
         quadrant.getFolla50(),
         quadrant.getFolla25(),
         quadrant.getFolla5(),
-        //FIXME: Get coordinates, its currently null
-        new ArrayList(),
+        new ArrayList(Arrays.asList(quadrant.getGeom().getCoordinates())),
         fireId,
         quadrant.getLinkedAt());
   }

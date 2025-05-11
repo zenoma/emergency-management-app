@@ -53,7 +53,7 @@ public class Quadrant implements Serializable {
   @Column(name = "folla5", length = 50)
   private String folla5;
 
-  @Column(name = "location", columnDefinition = "geometry(Point, 25829)")
+  @Column(name = "geom", columnDefinition = "geometry(MultiPolygon, 25829)")
   private MultiPolygon geom;
 
   @OneToMany(
