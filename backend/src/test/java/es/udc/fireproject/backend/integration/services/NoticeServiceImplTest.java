@@ -37,7 +37,7 @@ class NoticeServiceImplTest extends IntegrationTest {
     Notice notice = NoticeOm.withDefaultValues();
     notice = noticeService.create(notice.getBody(), notice.getLocation());
 
-    Assertions.assertEquals(NoticeOm.withDefaultValues(), notice);
+    Assertions.assertEquals(NoticeOm.withDefaultValues(notice.getId()), notice);
 
     Assertions.assertEquals(noticeService.findById(notice.getId()), notice);
   }

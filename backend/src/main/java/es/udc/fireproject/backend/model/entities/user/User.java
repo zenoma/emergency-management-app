@@ -1,6 +1,5 @@
 package es.udc.fireproject.backend.model.entities.user;
 
-import es.udc.fireproject.backend.model.entities.BaseEntity;
 import es.udc.fireproject.backend.model.entities.team.Team;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -8,6 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -18,6 +20,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,9 +32,12 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class User extends BaseEntity {
+@AllArgsConstructor
+public class User {
 
-  private static final long serialVersionUID = 8394072118760207353L;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  protected Long id;
 
   @Email(message = "Email should be valid")
   private String email;

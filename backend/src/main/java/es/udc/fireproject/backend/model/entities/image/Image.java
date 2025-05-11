@@ -1,11 +1,13 @@
 package es.udc.fireproject.backend.model.entities.image;
 
-import es.udc.fireproject.backend.model.entities.BaseEntity;
 import es.udc.fireproject.backend.model.entities.notice.Notice;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
@@ -20,9 +22,12 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class Image extends BaseEntity {
+public class Image {
 
-  private static final long serialVersionUID = 1801683026003370692L;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  protected Long id;
 
   @ManyToOne(
       optional = false,

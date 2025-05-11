@@ -1,6 +1,5 @@
 package es.udc.fireproject.backend.model.entities.team;
 
-import es.udc.fireproject.backend.model.entities.BaseEntity;
 import es.udc.fireproject.backend.model.entities.organization.Organization;
 import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.fireproject.backend.model.entities.user.User;
@@ -8,6 +7,9 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -25,9 +27,11 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class Team extends BaseEntity {
+public class Team {
 
-  private static final long serialVersionUID = -6662567578161123656L;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  protected Long id;
 
   @Column(name = "code")
   @NotBlank

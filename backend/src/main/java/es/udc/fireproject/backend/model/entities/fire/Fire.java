@@ -1,6 +1,5 @@
 package es.udc.fireproject.backend.model.entities.fire;
 
-import es.udc.fireproject.backend.model.entities.BaseEntity;
 import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -8,11 +7,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,9 +27,12 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class Fire extends BaseEntity {
+@AllArgsConstructor
+public class Fire {
 
-  private static final long serialVersionUID = -4072358581910996914L;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  protected Long id;
 
   @Column(name = "description", nullable = false)
   private String description;

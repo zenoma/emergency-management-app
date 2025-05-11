@@ -80,11 +80,15 @@ class OrganizationServiceImplTest extends IntegrationTest {
   @Test
   void givenValidName_whenFindByNameOrCode_thenFoundOrganization() {
     final Organization organization = OrganizationOM.withDefaultValues();
-    final List<Organization> organizationList = new ArrayList<>();
-    organizationList.add(organization);
 
-    personalManagementService.createOrganizationType(organization.getOrganizationType().getName());
-    personalManagementService.createOrganization(organization);
+    final OrganizationType createdOrganizationType = personalManagementService.createOrganizationType(
+        organization.getOrganizationType().getName());
+    final Organization createdOrganization = personalManagementService.createOrganization(organization);
+
+    final List<Organization> organizationList = new ArrayList<>();
+    organization.setId(createdOrganization.getId());
+    organization.getOrganizationType().setId(createdOrganization.getOrganizationType().getId());
+    organizationList.add(organization);
 
     Assertions.assertEquals(organizationList,
         personalManagementService.findOrganizationByNameOrCode(organization.getName()));
@@ -170,9 +174,12 @@ class OrganizationServiceImplTest extends IntegrationTest {
   @Test
   void givenData_whenFindAllOrganizationTypes_thenReturnFoundOrganizationType() {
     final OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
-    personalManagementService.createOrganizationType(organizationType.getName());
+    final OrganizationType createdOrganizationType = personalManagementService.createOrganizationType(
+        organizationType.getName());
 
     final List<OrganizationType> result = personalManagementService.findAllOrganizationTypes();
+
+    organizationType.setId(createdOrganizationType.getId());
 
     Assertions.assertTrue(result.contains(organizationType), "Result must contain the same Data");
   }
@@ -189,7 +196,10 @@ class OrganizationServiceImplTest extends IntegrationTest {
     final OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
     personalManagementService.createOrganizationType(organizationType.getName());
     final Organization organization = OrganizationOM.withDefaultValues();
-    personalManagementService.createOrganization(organization);
+    final Organization createdOrganization = personalManagementService.createOrganization(organization);
+
+    organization.getOrganizationType().setId(createdOrganization.getOrganizationType().getId());
+    organization.setId(createdOrganization.getId());
 
     final List<Organization> result = personalManagementService.findAllOrganizations();
 

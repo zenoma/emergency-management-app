@@ -1,12 +1,14 @@
 package es.udc.fireproject.backend.model.entities.logs;
 
-import es.udc.fireproject.backend.model.entities.BaseEntity;
 import es.udc.fireproject.backend.model.entities.fire.Fire;
 import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -22,9 +24,11 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class FireQuadrantLog extends BaseEntity {
+public class FireQuadrantLog {
 
-  private static final long serialVersionUID = -7339295013066556565L;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  protected Long id;
 
   @ManyToOne(
       optional = false,

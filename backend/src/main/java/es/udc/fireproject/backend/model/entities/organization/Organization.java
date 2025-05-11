@@ -1,9 +1,11 @@
 package es.udc.fireproject.backend.model.entities.organization;
 
-import es.udc.fireproject.backend.model.entities.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -23,9 +25,11 @@ import org.locationtech.jts.geom.Point;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class Organization extends BaseEntity {
+public class Organization {
 
-  private static final long serialVersionUID = -4807580144244128235L;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  protected Long id;
 
   @NotBlank
   private String code;

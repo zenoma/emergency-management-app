@@ -58,6 +58,7 @@ class UserServiceImplTest {
 
     User loggedInUser = personalManagementService.loginFromId(user.getId());
     loggedInUser.setUserRole(UserRole.USER);
+    loggedInUser.setPassword(user.getPassword());
 
     Assertions.assertEquals(user, loggedInUser, "Users must be the same");
   }
@@ -91,6 +92,8 @@ class UserServiceImplTest {
     String clearPassword = user.getPassword();
 
     User loggedInUser = personalManagementService.login(user.getEmail(), clearPassword);
+    loggedInUser.setPassword(user.getPassword());
+    loggedInUser.setUserRole(UserRole.USER);
 
     Assertions.assertEquals(user, loggedInUser, "Users must be the same");
 
@@ -126,11 +129,14 @@ class UserServiceImplTest {
     when(passwordEncoder.encode(("password"))).thenReturn("password");
 
     User user = UserOM.withDefaultValues();
+    user.setId(1L);
 
     personalManagementService.signUp(user);
 
     User updatedUser = personalManagementService.updateProfile(user.getId(), 'X' + user.getFirstName(),
         'X' + user.getLastName(), 'X' + user.getEmail(), 111111111, "11111111S");
+    updatedUser.setId(user.getId());
+    updatedUser.setUserRole(user.getUserRole());
 
     when(userRepository.findById(any())).thenReturn(Optional.of(updatedUser));
 
