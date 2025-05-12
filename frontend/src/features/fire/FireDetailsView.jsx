@@ -36,7 +36,7 @@ import {
   useUpdateFireMutation,
 } from "../../api/fireApi";
 import { useLinkFireMutation } from "../../api/quadrantApi";
-import CustomMap from "../map/CustomMap";
+import LandingMap from "../map/LandingMap";
 import QuadrantDataGrid from "../quadrant/QuadrantDataGrid";
 import { selectToken } from "../user/login/LoginSlice";
 import BackButton from "../utils/BackButton";
@@ -260,7 +260,7 @@ export default function FireDetailsView() {
             variant="outlined"
           >
             <Typography variant="h6">{t("quadrant-map")}</Typography>
-            {data && <Box sx={{ height: 450 }}><CustomMap quadrants={data.quadrants} /></Box>}
+            {data && <Box sx={{ height: 450 }}><LandingMap quadrants={data.quadrants} /></Box>}
           </Paper>
         </Grid>
         <Grid item xs={4} sm={8} md={3}>

@@ -2,7 +2,7 @@ import { isFulfilled, isRejected } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 
 export const rtkQueryErrorLogger = (api) => (next) => (action) => {
-  if (process.env.REACT_APP_MODE === "development" && isFulfilled(action)) {
+  if (import.meta.env.REACT_APP_MODE === "development" && isFulfilled(action)) {
     console.log(`Request ${action.meta.requestId} succeeded with payload:`, action.payload);
   }
 

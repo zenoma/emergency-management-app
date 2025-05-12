@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useGetNoticesQuery } from "../../api/noticeApi";
 
 
-var URL = process.env.REACT_APP_BACKEND_URL;
+var URL = import.meta.env.REACT_APP_BACKEND_URL;
 
 export default function MyNoticesList() {
   const [list, setList] = useState("");

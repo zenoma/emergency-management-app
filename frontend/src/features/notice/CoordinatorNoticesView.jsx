@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useDeleteNoticeMutation, useGetNoticesQuery, useUpdateNoticeMutation } from "../../api/noticeApi";
 
-var URL = process.env.REACT_APP_BACKEND_URL;
+var URL = import.meta.env.REACT_APP_BACKEND_URL;
 
 
 export default function CoordinatorNoticesView() {

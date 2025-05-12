@@ -26,7 +26,7 @@ import {
   useGetFireLogsByFireIdQuery,
   useGetGlobalStatisticsByFireIdQuery,
 } from "../../api/logApi";
-import CustomMap from "../map/CustomMap";
+import LandingMap from "../map/LandingMap";
 import { selectToken } from "../user/login/LoginSlice";
 import BackButton from "../utils/BackButton";
 
@@ -153,7 +153,7 @@ export default function FireHistoryView() {
               {t("quadrant-map")}
             </Typography>
             <Box sx={{ height: "90%", padding: 1 }}>
-              {fireLogs && <CustomMap quadrants={quadrants} />}
+              {fireLogs && <LandingMap quadrants={quadrants} />}
             </Box>
           </Paper>
         </Grid>

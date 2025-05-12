@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 
-import "mapbox-gl/dist/mapbox-gl.css";
-import Map, { Marker, NavigationControl } from "react-map-gl";
+import Map, { Layer, NavigationControl, Source } from "react-map-gl/maplibre";
+import 'maplibre-gl/dist/maplibre-gl.css';
 import Icon from "../../app/assets/images/pin.png";
 import { transformCoordinates } from "../../app/utils/coordinatesTransformations";
 
-var MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
-const MAP_STYLE = "mapbox://styles/mapbox/outdoors-v11?optimize=true";
 
 export default function CoordinatesMap({ childToParent }) {
   const [cursor] = useState("auto");
+
+  const MAP_STYLE = "https://api.maptiler.com/maps/topo-v2/style.json?key=3GSLdy5VE4yLq4OhlyYJ"
 
   // Viewport settings
   const INITIAL_VIEW_STATE = {
@@ -51,7 +51,6 @@ export default function CoordinatesMap({ childToParent }) {
       maxZoom={15}
       initialViewState={INITIAL_VIEW_STATE}
       mapStyle={MAP_STYLE}
-      mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
       onClick={(e) => handleClick(e)}
       cursor={cursor}
       maxBounds={bounds}

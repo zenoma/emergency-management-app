@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useLoginMutation } from "../../../api/userApi.js";
 import { emailValidation } from "../../../app/utils/validations.js";
 import "./Login.css";
-import { validLogin } from "./LoginSlice.js";
+import { validLogin } from "./LoginSlice.jsx";
 
 export default function Login() {
   const [email, setEmail] = useState("");
