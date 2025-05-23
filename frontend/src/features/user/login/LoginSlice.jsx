@@ -7,7 +7,7 @@ export const loginSlice = createSlice({
   initialState,
   reducers: {
     validLogin(state, action) {
-      state.user = action.payload.user;
+      state.user = action.payload.userDto;
       state.token = action.payload.serviceToken;
       localStorage.setItem("token", state.token);
     },
