@@ -40,7 +40,7 @@ public class Fire {
   @Column(name = "type", nullable = false)
   private String type;
 
-  @Column(name = "index", nullable = false)
+  @Column(name = "fire_index", nullable = false)
   @Enumerated(EnumType.STRING)
   private FireIndex fireIndex;
 

@@ -13,7 +13,7 @@ CREATE TABLE fire
     id              BIGSERIAL PRIMARY KEY,
     description     VARCHAR(255),
     type            VARCHAR(255)                              NOT NULL,
-    index           VARCHAR(255)                              NOT NULL,
+    fire_index      VARCHAR(255)                              NOT NULL,
     created_at      TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
     extinguished_at TIMESTAMP(3)
 );
