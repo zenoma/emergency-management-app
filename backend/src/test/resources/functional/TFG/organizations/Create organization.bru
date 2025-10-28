@@ -1,0 +1,29 @@
+meta {
+  name: Create organization
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/organizations/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "code": "ORG-2",
+      "name": "Centro Coordinación Central 2",
+      "headquartersAddress": "Rúa de San Lázaro, 61, 15707 Santiago de Compostela, A Coruña",
+      "coordinates": {
+          "lon": 4748400.75,
+          "lat": 539346.62
+      },
+      "organizationTypeId": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

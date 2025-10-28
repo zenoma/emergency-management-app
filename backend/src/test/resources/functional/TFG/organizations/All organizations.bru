@@ -1,0 +1,21 @@
+meta {
+  name: All organizations
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/organizations
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ~organizationTypeName: bri
+  ~nameOrCode: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

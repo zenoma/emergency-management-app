@@ -1,0 +1,26 @@
+meta {
+  name: Create notice without logged user
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/notices/create
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "body": "Some text to describe the fire",
+      "coordinates": {
+          "lon": 608633.94,
+          "lat": 4698571.38
+      }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

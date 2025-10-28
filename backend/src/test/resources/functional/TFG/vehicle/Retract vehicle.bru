@@ -1,0 +1,22 @@
+meta {
+  name: Retract vehicle
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{base_url}}/vehicles/4/retract
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "gid": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

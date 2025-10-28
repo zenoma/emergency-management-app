@@ -1,0 +1,27 @@
+meta {
+  name: SignUp
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/users/signUp
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "email": "4@email.com",
+      "password": "4",
+      "firstName": "4",
+      "lastName": "4",
+      "dni": "34274546S",
+      "phoneNumber": 638712551
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

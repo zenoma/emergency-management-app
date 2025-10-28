@@ -1,0 +1,22 @@
+meta {
+  name: Retract team
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{base_url}}/teams/4/retract
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "gid": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

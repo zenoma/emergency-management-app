@@ -1,0 +1,22 @@
+meta {
+  name: Deploy team
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{base_url}}/teams/4/deploy
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "gid": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

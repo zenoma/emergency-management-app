@@ -1,0 +1,22 @@
+meta {
+  name: updateTeam
+  type: http
+  seq: 11
+}
+
+put {
+  url: {{base_url}}/teams/6
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "code" : "new code"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
