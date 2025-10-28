@@ -3,16 +3,36 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <artifactId>fire-project-backend</artifactId>
 
   <build>
     <plugins>
+      <!-- Plugin de Spring Boot -->
       <plugin>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <groupId>org.springframework.boot</groupId>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+              <version>1.18.42</version>
+            </path>
+          </annotationProcessorPaths>
+          <release>25</release>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.13.0</version>
+      </plugin>
+
     </plugins>
   </build>
+
   <dependencies>
     <!-- Spring Boot Starters -->
     <dependency>
@@ -37,19 +57,21 @@
       <scope>runtime</scope>
     </dependency>
 
+    <!-- Lombok -->
     <dependency>
       <artifactId>lombok</artifactId>
       <groupId>org.projectlombok</groupId>
-      <scope>provided</scope>
+      <scope>compile</scope>
+      <version>1.18.42</version>
     </dependency>
 
     <!-- Base de datos -->
     <dependency>
       <artifactId>postgresql</artifactId>
       <groupId>org.postgresql</groupId>
+      <version>${postgresql.version}</version>
     </dependency>
 
-    <!-- Por estas versiones más recientes y compatibles -->
     <dependency>
       <artifactId>hibernate-spatial</artifactId>
       <groupId>org.hibernate.orm</groupId>
@@ -61,13 +83,6 @@
       <groupId>net.postgis</groupId>
       <version>${postgis.version}</version>
     </dependency>
-
-    <dependency>
-      <artifactId>hibernate-spatial</artifactId>
-      <groupId>org.hibernate.orm</groupId>
-      <version>${hibernate.version}</version>
-    </dependency>
-
 
     <!-- JSON y Geometría -->
     <dependency>
@@ -81,7 +96,6 @@
       <groupId>org.locationtech.jts</groupId>
       <version>${jts.version}</version>
     </dependency>
-
 
     <!-- Seguridad -->
     <dependency>
@@ -108,70 +122,71 @@
       <groupId>org.springframework.boot</groupId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <artifactId>spring-security-test</artifactId>
       <groupId>org.springframework.security</groupId>
       <scope>test</scope>
     </dependency>
 
+    <!-- Testcontainers -->
     <dependency>
       <artifactId>testcontainers</artifactId>
       <groupId>org.testcontainers</groupId>
       <scope>test</scope>
       <version>${testcontainers.version}</version>
     </dependency>
-
     <dependency>
       <artifactId>junit-jupiter</artifactId>
       <groupId>org.testcontainers</groupId>
       <scope>test</scope>
       <version>${testcontainers.version}</version>
     </dependency>
-
     <dependency>
       <artifactId>postgresql</artifactId>
       <groupId>org.testcontainers</groupId>
       <scope>test</scope>
       <version>${testcontainers.version}</version>
     </dependency>
-
   </dependencies>
   <description>Fire Project Backend</description>
   <groupId>es.udc.fireproject</groupId>
-
   <modelVersion>4.0.0</modelVersion>
-
   <name>Fire Project Backend</name>
-
   <packaging>jar</packaging>
 
   <parent>
     <artifactId>spring-boot-starter-parent</artifactId>
     <groupId>org.springframework.boot</groupId>
     <relativePath/>
-    <version>3.2.4</version>
+    <version>3.5.7</version>
   </parent>
 
   <properties>
+    <!-- Versión de Java -->
     <hibernate.version>6.6.13.Final</hibernate.version>
     <jackson-jts.version>2.0.0</jackson-jts.version>
-    <java.version>21</java.version>
+
+    <!-- Dependencias -->
+    <java.version>25</java.version>
     <jjwt.version>0.12.5</jjwt.version>
-
     <jts.version>1.19.0</jts.version>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
-
-
+    <maven.compiler.release>${java.version}</maven.compiler.release>
     <postgis.version>2.5.1</postgis.version>
     <postgresql.version>42.7.3</postgresql.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Codificación -->
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <springboot.version>3.2.4</springboot.version>
     <testcontainers.version>1.19.1</testcontainers.version>
   </properties>
-  <version>1.0</version>
 
+  <repositories>
+    <repository>
+      <id>projectlombok-snapshots</id>
+      <url>https://projectlombok.org/mavenrepo</url>
+    </repository>
+  </repositories>
+
+  <version>1.0</version>
 
 </project>
