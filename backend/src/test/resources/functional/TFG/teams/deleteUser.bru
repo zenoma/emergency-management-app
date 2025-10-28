@@ -1,0 +1,22 @@
+meta {
+  name: deleteUser
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{base_url}}/teams/1/deleteUser/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "memberId": "10"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

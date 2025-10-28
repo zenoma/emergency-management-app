@@ -1,0 +1,16 @@
+meta {
+  name: TeamById
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/teams/3
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

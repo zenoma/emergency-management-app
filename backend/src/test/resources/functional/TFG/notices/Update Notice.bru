@@ -1,0 +1,26 @@
+meta {
+  name: Update Notice
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{base_url}}/notices/30
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "body": "Some NEW text to describe the fire",
+      "coordinates": {
+          "lon": 608633.94,
+          "lat": 5698571.38
+      }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

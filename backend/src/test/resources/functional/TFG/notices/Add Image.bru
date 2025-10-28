@@ -1,0 +1,20 @@
+meta {
+  name: Add Image
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{base_url}}/notices/1/images
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  image: @file()
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

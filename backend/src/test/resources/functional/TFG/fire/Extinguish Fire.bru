@@ -1,0 +1,23 @@
+meta {
+  name: Extinguish Fire
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/fires/1/extinguish
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "description": "aaa",
+      "type": "aaaa"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

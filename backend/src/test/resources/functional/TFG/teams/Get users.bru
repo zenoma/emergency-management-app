@@ -1,0 +1,16 @@
+meta {
+  name: Get users
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{base_url}}/teams/1/users
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

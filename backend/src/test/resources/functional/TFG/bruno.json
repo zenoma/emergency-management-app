@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "TFM Collection",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

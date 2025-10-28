@@ -1,0 +1,20 @@
+meta {
+  name: Find ByScale
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/quadrants?scale=10.0
+  body: none
+  auth: none
+}
+
+params:query {
+  scale: 10.0
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

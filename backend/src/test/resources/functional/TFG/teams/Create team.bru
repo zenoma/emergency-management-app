@@ -1,0 +1,23 @@
+meta {
+  name: Create team
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/teams
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "code": "Equipo 5",
+      "organizationId": 5
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

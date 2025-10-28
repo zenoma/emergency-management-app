@@ -1,0 +1,28 @@
+meta {
+  name: Update organization
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{base_url}}/organizations/1
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "code": "ORG-1",
+      "name": "Orga asd",
+      "headquartersAddress": "aaa",
+      "coordinates": {
+          "lon": 80,
+          "lat": 40
+      }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

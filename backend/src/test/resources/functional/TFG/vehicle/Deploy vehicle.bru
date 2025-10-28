@@ -1,0 +1,22 @@
+meta {
+  name: Deploy vehicle
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{base_url}}/vehicles/4/deploy
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "gid": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

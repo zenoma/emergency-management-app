@@ -1,0 +1,20 @@
+meta {
+  name: OrganizationByNameOrCode
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/organizations?nameOrCode=
+  body: none
+  auth: inherit
+}
+
+params:query {
+  nameOrCode: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,16 @@
+meta {
+  name: All Teams
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{base_url}}/teams
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

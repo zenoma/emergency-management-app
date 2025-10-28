@@ -1,0 +1,20 @@
+meta {
+  name: VehiclesByOrganizationId
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/vehicles?organizationId=1
+  body: none
+  auth: inherit
+}
+
+params:query {
+  organizationId: 1
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,20 @@
+meta {
+  name: TeamByCode
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/teams?code=a22sd
+  body: none
+  auth: inherit
+}
+
+params:query {
+  code: a22sd
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
