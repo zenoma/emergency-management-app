@@ -46,6 +46,7 @@ class UserServiceImplTest {
     lenient().when(userRepository.findById(any())).thenReturn(Optional.of(UserOM.withDefaultValues()));
     lenient().when(passwordEncoder.encode(any())).thenReturn("encryptedPassword");
     lenient().when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(UserOM.withDefaultValues()));
+    lenient().when(userRepository.save(any())).thenReturn(UserOM.withDefaultValues());
   }
 
 
@@ -54,7 +55,8 @@ class UserServiceImplTest {
       throws DuplicateInstanceException, InstanceNotFoundException {
 
     User user = UserOM.withDefaultValues();
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
 
     User loggedInUser = personalManagementService.loginFromId(user.getId());
     loggedInUser.setUserRole(UserRole.USER);
@@ -68,7 +70,9 @@ class UserServiceImplTest {
 
     User user = UserOM.withDefaultValues();
     when(userRepository.existsByEmail(anyString())).thenReturn(true);
-    assertThrows(DuplicateInstanceException.class, () -> personalManagementService.signUp(user),
+    assertThrows(DuplicateInstanceException.class, () ->
+            personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+                String.valueOf(user.getPhoneNumber()), user.getDni()),
         "DuplicateInstanceException expected");
   }
 
@@ -86,13 +90,18 @@ class UserServiceImplTest {
       throws DuplicateInstanceException, IncorrectLoginException {
     when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-    User user = UserOM.withDefaultValues();
-    personalManagementService.signUp(user);
+    User userOm = UserOM.withDefaultValues();
+    User user = personalManagementService.signUp(userOm.getEmail(),
+        userOm.getPassword(),
+        userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()),
+        userOm.getDni());
 
-    String clearPassword = user.getPassword();
+    String clearPassword = userOm.getPassword();
 
-    User loggedInUser = personalManagementService.login(user.getEmail(), clearPassword);
-    loggedInUser.setPassword(user.getPassword());
+    User loggedInUser = personalManagementService.login(userOm.getEmail(), clearPassword);
+    loggedInUser.setPassword(userOm.getPassword());
     loggedInUser.setUserRole(UserRole.USER);
 
     Assertions.assertEquals(user, loggedInUser, "Users must be the same");
@@ -107,7 +116,8 @@ class UserServiceImplTest {
 
     String clearPassword = user.getPassword();
 
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
 
     assertThrows(IncorrectLoginException.class,
         () -> personalManagementService.login(user.getEmail(), 'X' + clearPassword), " Password must be incorrect");
@@ -131,7 +141,8 @@ class UserServiceImplTest {
     User user = UserOM.withDefaultValues();
     user.setId(1L);
 
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
 
     User updatedUser = personalManagementService.updateProfile(user.getId(), 'X' + user.getFirstName(),
         'X' + user.getLastName(), 'X' + user.getEmail(), 111111111, "11111111S");
@@ -144,7 +155,6 @@ class UserServiceImplTest {
     user.setLastName('X' + user.getLastName());
     user.setEmail('X' + user.getEmail());
     user.setPhoneNumber(111111111);
-    user.setUserRole(UserRole.USER);
     user.setDni("11111111S");
 
     Assertions.assertEquals(user, personalManagementService.loginFromId(user.getId()), "User must be updated");
@@ -174,7 +184,8 @@ class UserServiceImplTest {
 
     String oldPassword = user.getPassword();
     String newPassword = 'X' + oldPassword;
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
 
     personalManagementService.changePassword(user.getId(), oldPassword, newPassword);
     user.setPassword(newPassword);
@@ -201,7 +212,8 @@ class UserServiceImplTest {
     String oldPassword = user.getPassword();
     String newPassword = 'X' + oldPassword;
 
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
     assertThrows(IncorrectPasswordException.class,
         () -> personalManagementService.changePassword(user.getId(), 'Y' + oldPassword, newPassword),
         "IncorrectPassword Exception expected");
@@ -211,9 +223,11 @@ class UserServiceImplTest {
   @Test
   void givenValidData_whenSignUp_thenUserHasUserRole() throws DuplicateInstanceException {
 
-    User user = UserOM.withDefaultValues();
+    User userOm = UserOM.withDefaultValues();
 
-    personalManagementService.signUp(user);
+    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
     Assertions.assertEquals(UserRole.USER, user.getUserRole(), "Role must be USER");
 
@@ -235,8 +249,11 @@ class UserServiceImplTest {
     when(userRepository.findById(0L)).thenReturn(Optional.of(user));
     when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
 
-    personalManagementService.signUp(user);
-    personalManagementService.signUp(targetUser);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
+    personalManagementService.signUp(targetUser.getEmail(), targetUser.getPassword(), targetUser.getFirstName(),
+        targetUser.getLastName(),
+        String.valueOf(targetUser.getPhoneNumber()), targetUser.getDni());
 
     personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
 

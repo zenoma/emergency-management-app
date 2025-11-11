@@ -1,0 +1,39 @@
+put:
+  summary: Actualizar perfil
+  operationId: putUser
+  tags:
+    - UserManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/responses/UserDto.yml'
+  responses:
+    '200':
+      description: Usuario actualizado
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/UserDto.yml'
+    '403':
+      description: Permission denied
+      content:
+        application/json:
+          schema:
+            $ref: '../common/schemas/ErrorDto.yml'
+    '404':
+      description: Usuario no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '../common/schemas/ErrorDto.yml'

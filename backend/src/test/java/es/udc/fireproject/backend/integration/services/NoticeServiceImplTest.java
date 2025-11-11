@@ -176,8 +176,10 @@ class NoticeServiceImplTest extends IntegrationTest {
   @Test
   void givenValidData_whenFindByUserId_thenNoticesFound() throws InstanceNotFoundException, DuplicateInstanceException {
     Notice notice = NoticeOm.withDefaultValues();
-    User user = UserOM.withDefaultValues();
-    personalManagementService.signUp(user);
+    User userOM = UserOM.withDefaultValues();
+    User user = personalManagementService.signUp(userOM.getEmail(), userOM.getPassword(), userOM.getFirstName(),
+        userOM.getLastName(),
+        String.valueOf(userOM.getPhoneNumber()), userOM.getDni());
 
     List<Notice> noticeList = new ArrayList<>();
     noticeList.add(noticeService.create(notice.getBody(), notice.getLocation(), user.getId()));
@@ -193,8 +195,10 @@ class NoticeServiceImplTest extends IntegrationTest {
   void givenValidData_whenFindAll_thenNoticesFound() throws DuplicateInstanceException, InstanceNotFoundException {
 
     Notice notice = NoticeOm.withDefaultValues();
-    User user = UserOM.withDefaultValues();
-    personalManagementService.signUp(user);
+    User userOm = UserOM.withDefaultValues();
+    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
     List<Notice> noticeList = new ArrayList<>();
     noticeList.add(noticeService.create(notice.getBody(), notice.getLocation(), user.getId()));

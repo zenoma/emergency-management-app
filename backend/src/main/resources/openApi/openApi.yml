@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: Management APP - API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+tags:
+  - name: UserManagement
+    description: Operations related to users management
+paths:
+  /users/:
+    $ref: './users/list-users.yml'
+  /users/signUp:
+    $ref: './users/sign-up.yml'
+  /users/login:
+    $ref: './users/login.yml'
+  /users/loginFromServiceToken:
+    $ref: './users/login-from-service-token.yml'
+  /users/{id}:
+    $ref: './users/update-user.yml'
+  /users/{id}/changePassword:
+    $ref: './users/change-password.yml'
+  /users/{id}/updateRole:
+    $ref: './users/update-role.yml'
+
+security:
+  - bearerAuth: [ ]

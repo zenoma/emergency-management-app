@@ -1,0 +1,23 @@
+type: object
+required:
+  - firstName
+  - lastName
+  - email
+  - dni
+  - phoneNumber
+  - password
+properties:
+  firstName:
+    type: string
+  lastName:
+    type: string
+  email:
+    type: string
+    format: email
+  password:
+    type: string
+  phoneNumber:
+    type: string
+  dni:
+    type: string
+

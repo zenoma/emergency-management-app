@@ -380,7 +380,16 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
   }
 
   @Override
-  public void signUp(User user) throws DuplicateInstanceException {
+  public User signUp(String email,
+      String password,
+      String firstName,
+      String lastName,
+      String phoneNumber,
+      String dni)
+      throws DuplicateInstanceException {
+
+    User user = new User(email, password, firstName, lastName, dni,
+        phoneNumber != null ? Integer.parseInt(phoneNumber) : null);
 
     if (userRepository.existsByEmail(user.getEmail())) {
       throw new DuplicateInstanceException("project.entities.user", user.getEmail());
@@ -389,7 +398,8 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     user.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     user.setUserRole(UserRole.USER);
-    userRepository.save(user);
+
+    return userRepository.save(user);
 
   }
 

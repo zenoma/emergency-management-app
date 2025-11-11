@@ -5,33 +5,40 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <artifactId>fire-project-backend</artifactId>
+  <description>Fire Project Backend</description>
+  <groupId>es.udc.fireproject</groupId>
+  <version>1.0</version>
+  <modelVersion>4.0.0</modelVersion>
+  <name>Fire Project Backend</name>
+  <packaging>jar</packaging>
 
-  <build>
-    <plugins>
-      <!-- Plugin de Spring Boot -->
-      <plugin>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <groupId>org.springframework.boot</groupId>
-      </plugin>
+  <parent>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <relativePath/>
+    <version>3.5.7</version>
+  </parent>
 
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <annotationProcessorPaths>
-            <path>
-              <artifactId>lombok</artifactId>
-              <groupId>org.projectlombok</groupId>
-              <version>1.18.42</version>
-            </path>
-          </annotationProcessorPaths>
-          <release>25</release>
-        </configuration>
-        <groupId>org.apache.maven.plugins</groupId>
-        <version>3.13.0</version>
-      </plugin>
 
-    </plugins>
-  </build>
+  <properties>
+    <project.base-package>es.udc.fireproject</project.base-package>
+    <!-- Versión de Java -->
+    <hibernate.version>6.6.13.Final</hibernate.version>
+    <jackson-jts.version>2.0.0</jackson-jts.version>
+
+    <!-- Dependencias -->
+    <java.version>25</java.version>
+    <jjwt.version>0.12.5</jjwt.version>
+    <jts.version>1.19.0</jts.version>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <postgis.version>2.5.1</postgis.version>
+    <postgresql.version>42.7.3</postgresql.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Codificación -->
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <testcontainers.version>1.19.1</testcontainers.version>
+  </properties>
 
   <dependencies>
     <!-- Spring Boot Starters -->
@@ -147,38 +154,99 @@
       <scope>test</scope>
       <version>${testcontainers.version}</version>
     </dependency>
+
+    <!-- Springdoc UI para ver el swagger/ui en runtime -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.8.6</version>
+    </dependency>
+
+    <dependency>
+      <artifactId>jackson-databind-nullable</artifactId>
+      <groupId>org.openapitools</groupId>
+      <version>0.2.3</version>
+    </dependency>
   </dependencies>
-  <description>Fire Project Backend</description>
-  <groupId>es.udc.fireproject</groupId>
-  <modelVersion>4.0.0</modelVersion>
-  <name>Fire Project Backend</name>
-  <packaging>jar</packaging>
 
-  <parent>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <groupId>org.springframework.boot</groupId>
-    <relativePath/>
-    <version>3.5.7</version>
-  </parent>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>7.9.0</version>
+        <executions>
+          <execution>
+            <id>generate-openapi</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
 
-  <properties>
-    <!-- Versión de Java -->
-    <hibernate.version>6.6.13.Final</hibernate.version>
-    <jackson-jts.version>2.0.0</jackson-jts.version>
+            <configuration>
+              <inputSpec>${project.basedir}/src/main/resources/openApi/openApi.yml</inputSpec>
+              <apiPackage>${project.base-package}.backend.rest.controllers</apiPackage>
+              <modelPackage>${project.base-package}.backend.rest.dtos</modelPackage>
 
-    <!-- Dependencias -->
-    <java.version>25</java.version>
-    <jjwt.version>0.12.5</jjwt.version>
-    <jts.version>1.19.0</jts.version>
-    <maven.compiler.release>${java.version}</maven.compiler.release>
-    <postgis.version>2.5.1</postgis.version>
-    <postgresql.version>42.7.3</postgresql.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+              <generatorName>spring</generatorName>
+              <invokerPackage>es.udc.fireproject.backend.rest.invoker</invokerPackage>
 
-    <!-- Codificación -->
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <testcontainers.version>1.19.1</testcontainers.version>
-  </properties>
+              <output>${project.build.directory}/generated-sources/openapi</output>
+
+              <configOptions>
+                <dateLibrary>java8</dateLibrary>
+                <interfaceOnly>true</interfaceOnly>
+                <useSpringBoot3>true</useSpringBoot3>
+              </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+              </sources>
+            </configuration>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <id>add-generated-sources</id>
+            <phase>generate-sources</phase>
+          </execution>
+        </executions>
+        <groupId>org.codehaus.mojo</groupId>
+        <version>3.3.0</version>
+      </plugin>
+
+      <!-- Plugin de Spring Boot -->
+      <plugin>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <groupId>org.springframework.boot</groupId>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+              <version>1.18.42</version>
+            </path>
+          </annotationProcessorPaths>
+          <release>25</release>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.13.0</version>
+      </plugin>
+
+    </plugins>
+  </build>
 
   <repositories>
     <repository>
@@ -187,6 +255,5 @@
     </repository>
   </repositories>
 
-  <version>1.0</version>
 
 </project>

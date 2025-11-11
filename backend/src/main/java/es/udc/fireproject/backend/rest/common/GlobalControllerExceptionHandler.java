@@ -8,7 +8,7 @@ import es.udc.fireproject.backend.model.exceptions.PermissionException;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalControllerExceptionHandler {
 
   private static final String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
@@ -31,8 +32,7 @@ public class GlobalControllerExceptionHandler {
   private static final String ALREADY_EXIST_EXCEPTION_CODE = "project.exceptions.AlreadyExistException";
 
 
-  @Autowired
-  private MessageSource messageSource;
+  private final MessageSource messageSource;
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -86,7 +86,7 @@ public class GlobalControllerExceptionHandler {
   }
 
   @ExceptionHandler(PermissionException.class)
-  @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
   @ResponseBody
   public ErrorsDto handlePermissionException(PermissionException exception, Locale locale) {
 

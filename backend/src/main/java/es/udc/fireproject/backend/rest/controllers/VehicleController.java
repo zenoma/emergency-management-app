@@ -5,14 +5,12 @@ import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
-import es.udc.fireproject.backend.rest.dtos.UserDto;
 import es.udc.fireproject.backend.rest.dtos.VehicleDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.VehicleConversor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +34,6 @@ public class VehicleController {
 
   @PostMapping("")
   public VehicleDto create(@RequestAttribute Long userId,
-      @Validated({UserDto.AllValidations.class})
       @RequestBody Map<String, String> jsonParams)
       throws InstanceNotFoundException {
 

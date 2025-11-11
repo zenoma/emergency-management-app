@@ -4,12 +4,10 @@ import es.udc.fireproject.backend.model.entities.organization.OrganizationType;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
 import es.udc.fireproject.backend.rest.dtos.OrganizationTypeDto;
-import es.udc.fireproject.backend.rest.dtos.UserDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.OrganizationTypeConversor;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,7 +43,6 @@ public class OrganizationTypeController {
 
   @PostMapping("")
   public OrganizationTypeDto create(@RequestAttribute Long userId,
-      @Validated({UserDto.AllValidations.class})
       @RequestBody OrganizationTypeDto organizationTypeDto) {
 
     OrganizationType organizationType = personalManagementService.createOrganizationType(organizationTypeDto.getName());

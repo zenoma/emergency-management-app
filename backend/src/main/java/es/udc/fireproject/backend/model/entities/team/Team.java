@@ -26,7 +26,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-@ToString
+@ToString(exclude = {"userList"})
 public class Team {
 
   @Id

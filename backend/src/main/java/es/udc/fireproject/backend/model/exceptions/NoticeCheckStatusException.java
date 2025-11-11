@@ -1,6 +1,6 @@
 package es.udc.fireproject.backend.model.exceptions;
 
-public class NoticeCheckStatusException extends Exception {
+public class NoticeCheckStatusException extends RuntimeException {
 
   private String id;
   private String status;

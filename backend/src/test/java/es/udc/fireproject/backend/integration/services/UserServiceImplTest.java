@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class UserServiceImplTest extends IntegrationTest {
 
-  private final Long INVALID_USER_ID = -1L;
+  private static final Long INVALID_USER_ID = -1L;
 
   @Autowired
   private PersonalManagementService personalManagementService;
@@ -26,9 +26,14 @@ class UserServiceImplTest extends IntegrationTest {
   void givenValidData_whenSignUpAndLoginFromId_thenUserIsFound()
       throws DuplicateInstanceException, InstanceNotFoundException {
 
-    User user = UserOM.withDefaultValues();
+    User userOm = UserOM.withDefaultValues();
 
-    personalManagementService.signUp(user);
+    User user = personalManagementService.signUp(userOm.getEmail(),
+        userOm.getPassword(),
+        userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()),
+        userOm.getDni());
 
     User loggedInUser = personalManagementService.loginFromId(user.getId());
 
@@ -40,8 +45,12 @@ class UserServiceImplTest extends IntegrationTest {
   void givenDuplicatedData_whenSignUp_thenDuplicateInstanceException() throws DuplicateInstanceException {
     User user = UserOM.withDefaultValues();
 
-    personalManagementService.signUp(user);
-    Assertions.assertThrows(DuplicateInstanceException.class, () -> personalManagementService.signUp(user),
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
+
+    Assertions.assertThrows(DuplicateInstanceException.class, () ->
+            personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+                String.valueOf(user.getPhoneNumber()), user.getDni()),
         "DuplicateInstanceException expected");
 
   }
@@ -56,13 +65,15 @@ class UserServiceImplTest extends IntegrationTest {
   void givenValidData_whenLogin_thenUserLoggedSuccessfully()
       throws DuplicateInstanceException, IncorrectLoginException {
 
-    User user = UserOM.withDefaultValues();
+    User userOm = UserOM.withDefaultValues();
 
-    String clearPassword = user.getPassword();
+    String clearPassword = userOm.getPassword();
 
-    personalManagementService.signUp(user);
+    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
-    User loggedInUser = personalManagementService.login(user.getEmail(), clearPassword);
+    User loggedInUser = personalManagementService.login(userOm.getEmail(), clearPassword);
 
     Assertions.assertEquals(user, loggedInUser, "Users must be the same");
 
@@ -75,7 +86,9 @@ class UserServiceImplTest extends IntegrationTest {
 
     String clearPassword = user.getPassword();
 
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
+
     Assertions.assertThrows(IncorrectLoginException.class, () ->
         personalManagementService.login(user.getEmail(), 'X' + clearPassword), " Password must be incorrect");
 
@@ -92,18 +105,22 @@ class UserServiceImplTest extends IntegrationTest {
   void givenValidData_whenUpdateProfile_thenUserUpdatedSuccessfully()
       throws InstanceNotFoundException, DuplicateInstanceException {
 
-    User user = UserOM.withDefaultValues();
+    User userOm = UserOM.withDefaultValues();
 
-    personalManagementService.signUp(user);
+    User user = personalManagementService.signUp(userOm.getEmail(),
+        userOm.getPassword(),
+        userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()),
+        userOm.getDni());
 
-    user.setFirstName('X' + user.getFirstName());
-    user.setLastName('X' + user.getLastName());
-    user.setEmail('X' + user.getEmail());
+    user.setFirstName('X' + userOm.getFirstName());
+    user.setLastName('X' + userOm.getLastName());
+    user.setEmail('X' + userOm.getEmail());
 
-    personalManagementService.updateProfile(user.getId(), 'X' + user.getFirstName(), 'X' + user.getLastName(),
-        'X' + user.getEmail(), 111111111, "11111111S");
-
-    User updatedUser = personalManagementService.loginFromId(user.getId());
+    User updatedUser = personalManagementService.updateProfile(user.getId(), 'X' + userOm.getFirstName(),
+        'X' + userOm.getLastName(),
+        'X' + userOm.getEmail(), 111111111, "11111111S");
 
     Assertions.assertEquals(user, updatedUser, "User must be updated");
 
@@ -122,11 +139,13 @@ class UserServiceImplTest extends IntegrationTest {
       throws DuplicateInstanceException, InstanceNotFoundException,
       IncorrectPasswordException {
 
-    User user = UserOM.withDefaultValues();
+    User userOm = UserOM.withDefaultValues();
 
-    String oldPassword = user.getPassword();
+    String oldPassword = userOm.getPassword();
     String newPassword = 'X' + oldPassword;
-    personalManagementService.signUp(user);
+    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
     personalManagementService.changePassword(user.getId(), oldPassword, newPassword);
 
@@ -143,12 +162,18 @@ class UserServiceImplTest extends IntegrationTest {
 
   @Test
   void givenIncorrectPassword_whenChangePassword_thenInstanceNotFoundException() throws DuplicateInstanceException {
-    User user = UserOM.withDefaultValues();
+    User userOm = UserOM.withDefaultValues();
 
-    String oldPassword = user.getPassword();
+    String oldPassword = userOm.getPassword();
     String newPassword = 'X' + oldPassword;
 
-    personalManagementService.signUp(user);
+    User user = personalManagementService.signUp(userOm.getEmail(),
+        userOm.getPassword(),
+        userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()),
+        userOm.getDni());
+
     Assertions.assertThrows(IncorrectPasswordException.class, () ->
             personalManagementService.changePassword(user.getId(), 'Y' + oldPassword, newPassword),
         "IncorrectPassword Exception expected");
@@ -160,7 +185,8 @@ class UserServiceImplTest extends IntegrationTest {
   void givenValidData_whenSignUp_thenUserHasUserRole() throws DuplicateInstanceException {
     User user = UserOM.withDefaultValues();
 
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
 
     Assertions.assertEquals(UserRole.USER, user.getUserRole(), "Role must be USER");
 
@@ -170,13 +196,26 @@ class UserServiceImplTest extends IntegrationTest {
   void giveUsersWithHigherRole_whenUpdateLowerRole_thenUpdateRolSuccessfully() throws DuplicateInstanceException,
       InstanceNotFoundException, InsufficientRolePermissionException {
     int totalUsers = 2;
-    List<User> userList = UserOM.withRandomNames(totalUsers);
-    User user = userList.get(0);
-    User targetUser = userList.get(1);
-    personalManagementService.signUp(user);
+    List<User> usersOmList = UserOM.withRandomNames(totalUsers);
+    User userOm = usersOmList.get(0);
+    User targetUserOm = usersOmList.get(1);
+    User user = personalManagementService.signUp(userOm.getEmail(),
+        userOm.getPassword(),
+        userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()),
+        userOm.getDni());
+
     user.setUserRole(UserRole.COORDINATOR);
-    personalManagementService.signUp(targetUser);
-    targetUser.setUserRole(UserRole.MANAGER);
+
+    User targetUser = personalManagementService.signUp(targetUserOm.getEmail(),
+        targetUserOm.getPassword(),
+        targetUserOm.getFirstName(),
+        targetUserOm.getLastName(),
+        String.valueOf(targetUserOm.getPhoneNumber()),
+        targetUserOm.getDni());
+
+    targetUserOm.setUserRole(UserRole.MANAGER);
 
     personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
 
@@ -188,12 +227,25 @@ class UserServiceImplTest extends IntegrationTest {
   void giveUsersWithHigherRole_whenUpdateHigherRole_thenUpdateRolSuccessfully() throws DuplicateInstanceException,
       InstanceNotFoundException, InsufficientRolePermissionException {
     int totalUsers = 2;
-    List<User> userList = UserOM.withRandomNames(totalUsers);
-    User user = userList.get(0);
-    User targetUser = userList.get(1);
-    personalManagementService.signUp(user);
+    List<User> usersOmList = UserOM.withRandomNames(totalUsers);
+    User userOm = usersOmList.get(0);
+    User targetUserOm = usersOmList.get(1);
+    User user = personalManagementService.signUp(userOm.getEmail(),
+        userOm.getPassword(),
+        userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()),
+        userOm.getDni());
+
     user.setUserRole(UserRole.COORDINATOR);
-    personalManagementService.signUp(targetUser);
+
+    User targetUser = personalManagementService.signUp(targetUserOm.getEmail(),
+        targetUserOm.getPassword(),
+        targetUserOm.getFirstName(),
+        targetUserOm.getLastName(),
+        String.valueOf(targetUserOm.getPhoneNumber()),
+        targetUserOm.getDni());
+
     targetUser.setUserRole(UserRole.MANAGER);
 
     personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR);
@@ -205,11 +257,21 @@ class UserServiceImplTest extends IntegrationTest {
   @Test
   void giveUserWithLessRole_whenUpdateRole_thenInsufficientRolePermissionException() throws DuplicateInstanceException {
     int totalUsers = 2;
-    List<User> userList = UserOM.withRandomNames(totalUsers);
-    User user = userList.get(0);
-    User targetUser = userList.get(1);
-    personalManagementService.signUp(user);
-    personalManagementService.signUp(targetUser);
+    List<User> usersOmList = UserOM.withRandomNames(totalUsers);
+    User userOm = usersOmList.get(0);
+    User targetUserOm = usersOmList.get(1);
+    User user = personalManagementService.signUp(userOm.getEmail(),
+        userOm.getPassword(),
+        userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()),
+        userOm.getDni());
+    User targetUser = personalManagementService.signUp(targetUserOm.getEmail(),
+        targetUserOm.getPassword(),
+        targetUserOm.getFirstName(),
+        targetUserOm.getLastName(),
+        String.valueOf(targetUserOm.getPhoneNumber()),
+        targetUserOm.getDni());
 
     Assertions.assertThrows(InsufficientRolePermissionException.class,
         () -> personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.MANAGER),
@@ -221,14 +283,26 @@ class UserServiceImplTest extends IntegrationTest {
   void giveUsersWithSameRole_whenUpdateLowerRole_thenUpdateRolSuccessfully() throws DuplicateInstanceException,
       InstanceNotFoundException, InsufficientRolePermissionException {
     int totalUsers = 2;
-    List<User> userList = UserOM.withRandomNames(totalUsers);
-    User user = userList.get(0);
-    User targetUser = userList.get(1);
+    List<User> usersOmList = UserOM.withRandomNames(totalUsers);
+    User userOm = usersOmList.get(0);
+    User targetUserOm = usersOmList.get(1);
+
+    User user = personalManagementService.signUp(userOm.getEmail(),
+        userOm.getPassword(),
+        userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()),
+        userOm.getDni());
+
+    User targetUser = personalManagementService.signUp(targetUserOm.getEmail(),
+        targetUserOm.getPassword(),
+        targetUserOm.getFirstName(),
+        targetUserOm.getLastName(),
+        String.valueOf(targetUserOm.getPhoneNumber()),
+        targetUserOm.getDni());
+
     user.setUserRole(UserRole.MANAGER);
     targetUser.setUserRole(UserRole.MANAGER);
-    personalManagementService.signUp(user);
-    personalManagementService.signUp(targetUser);
-
     personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
 
     Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(),
@@ -240,13 +314,25 @@ class UserServiceImplTest extends IntegrationTest {
   void giveUsersWithSameRole_whenUpdateHigherRole_thenInsufficientRolePermissionException()
       throws DuplicateInstanceException {
     int totalUsers = 2;
-    List<User> userList = UserOM.withRandomNames(totalUsers);
-    User user = userList.get(0);
-    User targetUser = userList.get(1);
+    List<User> usersOmList = UserOM.withRandomNames(totalUsers);
+    User userOm = usersOmList.get(0);
+    User targetUserOm = usersOmList.get(1);
+
+    User user = personalManagementService.signUp(userOm.getEmail(),
+        userOm.getPassword(),
+        userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()),
+        userOm.getDni());
+    User targetUser = personalManagementService.signUp(targetUserOm.getEmail(),
+        targetUserOm.getPassword(),
+        targetUserOm.getFirstName(),
+        targetUserOm.getLastName(),
+        String.valueOf(targetUserOm.getPhoneNumber()),
+        targetUserOm.getDni());
+
     user.setUserRole(UserRole.MANAGER);
     targetUser.setUserRole(UserRole.MANAGER);
-    personalManagementService.signUp(user);
-    personalManagementService.signUp(targetUser);
 
     Assertions.assertThrows(InsufficientRolePermissionException.class,
         () -> personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR),

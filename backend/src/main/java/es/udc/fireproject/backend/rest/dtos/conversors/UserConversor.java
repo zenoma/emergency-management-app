@@ -17,23 +17,11 @@ public class UserConversor {
       teamId = user.getTeam().getId();
     }
 
-    return new UserDto(user.getId(),
-        user.getEmail(),
-        user.getFirstName(),
-        user.getLastName(),
-        user.getDni(),
-        user.getPhoneNumber(),
-        user.getUserRole(),
-        teamId);
+    return new UserDto();
   }
 
   public static User toUser(UserDto userDto) {
-    return new User(userDto.getEmail(),
-        userDto.getPassword(),
-        userDto.getFirstName(),
-        userDto.getLastName(),
-        userDto.getDni(),
-        userDto.getPhoneNumber());
+    return new User();
   }
 
   public static AuthenticatedUserDto toAuthenticatedUserDto(String serviceToken, User user) {

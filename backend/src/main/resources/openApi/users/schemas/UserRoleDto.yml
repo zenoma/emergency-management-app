@@ -1,0 +1,8 @@
+type: object
+properties:
+  userRole:
+    type: string
+    description:
+      "Valor del enum UserRole (ej: ADMIN, USER, ...)"
+required:
+  - userRole

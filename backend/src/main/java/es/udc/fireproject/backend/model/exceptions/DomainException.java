@@ -1,15 +1,15 @@
 package es.udc.fireproject.backend.model.exceptions;
 
-public class EntityException extends Exception {
+public class DomainException extends Exception {
 
   private String name;
   private String id;
 
-  protected EntityException(String message) {
+  protected DomainException(String message) {
     super(message);
   }
 
-  public EntityException(String name, String id) {
+  public DomainException(String name, String id) {
     this.name = name;
     this.id = id;
   }
