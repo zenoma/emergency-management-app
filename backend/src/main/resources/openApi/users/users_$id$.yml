@@ -17,7 +17,7 @@ put:
     content:
       application/json:
         schema:
-          $ref: './schemas/responses/UserDto.yml'
+          $ref: './schemas/requests/UserUpdateRequestDto.yml'
   responses:
     '200':
       description: Usuario actualizado

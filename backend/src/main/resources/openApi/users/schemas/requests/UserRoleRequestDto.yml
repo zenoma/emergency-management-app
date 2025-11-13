@@ -1,8 +1,8 @@
 type: object
+required:
+  - userRole
 properties:
   userRole:
     type: string
-    description:
-      "Valor del enum UserRole (ej: ADMIN, USER, ...)"
-required:
-  - userRole
+    enum: [ COORDINATOR, MANAGER, USER ]
+

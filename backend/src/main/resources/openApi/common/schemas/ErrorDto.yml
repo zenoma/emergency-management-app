@@ -1,11 +1,22 @@
 type: object
+description: Objeto que representa un error genérico o una lista de errores de validación.
+required:
+  - errorMessage
 properties:
+  errorMessage:
+    type: string
+    description: Mensaje de error general (por ejemplo, para errores no relacionados con validaciones de campos).
+    example: "El recurso solicitado no existe."
   fieldErrors:
     type: array
+    description: Lista de errores específicos de validación de campos.
     items:
-      type: object
-      properties:
-        fieldName:
-          type: string
-        message:
-          type: string
+      $ref: './FieldErrorDto.yml'
+
+example:
+  errorMessage: "Validación fallida."
+  fieldErrors:
+    - fieldName: "nombre"
+      message: "El nombre no puede estar vacío."
+    - fieldName: "organizationId"
+      message: "El valor debe ser numérico."

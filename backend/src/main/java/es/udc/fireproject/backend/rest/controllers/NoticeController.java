@@ -8,8 +8,8 @@ import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
 import es.udc.fireproject.backend.model.services.notice.NoticeService;
-import es.udc.fireproject.backend.rest.common.ErrorsDto;
 import es.udc.fireproject.backend.rest.common.FileUploadUtil;
+import es.udc.fireproject.backend.rest.dtos.ErrorDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeStatusDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.NoticeConversor;
@@ -57,47 +57,47 @@ public class NoticeController {
   @ExceptionHandler(ImageAlreadyUploadedException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorsDto handleImageAlreadyUploadedException(ImageAlreadyUploadedException exception, Locale locale) {
+  public ErrorDto handleImageAlreadyUploadedException(ImageAlreadyUploadedException exception, Locale locale) {
 
     String errorMessage = messageSource.getMessage(IMAGE_ALREADY_UPLOADED_EXCEPTION_CODE,
         new Object[]{exception.getId()}, IMAGE_ALREADY_UPLOADED_EXCEPTION_CODE, locale);
 
-    return new ErrorsDto(errorMessage);
+    return new ErrorDto(errorMessage);
   }
 
   @ExceptionHandler(NoticeCheckStatusException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorsDto handleNoticeCheckStatusException(NoticeCheckStatusException exception, Locale locale) {
+  public ErrorDto handleNoticeCheckStatusException(NoticeCheckStatusException exception, Locale locale) {
 
     String errorMessage = messageSource.getMessage(NOTICE_CHECK_STATUS_EXCEPTION_CODE,
         new Object[]{exception.getId(), exception.getStatus()}, NOTICE_CHECK_STATUS_EXCEPTION_CODE, locale);
 
-    return new ErrorsDto(errorMessage);
+    return new ErrorDto(errorMessage);
 
   }
 
   @ExceptionHandler(NoticeUpdateStatusException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorsDto handleNoticeUpdateStatusException(NoticeUpdateStatusException exception, Locale locale) {
+  public ErrorDto handleNoticeUpdateStatusException(NoticeUpdateStatusException exception, Locale locale) {
 
     String errorMessage = messageSource.getMessage(NOTICE_UPDATE_STATUS_EXCEPTION_CODE,
         new Object[]{exception.getId(), exception.getStatus()}, NOTICE_UPDATE_STATUS_EXCEPTION_CODE, locale);
 
-    return new ErrorsDto(errorMessage);
+    return new ErrorDto(errorMessage);
 
   }
 
   @ExceptionHandler(NoticeDeleteStatusException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorsDto handleNoticeDeleteStatusException(NoticeDeleteStatusException exception, Locale locale) {
+  public ErrorDto handleNoticeDeleteStatusException(NoticeDeleteStatusException exception, Locale locale) {
 
     String errorMessage = messageSource.getMessage(NOTICE_DELETE_STATUS_EXCEPTION_CODE,
         new Object[]{exception.getId(), exception.getStatus()}, NOTICE_DELETE_STATUS_EXCEPTION_CODE, locale);
 
-    return new ErrorsDto(errorMessage);
+    return new ErrorDto(errorMessage);
 
   }
 

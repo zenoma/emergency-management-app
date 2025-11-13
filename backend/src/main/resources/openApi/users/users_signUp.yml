@@ -8,7 +8,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: './schemas/requests/RequestUserDto.yml'
+          $ref: './schemas/requests/UserSignUpRequestDto.yml'
   responses:
     '201':
       description: Created

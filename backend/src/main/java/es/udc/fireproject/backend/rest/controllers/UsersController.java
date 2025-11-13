@@ -10,14 +10,14 @@ import es.udc.fireproject.backend.rest.config.JwtUtils;
 import es.udc.fireproject.backend.rest.dtos.AuthenticatedUserDto;
 import es.udc.fireproject.backend.rest.dtos.ChangePasswordParamsDto;
 import es.udc.fireproject.backend.rest.dtos.LoginParamsDto;
-import es.udc.fireproject.backend.rest.dtos.RequestUserDto;
 import es.udc.fireproject.backend.rest.dtos.UserDto;
 import es.udc.fireproject.backend.rest.dtos.UserRoleRequestDto;
+import es.udc.fireproject.backend.rest.dtos.UserSignUpRequestDto;
+import es.udc.fireproject.backend.rest.dtos.UserUpdateRequestDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.UserConversor;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -51,14 +51,14 @@ public class UsersController implements UsersApi {
   }
 
   @Override
-  public ResponseEntity<AuthenticatedUserDto> postUsersSignUp(RequestUserDto userDto) {
+  public ResponseEntity<AuthenticatedUserDto> postUsersSignUp(UserSignUpRequestDto userSignUpRequestDto) {
 
-    final User user = personalManagementService.signUp(userDto.getEmail(),
-        userDto.getPassword(),
-        userDto.getFirstName(),
-        userDto.getLastName(),
-        userDto.getPhoneNumber(),
-        userDto.getDni());
+    final User user = personalManagementService.signUp(userSignUpRequestDto.getEmail(),
+        userSignUpRequestDto.getPassword(),
+        userSignUpRequestDto.getFirstName(),
+        userSignUpRequestDto.getLastName(),
+        userSignUpRequestDto.getPhoneNumber(),
+        userSignUpRequestDto.getDni());
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest().path("/{id}")
@@ -93,7 +93,7 @@ public class UsersController implements UsersApi {
   }
 
   @Override
-  public ResponseEntity<UserDto> putUser(Long id, UserDto userDto) {
+  public ResponseEntity<UserDto> putUser(Long id, UserUpdateRequestDto userUpdateRequestDto) {
     final Optional<JwtInfo> jwtInfo = JwtUtils.getJwtInfo();
 
     if (jwtInfo.isEmpty()) {
@@ -107,8 +107,10 @@ public class UsersController implements UsersApi {
     }
 
     return ResponseEntity.ok(UserConversor.toUserDto(
-        personalManagementService.updateProfile(id, userDto.getFirstName(), userDto.getLastName(),
-            userDto.getEmail(), Integer.valueOf(userDto.getPhoneNumber()), userDto.getDni())));
+        personalManagementService.updateProfile(id, userUpdateRequestDto.getFirstName(),
+            userUpdateRequestDto.getLastName(),
+            userUpdateRequestDto.getEmail(), Integer.valueOf(userUpdateRequestDto.getPhoneNumber()),
+            userUpdateRequestDto.getDni())));
 
   }
 
@@ -146,7 +148,7 @@ public class UsersController implements UsersApi {
 
     UserRole userRole;
     try {
-      userRole = UserRole.valueOf(userRoleRequestDto.getUserRole().toUpperCase(Locale.ROOT));
+      userRole = UserRole.valueOf(userRoleRequestDto.getUserRole().toString());
     } catch (IllegalArgumentException ex) {
       throw new IllegalArgumentException("userRole");
     }
