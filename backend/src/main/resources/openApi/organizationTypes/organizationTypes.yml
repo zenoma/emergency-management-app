@@ -1,0 +1,35 @@
+get:
+  summary: Lista de tipos de organizaciones
+  operationId: getOrganizationsType
+  tags:
+    - OrganizationManagement
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/OrganizationTypeResponseDto.yml'
+
+post:
+  summary: Crear nueva organización
+  operationId: postOrganization
+  tags:
+    - OrganizationManagement
+  security:
+    - bearerAuth: [ ]
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/OrganizationTypeRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/OrganizationTypeResponseDto.yml'

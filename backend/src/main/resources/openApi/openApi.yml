@@ -53,3 +53,8 @@ paths:
   /organizations/{id}:
     $ref: './organizations/organizations_$id$.yml'
 
+
+  /organizationTypes:
+    $ref: './organizationTypes/organizationTypes.yml'
+  /organizationTypes/{id}:
+    $ref: './organizationTypes/organizationTypes_$id$.yml'
