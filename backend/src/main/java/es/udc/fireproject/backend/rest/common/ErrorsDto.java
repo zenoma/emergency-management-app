@@ -4,11 +4,11 @@ import java.util.List;
 
 public class ErrorsDto {
 
-  private String globalError;
+  private String errorMessage;
   private List<FieldErrorDto> fieldErrors;
 
-  public ErrorsDto(String globalError) {
-    this.globalError = globalError;
+  public ErrorsDto(String errorMessage) {
+    this.errorMessage = errorMessage;
   }
 
   public ErrorsDto(List<FieldErrorDto> fieldErrors) {
@@ -17,12 +17,12 @@ public class ErrorsDto {
 
   }
 
-  public String getGlobalError() {
-    return globalError;
+  public String getErrorMessage() {
+    return errorMessage;
   }
 
-  public void setGlobalError(String globalError) {
-    this.globalError = globalError;
+  public void setErrorMessage(String errorMessage) {
+    this.errorMessage = errorMessage;
   }
 
   public List<FieldErrorDto> getFieldErrors() {

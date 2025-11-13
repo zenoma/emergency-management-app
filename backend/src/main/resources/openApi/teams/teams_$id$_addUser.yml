@@ -1,0 +1,23 @@
+post:
+  summary: Añadir usuario a equipo por ID
+  operationId: postAddUserToTeamById
+  tags:
+    - TeamManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/TeamAddDeleteUserRequestDto.yml'
+  responses:
+    '204':
+      description: Usuario añadido al equipo

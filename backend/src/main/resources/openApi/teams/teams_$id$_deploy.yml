@@ -1,0 +1,27 @@
+post:
+  summary: Desplegar un equipo en un cuadrante por ID
+  operationId: postTeamDeployById
+  tags:
+    - TeamManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/TeamQuadrantRequestDto.yml'
+  responses:
+    '200':
+      description: Equipo desplegado
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/TeamResponseDto.yml'

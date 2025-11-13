@@ -1,12 +1,12 @@
 meta {
-  name: deleteById
+  name: Get my team
   type: http
-  seq: 3
+  seq: 14
 }
 
-delete {
-  url: {{base_url}}/teams/1
-  body: json
+get {
+  url: {{base_url}}/teams/myTeam
+  body: none
   auth: inherit
 }
 

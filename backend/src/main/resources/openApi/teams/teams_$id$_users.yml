@@ -1,0 +1,23 @@
+get:
+  summary: Obtener usuarios de un equipo por ID
+  operationId: getUsersOfTeamById
+  tags:
+    - TeamManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Ok
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../users/schemas/responses/UserDto.yml'

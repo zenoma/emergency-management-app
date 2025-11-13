@@ -15,7 +15,7 @@ tags:
   - name: UserManagement
     description: Operations related to users management
 paths:
-  /users/:
+  /users:
     $ref: './users/users.yml'
   /users/signUp:
     $ref: './users/users_signUp.yml'
@@ -58,3 +58,22 @@ paths:
     $ref: './organizationTypes/organizationTypes.yml'
   /organizationTypes/{id}:
     $ref: './organizationTypes/organizationTypes_$id$.yml'
+
+  /teams:
+    $ref: './teams/teams.yml'
+  /teams/active:
+    $ref: './teams/teams_active.yml'
+  /teams/myTeam:
+    $ref: './teams/teams_myTeam.yml'
+  /teams/{id}:
+    $ref: './teams/teams_$id$.yml'
+  /teams/{id}/addUser:
+    $ref: './teams/teams_$id$_addUser.yml'
+  /teams/{id}/deleteUser:
+    $ref: './teams/teams_$id$_deleteUser.yml'
+  /teams/{id}/users:
+    $ref: './teams/teams_$id$_users.yml'
+  /teams/{id}/deploy:
+    $ref: './teams/teams_$id$_deploy.yml'
+  /teams/{id}/retract:
+    $ref: './teams/teams_$id$_retract.yml'

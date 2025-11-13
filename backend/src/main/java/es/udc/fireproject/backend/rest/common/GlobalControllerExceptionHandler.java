@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,16 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalControllerExceptionHandler {
 
+  private static final String GLOBAL_ERROR_EXCEPTION = "project.exceptions.GlobalErrorException";
   private static final String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+  private static final String BAD_REQUEST_EXCEPTION_CODE = "project.exceptions.BadRequestException";
+  private static final String RESOURCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.ResourceNotFoundException";
   private static final String DUPLICATE_INSTANCE_EXCEPTION_CODE = "project.exceptions.DuplicateInstanceException";
   private static final String
       PERMISSION_EXCEPTION_CODE = "project.exceptions.PermissionException";
@@ -32,7 +37,18 @@ public class GlobalControllerExceptionHandler {
   private static final String ALREADY_DISMANTLED_EXCEPTION_CODE = "project.exceptions.AlreadyDismantledException";
   private static final String ALREADY_EXIST_EXCEPTION_CODE = "project.exceptions.AlreadyExistException";
   private static final String EXTINGUISHED_FIRE_EXCEPTION_CODE = "project.exceptions.ExtinguishedFireException";
+
+
   private final MessageSource messageSource;
+
+  @ExceptionHandler(Exception.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseBody
+  public ErrorsDto handleUnhandledException(Exception exception, Locale locale) {
+    String errorMessage = messageSource.getMessage(GLOBAL_ERROR_EXCEPTION, null, null, locale);
+
+    return new ErrorsDto(errorMessage);
+  }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -43,6 +59,33 @@ public class GlobalControllerExceptionHandler {
         .map(error -> new FieldErrorDto(error.getField(), error.getDefaultMessage())).collect(Collectors.toList());
 
     return new ErrorsDto(fieldErrors);
+
+  }
+
+  @ExceptionHandler(NoResourceFoundException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorsDto handleNoResourceFoundException(NoResourceFoundException exception, Locale locale) {
+
+    String nameMessage = messageSource.getMessage(exception.getMessage(), null, null, null);
+    String errorMessage = messageSource.getMessage(RESOURCE_NOT_FOUND_EXCEPTION_CODE,
+        new Object[]{nameMessage, exception.getBody()}, RESOURCE_NOT_FOUND_EXCEPTION_CODE, locale);
+
+    return new ErrorsDto(errorMessage);
+
+  }
+
+
+  @ExceptionHandler(BadRequestException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorsDto handleNoResourceFoundException(BadRequestException exception, Locale locale) {
+
+    String nameMessage = messageSource.getMessage(exception.getMessage(), null, null, null);
+    String errorMessage = messageSource.getMessage(BAD_REQUEST_EXCEPTION_CODE,
+        new Object[]{nameMessage, exception.getMessage()}, BAD_REQUEST_EXCEPTION_CODE, locale);
+
+    return new ErrorsDto(errorMessage);
 
   }
 
