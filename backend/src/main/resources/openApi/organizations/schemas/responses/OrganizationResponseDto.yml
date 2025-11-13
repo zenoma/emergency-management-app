@@ -1,0 +1,35 @@
+type: object
+required:
+  - id
+  - code
+  - name
+  - headquartersAddress
+  - lon
+  - lat
+  - createdAt
+  - organizationTypeId
+  - organizationTypeName
+properties:
+  id:
+    type: integer
+    format: int64
+  code:
+    type: string
+  name:
+    type: string
+  headquartersAddress:
+    type: string
+  lon:
+    type: number
+    format: double
+  lat:
+    type: number
+    format: double
+  createdAt:
+    type: string
+    format: localDateTime
+  organizationTypeId:
+    type: integer
+    format: int64
+  organizationTypeName:
+    type: string

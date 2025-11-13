@@ -5,7 +5,7 @@ import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
-import es.udc.fireproject.backend.rest.dtos.VehicleDto;
+import es.udc.fireproject.backend.rest.dtos.VehicleResponseDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.VehicleConversor;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class VehicleController {
   FireManagementService fireManagementService;
 
   @PostMapping("")
-  public VehicleDto create(@RequestAttribute Long userId,
+  public VehicleResponseDto create(@RequestAttribute Long userId,
       @RequestBody Map<String, String> jsonParams)
       throws InstanceNotFoundException {
 
@@ -50,55 +50,56 @@ public class VehicleController {
   }
 
   @PutMapping("/{id}")
-  public void update(@RequestAttribute Long userId, @PathVariable Long id, @RequestBody VehicleDto vehicleDto)
+  public void update(@RequestAttribute Long userId, @PathVariable Long id,
+      @RequestBody VehicleResponseDto vehicleResponseDto)
       throws InstanceNotFoundException, AlreadyDismantledException {
-    personalManagementService.updateVehicle(id, vehicleDto.getVehiclePlate(), vehicleDto.getType());
+    personalManagementService.updateVehicle(id, vehicleResponseDto.getVehiclePlate(), vehicleResponseDto.getType());
   }
 
   @GetMapping("/{id}")
-  public VehicleDto findById(@RequestAttribute Long userId, @PathVariable Long id)
+  public VehicleResponseDto findById(@RequestAttribute Long userId, @PathVariable Long id)
       throws InstanceNotFoundException {
     return VehicleConversor.toVehicleDto(personalManagementService.findVehicleById(id));
   }
 
   @GetMapping("")
-  public List<VehicleDto> findAll(@RequestAttribute Long userId,
+  public List<VehicleResponseDto> findAll(@RequestAttribute Long userId,
       @RequestParam(required = false) Long organizationId) {
 
-    List<VehicleDto> vehicleDtos = new ArrayList<>();
+    List<VehicleResponseDto> vehicleResponseDtos = new ArrayList<>();
 
     if (organizationId != null) {
       for (Vehicle vehicle : personalManagementService.findVehiclesByOrganizationId(organizationId)) {
-        vehicleDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
       }
     } else {
       for (Vehicle vehicle : personalManagementService.findAllVehicles()) {
-        vehicleDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
       }
     }
-    return vehicleDtos;
+    return vehicleResponseDtos;
   }
 
   @GetMapping("/active")
-  public List<VehicleDto> findAllActiveByOrganizationId(@RequestAttribute Long userId,
+  public List<VehicleResponseDto> findAllActiveByOrganizationId(@RequestAttribute Long userId,
       @RequestParam(required = false) Long organizationId) {
 
-    List<VehicleDto> vehicleDtos = new ArrayList<>();
+    List<VehicleResponseDto> vehicleResponseDtos = new ArrayList<>();
 
     if (organizationId != null) {
       for (Vehicle vehicle : personalManagementService.findActiveVehiclesByOrganizationId(organizationId)) {
-        vehicleDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
       }
     } else {
       for (Vehicle vehicle : personalManagementService.findAllActiveVehicles()) {
-        vehicleDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
       }
     }
-    return vehicleDtos;
+    return vehicleResponseDtos;
   }
 
   @PostMapping("/{id}/deploy")
-  public VehicleDto deploy(@RequestAttribute Long userId, @PathVariable Long id,
+  public VehicleResponseDto deploy(@RequestAttribute Long userId, @PathVariable Long id,
       @RequestBody Map<String, String> jsonParams)
       throws InstanceNotFoundException, AlreadyDismantledException {
 
@@ -107,7 +108,7 @@ public class VehicleController {
   }
 
   @PostMapping("/{id}/retract")
-  public VehicleDto retract(@RequestAttribute Long userId, @PathVariable Long id)
+  public VehicleResponseDto retract(@RequestAttribute Long userId, @PathVariable Long id)
       throws InstanceNotFoundException, AlreadyDismantledException {
 
     return VehicleConversor.toVehicleDto(fireManagementService.retractVehicle(id));

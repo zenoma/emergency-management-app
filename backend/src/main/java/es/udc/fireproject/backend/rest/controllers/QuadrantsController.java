@@ -1,22 +1,16 @@
 package es.udc.fireproject.backend.rest.controllers;
 
 import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
-import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
+import es.udc.fireproject.backend.rest.dtos.LinkFireRequestDto;
 import es.udc.fireproject.backend.rest.dtos.QuadrantDto;
 import es.udc.fireproject.backend.rest.dtos.QuadrantInfoDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.QuadrantConversor;
 import es.udc.fireproject.backend.rest.dtos.conversors.QuadrantInfoConversor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -42,31 +36,34 @@ public class QuadrantsController implements QuadrantsApi {
     return ResponseEntity.ok(quadrantDtos);
   }
 
-  @GetMapping("/{gid}")
-  public QuadrantInfoDto findQuadrantById(@PathVariable Integer gid)
-      throws InstanceNotFoundException {
-    return QuadrantInfoConversor.toQuadrantDto(fireManagementService.findQuadrantById(gid));
+  @Override
+  public ResponseEntity<QuadrantInfoDto> getQuadrantById(Integer id) {
+    final QuadrantInfoDto quadrantInfoDto = QuadrantInfoConversor.toQuadrantDto(
+        fireManagementService.findQuadrantById(id));
+
+    return ResponseEntity.ok(quadrantInfoDto);
   }
 
 
-  @GetMapping("/active")
-  public List<QuadrantDto> findQuadrantsWithActiveFire() {
+  @Override
+  public ResponseEntity<List<QuadrantDto>> getQuadrantsWithActiveFire() {
     List<QuadrantDto> quadrantDtos = new ArrayList<>();
 
     for (Quadrant quadrant : fireManagementService.findQuadrantsWithActiveFire()) {
       quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
     }
 
-    return quadrantDtos;
+    return ResponseEntity.ok(quadrantDtos);
   }
 
-  @PostMapping("/{gid}/linkFire")
-  public void linkFire(@RequestAttribute Long userId, @PathVariable Integer gid,
-      @RequestBody Map<String, String> jsonParams)
-      throws InstanceNotFoundException {
+  @Override
+  public ResponseEntity<QuadrantInfoDto> postQuadrantLinkFire(Integer id, LinkFireRequestDto linkFireRequestDto) {
 
-    fireManagementService.linkFire(gid, Long.valueOf(jsonParams.get("fireId")));
+    Quadrant quadrant = fireManagementService.linkFire(id, linkFireRequestDto.getFireId());
+
+    QuadrantInfoDto quadrantInfoDto = QuadrantInfoConversor.toQuadrantDtoWithoutTeamsAndVehicles(quadrant);
+
+    return ResponseEntity.ok(quadrantInfoDto);
   }
-
 
 }

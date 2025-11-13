@@ -1,0 +1,26 @@
+type: object
+required:
+  - id
+  - escala
+  - nombre
+  - coordinates
+properties:
+  id:
+    type: integer
+    format: int32
+  escala:
+    type: string
+  nombre:
+    type: string
+  coordinates:
+    type: array
+    items:
+      $ref: "../../../common/schemas/CoordinatesDto.yml"
+  teamList:
+    type: array
+    items:
+      $ref: "../../../teams/schemas/responses/TeamResponseDto.yml"
+  vehicleList:
+    type: array
+    items:
+      $ref: "../../../vehicles/schemas/responses/VehicleResponseDto.yml"

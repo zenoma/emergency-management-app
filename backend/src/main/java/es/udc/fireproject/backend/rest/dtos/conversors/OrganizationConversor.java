@@ -2,7 +2,7 @@ package es.udc.fireproject.backend.rest.dtos.conversors;
 
 import es.udc.fireproject.backend.model.entities.organization.Organization;
 import es.udc.fireproject.backend.model.entities.organization.OrganizationType;
-import es.udc.fireproject.backend.rest.dtos.OrganizationDto;
+import es.udc.fireproject.backend.rest.dtos.OrganizationResponseDto;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -14,27 +14,29 @@ public class OrganizationConversor {
 
   }
 
-  public static Organization toOrganization(OrganizationDto organizationDto) {
-    OrganizationType organizationType = new OrganizationType(organizationDto.getOrganizationTypeId(), "");
+  public static Organization toOrganization(OrganizationResponseDto organizationResponseDto) {
+    OrganizationType organizationType = new OrganizationType(organizationResponseDto.getOrganizationTypeId(), "");
     GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 25829);
-    Coordinate coordinate = new Coordinate(organizationDto.getLat(), organizationDto.getLon());
+    Coordinate coordinate = new Coordinate(organizationResponseDto.getLat(), organizationResponseDto.getLon());
 
-    return new Organization(organizationDto.getCode(),
-        organizationDto.getName(),
-        organizationDto.getHeadquartersAddress(),
+    return new Organization(organizationResponseDto.getCode(),
+        organizationResponseDto.getName(),
+        organizationResponseDto.getHeadquartersAddress(),
         geometryFactory.createPoint(coordinate),
         organizationType);
   }
 
 
-  public static OrganizationDto toOrganizationDto(Organization organization) {
-    return new OrganizationDto(organization.getId(),
+  public static OrganizationResponseDto toOrganizationDto(Organization organization) {
+    return new OrganizationResponseDto(
+        organization.getId(),
         organization.getCode(),
         organization.getName(),
         organization.getHeadquartersAddress(),
         organization.getLocation().getX(),
         organization.getLocation().getY(),
         organization.getCreatedAt(),
+        organization.getOrganizationType().getId(),
         organization.getOrganizationType().getName());
 
   }

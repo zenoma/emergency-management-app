@@ -32,4 +32,9 @@ paths:
 
   /quadrants:
     $ref: './quadrants/quadrants.yml'
-
+  /quadrants/active:
+    $ref: './quadrants/quadrants_active.yml'
+  /quadrants/{id}:
+    $ref: './quadrants/quadrants_$id$.yml'
+  /quadrants/{id}/linkFire:
+    $ref: './quadrants/quadrants_$id$_linkFire.yml'

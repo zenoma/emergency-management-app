@@ -4,8 +4,8 @@ import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.fireproject.backend.model.entities.team.Team;
 import es.udc.fireproject.backend.model.entities.vehicle.Vehicle;
 import es.udc.fireproject.backend.rest.dtos.QuadrantInfoDto;
-import es.udc.fireproject.backend.rest.dtos.TeamDto;
-import es.udc.fireproject.backend.rest.dtos.VehicleDto;
+import es.udc.fireproject.backend.rest.dtos.TeamResponseDto;
+import es.udc.fireproject.backend.rest.dtos.VehicleResponseDto;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,25 +17,28 @@ public class QuadrantInfoConversor {
   }
 
   public static QuadrantInfoDto toQuadrantDto(Quadrant quadrant) {
-    List<TeamDto> teamDtoList = new ArrayList<>();
+    List<TeamResponseDto> teamResponseDtos = new ArrayList<>();
     if (quadrant.getTeamList() != null && !quadrant.getTeamList().isEmpty()) {
       for (Team team : quadrant.getTeamList()) {
-        teamDtoList.add(TeamConversor.toTeamDtoWithoutQuadrantInfo(team));
+        teamResponseDtos.add(TeamConversor.toTeamDtoWithoutQuadrantInfo(team));
       }
     }
-    List<VehicleDto> vehicleDtoList = new ArrayList<>();
+    List<VehicleResponseDto> vehicleResponseDtos = new ArrayList<>();
     if (quadrant.getVehicleList() != null && !quadrant.getVehicleList().isEmpty()) {
       for (Vehicle vehicle : quadrant.getVehicleList()) {
-        vehicleDtoList.add(VehicleConversor.toVehicleDtoWithoutQuadrantInfo(vehicle));
+        vehicleResponseDtos.add(VehicleConversor.toVehicleDtoWithoutQuadrantInfo(vehicle));
       }
     }
 
-    return new QuadrantInfoDto(quadrant.getId(),
+    QuadrantInfoDto quadrantInfoDto = new QuadrantInfoDto(quadrant.getId(),
         quadrant.getEscala(),
         quadrant.getNombre(),
-        teamDtoList,
-        vehicleDtoList,
         new ArrayList(Arrays.asList(quadrant.getGeom().getCoordinates())));
+
+    quadrantInfoDto.setTeamList(teamResponseDtos);
+    quadrantInfoDto.setVehicleList(vehicleResponseDtos);
+
+    return quadrantInfoDto;
   }
 
   public static QuadrantInfoDto toQuadrantDtoWithoutTeamsAndVehicles(Quadrant quadrant) {

@@ -7,7 +7,6 @@
     <option name="SPRING_BOOT_MAIN_CLASS" value="es.udc.fireproject.backend.Application" />
     <method v="2">
       <option name="Make" enabled="true" />
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="run clean install" run_configuration_type="MavenRunConfiguration" />
     </method>
   </configuration>
 </component>

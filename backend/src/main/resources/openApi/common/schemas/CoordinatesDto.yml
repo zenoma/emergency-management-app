@@ -1,13 +1,12 @@
-Coordinates:
-  type: object
-  properties:
-    x:
-      type: number
-      format: double
-    y:
-      type: number
-      format: double
-    z:
-      type: number
-      format: double
-      nullable: true
+type: object
+properties:
+  x:
+    type: number
+    format: double
+  y:
+    type: number
+    format: double
+  z:
+    type: number
+    format: double
+    nullable: true

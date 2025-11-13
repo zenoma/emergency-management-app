@@ -1,0 +1,25 @@
+post:
+  summary: Información de un cuadrante específico
+  operationId: PostQuadrantLinkFire
+  tags:
+    - QuadrantManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/LinkFireRequestDto.yml'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/QuadrantInfoDto.yml'

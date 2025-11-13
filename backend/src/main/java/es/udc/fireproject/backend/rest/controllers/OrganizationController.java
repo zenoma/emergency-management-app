@@ -4,7 +4,7 @@ import es.udc.fireproject.backend.model.entities.organization.Organization;
 import es.udc.fireproject.backend.model.entities.organization.OrganizationType;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
-import es.udc.fireproject.backend.rest.dtos.OrganizationDto;
+import es.udc.fireproject.backend.rest.dtos.OrganizationResponseDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.OrganizationConversor;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,30 +29,30 @@ public class OrganizationController {
 
 
   @GetMapping("")
-  public List<OrganizationDto> findAll(@RequestAttribute Long userId,
+  public List<OrganizationResponseDto> findAll(@RequestAttribute Long userId,
       @RequestParam(required = false) String nameOrCode,
       @RequestParam(required = false) String organizationTypeName) {
 
-    List<OrganizationDto> organizationDtos = new ArrayList<>();
+    List<OrganizationResponseDto> organizationResponseDtos = new ArrayList<>();
     if (nameOrCode != null) {
       for (Organization organization : personalManagementService.findOrganizationByNameOrCode(nameOrCode)) {
-        organizationDtos.add(OrganizationConversor.toOrganizationDto(organization));
+        organizationResponseDtos.add(OrganizationConversor.toOrganizationDto(organization));
       }
     } else if (organizationTypeName != null) {
       for (Organization organization : personalManagementService.findOrganizationByOrganizationTypeName(
           organizationTypeName)) {
-        organizationDtos.add(OrganizationConversor.toOrganizationDto(organization));
+        organizationResponseDtos.add(OrganizationConversor.toOrganizationDto(organization));
       }
     } else {
       for (Organization organization : personalManagementService.findAllOrganizations()) {
-        organizationDtos.add(OrganizationConversor.toOrganizationDto(organization));
+        organizationResponseDtos.add(OrganizationConversor.toOrganizationDto(organization));
       }
     }
-    return organizationDtos;
+    return organizationResponseDtos;
   }
 
   @GetMapping("/{id}")
-  public OrganizationDto findById(@RequestAttribute Long userId, @PathVariable Long id)
+  public OrganizationResponseDto findById(@RequestAttribute Long userId, @PathVariable Long id)
       throws InstanceNotFoundException {
     return OrganizationConversor.toOrganizationDto(personalManagementService.findOrganizationById(id));
   }
@@ -64,11 +64,11 @@ public class OrganizationController {
   }
 
   @PostMapping("")
-  public OrganizationDto create(@RequestAttribute Long userId,
-      @RequestBody OrganizationDto organizationDto)
+  public OrganizationResponseDto create(@RequestAttribute Long userId,
+      @RequestBody OrganizationResponseDto organizationResponseDto)
       throws InstanceNotFoundException {
 
-    Organization organization = OrganizationConversor.toOrganization(organizationDto);
+    Organization organization = OrganizationConversor.toOrganization(organizationResponseDto);
 
     OrganizationType organizationType = personalManagementService.findOrganizationTypeById(
         organization.getOrganizationType().getId());
@@ -80,11 +80,11 @@ public class OrganizationController {
 
   @PutMapping("/{id}")
   public void update(@RequestAttribute Long userId,
-      @RequestBody OrganizationDto organizationDto,
+      @RequestBody OrganizationResponseDto organizationResponseDto,
       @PathVariable Long id)
       throws InstanceNotFoundException {
 
-    Organization organization = OrganizationConversor.toOrganization(organizationDto);
+    Organization organization = OrganizationConversor.toOrganization(organizationResponseDto);
 
     personalManagementService.updateOrganization(id, organization.getName(),
         organization.getCode(),

@@ -1,0 +1,17 @@
+get:
+  summary: Información de un cuadrante específico
+  operationId: getQuadrantById
+  tags:
+    - QuadrantManagement
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/QuadrantInfoDto.yml'

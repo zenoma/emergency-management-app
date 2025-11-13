@@ -15,7 +15,7 @@ public class TeamQuadrantLogDto extends BaseDto {
 
   private static final long serialVersionUID = -5703692848678170759L;
 
-  private TeamDto teamDto;
+  private TeamResponseDto teamResponseDto;
 
   private QuadrantInfoDto quadrantInfoDto;
 
@@ -28,9 +28,9 @@ public class TeamQuadrantLogDto extends BaseDto {
   public TeamQuadrantLogDto() {
   }
 
-  public TeamQuadrantLogDto(TeamDto teamDto, QuadrantInfoDto quadrantInfoDto, LocalDateTime deployAt,
+  public TeamQuadrantLogDto(TeamResponseDto teamResponseDto, QuadrantInfoDto quadrantInfoDto, LocalDateTime deployAt,
       LocalDateTime retractAt) {
-    this.teamDto = teamDto;
+    this.teamResponseDto = teamResponseDto;
     this.quadrantInfoDto = quadrantInfoDto;
     this.deployAt = deployAt;
     this.retractAt = retractAt;

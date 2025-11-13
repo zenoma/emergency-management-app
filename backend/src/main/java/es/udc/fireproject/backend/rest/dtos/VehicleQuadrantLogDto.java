@@ -15,7 +15,7 @@ public class VehicleQuadrantLogDto extends BaseDto {
 
   private static final long serialVersionUID = 7866765077374416159L;
 
-  private VehicleDto vehicleDto;
+  private VehicleResponseDto vehicleResponseDto;
 
   private QuadrantInfoDto quadrantInfoDto;
 
@@ -29,9 +29,10 @@ public class VehicleQuadrantLogDto extends BaseDto {
   public VehicleQuadrantLogDto() {
   }
 
-  public VehicleQuadrantLogDto(VehicleDto vehicleDto, QuadrantInfoDto quadrantInfoDto, LocalDateTime deployAt,
+  public VehicleQuadrantLogDto(VehicleResponseDto vehicleResponseDto, QuadrantInfoDto quadrantInfoDto,
+      LocalDateTime deployAt,
       LocalDateTime retractAt) {
-    this.vehicleDto = vehicleDto;
+    this.vehicleResponseDto = vehicleResponseDto;
     this.quadrantInfoDto = quadrantInfoDto;
     this.deployAt = deployAt;
     this.retractAt = retractAt;

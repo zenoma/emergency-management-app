@@ -1,0 +1,14 @@
+get:
+  summary: Lista cuadrantes activos
+  operationId: getQuadrantsWithActiveFire
+  tags:
+    - QuadrantManagement
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/QuadrantDto.yml'

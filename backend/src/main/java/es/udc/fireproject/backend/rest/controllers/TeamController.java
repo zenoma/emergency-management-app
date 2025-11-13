@@ -7,7 +7,7 @@ import es.udc.fireproject.backend.model.exceptions.AlreadyExistException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
-import es.udc.fireproject.backend.rest.dtos.TeamDto;
+import es.udc.fireproject.backend.rest.dtos.TeamResponseDto;
 import es.udc.fireproject.backend.rest.dtos.UserDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.TeamConversor;
 import es.udc.fireproject.backend.rest.dtos.conversors.UserConversor;
@@ -39,7 +39,7 @@ public class TeamController {
 
 
   @PostMapping("")
-  public TeamDto create(@RequestAttribute Long userId,
+  public TeamResponseDto create(@RequestAttribute Long userId,
       @RequestBody Map<String, String> jsonParams)
       throws InstanceNotFoundException, AlreadyExistException {
 
@@ -50,56 +50,56 @@ public class TeamController {
   }
 
   @GetMapping("")
-  public List<TeamDto> findAll(@RequestAttribute Long userId,
+  public List<TeamResponseDto> findAll(@RequestAttribute Long userId,
       @RequestParam(required = false) String code,
       @RequestParam(required = false) Long organizationId) {
 
-    List<TeamDto> teamDtoList = new ArrayList<>();
+    List<TeamResponseDto> teamResponseDtoList = new ArrayList<>();
 
     if (code != null) {
       for (Team team : personalManagementService.findTeamByCode(code)) {
-        teamDtoList.add(TeamConversor.toTeamDto(team));
+        teamResponseDtoList.add(TeamConversor.toTeamDto(team));
       }
     } else if (organizationId != null) {
       for (Team team : personalManagementService.findTeamsByOrganizationId(organizationId)) {
-        teamDtoList.add(TeamConversor.toTeamDto(team));
+        teamResponseDtoList.add(TeamConversor.toTeamDto(team));
       }
     } else {
       for (Team team : personalManagementService.findTeamByCode("")) {
-        teamDtoList.add(TeamConversor.toTeamDto(team));
+        teamResponseDtoList.add(TeamConversor.toTeamDto(team));
       }
     }
 
-    return teamDtoList;
+    return teamResponseDtoList;
   }
 
   @GetMapping("/active")
-  public List<TeamDto> findAllActiveByOrganizationId(@RequestAttribute Long userId,
+  public List<TeamResponseDto> findAllActiveByOrganizationId(@RequestAttribute Long userId,
       @RequestParam(required = false) Long organizationId) {
 
-    List<TeamDto> teamDtoList = new ArrayList<>();
+    List<TeamResponseDto> teamResponseDtoList = new ArrayList<>();
 
     if (organizationId != null) {
       for (Team team : personalManagementService.findActiveTeamsByOrganizationId(organizationId)) {
-        teamDtoList.add(TeamConversor.toTeamDto(team));
+        teamResponseDtoList.add(TeamConversor.toTeamDto(team));
       }
     } else {
       for (Team team : personalManagementService.findAllActiveTeams()) {
-        teamDtoList.add(TeamConversor.toTeamDto(team));
+        teamResponseDtoList.add(TeamConversor.toTeamDto(team));
       }
     }
 
-    return teamDtoList;
+    return teamResponseDtoList;
   }
 
   @GetMapping("/{id}")
-  public TeamDto findById(@RequestAttribute Long userId, @PathVariable Long id)
+  public TeamResponseDto findById(@RequestAttribute Long userId, @PathVariable Long id)
       throws InstanceNotFoundException {
     return TeamConversor.toTeamDto(personalManagementService.findTeamById(id));
   }
 
   @GetMapping("/myTeam")
-  public TeamDto findMyTeam(@RequestAttribute Long userId)
+  public TeamResponseDto findMyTeam(@RequestAttribute Long userId)
       throws InstanceNotFoundException {
     return TeamConversor.toTeamDto(personalManagementService.findTeamByUserId(userId));
   }
@@ -135,14 +135,14 @@ public class TeamController {
   }
 
   @PutMapping("/{id}")
-  public void update(@RequestAttribute Long userId, @PathVariable Long id, @RequestBody TeamDto teamDto)
+  public void update(@RequestAttribute Long userId, @PathVariable Long id, @RequestBody TeamResponseDto teamResponseDto)
       throws InstanceNotFoundException, AlreadyDismantledException {
-    personalManagementService.updateTeam(id, teamDto.getCode());
+    personalManagementService.updateTeam(id, teamResponseDto.getCode());
   }
 
 
   @PostMapping("/{id}/deploy")
-  public TeamDto deploy(@RequestAttribute Long userId, @PathVariable Long id,
+  public TeamResponseDto deploy(@RequestAttribute Long userId, @PathVariable Long id,
       @RequestBody Map<String, String> jsonParams)
       throws InstanceNotFoundException, AlreadyDismantledException {
 
@@ -150,7 +150,7 @@ public class TeamController {
   }
 
   @PostMapping("/{id}/retract")
-  public TeamDto retract(@RequestAttribute Long userId, @PathVariable Long id)
+  public TeamResponseDto retract(@RequestAttribute Long userId, @PathVariable Long id)
       throws InstanceNotFoundException, AlreadyDismantledException {
 
     return TeamConversor.toTeamDto(fireManagementService.retractTeam(id));

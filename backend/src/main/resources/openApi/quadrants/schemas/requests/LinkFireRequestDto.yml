@@ -1,0 +1,7 @@
+type: object
+required:
+  - fireId
+properties:
+  fireId:
+    type: integer
+    format: int64
