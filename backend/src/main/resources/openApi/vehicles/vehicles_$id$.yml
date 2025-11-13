@@ -1,0 +1,69 @@
+get:
+  summary: Información de un vehiculo por ID
+  operationId: getVehicleById
+  tags:
+    - VehicleManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/VehicleResponseDto.yml'
+
+
+delete:
+  summary: Eliminar un vehículo por ID
+  operationId: deleteVehicleById
+  tags:
+    - VehicleManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '204':
+      description: Borrado correctamente
+
+
+put:
+  summary: Actualizar un vehiculo por ID
+  operationId: putVehicleById
+  tags:
+    - VehicleManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/VehicleUpdateRequestDto.yml'
+  responses:
+    '201':
+      description: Vehiculo creado
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/VehicleResponseDto.yml'

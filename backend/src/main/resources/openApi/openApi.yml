@@ -77,3 +77,15 @@ paths:
     $ref: './teams/teams_$id$_deploy.yml'
   /teams/{id}/retract:
     $ref: './teams/teams_$id$_retract.yml'
+
+
+  /vehicles:
+    $ref: './vehicles/vehicles.yml'
+  /vehicles/active:
+    $ref: './vehicles/vehicles_active.yml'
+  /vehicles/{id}:
+    $ref: './vehicles/vehicles_$id$.yml'
+  /vehicles/{id}/deploy:
+    $ref: './vehicles/vehicles_$id$_deploy.yml'
+  /vehicles/{id}/retract:
+    $ref: './vehicles/vehicles_$id$_retract.yml'
