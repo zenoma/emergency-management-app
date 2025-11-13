@@ -12,7 +12,7 @@ import es.udc.fireproject.backend.rest.dtos.ChangePasswordParamsDto;
 import es.udc.fireproject.backend.rest.dtos.LoginParamsDto;
 import es.udc.fireproject.backend.rest.dtos.RequestUserDto;
 import es.udc.fireproject.backend.rest.dtos.UserDto;
-import es.udc.fireproject.backend.rest.dtos.UserRoleDto;
+import es.udc.fireproject.backend.rest.dtos.UserRoleRequestDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.UserConversor;
 import java.net.URI;
 import java.util.ArrayList;
@@ -134,7 +134,7 @@ public class UsersController implements UsersApi {
   }
 
   @Override
-  public ResponseEntity<Void> postUpdateUserRole(Long id, UserRoleDto userRoleDto) {
+  public ResponseEntity<Void> postUpdateUserRole(Long id, UserRoleRequestDto userRoleRequestDto) {
 
     final Optional<JwtInfo> jwtInfo = JwtUtils.getJwtInfo();
 
@@ -146,7 +146,7 @@ public class UsersController implements UsersApi {
 
     UserRole userRole;
     try {
-      userRole = UserRole.valueOf(userRoleDto.getUserRole().toUpperCase(Locale.ROOT));
+      userRole = UserRole.valueOf(userRoleRequestDto.getUserRole().toUpperCase(Locale.ROOT));
     } catch (IllegalArgumentException ex) {
       throw new IllegalArgumentException("userRole");
     }

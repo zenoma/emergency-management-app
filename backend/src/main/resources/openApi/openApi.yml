@@ -30,5 +30,3 @@ paths:
   /users/{id}/updateRole:
     $ref: './users/update-role.yml'
 
-security:
-  - bearerAuth: [ ]

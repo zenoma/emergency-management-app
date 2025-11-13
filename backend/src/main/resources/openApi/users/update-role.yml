@@ -17,7 +17,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: './schemas/UserRoleDto.yml'
+          $ref: './schemas/requests/UserRoleRequestDto.yml'
   responses:
     '204':
       description: No Content
