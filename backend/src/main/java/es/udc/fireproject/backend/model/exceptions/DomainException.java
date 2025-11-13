@@ -1,6 +1,6 @@
 package es.udc.fireproject.backend.model.exceptions;
 
-public class DomainException extends Exception {
+public class DomainException extends RuntimeException {
 
   private String name;
   private String id;

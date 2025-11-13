@@ -1,12 +1,8 @@
 type: object
 properties:
-  x:
+  lon:
     type: number
     format: double
-  y:
+  lat:
     type: number
     format: double
-  z:
-    type: number
-    format: double
-    nullable: true

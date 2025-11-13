@@ -1,4 +1,11 @@
 type: object
 properties:
-  message:
-    type: string
+  fieldErrors:
+    type: array
+    items:
+      type: object
+      properties:
+        fieldName:
+          type: string
+        message:
+          type: string

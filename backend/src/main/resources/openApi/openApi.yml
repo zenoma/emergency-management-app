@@ -38,3 +38,18 @@ paths:
     $ref: './quadrants/quadrants_$id$.yml'
   /quadrants/{id}/linkFire:
     $ref: './quadrants/quadrants_$id$_linkFire.yml'
+
+  /fires:
+    $ref: './fires/fires.yml'
+  /fires/{id}:
+    $ref: './fires/fires_$id$.yml'
+  /fires/{id}/extinguishQuadrant:
+    $ref: './fires/fires_$id$_extinguishQuadrant.yml'
+  /fires/{id}/extinguishFire:
+    $ref: './fires/fires_$id$_extinguishFire.yml'
+
+  /organizations:
+    $ref: './organizations/organizations.yml'
+  /organizations/{id}:
+    $ref: './organizations/organizations_$id$.yml'
+

@@ -147,7 +147,7 @@ public class FireManagementServiceImpl implements FireManagementService {
 
   @Override
   public Fire extinguishQuadrantByFireId(Long id, Integer quadrantId)
-      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyDismantledException {
+      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException {
 
     Fire fire = fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
 

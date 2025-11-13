@@ -15,7 +15,7 @@ public class FireQuadrantLogDto extends BaseDto {
 
   private static final long serialVersionUID = -5703692848678170759L;
 
-  private FireDto fireDto;
+  private FireResponseDto fireResponseDto;
 
   private QuadrantInfoDto quadrantInfoDto;
 
@@ -28,9 +28,9 @@ public class FireQuadrantLogDto extends BaseDto {
   public FireQuadrantLogDto() {
   }
 
-  public FireQuadrantLogDto(FireDto fireDto, QuadrantInfoDto quadrantInfoDto, LocalDateTime linkedAt,
+  public FireQuadrantLogDto(FireResponseDto fireResponseDto, QuadrantInfoDto quadrantInfoDto, LocalDateTime linkedAt,
       LocalDateTime extinguishedAt) {
-    this.fireDto = fireDto;
+    this.fireResponseDto = fireResponseDto;
     this.quadrantInfoDto = quadrantInfoDto;
     this.linkedAt = linkedAt;
     this.extinguishedAt = extinguishedAt;

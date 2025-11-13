@@ -1,0 +1,14 @@
+type: object
+required:
+  - description
+  - type
+  - fireIndex
+properties:
+  description:
+    type: string
+  type:
+    type: string
+  fireIndex:
+    type: string
+    enum: [ EXTINGUIDO, CERO, UNO, DOS, TRES ]
+

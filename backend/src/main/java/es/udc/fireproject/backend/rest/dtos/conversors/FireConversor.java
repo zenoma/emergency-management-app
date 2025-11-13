@@ -1,8 +1,11 @@
 package es.udc.fireproject.backend.rest.dtos.conversors;
 
 import es.udc.fireproject.backend.model.entities.fire.Fire;
+import es.udc.fireproject.backend.model.entities.fire.FireIndex;
 import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
-import es.udc.fireproject.backend.rest.dtos.FireDto;
+import es.udc.fireproject.backend.rest.dtos.FireRequestDto;
+import es.udc.fireproject.backend.rest.dtos.FireResponseDto;
+import es.udc.fireproject.backend.rest.dtos.FireResponseDto.FireIndexEnum;
 import es.udc.fireproject.backend.rest.dtos.QuadrantInfoDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +15,7 @@ public class FireConversor {
   private FireConversor() {
   }
 
-  public static FireDto toFireDto(Fire fire) {
+  public static FireResponseDto toFireDto(Fire fire) {
 
     List<QuadrantInfoDto> cuadrantDtoList = new ArrayList<>();
     if (fire.getQuadrantGids() != null && !fire.getQuadrantGids().isEmpty()) {
@@ -20,18 +23,33 @@ public class FireConversor {
         cuadrantDtoList.add(QuadrantInfoConversor.toQuadrantDto(quadrant));
       }
     }
-    return new FireDto(fire.getId(), fire.getDescription(), fire.getType(), fire.getFireIndex(), cuadrantDtoList,
-        fire.getCreatedAt(), fire.getExtinguishedAt());
+    FireResponseDto fireResponseDto = new FireResponseDto(
+        fire.getId(),
+        fire.getDescription(),
+        fire.getType(),
+        FireIndexEnum.fromValue(fire.getFireIndex().toString()),
+        fire.getCreatedAt(),
+        fire.getExtinguishedAt());
+
+    fireResponseDto.setQuadrantInfo(cuadrantDtoList);
+
+    return fireResponseDto;
   }
 
-  public static FireDto toFireDtoWithoutQuadrants(Fire fire) {
+  public static FireResponseDto toFireDtoWithoutQuadrants(Fire fire) {
 
-    return new FireDto(fire.getId(), fire.getDescription(), fire.getType(), fire.getFireIndex(), fire.getCreatedAt(),
+    return new FireResponseDto(fire.getId(),
+        fire.getDescription(),
+        fire.getType(),
+        FireIndexEnum.fromValue(fire.getFireIndex().toString()),
+        fire.getCreatedAt(),
         fire.getExtinguishedAt());
   }
 
-  public static Fire toFire(FireDto fireDto) {
+  public static Fire toFire(FireRequestDto fireRequestDto) {
 
-    return new Fire(fireDto.getDescription(), fireDto.getType(), fireDto.getFireIndex());
+    return new Fire(fireRequestDto.getDescription(),
+        fireRequestDto.getType(),
+        FireIndex.valueOf(fireRequestDto.getFireIndex().toString()));
   }
 }

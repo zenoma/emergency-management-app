@@ -3,6 +3,7 @@ package es.udc.fireproject.backend.rest.common;
 import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.AlreadyExistException;
 import es.udc.fireproject.backend.model.exceptions.DuplicateInstanceException;
+import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.PermissionException;
 import java.util.List;
@@ -30,8 +31,7 @@ public class GlobalControllerExceptionHandler {
   private static final String DATA_INTEGRITY_EXCEPTION_CODE = "project.exceptions.DataIntegrityViolationException";
   private static final String ALREADY_DISMANTLED_EXCEPTION_CODE = "project.exceptions.AlreadyDismantledException";
   private static final String ALREADY_EXIST_EXCEPTION_CODE = "project.exceptions.AlreadyExistException";
-
-
+  private static final String EXTINGUISHED_FIRE_EXCEPTION_CODE = "project.exceptions.ExtinguishedFireException";
   private final MessageSource messageSource;
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -133,5 +133,15 @@ public class GlobalControllerExceptionHandler {
 
   }
 
+  @ExceptionHandler(ExtinguishedFireException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorsDto handleExtinguishedFireException(ExtinguishedFireException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(EXTINGUISHED_FIRE_EXCEPTION_CODE,
+        new Object[]{exception.getId()}, EXTINGUISHED_FIRE_EXCEPTION_CODE, locale);
+
+    return new ErrorsDto(errorMessage);
+  }
 
 }

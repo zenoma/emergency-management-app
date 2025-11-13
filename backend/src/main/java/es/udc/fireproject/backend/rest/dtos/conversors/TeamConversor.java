@@ -35,7 +35,7 @@ public class TeamConversor {
     TeamResponseDto teamResponseDto = new TeamResponseDto(team.getId(),
         team.getCode(),
         team.getCreatedAt(),
-        OrganizationConversor.toOrganizationDto(team.getOrganization()),
+        OrganizationConversor.toOrganizationResponseDto(team.getOrganization()),
         team.getDeployAt(), team.getDismantleAt());
 
     teamResponseDto.setUserList(userDtoList);
@@ -55,7 +55,7 @@ public class TeamConversor {
     return new TeamResponseDto(team.getId(),
         team.getCode(),
         team.getCreatedAt(),
-        OrganizationConversor.toOrganizationDto(team.getOrganization()),
+        OrganizationConversor.toOrganizationResponseDto(team.getOrganization()),
         team.getDeployAt(), team.getDismantleAt());
 
   }
