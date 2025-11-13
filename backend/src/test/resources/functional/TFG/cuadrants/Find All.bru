@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{base_url}}/quadrants
+  url: {{base_url}}/quadrants?scale=50.0
   body: none
   auth: none
+}
+
+params:query {
+  scale: 50.0
 }
 
 settings {

@@ -16,17 +16,20 @@ tags:
     description: Operations related to users management
 paths:
   /users/:
-    $ref: './users/list-users.yml'
+    $ref: './users/users.yml'
   /users/signUp:
-    $ref: './users/sign-up.yml'
+    $ref: './users/users_signUp.yml'
   /users/login:
-    $ref: './users/login.yml'
+    $ref: './users/users_login.yml'
   /users/loginFromServiceToken:
-    $ref: './users/login-from-service-token.yml'
+    $ref: './users/users_loginFromServiceToken.yml'
   /users/{id}:
-    $ref: './users/update-user.yml'
+    $ref: './users/users_$id$.yml'
   /users/{id}/changePassword:
-    $ref: './users/change-password.yml'
+    $ref: './users/users_$id$_changePassword.yml'
   /users/{id}/updateRole:
-    $ref: './users/update-role.yml'
+    $ref: './users/users_$id$_updateRole.yml'
+
+  /quadrants:
+    $ref: './quadrants/quadrants.yml'
 

@@ -175,6 +175,8 @@
         <groupId>org.openapitools</groupId>
         <artifactId>openapi-generator-maven-plugin</artifactId>
         <version>7.9.0</version>
+
+
         <executions>
           <execution>
             <id>generate-openapi</id>
@@ -197,7 +199,23 @@
                 <dateLibrary>java8</dateLibrary>
                 <interfaceOnly>true</interfaceOnly>
                 <useSpringBoot3>true</useSpringBoot3>
+                <interfaceOnly>true</interfaceOnly>
+                <skipDefaultInterface>true</skipDefaultInterface>
+                <additionalModelTypeAnnotations>
+                  @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS)
+                </additionalModelTypeAnnotations>
               </configOptions>
+
+              <typeMappings>
+                <typeMapping>string+localDateTime=LocalDateTime</typeMapping>
+                <typeMapping>string+localTime=LocalTime</typeMapping>
+              </typeMappings>
+              <schemaMappings>
+
+                <mapping>LocalDateTime=java.time.LocalDateTime</mapping>
+                <mapping>LocalTime=java.time.LocalTime</mapping>
+              </schemaMappings>
+
             </configuration>
           </execution>
         </executions>

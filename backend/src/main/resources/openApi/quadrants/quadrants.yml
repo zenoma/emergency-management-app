@@ -1,0 +1,19 @@
+get:
+  summary: Lista cuadrantes
+  operationId: getQuadrants
+  tags:
+    - QuadrantManagement
+  parameters:
+    - in: query
+      name: scale
+      schema:
+        type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/QuadrantDto.yml'

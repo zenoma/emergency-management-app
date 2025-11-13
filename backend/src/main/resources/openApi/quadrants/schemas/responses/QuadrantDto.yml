@@ -1,0 +1,35 @@
+type: object
+required:
+  - id
+  - escala
+  - nombre
+  - folla50
+  - folla25
+  - folla5
+  - fireId
+  - linkedAt
+  - coordinates
+properties:
+  id:
+    type: integer
+    format: int32
+  escala:
+    type: string
+  nombre:
+    type: string
+  folla50:
+    type: string
+  folla25:
+    type: string
+  folla5:
+    type: string
+  fireId:
+    type: integer
+    format: int64
+  linkedAt:
+    type: string
+    format: localDateTime
+  coordinates:
+    type: array
+    items:
+      $ref: "../../../common/schemas/CoordinatesDto.yml"
