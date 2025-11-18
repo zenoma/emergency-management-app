@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
@@ -28,7 +27,6 @@ public class FiresController implements FiresApi {
 
 
   private final FireManagementService fireManagementService;
-  private final HandlerMapping resourceHandlerMapping;
 
 
   @Override

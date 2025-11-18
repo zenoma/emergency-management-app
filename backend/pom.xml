@@ -195,12 +195,14 @@
 
               <output>${project.build.directory}/generated-sources/openapi</output>
 
+              <skipOperationExample>true</skipOperationExample>
               <configOptions>
                 <dateLibrary>java8</dateLibrary>
-                <interfaceOnly>true</interfaceOnly>
                 <useSpringBoot3>true</useSpringBoot3>
                 <interfaceOnly>true</interfaceOnly>
                 <skipDefaultInterface>true</skipDefaultInterface>
+                <generateSupportingFiles>false</generateSupportingFiles>
+
                 <additionalModelTypeAnnotations>
                   @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
                 </additionalModelTypeAnnotations>
