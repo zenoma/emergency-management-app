@@ -210,11 +210,13 @@
 
               <typeMappings>
                 <typeMapping>string+localDateTime=LocalDateTime</typeMapping>
+                <typeMapping>string+localDate=LocalDate</typeMapping>
                 <typeMapping>string+localTime=LocalTime</typeMapping>
               </typeMappings>
               <schemaMappings>
 
                 <mapping>LocalDateTime=java.time.LocalDateTime</mapping>
+                <mapping>LocalDate=java.time.LocalDate</mapping>
                 <mapping>LocalTime=java.time.LocalTime</mapping>
               </schemaMappings>
 

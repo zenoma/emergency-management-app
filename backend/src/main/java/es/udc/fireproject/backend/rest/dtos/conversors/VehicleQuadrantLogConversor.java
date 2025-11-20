@@ -10,7 +10,6 @@ public class VehicleQuadrantLogConversor {
   private VehicleQuadrantLogConversor() {
   }
 
-
   public static VehicleQuadrantLogDto toVehicleQuadrantDto(VehicleQuadrantLog vehicleQuadrantLog) {
 
     VehicleResponseDto vehicleResponseDto = VehicleConversor.toVehicleDtoWithoutQuadrantInfo(

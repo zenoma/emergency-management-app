@@ -10,7 +10,6 @@ public class TeamQuadrantLogConversor {
   private TeamQuadrantLogConversor() {
   }
 
-
   public static TeamQuadrantLogDto toTeamQuadrantLogDto(TeamQuadrantLog teamQuadrantLog) {
 
     TeamResponseDto teamResponseDto = TeamConversor.toTeamDtoWithoutQuadrantInfo(teamQuadrantLog.getTeam());

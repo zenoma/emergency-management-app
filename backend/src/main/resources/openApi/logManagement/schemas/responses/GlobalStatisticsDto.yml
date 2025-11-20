@@ -1,0 +1,18 @@
+type: object
+required:
+  - teamsMobilized
+  - vehiclesMobilized
+  - maxBurnedHectares
+  - affectedQuadrants
+properties:
+  teamsMobilized:
+    type: integer
+  vehiclesMobilized:
+    type: integer
+  maxBurnedHectares:
+    type: number
+    format: int32
+  affectedQuadrants:
+    type: integer
+
+

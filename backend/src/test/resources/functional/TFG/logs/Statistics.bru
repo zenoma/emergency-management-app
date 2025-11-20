@@ -1,0 +1,20 @@
+meta {
+  name: Statistics
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{base_url}}/logs/statistics?fireId=1
+  body: none
+  auth: inherit
+}
+
+params:query {
+  fireId: 1
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

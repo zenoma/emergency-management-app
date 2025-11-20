@@ -2,6 +2,7 @@ package es.udc.fireproject.backend.rest.dtos.conversors;
 
 import es.udc.fireproject.backend.model.entities.logs.GlobalStatistics;
 import es.udc.fireproject.backend.rest.dtos.GlobalStatisticsDto;
+import java.math.BigDecimal;
 
 public class GlobalStatisticsConversor {
 
@@ -13,7 +14,7 @@ public class GlobalStatisticsConversor {
 
     return new GlobalStatisticsDto(globalStatistics.getTeamsMobilized(),
         globalStatistics.getVehiclesMobilized(),
-        globalStatistics.getMaxBurnedHectares(),
+        BigDecimal.valueOf(globalStatistics.getMaxBurnedHectares()),
         globalStatistics.getAffectedQuadrants());
   }
 

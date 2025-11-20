@@ -89,3 +89,15 @@ paths:
     $ref: './vehicles/vehicles_$id$_deploy.yml'
   /vehicles/{id}/retract:
     $ref: './vehicles/vehicles_$id$_retract.yml'
+
+
+  /logs/fires:
+    $ref: './logManagement/fires.yml'
+  /logs/fires/{id}:
+    $ref: './logManagement/fires_$id$.yml'
+  /logs/teams:
+    $ref: './logManagement/teams.yml'
+  /logs/vehicles:
+    $ref: './logManagement/vehicles.yml'
+  /logs/statistics:
+    $ref: './logManagement/statistics.yml'

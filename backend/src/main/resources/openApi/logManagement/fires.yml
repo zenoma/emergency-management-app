@@ -1,0 +1,16 @@
+get:
+  summary: Lista de logs de los incendios
+  operationId: findAllFiresLog
+  tags:
+    - LogManagement
+  security:
+    - bearerAuth: [ ]
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../logManagement/schemas/FireQuadrantLogSchema.yml"
+
+
