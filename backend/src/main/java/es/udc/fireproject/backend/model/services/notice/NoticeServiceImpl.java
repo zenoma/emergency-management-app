@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,12 @@ public class NoticeServiceImpl implements NoticeService {
 
   @Override
   public Notice create(String body, Point location) {
-    Notice notice = new Notice(body, NoticeStatus.PENDING, location);
+    Notice notice = new Notice();
+    notice.setStatus(NoticeStatus.PENDING);
+    notice.setBody(body);
+    notice.setLocation(location);
     notice.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+    notice.setImageList(Collections.emptyList());
 
     ConstraintValidator.validate(notice);
 
@@ -47,7 +52,11 @@ public class NoticeServiceImpl implements NoticeService {
 
   @Override
   public Notice create(String body, Point location, Long userId) throws InstanceNotFoundException {
-    Notice notice = new Notice(body, NoticeStatus.PENDING, location);
+    Notice notice = new Notice();
+    notice.setStatus(NoticeStatus.PENDING);
+    notice.setBody(body);
+    notice.setLocation(location);
+    notice.setImageList(Collections.emptyList());
 
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new InstanceNotFoundException(User.class.getSimpleName(), userId));
@@ -79,7 +88,7 @@ public class NoticeServiceImpl implements NoticeService {
 
   @Override
   @Transactional
-  public void deleteById(Long id) throws InstanceNotFoundException, NoticeDeleteStatusException, IOException {
+  public void deleteById(Long id) throws InstanceNotFoundException, NoticeDeleteStatusException {
 
     Notice notice = noticeRepository.findById(id)
         .orElseThrow(() -> new InstanceNotFoundException(Notice.class.getSimpleName(), id));
@@ -93,7 +102,11 @@ public class NoticeServiceImpl implements NoticeService {
       Image image = imageList.get(0);
       if (image != null) {
         String uploadDir = "public/images/" + notice.getId();
-        FileUploadUtil.deleteFile(uploadDir, image.getName());
+        try {
+          FileUploadUtil.deleteFile(uploadDir, image.getName());
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
         imageRepository.delete(image);
       }
     }

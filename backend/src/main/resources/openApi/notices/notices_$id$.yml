@@ -1,0 +1,65 @@
+get:
+  summary: Obtener aviso
+  operationId: getNoticeById
+  tags:
+    - NoticeManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Aviso
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/NoticeResponseDto.yml'
+
+put:
+  summary: Actualizar aviso
+  operationId: putNotice
+  tags:
+    - NoticeManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/NoticeRequestDto.yml'
+  responses:
+    '204':
+      description: Aviso actualizado
+
+
+
+delete:
+  summary: Eliminar aviso
+  operationId: deleteNotice
+  tags:
+    - NoticeManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '204':
+      description: Aviso eliminado

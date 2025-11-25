@@ -4,10 +4,14 @@ import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.AlreadyExistException;
 import es.udc.fireproject.backend.model.exceptions.DuplicateInstanceException;
 import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
+import es.udc.fireproject.backend.model.exceptions.ImageAlreadyUploadedException;
 import es.udc.fireproject.backend.model.exceptions.IncorrectLoginException;
 import es.udc.fireproject.backend.model.exceptions.IncorrectPasswordException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.InsufficientRolePermissionException;
+import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
+import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
+import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
 import es.udc.fireproject.backend.model.exceptions.PermissionException;
 import es.udc.fireproject.backend.rest.dtos.ErrorDto;
 import es.udc.fireproject.backend.rest.dtos.FieldErrorDto;
@@ -47,6 +51,10 @@ public class GlobalControllerExceptionHandler {
   private static final String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
   private static final String INCORRECT_PASSWORD_EXCEPTION_CODE = "project.exceptions.IncorrectPasswordException";
   private static final String INSUFFICIENT_ROLE_PERMISSION_EXCEPTION_CODE = "project.exceptions.InsufficientRolePermissionException";
+  private static final String IMAGE_ALREADY_UPLOADED_EXCEPTION_CODE = "project.exceptions.ImageAlreadyUploadedException";
+  private static final String NOTICE_CHECK_STATUS_EXCEPTION_CODE = "project.exceptions.NoticeCheckStatusException";
+  private static final String NOTICE_UPDATE_STATUS_EXCEPTION_CODE = "project.exceptions.NoticeUpdateStatusException";
+  private static final String NOTICE_DELETE_STATUS_EXCEPTION_CODE = "project.exceptions.NoticeDeleteStatusException";
 
   private final MessageSource messageSource;
 
@@ -226,6 +234,54 @@ public class GlobalControllerExceptionHandler {
     String errorMessage = messageSource.getMessage(INSUFFICIENT_ROLE_PERMISSION_EXCEPTION_CODE, null,
         INSUFFICIENT_ROLE_PERMISSION_EXCEPTION_CODE, locale);
     return new ErrorDto(errorMessage);
+  }
+
+
+  @ExceptionHandler(ImageAlreadyUploadedException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleImageAlreadyUploadedException(ImageAlreadyUploadedException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(IMAGE_ALREADY_UPLOADED_EXCEPTION_CODE,
+        new Object[]{exception.getId()}, IMAGE_ALREADY_UPLOADED_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(NoticeCheckStatusException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleNoticeCheckStatusException(NoticeCheckStatusException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(NOTICE_CHECK_STATUS_EXCEPTION_CODE,
+        new Object[]{exception.getId(), exception.getStatus()}, NOTICE_CHECK_STATUS_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+
+  }
+
+  @ExceptionHandler(NoticeUpdateStatusException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleNoticeUpdateStatusException(NoticeUpdateStatusException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(NOTICE_UPDATE_STATUS_EXCEPTION_CODE,
+        new Object[]{exception.getId(), exception.getStatus()}, NOTICE_UPDATE_STATUS_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+
+  }
+
+  @ExceptionHandler(NoticeDeleteStatusException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleNoticeDeleteStatusException(NoticeDeleteStatusException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(NOTICE_DELETE_STATUS_EXCEPTION_CODE,
+        new Object[]{exception.getId(), exception.getStatus()}, NOTICE_DELETE_STATUS_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+
   }
 
 }

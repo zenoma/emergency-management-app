@@ -1,0 +1,27 @@
+post:
+  summary: Añadir imagen a un aviso
+  operationId: postNoticeImage
+  tags:
+    - NoticeManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          $ref: './schemas/requests/ImageRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/NoticeResponseDto.yml'

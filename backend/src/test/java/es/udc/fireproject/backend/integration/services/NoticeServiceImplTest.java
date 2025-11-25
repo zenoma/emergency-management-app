@@ -34,10 +34,10 @@ class NoticeServiceImplTest extends IntegrationTest {
   @Test
   void givenValid_whenCreateNotice_thenCreatedSuccessfully() throws InstanceNotFoundException {
 
-    Notice notice = NoticeOm.withDefaultValues();
+    Notice notice = NoticeOm.withDefaultValuesAndNoUser(1L);
     notice = noticeService.create(notice.getBody(), notice.getLocation());
 
-    Assertions.assertEquals(NoticeOm.withDefaultValues(notice.getId()), notice);
+    Assertions.assertEquals(NoticeOm.withDefaultValuesAndNoUser(notice.getId()), notice);
 
     Assertions.assertEquals(noticeService.findById(notice.getId()), notice);
   }

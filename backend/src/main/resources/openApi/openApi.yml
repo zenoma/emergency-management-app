@@ -14,6 +14,23 @@ components:
 tags:
   - name: UserManagement
     description: Operations related to users management
+  - name: QuadrantManagement
+    description: Operations related to quadrants management
+  - name: FireManagement
+    description: Operations related to fires management
+  - name: OrganizationManagement
+    description: Operations related to organizations management
+  - name: OrganizationTypeManagement
+    description: Operations related to organization types management
+  - name: TeamManagement
+    description: Operations related to teams management
+  - name: VehicleManagement
+    description: Operations related to vehicles management
+  - name: LogManagement
+    description: Operations related to logs management
+  - name: NoticeManagement
+    description: Operations related to notices management
+
 paths:
   /users:
     $ref: './users/users.yml'
@@ -101,3 +118,12 @@ paths:
     $ref: './logManagement/vehicles.yml'
   /logs/statistics:
     $ref: './logManagement/statistics.yml'
+
+  /notices:
+    $ref: './notices/notices.yml'
+  /notices/{id}:
+    $ref: './notices/notices_$id$.yml'
+  /notices/{id}/status:
+    $ref: './notices/notices_$id$_status.yml'
+  /notices/{id}/images:
+    $ref: './notices/notices_$id$_images.yml'
