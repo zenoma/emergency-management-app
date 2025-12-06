@@ -1,0 +1,27 @@
+post:
+  summary: Extinguir un quadrante afectado por un incendio
+  operationId: postExtinguishQuadrant
+  tags:
+    - FireManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/QuadrantFireRequestDto.yml'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/FireResponseDto.yml'

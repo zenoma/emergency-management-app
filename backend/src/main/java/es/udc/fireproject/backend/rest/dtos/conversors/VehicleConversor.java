@@ -2,43 +2,47 @@ package es.udc.fireproject.backend.rest.dtos.conversors;
 
 import es.udc.fireproject.backend.model.entities.vehicle.Vehicle;
 import es.udc.fireproject.backend.rest.dtos.QuadrantInfoDto;
-import es.udc.fireproject.backend.rest.dtos.VehicleDto;
+import es.udc.fireproject.backend.rest.dtos.VehicleResponseDto;
 
 public class VehicleConversor {
 
   private VehicleConversor() {
   }
 
-  public static Vehicle toVehicle(VehicleDto vehicleDto) {
-    return new Vehicle(vehicleDto.getVehiclePlate(),
-        vehicleDto.getType(),
-        OrganizationConversor.toOrganization(vehicleDto.getOrganization()));
+  public static Vehicle toVehicle(VehicleResponseDto vehicleResponseDto) {
+    return new Vehicle(vehicleResponseDto.getVehiclePlate(),
+        vehicleResponseDto.getType(),
+        OrganizationConversor.toOrganization(vehicleResponseDto.getOrganization()));
 
   }
 
-  public static VehicleDto toVehicleDto(Vehicle vehicle) {
+  public static VehicleResponseDto toVehicleDto(Vehicle vehicle) {
     QuadrantInfoDto quadrantInfoDto = new QuadrantInfoDto();
     if (vehicle.getQuadrant() != null) {
       quadrantInfoDto = QuadrantInfoConversor.toQuadrantDtoWithoutTeamsAndVehicles(vehicle.getQuadrant());
     }
 
-    return new VehicleDto(vehicle.getId(),
+    VehicleResponseDto vehicleResponseDto = new VehicleResponseDto(vehicle.getId(),
         vehicle.getVehiclePlate(),
         vehicle.getType(),
         vehicle.getCreatedAt(),
-        OrganizationConversor.toOrganizationDto(vehicle.getOrganization()),
-        quadrantInfoDto, vehicle.getDeployAt(),
+        OrganizationConversor.toOrganizationResponseDto(vehicle.getOrganization()),
+        vehicle.getDeployAt(),
         vehicle.getDismantleAt());
+
+    vehicleResponseDto.setQuadrantInfo(quadrantInfoDto);
+
+    return vehicleResponseDto;
 
   }
 
-  public static VehicleDto toVehicleDtoWithoutQuadrantInfo(Vehicle vehicle) {
+  public static VehicleResponseDto toVehicleDtoWithoutQuadrantInfo(Vehicle vehicle) {
 
-    return new VehicleDto(vehicle.getId(),
+    return new VehicleResponseDto(vehicle.getId(),
         vehicle.getVehiclePlate(),
         vehicle.getType(),
         vehicle.getCreatedAt(),
-        OrganizationConversor.toOrganizationDto(vehicle.getOrganization()),
+        OrganizationConversor.toOrganizationResponseDto(vehicle.getOrganization()),
         vehicle.getDeployAt(),
         vehicle.getDismantleAt());
 

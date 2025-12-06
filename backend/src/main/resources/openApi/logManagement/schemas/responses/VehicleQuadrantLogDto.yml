@@ -1,0 +1,18 @@
+type: object
+required:
+  - vehicleInfo
+  - quadrantInfo
+  - deployAt
+  - retractAt
+properties:
+  vehicleInfo:
+    $ref: "../../../vehicles/schemas/responses/VehicleResponseDto.yml"
+  quadrantInfo:
+    $ref: "../../../quadrants/schemas/responses/QuadrantInfoDto.yml"
+  deployAt:
+    type: string
+    format: localDateTime
+  retractAt:
+    type: string
+    format: localDateTime
+

@@ -1,0 +1,24 @@
+post:
+  summary: Login
+  operationId: postUsersLogin
+  tags:
+    - UserManagement
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/LoginParamsDto.yml'
+  responses:
+    '200':
+      description: Authenticated
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/AuthenticatedUserDto.yml'
+    '404':
+      description: Incorrect login
+      content:
+        application/json:
+          schema:
+            $ref: '../common/schemas/ErrorDto.yml'

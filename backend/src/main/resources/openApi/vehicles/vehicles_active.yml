@@ -1,0 +1,20 @@
+get:
+  summary: Lista de vehiculos activos
+  operationId: getActiveVehiclesByOrganizationId
+  tags:
+    - TeamManagement
+  parameters:
+    - in: query
+      name: organizationId
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/VehicleResponseDto.yml'

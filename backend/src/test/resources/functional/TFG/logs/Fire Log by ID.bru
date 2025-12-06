@@ -1,0 +1,21 @@
+meta {
+  name: Fire Log by ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/logs/fires/6?startDate=2025-01-01&endDate=2026-01-01
+  body: none
+  auth: inherit
+}
+
+params:query {
+  startDate: 2025-01-01
+  endDate: 2026-01-01
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

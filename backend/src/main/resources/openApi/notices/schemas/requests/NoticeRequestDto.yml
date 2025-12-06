@@ -1,0 +1,9 @@
+type: object
+required:
+  - body
+  - coordinates
+properties:
+  body:
+    type: string
+  coordinates:
+    $ref: "../../../common/schemas/CoordinatesDto.yml"

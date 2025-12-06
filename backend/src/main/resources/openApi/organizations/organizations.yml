@@ -1,0 +1,44 @@
+get:
+  summary: Lista de organizaciones
+  operationId: getOrganizations
+  tags:
+    - OrganizationManagement
+  parameters:
+    - in: query
+      name: nameOrCode
+      schema:
+        type: string
+    - in: query
+      name: organizationTypeName
+      schema:
+        type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/OrganizationResponseDto.yml'
+
+post:
+  summary: Crear nueva organización
+  operationId: postOrganization
+  tags:
+    - OrganizationManagement
+  security:
+    - bearerAuth: [ ]
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/OrganizationRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/OrganizationResponseDto.yml'

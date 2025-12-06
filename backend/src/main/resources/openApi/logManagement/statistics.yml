@@ -1,0 +1,19 @@
+get:
+  summary: Estadísticas globales de un incendio
+  operationId: getGlobalStatistics
+  tags:
+    - LogManagement
+  parameters:
+    - in: query
+      name: fireId
+      schema:
+        type: integer
+        format: int64
+      required: true
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../logManagement/schemas/responses/GlobalStatisticsDto.yml"

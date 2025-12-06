@@ -1,0 +1,8 @@
+type: object
+required:
+  - userRole
+properties:
+  userRole:
+    type: string
+    enum: [ COORDINATOR, MANAGER, USER ]
+

@@ -7,7 +7,6 @@ import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
-import java.io.IOException;
 import java.util.List;
 import org.locationtech.jts.geom.Point;
 
@@ -20,7 +19,7 @@ public interface NoticeService {
 
   Notice update(Long id, String body, Point location) throws NoticeUpdateStatusException, InstanceNotFoundException;
 
-  void deleteById(Long noticeId) throws InstanceNotFoundException, NoticeDeleteStatusException, IOException;
+  void deleteById(Long noticeId) throws InstanceNotFoundException, NoticeDeleteStatusException;
 
   List<Notice> findByUserId(Long userId);
 

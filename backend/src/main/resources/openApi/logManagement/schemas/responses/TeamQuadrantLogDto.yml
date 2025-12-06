@@ -1,0 +1,18 @@
+type: object
+required:
+  - teamInfo
+  - quadrantInfo
+  - deployAt
+  - retractAt
+properties:
+  teamInfo:
+    $ref: "../../../teams/schemas/responses/TeamResponseDto.yml"
+  quadrantInfo:
+    $ref: "../../../quadrants/schemas/responses/QuadrantInfoDto.yml"
+  deployAt:
+    type: string
+    format: localDateTime
+  retractAt:
+    type: string
+    format: localDateTime
+

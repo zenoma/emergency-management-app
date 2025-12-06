@@ -1,0 +1,18 @@
+type: object
+required:
+  - quadrantInfo
+  - fireInfo
+  - linkedAt
+  - extinguishedAt
+properties:
+  quadrantInfo:
+    $ref: "../../../quadrants/schemas/responses/QuadrantInfoDto.yml"
+  fireInfo:
+    $ref: "../../../fires/schemas/responses/FireResponseDto.yml"
+  linkedAt:
+    type: string
+    format: localDateTime
+  extinguishedAt:
+    type: string
+    format: localDateTime
+

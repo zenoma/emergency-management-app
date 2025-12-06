@@ -1,0 +1,69 @@
+get:
+  summary: Información de un equipo por ID
+  operationId: getTeamById
+  tags:
+    - TeamManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/TeamResponseDto.yml'
+
+
+delete:
+  summary: Eliminar un equipo por ID
+  operationId: deleteTeamById
+  tags:
+    - TeamManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '204':
+      description: Borrado correctamente
+
+
+put:
+  summary: Actualizar un equipo por ID
+  operationId: putTeamById
+  tags:
+    - TeamManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/TeamRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/TeamResponseDto.yml'

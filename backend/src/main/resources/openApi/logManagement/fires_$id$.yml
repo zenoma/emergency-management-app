@@ -1,0 +1,33 @@
+get:
+  summary: Lista de logs de un incendio por id
+  operationId: findAllFiresLogByFireIdAndDate
+  tags:
+    - LogManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+        format: int64
+      required: true
+    - in: query
+      name: startDate
+      schema:
+        type: string
+        format: localDate
+      required: true
+    - in: query
+      name: endDate
+      schema:
+        type: string
+        format: localDate
+      required: true
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../logManagement/schemas/FireQuadrantLogSchema.yml"

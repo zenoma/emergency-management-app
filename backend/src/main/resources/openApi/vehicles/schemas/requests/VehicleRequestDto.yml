@@ -1,0 +1,13 @@
+type: object
+required:
+  - vehiclePlate
+  - type
+  - organizationId
+properties:
+  type:
+    type: string
+  vehiclePlate:
+    type: string
+  organizationId:
+    type: integer
+    format: int64

@@ -1,0 +1,34 @@
+get:
+  summary: Lista de incendios
+  operationId: getAllFires
+  tags:
+    - FireManagement
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/FireResponseDto.yml'
+post:
+  summary: Crear nuevo incendio
+  operationId: postFire
+  tags:
+    - FireManagement
+  security:
+    - bearerAuth: [ ]
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/FireRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/FireResponseDto.yml'

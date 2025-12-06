@@ -1,0 +1,16 @@
+meta {
+  name: List Users
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{base_url}}/users/
+  body: json
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

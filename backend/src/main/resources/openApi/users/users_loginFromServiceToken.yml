@@ -1,0 +1,21 @@
+post:
+  summary: Login desde service token
+  operationId: postLoginFromServiceToken
+  tags:
+    - UserManagement
+  description: Autenticación usando `serviceToken` y `userId` proporcionados por jwt.
+  security:
+    - bearerAuth: [ ]
+  responses:
+    '200':
+      description: Authenticated via service token
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/AuthenticatedUserDto.yml'
+    '404':
+      description: Usuario no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '../common/schemas/ErrorDto.yml'

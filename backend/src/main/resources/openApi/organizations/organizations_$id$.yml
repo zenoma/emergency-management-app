@@ -1,0 +1,70 @@
+get:
+  summary: Información de una organización por ID
+  operationId: getOrganizationById
+  tags:
+    - OrganizationManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/OrganizationResponseDto.yml'
+
+
+delete:
+  summary: Eliminar una organización por ID
+  operationId: deleteByOrganizationId
+  tags:
+    - OrganizationManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '204':
+      description: Borrado correctamente
+
+
+
+put:
+  summary: Actualizar una organización por ID
+  operationId: putOrganizationById
+  tags:
+    - OrganizationManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/OrganizationUpdateRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/OrganizationResponseDto.yml'

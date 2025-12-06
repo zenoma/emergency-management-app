@@ -1,0 +1,27 @@
+type: object
+required:
+  - id
+  - firstName
+  - lastName
+  - email
+  - phoneNumber
+  - dni
+  - userRole
+properties:
+  id:
+    type: integer
+    format: int64
+  firstName:
+    type: string
+  lastName:
+    type: string
+  email:
+    type: string
+    format: email
+  phoneNumber:
+    type: string
+  dni:
+    type: string
+  userRole:
+    type: string
+

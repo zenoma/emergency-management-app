@@ -1,0 +1,129 @@
+openapi: 3.0.3
+info:
+  title: Management APP - API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+tags:
+  - name: UserManagement
+    description: Operations related to users management
+  - name: QuadrantManagement
+    description: Operations related to quadrants management
+  - name: FireManagement
+    description: Operations related to fires management
+  - name: OrganizationManagement
+    description: Operations related to organizations management
+  - name: OrganizationTypeManagement
+    description: Operations related to organization types management
+  - name: TeamManagement
+    description: Operations related to teams management
+  - name: VehicleManagement
+    description: Operations related to vehicles management
+  - name: LogManagement
+    description: Operations related to logs management
+  - name: NoticeManagement
+    description: Operations related to notices management
+
+paths:
+  /users:
+    $ref: './users/users.yml'
+  /users/signUp:
+    $ref: './users/users_signUp.yml'
+  /users/login:
+    $ref: './users/users_login.yml'
+  /users/loginFromServiceToken:
+    $ref: './users/users_loginFromServiceToken.yml'
+  /users/{id}:
+    $ref: './users/users_$id$.yml'
+  /users/{id}/changePassword:
+    $ref: './users/users_$id$_changePassword.yml'
+  /users/{id}/updateRole:
+    $ref: './users/users_$id$_updateRole.yml'
+
+  /quadrants:
+    $ref: './quadrants/quadrants.yml'
+  /quadrants/active:
+    $ref: './quadrants/quadrants_active.yml'
+  /quadrants/{id}:
+    $ref: './quadrants/quadrants_$id$.yml'
+  /quadrants/{id}/linkFire:
+    $ref: './quadrants/quadrants_$id$_linkFire.yml'
+
+  /fires:
+    $ref: './fires/fires.yml'
+  /fires/{id}:
+    $ref: './fires/fires_$id$.yml'
+  /fires/{id}/extinguishQuadrant:
+    $ref: './fires/fires_$id$_extinguishQuadrant.yml'
+  /fires/{id}/extinguishFire:
+    $ref: './fires/fires_$id$_extinguishFire.yml'
+
+  /organizations:
+    $ref: './organizations/organizations.yml'
+  /organizations/{id}:
+    $ref: './organizations/organizations_$id$.yml'
+
+
+  /organizationTypes:
+    $ref: './organizationTypes/organizationTypes.yml'
+  /organizationTypes/{id}:
+    $ref: './organizationTypes/organizationTypes_$id$.yml'
+
+  /teams:
+    $ref: './teams/teams.yml'
+  /teams/active:
+    $ref: './teams/teams_active.yml'
+  /teams/myTeam:
+    $ref: './teams/teams_myTeam.yml'
+  /teams/{id}:
+    $ref: './teams/teams_$id$.yml'
+  /teams/{id}/addUser:
+    $ref: './teams/teams_$id$_addUser.yml'
+  /teams/{id}/deleteUser:
+    $ref: './teams/teams_$id$_deleteUser.yml'
+  /teams/{id}/users:
+    $ref: './teams/teams_$id$_users.yml'
+  /teams/{id}/deploy:
+    $ref: './teams/teams_$id$_deploy.yml'
+  /teams/{id}/retract:
+    $ref: './teams/teams_$id$_retract.yml'
+
+
+  /vehicles:
+    $ref: './vehicles/vehicles.yml'
+  /vehicles/active:
+    $ref: './vehicles/vehicles_active.yml'
+  /vehicles/{id}:
+    $ref: './vehicles/vehicles_$id$.yml'
+  /vehicles/{id}/deploy:
+    $ref: './vehicles/vehicles_$id$_deploy.yml'
+  /vehicles/{id}/retract:
+    $ref: './vehicles/vehicles_$id$_retract.yml'
+
+
+  /logs/fires:
+    $ref: './logManagement/fires.yml'
+  /logs/fires/{id}:
+    $ref: './logManagement/fires_$id$.yml'
+  /logs/teams:
+    $ref: './logManagement/teams.yml'
+  /logs/vehicles:
+    $ref: './logManagement/vehicles.yml'
+  /logs/statistics:
+    $ref: './logManagement/statistics.yml'
+
+  /notices:
+    $ref: './notices/notices.yml'
+  /notices/{id}:
+    $ref: './notices/notices_$id$.yml'
+  /notices/{id}/status:
+    $ref: './notices/notices_$id$_status.yml'
+  /notices/{id}/images:
+    $ref: './notices/notices_$id$_images.yml'

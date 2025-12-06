@@ -1,0 +1,14 @@
+type: object
+description: Detalle de un error de validación asociado a un campo concreto.
+properties:
+  fieldName:
+    type: string
+    description: Nombre del campo que causó el error.
+    example: "nombre"
+  message:
+    type: string
+    description: Descripción del error asociado al campo.
+    example: "El nombre no puede estar vacío."
+required:
+  - fieldName
+  - message

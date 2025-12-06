@@ -1,6 +1,6 @@
 package es.udc.fireproject.backend.model.exceptions;
 
-public class NoticeDeleteStatusException extends Exception {
+public class NoticeDeleteStatusException extends RuntimeException {
 
   private String id;
   private String status;

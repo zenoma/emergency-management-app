@@ -5,9 +5,13 @@ meta {
 }
 
 post {
-  url: {{base_url}}/users/2/updateRole
+  url: {{base_url}}/users/:targetUserId/updateRole
   body: json
   auth: inherit
+}
+
+params:path {
+  targetUserId: 2
 }
 
 body:json {

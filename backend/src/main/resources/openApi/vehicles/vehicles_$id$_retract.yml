@@ -1,0 +1,21 @@
+post:
+  summary: Retirar un vehículo en un cuadrante por ID
+  operationId: postVehicleRetractById
+  tags:
+    - VehicleManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Vehiculo retirado
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/VehicleResponseDto.yml'

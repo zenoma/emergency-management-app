@@ -1,0 +1,16 @@
+meta {
+  name: Extinguish Quadrant
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/fires/4/extinguishFire
+  body: json
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

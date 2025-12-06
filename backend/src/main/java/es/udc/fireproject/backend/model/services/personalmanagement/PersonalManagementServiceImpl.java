@@ -18,6 +18,7 @@ import es.udc.fireproject.backend.model.exceptions.IncorrectLoginException;
 import es.udc.fireproject.backend.model.exceptions.IncorrectPasswordException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.InsufficientRolePermissionException;
+import es.udc.fireproject.backend.model.exceptions.UserWithoutTeamException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementServiceImpl;
 import es.udc.fireproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
@@ -281,8 +282,13 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
   public Team findTeamByUserId(Long userId) throws InstanceNotFoundException {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new InstanceNotFoundException(USER_NOT_FOUND, userId));
-    return teamRepository.findById(user.getTeam().getId())
-        .orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, user.getTeam().getId()));
+    try {
+      Long teamId = user.getTeam().getId();
+      return teamRepository.findById(teamId).orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, teamId));
+
+    } catch (NullPointerException e) {
+      throw new UserWithoutTeamException(TEAM_NOT_FOUND, userId);
+    }
   }
 
   @Override
@@ -380,7 +386,16 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
   }
 
   @Override
-  public void signUp(User user) throws DuplicateInstanceException {
+  public User signUp(String email,
+      String password,
+      String firstName,
+      String lastName,
+      String phoneNumber,
+      String dni)
+      throws DuplicateInstanceException {
+
+    User user = new User(email, password, firstName, lastName, dni,
+        phoneNumber != null ? Integer.parseInt(phoneNumber) : null);
 
     if (userRepository.existsByEmail(user.getEmail())) {
       throw new DuplicateInstanceException("project.entities.user", user.getEmail());
@@ -389,7 +404,8 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     user.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     user.setUserRole(UserRole.USER);
-    userRepository.save(user);
+
+    return userRepository.save(user);
 
   }
 

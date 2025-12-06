@@ -1,7 +1,6 @@
 package es.udc.fireproject.backend.model.exceptions;
 
-@SuppressWarnings("serial")
-public abstract class InstanceException extends Exception {
+public abstract class InstanceException extends RuntimeException {
 
   private String name;
   private Object key;

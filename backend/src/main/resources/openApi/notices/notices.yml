@@ -1,0 +1,38 @@
+get:
+  summary: Obtener todos los avisos
+  operationId: getNotices
+  tags:
+    - NoticeManagement
+  parameters:
+    - in: query
+      name: userId
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: Lista de avisos
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/NoticeResponseDto.yml'
+post:
+  summary: Crear nuevo aviso
+  operationId: postNotice
+  tags:
+    - NoticeManagement
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/NoticeRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/NoticeResponseDto.yml'

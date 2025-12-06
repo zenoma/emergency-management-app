@@ -1,119 +1,119 @@
 package es.udc.fireproject.backend.rest.controllers;
 
 import es.udc.fireproject.backend.model.entities.vehicle.Vehicle;
-import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
-import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
-import es.udc.fireproject.backend.rest.dtos.UserDto;
-import es.udc.fireproject.backend.rest.dtos.VehicleDto;
+import es.udc.fireproject.backend.rest.dtos.VehicleQuadrantRequestDto;
+import es.udc.fireproject.backend.rest.dtos.VehicleRequestDto;
+import es.udc.fireproject.backend.rest.dtos.VehicleResponseDto;
+import es.udc.fireproject.backend.rest.dtos.VehicleUpdateRequestDto;
 import es.udc.fireproject.backend.rest.dtos.conversors.VehicleConversor;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping("/vehicles")
-public class VehicleController {
+@RequiredArgsConstructor
+public class VehicleController implements VehiclesApi {
 
-  @Autowired
-  PersonalManagementService personalManagementService;
+  private final PersonalManagementService personalManagementService;
 
-  @Autowired
-  FireManagementService fireManagementService;
+  private final FireManagementService fireManagementService;
 
-  @PostMapping("")
-  public VehicleDto create(@RequestAttribute Long userId,
-      @Validated({UserDto.AllValidations.class})
-      @RequestBody Map<String, String> jsonParams)
-      throws InstanceNotFoundException {
+  @Override
+  public ResponseEntity<VehicleResponseDto> postVehicle(VehicleRequestDto vehicleRequestDto) {
 
-    Vehicle vehicle = personalManagementService.createVehicle(jsonParams.get("vehiclePlate"), jsonParams.get("type"),
-        Long.valueOf(jsonParams.get("organizationId")));
-    return VehicleConversor.toVehicleDto(vehicle);
+    Vehicle vehicle = personalManagementService.createVehicle(
+        vehicleRequestDto.getVehiclePlate(),
+        vehicleRequestDto.getType(),
+        vehicleRequestDto.getOrganizationId()
+    );
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest().path("/{id}")
+        .buildAndExpand(vehicle.getId()).toUri();
 
+    return ResponseEntity.created(location).body(VehicleConversor.toVehicleDto(vehicle));
   }
 
-  @DeleteMapping("/{id}")
-  public void delete(@RequestAttribute Long userId, @PathVariable Long id)
-      throws InstanceNotFoundException, AlreadyDismantledException {
+  @Override
+  public ResponseEntity<Void> deleteVehicleById(Long id) {
     personalManagementService.dismantleVehicleById(id);
+
+    return ResponseEntity.noContent().build();
   }
 
-  @PutMapping("/{id}")
-  public void update(@RequestAttribute Long userId, @PathVariable Long id, @RequestBody VehicleDto vehicleDto)
-      throws InstanceNotFoundException, AlreadyDismantledException {
-    personalManagementService.updateVehicle(id, vehicleDto.getVehiclePlate(), vehicleDto.getType());
+  @Override
+  public ResponseEntity<VehicleResponseDto> putVehicleById(Long id, VehicleUpdateRequestDto vehicleUpdateRequestDto) {
+
+    final Vehicle vehicle = personalManagementService.updateVehicle(id, vehicleUpdateRequestDto.getVehiclePlate(),
+        vehicleUpdateRequestDto.getType());
+
+    return ResponseEntity.ok(VehicleConversor.toVehicleDto(vehicle));
   }
 
-  @GetMapping("/{id}")
-  public VehicleDto findById(@RequestAttribute Long userId, @PathVariable Long id)
-      throws InstanceNotFoundException {
-    return VehicleConversor.toVehicleDto(personalManagementService.findVehicleById(id));
+  @Override
+  public ResponseEntity<VehicleResponseDto> getVehicleById(Long id) {
+    final Vehicle vehicle = personalManagementService.findVehicleById(id);
+
+    return ResponseEntity.ok(VehicleConversor.toVehicleDto(vehicle));
   }
 
-  @GetMapping("")
-  public List<VehicleDto> findAll(@RequestAttribute Long userId,
-      @RequestParam(required = false) Long organizationId) {
+  @Override
+  public ResponseEntity<List<VehicleResponseDto>> getVehicles(String code, Long organizationId) {
 
-    List<VehicleDto> vehicleDtos = new ArrayList<>();
+    List<VehicleResponseDto> vehicleResponseDtos = new ArrayList<>();
 
     if (organizationId != null) {
       for (Vehicle vehicle : personalManagementService.findVehiclesByOrganizationId(organizationId)) {
-        vehicleDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
       }
     } else {
       for (Vehicle vehicle : personalManagementService.findAllVehicles()) {
-        vehicleDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
       }
     }
-    return vehicleDtos;
+
+    return ResponseEntity.ok(vehicleResponseDtos);
   }
 
-  @GetMapping("/active")
-  public List<VehicleDto> findAllActiveByOrganizationId(@RequestAttribute Long userId,
-      @RequestParam(required = false) Long organizationId) {
+  @Override
+  public ResponseEntity<List<VehicleResponseDto>> getActiveVehiclesByOrganizationId(Long organizationId) {
 
-    List<VehicleDto> vehicleDtos = new ArrayList<>();
+    List<VehicleResponseDto> vehicleResponseDtos = new ArrayList<>();
 
     if (organizationId != null) {
       for (Vehicle vehicle : personalManagementService.findActiveVehiclesByOrganizationId(organizationId)) {
-        vehicleDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
       }
     } else {
       for (Vehicle vehicle : personalManagementService.findAllActiveVehicles()) {
-        vehicleDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
       }
     }
-    return vehicleDtos;
+    return ResponseEntity.ok(vehicleResponseDtos);
   }
 
-  @PostMapping("/{id}/deploy")
-  public VehicleDto deploy(@RequestAttribute Long userId, @PathVariable Long id,
-      @RequestBody Map<String, String> jsonParams)
-      throws InstanceNotFoundException, AlreadyDismantledException {
+  @Override
+  public ResponseEntity<VehicleResponseDto> postVehicleDeployById(Long id,
+      VehicleQuadrantRequestDto vehicleQuadrantRequestDto) {
 
-    return VehicleConversor.toVehicleDto(
-        fireManagementService.deployVehicle(id, Integer.valueOf(jsonParams.get("gid"))));
+    final VehicleResponseDto vehicleResponseDto = VehicleConversor.toVehicleDto(
+        fireManagementService.deployVehicle(id, vehicleQuadrantRequestDto.getQuadrantId()));
+
+    return ResponseEntity.ok(vehicleResponseDto);
   }
 
-  @PostMapping("/{id}/retract")
-  public VehicleDto retract(@RequestAttribute Long userId, @PathVariable Long id)
-      throws InstanceNotFoundException, AlreadyDismantledException {
+  @Override
+  public ResponseEntity<VehicleResponseDto> postVehicleRetractById(Long id) {
 
-    return VehicleConversor.toVehicleDto(fireManagementService.retractVehicle(id));
+    final VehicleResponseDto vehicleResponseDto = VehicleConversor.toVehicleDto(
+        fireManagementService.retractVehicle(id));
+
+    return ResponseEntity.ok(vehicleResponseDto);
 
   }
 }

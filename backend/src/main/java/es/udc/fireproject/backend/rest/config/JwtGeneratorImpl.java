@@ -22,9 +22,9 @@ public class JwtGeneratorImpl implements JwtGenerator {
   @Override
   public String generate(JwtInfo info) {
     return Jwts.builder()
-        .claim("userId", info.getUserId())
-        .claim("role", info.getRole())
-        .setSubject(info.getUserName())
+        .claim("userId", info.userId())
+        .claim("role", info.role())
+        .setSubject(info.userName())
         .setExpiration(new Date(System.currentTimeMillis() + expirationMinutes * 60 * 1000))
         .signWith(Keys.hmacShaKeyFor(signKey.getBytes(StandardCharsets.UTF_8)))
         .compact();

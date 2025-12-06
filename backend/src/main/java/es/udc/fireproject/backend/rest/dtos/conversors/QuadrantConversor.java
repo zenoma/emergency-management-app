@@ -22,8 +22,8 @@ public class QuadrantConversor {
         quadrant.getFolla50(),
         quadrant.getFolla25(),
         quadrant.getFolla5(),
-        new ArrayList(Arrays.asList(quadrant.getGeom().getCoordinates())),
         fireId,
-        quadrant.getLinkedAt());
+        quadrant.getLinkedAt(),
+        new ArrayList(Arrays.asList(quadrant.getGeom().getCoordinates())));
   }
 }

@@ -11,30 +11,18 @@ public class UserConversor {
   }
 
   public static UserDto toUserDto(User user) {
-    Long teamId = null;
 
-    if (user.getTeam() != null) {
-      teamId = user.getTeam().getId();
-    }
-
-    return new UserDto(user.getId(),
-        user.getEmail(),
+    return new UserDto(
+        user.getId(),
         user.getFirstName(),
         user.getLastName(),
+        user.getEmail(),
+        user.getPhoneNumber().toString(),
         user.getDni(),
-        user.getPhoneNumber(),
-        user.getUserRole(),
-        teamId);
+        user.getUserRole().toString()
+    );
   }
 
-  public static User toUser(UserDto userDto) {
-    return new User(userDto.getEmail(),
-        userDto.getPassword(),
-        userDto.getFirstName(),
-        userDto.getLastName(),
-        userDto.getDni(),
-        userDto.getPhoneNumber());
-  }
 
   public static AuthenticatedUserDto toAuthenticatedUserDto(String serviceToken, User user) {
 

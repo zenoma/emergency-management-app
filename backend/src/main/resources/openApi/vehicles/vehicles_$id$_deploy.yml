@@ -1,0 +1,27 @@
+post:
+  summary: Desplegar un vehículo en un cuadrante por ID
+  operationId: postVehicleDeployById
+  tags:
+    - VehicleManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/VehicleQuadrantRequestDto.yml'
+  responses:
+    '200':
+      description: Vehículo desplegado
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/VehicleResponseDto.yml'

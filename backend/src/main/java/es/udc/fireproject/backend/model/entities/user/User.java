@@ -30,7 +30,7 @@ import lombok.ToString;
 @Table(name = "user", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 @AllArgsConstructor
 public class User {
@@ -92,6 +92,7 @@ public class User {
     this.dni = dni;
     this.phoneNumber = phoneNumber;
     this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    this.userRole = UserRole.USER;
   }
 
 

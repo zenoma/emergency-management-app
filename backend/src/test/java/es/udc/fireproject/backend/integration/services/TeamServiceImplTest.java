@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class TeamServiceImplTest extends IntegrationTest {
 
-  private final Long INVALID_TEAM_ID = -1L;
-  private final Long INVALID_USER_ID = -1L;
+  private static final Long INVALID_TEAM_ID = -1L;
+  private static final Long INVALID_USER_ID = -1L;
 
   @Autowired
   PersonalManagementService personalManagementService;
@@ -142,13 +142,25 @@ class TeamServiceImplTest extends IntegrationTest {
 
   @Test
   void givenValidUser_whenAddMember_thenMemberAddedSuccessfully()
-      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException {
+      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException, AlreadyExistException {
 
-    User user = UserOM.withDefaultValues();
-    Team team = TeamOM.withDefaultValues();
+    OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
+    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+
+    Organization organizationOm = OrganizationOM.withDefaultValues();
+    Organization organization = personalManagementService.createOrganization(organizationOm);
+
+    Team teamOm = TeamOM.withDefaultValues();
+    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+
+    User userOm = UserOM.withDefaultValues();
+    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
+
     user.setTeam(team);
-    personalManagementService.signUp(user);
-    team = personalManagementService.addMember(user.getTeam().getId(), user.getId());
+
+    personalManagementService.addMember(team.getId(), user.getId());
 
     Assertions.assertTrue(personalManagementService.findAllUsersByTeamId(team.getId()).contains(user),
         "User must belong to the Team");
@@ -156,19 +168,31 @@ class TeamServiceImplTest extends IntegrationTest {
 
   @Test
   void givenInvalidUser_whenAddMember_thenConstraintViolationException()
-      throws InstanceNotFoundException, DuplicateInstanceException {
+      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyExistException {
 
-    User user = UserOM.withDefaultValues();
-    Team team = TeamOM.withDefaultValues();
+    OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
+    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+
+    Organization organizationOm = OrganizationOM.withDefaultValues();
+    Organization organization = personalManagementService.createOrganization(organizationOm);
+
+    Team teamOm = TeamOM.withDefaultValues();
+    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+
+    User userOm = UserOM.withDefaultValues();
+    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
+
     user.setTeam(team);
-    personalManagementService.signUp(user);
 
     final Team finalTeam = user.getTeam();
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
             personalManagementService.addMember(finalTeam.getId(), INVALID_USER_ID),
         "InstanceNotFoundException error was expected");
+
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
-            personalManagementService.addMember(INVALID_TEAM_ID, user.getId()),
+            personalManagementService.addMember(INVALID_TEAM_ID, userOm.getId()),
         "InstanceNotFoundException error was expected");
 
   }
@@ -176,31 +200,51 @@ class TeamServiceImplTest extends IntegrationTest {
 
   @Test
   void givenValidUser_whenDeleteMember_thenMemberDeletedSuccessfully()
-      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException {
+      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException, AlreadyExistException {
 
-    User user = UserOM.withDefaultValues();
-    Team team = TeamOM.withDefaultValues();
-    user.setTeam(team);
-    personalManagementService.signUp(user);
-    personalManagementService.addMember(user.getTeam().getId(), user.getId());
+    OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
+    personalManagementService.createOrganizationType(organizationTypeOm.getName());
 
-    Assertions.assertTrue(personalManagementService.findAllUsersByTeamId(user.getTeam().getId()).contains(user),
+    Organization organizationOm = OrganizationOM.withDefaultValues();
+    Organization organization = personalManagementService.createOrganization(organizationOm);
+
+    Team teamOm = TeamOM.withDefaultValues();
+    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+
+    User userOm = UserOM.withDefaultValues();
+    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
+
+    personalManagementService.addMember(team.getId(), user.getId());
+
+    Assertions.assertTrue(personalManagementService.findAllUsersByTeamId(team.getId()).contains(user),
         "User must belong to the Team");
 
-    personalManagementService.deleteMember(user.getTeam().getId(), user.getId());
+    personalManagementService.deleteMember(team.getId(), user.getId());
 
     Assertions.assertNull(user.getTeam(), "User must not belong to the Team");
   }
 
   @Test
   void givenInvalidUser_whenDeleteMember_thenConstraintViolationException()
-      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException {
+      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException, AlreadyExistException {
 
-    User user = UserOM.withDefaultValues();
-    Team team = TeamOM.withDefaultValues();
+    OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
+    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+
+    Organization organizationOm = OrganizationOM.withDefaultValues();
+    Organization organization = personalManagementService.createOrganization(organizationOm);
+
+    Team teamOm = TeamOM.withDefaultValues();
+    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+
+    User userOm = UserOM.withDefaultValues();
+    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
+
     user.setTeam(team);
-    personalManagementService.signUp(user);
-
     personalManagementService.addMember(user.getTeam().getId(), user.getId());
 
     Assertions.assertTrue(personalManagementService.findAllUsersByTeamId(user.getTeam().getId()).contains(user),
@@ -218,16 +262,30 @@ class TeamServiceImplTest extends IntegrationTest {
 
   @Test
   void givenValidUsers_whenFindAllUsers_thenNumberFoundCorrect()
-      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException {
-    Team team = TeamOM.withDefaultValues();
+      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException, AlreadyExistException {
+
+    OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
+    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+
+    Organization organizationOm = OrganizationOM.withDefaultValues();
+    Organization organization = personalManagementService.createOrganization(organizationOm);
+
+    Team teamOm = TeamOM.withDefaultValues();
+    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+
     int itemNumber = 3;
     List<User> userList = UserOM.withRandomNames(itemNumber);
-    for (User user : userList) {
+    for (User userOm : userList) {
+      User user = personalManagementService.signUp(userOm.getEmail(),
+          userOm.getPassword(),
+          userOm.getFirstName(),
+          userOm.getLastName(),
+          String.valueOf(userOm.getPhoneNumber()),
+          userOm.getDni());
+
       user.setTeam(team);
-      personalManagementService.signUp(user);
-      personalManagementService.addMember(user.getTeam().getId(), user.getId());
+      personalManagementService.addMember(team.getId(), user.getId());
     }
-    team = userList.get(0).getTeam();
 
     Assertions.assertEquals(personalManagementService.findAllUsersByTeamId(team.getId()).size(), itemNumber,
         "Size must be equal to added Members");
@@ -235,16 +293,29 @@ class TeamServiceImplTest extends IntegrationTest {
 
   @Test
   void givenTeamInvalidID_whenFindAllUsers_thenConstraintViolationException()
-      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException {
+      throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException, AlreadyExistException {
+    OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
+    personalManagementService.createOrganizationType(organizationTypeOm.getName());
 
-    Team team = TeamOM.withDefaultValues();
+    Organization organizationOm = OrganizationOM.withDefaultValues();
+    Organization organization = personalManagementService.createOrganization(organizationOm);
+
+    Team teamOm = TeamOM.withDefaultValues();
+    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
 
     int itemNumber = 3;
     List<User> userList = UserOM.withRandomNames(itemNumber);
-    for (User user : userList) {
+    for (User userOm : userList) {
+      User user = personalManagementService.signUp(userOm.getEmail(),
+          userOm.getPassword(),
+          userOm.getFirstName(),
+          userOm.getLastName(),
+          String.valueOf(userOm.getPhoneNumber()),
+          userOm.getDni());
+
       user.setTeam(team);
-      personalManagementService.signUp(user);
-      personalManagementService.addMember(user.getTeam().getId(), user.getId());
+      personalManagementService.addMember(team.getId(), user.getId());
+
     }
 
     Assertions.assertThrows(InstanceNotFoundException.class,
@@ -256,12 +327,22 @@ class TeamServiceImplTest extends IntegrationTest {
 
   @Test
   void givenUserId_whenFindByUserId_thenTeamFound()
-      throws DuplicateInstanceException, InstanceNotFoundException, AlreadyDismantledException {
-    User user = UserOM.withDefaultValues();
-    Team team = TeamOM.withDefaultValues();
-    user.setTeam(team);
-    personalManagementService.signUp(user);
-    team = personalManagementService.addMember(user.getTeam().getId(), user.getId());
+      throws DuplicateInstanceException, InstanceNotFoundException, AlreadyDismantledException, AlreadyExistException {
+    OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
+    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+
+    Organization organizationOm = OrganizationOM.withDefaultValues();
+    Organization organization = personalManagementService.createOrganization(organizationOm);
+
+    Team teamOm = TeamOM.withDefaultValues();
+    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+
+    User userOm = UserOM.withDefaultValues();
+    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+        userOm.getLastName(),
+        String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
+
+    team = personalManagementService.addMember(team.getId(), user.getId());
 
     Assertions.assertEquals(team, personalManagementService.findTeamByUserId(user.getId()));
 

@@ -1,0 +1,45 @@
+get:
+  summary: Lista de equipos
+  operationId: getTeams
+  tags:
+    - TeamManagement
+  parameters:
+    - in: query
+      name: code
+      schema:
+        type: string
+    - in: query
+      name: organizationId
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/TeamResponseDto.yml'
+
+post:
+  summary: Crear nuevo equipo
+  operationId: postTeam
+  tags:
+    - TeamManagement
+  security:
+    - bearerAuth: [ ]
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/TeamRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/TeamResponseDto.yml'

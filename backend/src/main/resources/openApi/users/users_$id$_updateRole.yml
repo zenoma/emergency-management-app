@@ -1,0 +1,35 @@
+post:
+  summary: Actualizar rol de usuario
+  operationId: postUpdateUserRole
+  tags:
+    - UserManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/UserRoleRequestDto.yml'
+  responses:
+    '204':
+      description: No Content
+    '403':
+      description: Insufficient role permission
+      content:
+        application/json:
+          schema:
+            $ref: '../common/schemas/ErrorDto.yml'
+    '404':
+      description: Usuario no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '../common/schemas/ErrorDto.yml'

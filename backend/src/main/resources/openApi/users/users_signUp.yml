@@ -1,0 +1,18 @@
+post:
+  summary: Registro (signUp)
+  operationId: postUsersSignUp
+  tags:
+    - UserManagement
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/UserSignUpRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/AuthenticatedUserDto.yml'

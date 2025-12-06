@@ -1,0 +1,30 @@
+type: object
+required:
+  - id
+  - code
+  - name
+  - headquartersAddress
+  - coordinates
+  - createdAt
+  - organizationTypeId
+  - organizationTypeName
+properties:
+  id:
+    type: integer
+    format: int64
+  code:
+    type: string
+  name:
+    type: string
+  headquartersAddress:
+    type: string
+  coordinates:
+    $ref: "../../../common/schemas/CoordinatesDto.yml"
+  createdAt:
+    type: string
+    format: localDateTime
+  organizationTypeId:
+    type: integer
+    format: int64
+  organizationTypeName:
+    type: string

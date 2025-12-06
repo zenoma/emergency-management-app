@@ -1,0 +1,16 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+  code:
+    type: string
+  name:
+    type: string
+  headquartersAddress:
+    type: string
+  coordinates:
+    $ref: "../../../common/schemas/CoordinatesDto.yml"
+  organizationTypeId:
+    type: integer
+    format: int64

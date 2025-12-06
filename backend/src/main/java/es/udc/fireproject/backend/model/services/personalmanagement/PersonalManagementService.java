@@ -15,7 +15,10 @@ import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.InsufficientRolePermissionException;
 import java.util.List;
 import org.locationtech.jts.geom.Point;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public interface PersonalManagementService {
 
   // ORGANIZATION SERVICES
@@ -93,7 +96,8 @@ public interface PersonalManagementService {
 
   List<User> findAllUsers();
 
-  void signUp(User user) throws DuplicateInstanceException;
+  User signUp(String email, String password, String firstName, String lastName, String phoneNumber, String dni)
+      throws DuplicateInstanceException;
 
   User login(String email, String password) throws IncorrectLoginException;
 

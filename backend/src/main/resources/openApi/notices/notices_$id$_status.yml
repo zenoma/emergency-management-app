@@ -1,0 +1,23 @@
+put:
+  summary: Actualizar estado del aviso
+  operationId: putNoticeStatus
+  tags:
+    - NoticeManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/NoticeStatusRequestDto.yml'
+  responses:
+    '204':
+      description: Aviso validado

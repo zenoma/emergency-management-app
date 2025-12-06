@@ -46,14 +46,14 @@ function App({ t }) {
   const { i18n } = useTranslation("home");
   const locale = i18n.language;
 
-  const [login] = useLoginFromTokenMutation();
+  const [loginFromToken] = useLoginFromTokenMutation();
 
   const logged = useSelector(selectToken);
 
   const userRole = useSelector(selectUser)?.userRole || 'USER';
 
 
-  const [token] = useState(localStorage.getItem("token") || "");
+  const [token] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
 
@@ -65,13 +65,13 @@ function App({ t }) {
       locale: locale,
     };
 
-    if (token !== "") {
-      login(payload)
+    if (token !== undefined) {
+      loginFromToken(payload)
         .unwrap()
         .then((payload) => {
           dispatch(validLogin(payload));
           toast.info(t("succesfully-login"));
-          localStorage.setItem("token", token);
+          console.log(payload)
           setLoading(false);
         })
         .catch(() => {
@@ -80,7 +80,7 @@ function App({ t }) {
     } else {
       setLoading(false);
     }
-  }, [token, dispatch, login, t, locale]);
+  }, [token, dispatch, loginFromToken, t, locale]);
 
   if (loading) {
     return (

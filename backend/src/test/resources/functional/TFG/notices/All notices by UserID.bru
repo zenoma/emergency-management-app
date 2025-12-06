@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{base_url}}/notices
+  url: {{base_url}}/notices?userId=4
   body: none
   auth: inherit
+}
+
+params:query {
+  userId: 4
 }
 
 settings {

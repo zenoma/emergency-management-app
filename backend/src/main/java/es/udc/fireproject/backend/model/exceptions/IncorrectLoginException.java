@@ -1,6 +1,6 @@
 package es.udc.fireproject.backend.model.exceptions;
 
-public class IncorrectLoginException extends Exception {
+public class IncorrectLoginException extends RuntimeException {
 
   private final String userName;
   private final String password;

@@ -175,7 +175,8 @@ class TeamServiceImplTest {
         organization.getId());
 
     User user = UserOM.withDefaultValues();
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
     team = personalManagementService.addMember(team.getId(), user.getId());
     team.setUserList(List.of(user));
 
@@ -196,7 +197,8 @@ class TeamServiceImplTest {
         organization.getId());
 
     User user = UserOM.withDefaultValues();
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
 
     final Team finalTeam = team;
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
@@ -216,7 +218,8 @@ class TeamServiceImplTest {
     User user = UserOM.withDefaultValues();
     Team team = TeamOM.withDefaultValues();
     user.setTeam(team);
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
     personalManagementService.addMember(user.getTeam().getId(), user.getId());
 
     personalManagementService.deleteMember(user.getTeam().getId(), user.getId());
@@ -237,7 +240,8 @@ class TeamServiceImplTest {
         organization.getId());
 
     User user = UserOM.withDefaultValues();
-    personalManagementService.signUp(user);
+    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+        String.valueOf(user.getPhoneNumber()), user.getDni());
 
     personalManagementService.addMember(team.getId(), user.getId());
 
@@ -269,7 +273,8 @@ class TeamServiceImplTest {
     int itemNumber = 3;
     List<User> userList = UserOM.withRandomNames(itemNumber);
     for (User user : userList) {
-      personalManagementService.signUp(user);
+      personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+          String.valueOf(user.getPhoneNumber()), user.getDni());
       personalManagementService.addMember(team.getId(), user.getId());
     }
 
@@ -291,7 +296,8 @@ class TeamServiceImplTest {
     int itemNumber = 3;
     List<User> userList = UserOM.withRandomNames(itemNumber);
     for (User user : userList) {
-      personalManagementService.signUp(user);
+      personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+          String.valueOf(user.getPhoneNumber()), user.getDni());
       personalManagementService.addMember(team.getId(), user.getId());
     }
 
