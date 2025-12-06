@@ -4,6 +4,7 @@ required:
   - firstName
   - lastName
   - email
+  - phoneNumber
   - dni
   - userRole
 properties:

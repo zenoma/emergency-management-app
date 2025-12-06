@@ -18,6 +18,7 @@ import es.udc.fireproject.backend.model.exceptions.IncorrectLoginException;
 import es.udc.fireproject.backend.model.exceptions.IncorrectPasswordException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.InsufficientRolePermissionException;
+import es.udc.fireproject.backend.model.exceptions.UserWithoutTeamException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementServiceImpl;
 import es.udc.fireproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
@@ -281,8 +282,13 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
   public Team findTeamByUserId(Long userId) throws InstanceNotFoundException {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new InstanceNotFoundException(USER_NOT_FOUND, userId));
-    return teamRepository.findById(user.getTeam().getId())
-        .orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, user.getTeam().getId()));
+    try {
+      Long teamId = user.getTeam().getId();
+      return teamRepository.findById(teamId).orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, teamId));
+
+    } catch (NullPointerException e) {
+      throw new UserWithoutTeamException(TEAM_NOT_FOUND, userId);
+    }
   }
 
   @Override

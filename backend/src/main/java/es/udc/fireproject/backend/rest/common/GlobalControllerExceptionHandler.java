@@ -13,6 +13,7 @@ import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
 import es.udc.fireproject.backend.model.exceptions.PermissionException;
+import es.udc.fireproject.backend.model.exceptions.UserWithoutTeamException;
 import es.udc.fireproject.backend.rest.dtos.ErrorDto;
 import es.udc.fireproject.backend.rest.dtos.FieldErrorDto;
 import java.util.List;
@@ -36,6 +37,7 @@ public class GlobalControllerExceptionHandler {
 
   private static final String GLOBAL_ERROR_EXCEPTION = "project.exceptions.GlobalErrorException";
   private static final String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+  private static final String USER_WITHOUT_TEAM_EXCEPTION_CODE = "project.exceptions.UserWithoutTeamException";
   private static final String BAD_REQUEST_EXCEPTION_CODE = "project.exceptions.BadRequestException";
   private static final String METHOD_ARGUMENT_NOT_VALID_EXCEPTION = "project.exceptions.MethodArgumentNotValidException";
   private static final String RESOURCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.ResourceNotFoundException";
@@ -121,6 +123,19 @@ public class GlobalControllerExceptionHandler {
     String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
     String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE,
         new Object[]{nameMessage, exception.getKey().toString()}, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+
+  }
+
+  @ExceptionHandler(UserWithoutTeamException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseBody
+  public ErrorDto handleUserWithoutTeamException(UserWithoutTeamException exception, Locale locale) {
+
+    String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
+    String errorMessage = messageSource.getMessage(USER_WITHOUT_TEAM_EXCEPTION_CODE,
+        new Object[]{nameMessage, exception.getKey().toString()}, USER_WITHOUT_TEAM_EXCEPTION_CODE, locale);
 
     return new ErrorDto(errorMessage);
 

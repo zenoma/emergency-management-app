@@ -17,6 +17,7 @@ public class UserConversor {
         user.getFirstName(),
         user.getLastName(),
         user.getEmail(),
+        user.getPhoneNumber().toString(),
         user.getDni(),
         user.getUserRole().toString()
     );
