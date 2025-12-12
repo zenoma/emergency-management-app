@@ -2,7 +2,7 @@ type: object
 required:
   - id
   - body
-  - noticeStatus
+  - status
   - createdAt
   - userDto
   - coordinates
@@ -13,8 +13,9 @@ properties:
     format: int64
   body:
     type: string
-  noticeStatus:
-    $ref: "../../schemas/requests/NoticeStatusRequestDto.yml"
+  status:
+    type: string
+    enum: [ PENDING, REJECTED, ACCEPTED ]
   createdAt:
     type: string
     format: localDateTime

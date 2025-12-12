@@ -1,8 +1,8 @@
 type: object
 required:
-  - noticeStatus
+  - status
 properties:
-  noticeStatus:
+  status:
     type: string
     enum: [ PENDING, REJECTED, ACCEPTED ]
 

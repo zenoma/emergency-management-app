@@ -148,25 +148,25 @@ export default function CoordinatorNoticesView() {
         ) : null;
       },
     },
-    {
-      field: 'image',
-      headerName: t("notice-image"),
-      width: 150,
-      renderCell: (params) => {
-        if (params.row.images[0]) {
-          return (
-            <img
-              src={`${URL}/images/${params.row.id}/${params.row.images[0].name}`}
-              alt={params.row.name}
-              style={{ minWidth: 100, minHeight: 10, cursor: "pointer" }}
-              onClick={() => handleDialogOpen(params.row.id, params.row.images[0].name)}
-            />
-          );
-        } else {
-          return null;
-        }
-      }
-    },
+    // {
+    //   field: 'image',
+    //   headerName: t("notice-image"),
+    //   width: 150,
+    //   renderCell: (params) => {
+    //     if (params.row.images[0]) {
+    //       return (
+    //         <img
+    //           src={`${URL}/images/${params.row.id}/${params.row.images[0].name}`}
+    //           alt={params.row.name}
+    //           style={{ minWidth: 100, minHeight: 10, cursor: "pointer" }}
+    //           onClick={() => handleDialogOpen(params.row.id, params.row.images[0].name)}
+    //         />
+    //       );
+    //     } else {
+    //       return null;
+    //     }
+    //   }
+    // },
     {
       field: "notice-options",
       headerName: t("notice-options"),

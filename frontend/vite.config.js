@@ -4,16 +4,13 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
+  build: {
+    sourcemap: true
   },
   server: {
+    host: true,
     port: 3000,
-    watch: {
-      usePolling: true,
-    },
+    watch: { usePolling: true },
     proxy: {
       '/ow': {
         target: 'https://api.openweathermap.org/data/2.5',
@@ -21,6 +18,11 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/ow/, ''),
       },
     }
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
   },
 });
 

@@ -5,8 +5,7 @@ import es.udc.fireproject.backend.model.entities.notice.Notice;
 import es.udc.fireproject.backend.rest.dtos.CoordinatesDto;
 import es.udc.fireproject.backend.rest.dtos.ImageDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeResponseDto;
-import es.udc.fireproject.backend.rest.dtos.NoticeStatusRequestDto;
-import es.udc.fireproject.backend.rest.dtos.NoticeStatusRequestDto.NoticeStatusEnum;
+import es.udc.fireproject.backend.rest.dtos.NoticeResponseDto.StatusEnum;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class NoticeConversor {
 
     return new NoticeResponseDto(notice.getId(),
         notice.getBody(),
-        new NoticeStatusRequestDto(NoticeStatusEnum.valueOf(notice.getStatus().toString())),
+        StatusEnum.valueOf(String.valueOf(notice.getStatus())),
         notice.getCreatedAt(),
         notice.getUser() != null ? UserConversor.toUserDto(notice.getUser()) : null,
         coordinatesDto,

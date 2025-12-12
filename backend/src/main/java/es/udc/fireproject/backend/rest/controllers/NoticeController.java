@@ -108,7 +108,7 @@ public class NoticeController implements NoticesApi {
   @Override
   public ResponseEntity<Void> putNoticeStatus(Long id, NoticeStatusRequestDto noticeStatusRequestDto) {
 
-    final NoticeStatus noticeStatus = NoticeStatus.valueOf(noticeStatusRequestDto.getNoticeStatus().getValue());
+    final NoticeStatus noticeStatus = NoticeStatus.valueOf(noticeStatusRequestDto.getStatus().getValue());
 
     noticeService.checkNotice(id, noticeStatus);
 
