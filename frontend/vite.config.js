@@ -13,6 +13,13 @@ export default defineConfig({
     port: 3000,
     watch: {
       usePolling: true,
+    },
+    proxy: {
+      '/ow': {
+        target: 'https://api.openweathermap.org/data/2.5',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ow/, ''),
+      },
     }
   },
 });

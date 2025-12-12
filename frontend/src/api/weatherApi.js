@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const API_KEY = import.meta.env.VITE_REACT_APP_OPEN_WEATHER_TOKEN;
-const API_BASE_URL = "/api/weather";
+const API_BASE_URL = "/ow/";
+
 
 export const weatherApi = createApi({
     reducerPath: 'weatherApi',
