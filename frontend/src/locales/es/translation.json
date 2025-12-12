@@ -2,7 +2,6 @@
   "language": "Idioma",
   "title": "Aplicación de Coordinación de Bomberos",
   "open-settings": "Abrir opciones",
-
   "sign-up": "Sign up",
   "sign-up-tittle": "Crear nuevo usuario",
   "sign-up-button": "Crear",
@@ -17,7 +16,6 @@
   "change-password-error": "No se ha podido cambiar la contraseña",
   "already-account": "¿Ya estás registrado?",
   "has-team?": "¿Tiene equipo asginado?",
-
   "login": "Login",
   "logout": "Logout",
   "profile": "Perfil",
@@ -26,19 +24,17 @@
   "my-notices": "Mis avisos",
   "notices": "Avisos",
   "succesfully-login": "Logeado correctamente",
-
   "geographic-map": "Mapa geográfico",
   "create-notice": "Crear aviso",
   "create-notice-placeholder": "Inserte la descripción del aviso...",
   "notice-created-sucessfully": "Aviso creado correctamente",
-  "notice-created-error": "Hubo un problema al crear el error",
+  "notice-created-error": "Hubo un problema al crear el aviso",
   "notice-image-error": "Hubo un problema al subir la imagen",
   "notice-management": "Gestión avisos",
   "notice-body": "Descripción",
   "notice-status": "Estado",
   "notice-image": "Imagen",
   "notice-options": "Opciones",
-
   "select-organization-type": "Seleciona el tipo de organización a mostrar",
   "choose-organization-type": "Selecciona el tipo de organización",
   "organization-details-title": "Detalles de la organización",
@@ -51,7 +47,6 @@
   "organization-create-new": "Crear nueva organización",
   "organization-deleted-dialog": "¿Está seguro de eliminar esta organización?",
   "organization-edit": "Editar organizacion",
-
   "teams-list": "Lista de equipos",
   "team-details": "Detalles de equipo",
   "team-organization-belong": "Organización asociada",
@@ -75,11 +70,9 @@
   "team-retracted-error": "No se ha podido retirado el equipo",
   "my-team-not-found-tittle": "Todavía no perteneces aún equipo",
   "my-team-not-found-body": "Habla con algún administrador para que se te asigne correctamente a un equipo.",
-
   "firstName": "Nombre",
   "lastName": "Apellido",
   "phoneNumber": "Número de teléfono",
-
   "user-list": "Lista de usuarios",
   "user-no-user-list": "Todavía no hay usuarios en este equipo",
   "user-added-successfully": "Usuario añadido satisfactoriamente",
@@ -93,7 +86,6 @@
   "user-role": "Rol usuario",
   "user-profile": "Perfil del usuario",
   "role-permissions": "Opciones de permisos",
-
   "vehicle-list": "Lista de vehículos",
   "vehicle-plate": "Matrícula",
   "type": "Tipo vehículo",
@@ -112,7 +104,6 @@
   "vehicle-deployed-no-selected": "Debe seleccionar un vehículo para desplegar",
   "vehicle-retracted-successfully": "Vehículo retirado correctamente",
   "vehicle-retracted-error": "No se ha podido retirar el vehículo",
-
   "fire-list": "Lista de incendios",
   "fire-management": "Gestión incendios",
   "fire-id": "Código incendio",
@@ -135,7 +126,6 @@
   "fire-fireIndex": "Nivel del incendio",
   "fire-updated-successfully": "Incendio actualizado correctamente",
   "fire-updated-error": "No se ha podido actualizar el incendio",
-
   "quadrant-list": "Lista de cuadrantes",
   "quadrant-id": "Código cuadrante",
   "quadrant-name": "Nombre",
@@ -157,7 +147,6 @@
   "quadrant-extinguish-text": "Se liberarán los equipos y los vehículos del cuadrante y se marcará el cuadrante como extinguido.",
   "quadrant-extinguished-successfully": "Se ha extinguido el cuadrante satisfactoriamente",
   "quadrant-extinguished-error": "No se ha podido extinguir el cuadrante",
-
   "fire-history-title": "Histórico del incendio",
   "tittle-date-picker": "Selector de rango de fechas",
   "start-date-picker": "Fecha de inicio",
@@ -165,13 +154,11 @@
   "date-invalid-body": "Porfavor selecciona las fechas correctamente",
   "start-date-after-end-date": "La fecha de inicio es posterior a la fecha de fin",
   "end-date-before-start-date": "La fecha de fin es anterior a la fecha de inicio",
-
   "global-statistics": "Estadísticas globales",
   "teams-mobilized": "Equipos movilizados",
   "vehicles-mobilized": "Vehículos movilizados",
   "affected-quadrants": "Cuadrantes afectados",
   "max-burned-hectares": "Hectáreas quemadas",
-
   "navigator-geolocation-tittle": "Ubicación no disponible",
   "navigator-geolocation-error": "No se ha podido obtener la localización actual, porfavor conceda los permisos necesarios en el navegador.",
   "weather-info-tittle": "Información meteorológica en ",
@@ -184,7 +171,6 @@
   "weather-wind": "Viento",
   "weather-wind-speed": "Velocidad del viento",
   "weather-wind-direction": "Dirección del viento",
-
   "options": "Opciones",
   "cancel": "Cancelar",
   "edit": "Editar",
