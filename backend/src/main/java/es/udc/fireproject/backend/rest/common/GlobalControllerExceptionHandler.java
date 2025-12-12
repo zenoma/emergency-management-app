@@ -227,7 +227,8 @@ public class GlobalControllerExceptionHandler {
   }
 
   @ExceptionHandler(IncorrectLoginException.class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ResponseBody
   public ErrorDto handleIncorrectLoginException(IncorrectLoginException exception, Locale locale) {
     String errorMessage = messageSource.getMessage(INCORRECT_LOGIN_EXCEPTION_CODE, null,
         INCORRECT_LOGIN_EXCEPTION_CODE, locale);
@@ -235,7 +236,8 @@ public class GlobalControllerExceptionHandler {
   }
 
   @ExceptionHandler(IncorrectPasswordException.class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ResponseBody
   public ErrorDto handleIncorrectPasswordException(IncorrectPasswordException exception, Locale locale) {
     String errorMessage = messageSource.getMessage(INCORRECT_PASSWORD_EXCEPTION_CODE, null,
         INCORRECT_PASSWORD_EXCEPTION_CODE, locale);
@@ -244,6 +246,7 @@ public class GlobalControllerExceptionHandler {
 
   @ExceptionHandler(InsufficientRolePermissionException.class)
   @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ResponseBody
   public ErrorDto handleInsufficientRolePermissionException(InsufficientRolePermissionException exception,
       Locale locale) {
     String errorMessage = messageSource.getMessage(INSUFFICIENT_ROLE_PERMISSION_EXCEPTION_CODE, null,

@@ -45,7 +45,7 @@ export default function MyNoticesList() {
 
   const { data, error, isLoading } = useGetNoticesQuery(payload, { refetchOnMountOrArgChange: true });
 
-  if ((data === "") & (list === "")) {
+  if (data && data !== list) {
     setList(data);
   }
 
@@ -72,7 +72,7 @@ export default function MyNoticesList() {
       ),
     },
     {
-      field: 'status',
+      field: 'noticeStatus',
       headerName: t("notice-status"),
       width: 200,
       renderCell: (params) => (
@@ -81,26 +81,26 @@ export default function MyNoticesList() {
         </Typography>
       ),
     },
-    {
-      field: 'image',
-      headerName: t("notice-image"),
-      width: 150,
-      renderCell: (params) => {
-        if (params.row.images[0]) {
-          return (
-            <img
-              src={`${URL}/images/${params.row.id}/${params.row.images[0].name}`}
-              alt={params.row.title}
-              style={{ width: 50, height: 50 }}
-              onClick={() => handleDialogOpen(params.row.id, params.row.images[0].name)}
-            />
+    // {
+    //   field: 'image',
+    //   headerName: t("notice-image"),
+    //   width: 150,
+    //   renderCell: (params) => {
+    //     if (params.row.images[0]) {
+    //       return (
+    //         <img
+    //           src={`${URL}/images/${params.row.id}/${params.row.images[0].name}`}
+    //           alt={params.row.title}
+    //           style={{ width: 50, height: 50 }}
+    //           onClick={() => handleDialogOpen(params.row.id, params.row.images[0].name)}
+    //         />
 
-          );
-        } else {
-          return null;
-        }
-      }
-    },
+    //       );
+    //     } else {
+    //       return null;
+    //     }
+    //   }
+    // },
   ];
   return (
     <Paper
@@ -136,13 +136,13 @@ export default function MyNoticesList() {
           />
         </div>)
         : null}
-        <Dialog open={dialogOpen} onClose={handleDialogClose}>
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogContent>
           {selectedImage && <img src={`${URL}/images/${selectedNoticeId}/${selectedImage}`}
             alt="Imagen" style={{ maxWidth: "100%" }} />}
         </DialogContent>
       </Dialog>
     </Paper >
-    
+
   );
 }
