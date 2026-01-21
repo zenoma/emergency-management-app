@@ -158,9 +158,9 @@ export default function OrganizationTable(props) {
       .then((payload) => {
         toast.success("Organización borrada satisfactoriamente");
       })
-      .catch((error) =>
-        toast.error("No se ha podido eliminar la organización")
-      );
+    // .catch((error) =>
+    //   toast.error("No se ha podido eliminar la organización")
+    // );
 
     handleCloseDelete();
     props.reloadData();

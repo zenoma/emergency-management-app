@@ -14,7 +14,7 @@ import glFlag from "../../assets/images/gl.svg";
 import i18n from "../../i18n";
 
 export const SwitchLanguajeDropdown = () => {
-  const [language, setLanguage] = useState(i18n.language.substring(0,2));
+  const [language, setLanguage] = useState(i18n.language.substring(0, 2));
 
 
   const handleChange = (event) => {
@@ -25,7 +25,7 @@ export const SwitchLanguajeDropdown = () => {
   const { t } = useTranslation();
 
   return (
-    <Box sx={{ padding: "30px" }}>
+    <Box sx={{ minWidth: 150 }}>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">{t("language")}</InputLabel>
         <Select
@@ -58,4 +58,4 @@ export const SwitchLanguajeDropdown = () => {
   );
 };
 
-export default function BasicSelect() {}
+export default function BasicSelect() { }

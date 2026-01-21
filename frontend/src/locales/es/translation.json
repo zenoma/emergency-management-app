@@ -186,5 +186,6 @@
   "description": "Descripción",
   "rows-per-page": "Filas por página",
   "generic-error": "Oh no, ha ocurrido un error",
-  "loading": "Cargando"
+  "loading": "Cargando",
+  "my-area": "Mi área"
 }

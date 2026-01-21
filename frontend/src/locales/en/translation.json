@@ -2,7 +2,6 @@
   "language": "Language",
   "title": "Firefighters Coordination App",
   "open-settings": "Open settings",
-
   "sign-up": "Sign up",
   "sign-up-tittle": "Create a new user",
   "sign-up-button": "Create",
@@ -17,7 +16,6 @@
   "change-password-error": "Unable to change password",
   "already-account": "Already have an account?",
   "has-team?": "Has a team assigned?",
-
   "login": "Login",
   "logout": "Logout",
   "profile": "Profile",
@@ -26,7 +24,6 @@
   "my-notices": "My notices",
   "notices": "Notices",
   "succesfully-login": "Logged in successfully",
-
   "geographic-map": "Geographic map",
   "create-notice": "Create notice",
   "create-notice-placeholder": "Enter notice description...",
@@ -38,7 +35,6 @@
   "notice-status": "Status",
   "notice-image": "Image",
   "notice-options": "Options",
-
   "select-organization-type": "Select organization type to display",
   "choose-organization-type": "Choose organization type",
   "organization-details-title": "Organization details",
@@ -51,7 +47,6 @@
   "organization-create-new": "Create new organization",
   "organization-deleted-dialog": "Are you sure you want to delete this organization?",
   "organization-edit": "Edit organization",
-
   "teams-list": "Teams list",
   "team-details": "Team details",
   "team-organization-belong": "Associated organization",
@@ -75,11 +70,9 @@
   "team-retracted-error": "Unable to retract team",
   "my-team-not-found-tittle": "You dont have a assigned team",
   "my-team-not-found-body": "Speak with an administrator so you can have an assigned team.",
-
   "firstName": "First name",
   "lastName": "Last name",
   "phoneNumber": "Phone number",
-
   "user-list": "User list",
   "user-no-user-list": "There are no users in this team yet",
   "user-added-successfully": "User added successfully",
@@ -93,7 +86,6 @@
   "user-role": "User role",
   "user-profile": "User profile",
   "role-permissions": "Permission options",
-
   "vehicle-list": "Vehicle list",
   "vehicle-plate": "License plate",
   "type": "Vehicle type",
@@ -112,7 +104,6 @@
   "vehicle-deployed-no-selected": "You must select a vehicle to deploy",
   "vehicle-retracted-successfully": "Vehicle retracted successfully",
   "vehicle-retracted-error": "Could not retract vehicle",
-
   "fire-list": "Fire list",
   "fire-management": "Fire management",
   "fire-id": "Fire code",
@@ -135,7 +126,6 @@
   "fire-fireIndex": "Fire level",
   "fire-updated-successfully": "Fire updated successfully",
   "fire-updated-error": "Could not update fire",
-
   "quadrant-list": "Quadrant list",
   "quadrant-id": "Quadrant code",
   "quadrant-name": "Name",
@@ -157,7 +147,6 @@
   "quadrant-extinguish-text": "Teams and vehicles will be released from the quadrant and the quadrant will be marked as extinguished.",
   "quadrant-extinguished-successfully": "Quadrant extinguished successfully",
   "quadrant-extinguished-error": "Could not extinguish quadrant",
-
   "fire-history-title": "Fire History",
   "tittle-date-picker": "Date Range Selector",
   "start-date-picker": "Start Date",
@@ -165,13 +154,11 @@
   "date-invalid-body": "Please select the dates correctly",
   "start-date-after-end-date": "The start date is after the end date",
   "end-date-before-start-date": "The end date is before the start date",
-
   "global-statistics": "Global Statistics",
   "teams-mobilized": "Teams Mobilized",
   "vehicles-mobilized": "Vehicles Mobilized",
   "affected-quadrants": "Affected Quadrants",
   "max-burned-hectares": "Max Burned Hectares",
-
   "navigator-geolocation-tittle": "Location unavailable",
   "navigator-geolocation-error": "Could not retrieve current location, please grant necessary permissions in your browser.",
   "weather-info-tittle": "Información meteorológica en ",
@@ -184,7 +171,6 @@
   "weather-wind": "Wind",
   "weather-wind-speed": "Wind speed",
   "weather-wind-direction": "Wind direction",
-
   "options": "Options",
   "cancel": "Cancel",
   "edit": "Edit",
@@ -200,5 +186,6 @@
   "description": "Description",
   "rows-per-page": "Rows per page",
   "generic-error": "Oh no, an error has occurred",
-  "loading": "Loading"
+  "loading": "Loading",
+  "my-area": "My area"
 }

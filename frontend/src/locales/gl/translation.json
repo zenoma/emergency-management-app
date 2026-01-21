@@ -2,7 +2,6 @@
   "language": "Idioma",
   "title": "Aplicación de Coordinación de Bombeiros",
   "open-settings": "Abrir opcións",
-
   "sign-up": "Rexistrarse",
   "sign-up-tittle": "Crear novo usuario",
   "sign-up-button": "Crear",
@@ -17,7 +16,6 @@
   "change-password-error": "Non foi posible cambiar o contrasinal",
   "already-account": "Xa estás rexistrado?",
   "has-team?": "Ten equipo asignado?",
-
   "login": "Acceder",
   "logout": "Sair",
   "profile": "Perfil",
@@ -26,7 +24,6 @@
   "my-notices": "Os meus avisos",
   "notices": "Avisos",
   "succesfully-login": "Acceso correcto",
-
   "geographic-map": "Mapa xeográfico",
   "create-notice": "Crear aviso",
   "create-notice-placeholder": "Escriba a descrición do aviso...",
@@ -38,7 +35,6 @@
   "notice-status": "Estado",
   "notice-image": "Imaxe",
   "notice-options": "Opcións",
-
   "select-organization-type": "Seleccionar o tipo de organización a mostrar",
   "choose-organization-type": "Seleccionar o tipo de organización",
   "organization-details-title": "Detalles da organización",
@@ -51,7 +47,6 @@
   "organization-create-new": "Crear nova organización",
   "organization-deleted-dialog": "Está seguro de eliminar esta organización?",
   "organization-edit": "Editar organización",
-
   "teams-list": "Lista de equipos",
   "team-details": "Detalles do equipo",
   "team-organization-belong": "Organización asociada",
@@ -75,11 +70,9 @@
   "team-retracted-error": "Non foi posíbel retirar o equipo",
   "my-team-not-found-tittle": "Aínda non pertence a ningún equipo",
   "my-team-not-found-body": "Hable con algún administrador para que se lle asigne correctamente a un equipo.",
-
   "firstName": "Nome",
   "lastName": "Apelido",
   "phoneNumber": "Número de teléfono",
-
   "user-list": "Lista de usuarios",
   "user-no-user-list": "Aínda non hai usuarios neste equipo",
   "user-added-successfully": "Usuario engadido satisfactoriamente",
@@ -93,7 +86,6 @@
   "user-role": "Rol usuario",
   "user-profile": "Perfil do usuario",
   "role-permissions": "Opcións de permisos",
-
   "vehicle-list": "Lista de vehículos",
   "vehicle-plate": "Matrícula",
   "type": "Tipo vehículo",
@@ -112,7 +104,6 @@
   "vehicle-deployed-no-selected": "Debe seleccionar un vehículo para despregar",
   "vehicle-retracted-successfully": "Vehículo retirado correctamente",
   "vehicle-retracted-error": "Non foi posible retirar o vehículo",
-
   "fire-list": "Lista de lumes",
   "fire-management": "Xestión de lumes",
   "fire-id": "Código do lume",
@@ -135,7 +126,6 @@
   "fire-fireIndex": "Nivel do lume",
   "fire-updated-successfully": "Lume actualizado con éxito",
   "fire-updated-error": "Non se puido actualizar o lume",
-
   "quadrant-list": "Lista de cadrantes",
   "quadrant-id": "Código de cadrante",
   "quadrant-name": "Nome",
@@ -157,7 +147,6 @@
   "quadrant-extinguish-text": "Libéranse os equipos e vehículos do cadrante e marcase o cadrante como extinguido.",
   "quadrant-extinguished-successfully": "Extinguiuse o cadrante satisfactoriamente",
   "quadrant-extinguished-error": "Non se puido extinguir o cadrante",
-
   "fire-history-title": "Histórico do incendio",
   "tittle-date-picker": "Selector de rango de datas",
   "start-date-picker": "Data de inicio",
@@ -165,13 +154,11 @@
   "date-invalid-body": "Por favor, seleccione as datas correctamente",
   "start-date-after-end-date": "A data de inicio é posterior á data de fin",
   "end-date-before-start-date": "A data de fin é anterior á data de inicio",
-
   "global-statistics": "Estatísticas globais",
   "teams-mobilized": "Equipos mobilizados",
   "vehicles-mobilized": "Vehículos mobilizados",
   "affected-quadrants": "Cadrantes afectados",
   "max-burned-hectares": "Hectáreas queimadas",
-
   "navigator-geolocation-tittle": "Localización non dispoñible",
   "navigator-geolocation-error": "Non foi posíbel obter a localización actual, por favor, conceda os permisos necesarios no navegador.",
   "weather-info-tittle": "Información meteorolóxica en ",
@@ -184,8 +171,6 @@
   "weather-wind": "Vento",
   "weather-wind-speed": "Velocidade do vento",
   "weather-wind-direction": "Dirección do vento",
-
-
   "options": "Opcións",
   "cancel": "Cancelar",
   "edit": "Editar",
@@ -201,5 +186,6 @@
   "description": "Descrición",
   "rows-per-page": "Filas por páxina",
   "generic-error": "Oh non, ocorreu un erro",
-  "loading": "Cargando"
+  "loading": "Cargando",
+  "my-area": "Miña área"
 }

@@ -2,6 +2,7 @@ package es.udc.fireproject.backend.rest.controllers;
 
 import es.udc.fireproject.backend.model.entities.organization.Organization;
 import es.udc.fireproject.backend.model.entities.organization.OrganizationType;
+import es.udc.fireproject.backend.model.exceptions.DomainException;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
 import es.udc.fireproject.backend.rest.dtos.OrganizationRequestDto;
 import es.udc.fireproject.backend.rest.dtos.OrganizationResponseDto;
@@ -10,6 +11,7 @@ import es.udc.fireproject.backend.rest.dtos.conversors.OrganizationConversor;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,7 +54,11 @@ public class OrganizationsController implements OrganizationsApi {
 
   @Override
   public ResponseEntity<Void> deleteByOrganizationId(Long id) {
-    personalManagementService.deleteOrganizationById(id);
+    try {
+      personalManagementService.deleteOrganizationById(id);
+    } catch (DataIntegrityViolationException e) {
+      throw new DomainException(e.getMessage(), String.valueOf(id));
+    }
 
     return ResponseEntity.noContent().build();
   }
