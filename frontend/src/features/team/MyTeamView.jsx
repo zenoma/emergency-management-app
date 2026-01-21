@@ -31,6 +31,10 @@ export default function MyTeamView(props) {
     refetchOnMountOrArgChange: true,
   });
 
+  if (error?.noTeam) {
+    return <TeamNotFoundPage />;
+  }
+
   return (
     <Paper
       sx={{
@@ -41,6 +45,7 @@ export default function MyTeamView(props) {
         padding: "10px",
       }}
     >
+
       {error ? (
         <TeamNotFoundPage />
       ) : isLoading ? (

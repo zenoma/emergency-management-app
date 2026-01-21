@@ -70,7 +70,10 @@ export const teamApi = baseApi.injectEndpoints({
           "Accept-Language": payload.locale,
         },
       }),
-      transformResponse: (response, meta, arg) => {
+      transformErrorResponse: (response) => {
+        if (response.status === 404) {
+          return { noTeam: true };
+        }
         return response;
       },
     }),
