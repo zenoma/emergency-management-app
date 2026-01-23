@@ -35,6 +35,7 @@
   "notice-status": "Status",
   "notice-image": "Image",
   "notice-options": "Options",
+  "notice-body-required": "Notice description is required",
   "select-organization-type": "Select organization type to display",
   "choose-organization-type": "Choose organization type",
   "organization-details-title": "Organization details",

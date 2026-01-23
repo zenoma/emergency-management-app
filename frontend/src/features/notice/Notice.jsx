@@ -11,6 +11,7 @@ export default function Notice() {
   const [body, setBody] = useState("");
   const [coordinates, setCoordinates] = useState("");
   const [image, setImage] = useState("");
+  const [bodyError, setBodyError] = useState(false);
 
 
   const { t } = useTranslation();
@@ -44,6 +45,15 @@ export default function Notice() {
   };
 
   const handleClick = async (e) => {
+    if (!body.trim()) {
+      setBodyError(true);
+      toast.error(t("notice-body-required"));
+      return;
+    }
+
+    setBodyError(false);
+
+
     const payload = { body: body, coordinates: coordinates, token: token, locale: locale };
 
     createNotice(payload)
@@ -77,6 +87,7 @@ export default function Notice() {
         value={body}
         variant="standard"
         onChange={(e) => handleChange(e)}
+        required
       />
       <Box m={3}>
         <input

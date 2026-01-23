@@ -35,6 +35,7 @@
   "notice-status": "Estado",
   "notice-image": "Imagen",
   "notice-options": "Opciones",
+  "notice-body-required": "La descripción del aviso es obligatoria",
   "select-organization-type": "Seleciona el tipo de organización a mostrar",
   "choose-organization-type": "Selecciona el tipo de organización",
   "organization-details-title": "Detalles de la organización",
