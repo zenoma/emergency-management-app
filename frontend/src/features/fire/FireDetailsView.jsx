@@ -242,10 +242,57 @@ export default function FireDetailsView() {
         {t("fire-details-title")}
       </Typography>
       {data && (
-        <Typography variant="h6" margin={1}>
-          {data.description} ({"#" + fireId})
-        </Typography>
-      )}
+        <Paper
+          sx={{
+            color: "primary.light",
+            padding: 2,
+            marginBottom: 2,
+            marginTop: 1,
+            marginLeft: "auto",
+            marginRight: "auto",
+            backgroundColor: "rgba(0, 0, 0, 0.02)",
+            display: "flex",
+            justifyContent: "center",
+          }}
+          variant="outlined"
+        >
+          <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap", justifyContent: "center" }}>
+            <Box>
+              <Typography variant="overline" sx={{ color: "secondary.light" }} display="block">
+                {t("fire-id")}
+              </Typography>
+              <Typography variant="h6" fontWeight="bold">
+                #{data.id}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="overline" sx={{ color: "secondary.light" }} display="block">
+                {t("fire-description")}
+              </Typography>
+              <Typography variant="h6" fontWeight="bold">
+                {data.description}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="overline" sx={{ color: "secondary.light" }} display="block">
+                {t("fire-type")}
+              </Typography>
+              <Typography variant="h6" fontWeight="bold">
+                {data.type}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="overline" sx={{ color: "secondary.light" }} display="block">
+                {t("fire-fireIndex")}
+              </Typography>
+              <Typography variant="h6" fontWeight="bold">
+                {data.fireIndex}
+              </Typography>
+            </Box>
+          </Box>
+        </Paper>
+      )
+      }
       <Grid
         container
         spacing={{ xs: 2, md: 3 }}

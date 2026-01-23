@@ -215,16 +215,34 @@ export default function FireDataGrid() {
           sx={{
             height: 490,
             width: "100%",
-            "& .disabled": {
+            "& .extinguido": {
               backgroundColor: "lightgrey",
               "&:hover": {
                 backgroundColor: "darkgrey",
               },
             },
-            "& .active": {
-              backgroundColor: "error.light",
+            "& .cero": {
+              backgroundColor: "#ffcdd2",
               "&:hover": {
-                backgroundColor: "error.dark",
+                backgroundColor: "#ef9a9a",
+              },
+            },
+            "& .uno": {
+              backgroundColor: "#ef9a9a",
+              "&:hover": {
+                backgroundColor: "#e57373",
+              },
+            },
+            "& .dos": {
+              backgroundColor: "#e57373",
+              "&:hover": {
+                backgroundColor: "#ef5350",
+              },
+            },
+            "& .tres": {
+              backgroundColor: "#ef5350",
+              "&:hover": {
+                backgroundColor: "#e53935",
               },
             },
           }}
@@ -253,9 +271,15 @@ export default function FireDataGrid() {
             onFilterModelChange={handleFilterModelChange}
             getRowClassName={(params) => {
               if (params.row.fireIndex === "EXTINGUIDO") {
-                return "disabled";
-              } else {
-                return "active";
+                return "extinguido";
+              } else if (params.row.fireIndex === "CERO") {
+                return "cero";
+              } else if (params.row.fireIndex === "UNO") {
+                return "uno";
+              } else if (params.row.fireIndex === "DOS") {
+                return "dos";
+              } else if (params.row.fireIndex === "TRES") {
+                return "tres";
               }
             }}
             onRowClick={(e) =>

@@ -19,3 +19,31 @@ get:
         application/json:
           schema:
             $ref: './schemas/responses/FireResponseDto.yml'
+
+put:
+  summary: Actualizar nuevo incendio
+  operationId: putFire
+  tags:
+    - FireManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/FireRequestDto.yml'
+  responses:
+    '200':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/FireResponseDto.yml'

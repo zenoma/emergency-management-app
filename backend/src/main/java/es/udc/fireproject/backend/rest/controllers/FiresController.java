@@ -57,6 +57,21 @@ public class FiresController implements FiresApi {
   }
 
   @Override
+  public ResponseEntity<FireResponseDto> putFire(Long id, FireRequestDto fireRequestDto) {
+
+    Fire fire = FireConversor.toFire(fireRequestDto);
+
+    fire = fireManagementService.updateFire(id, fire.getDescription(), fire.getType(), fire.getFireIndex());
+
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest().path("/{id}")
+        .buildAndExpand(fire.getId()).toUri();
+
+    return ResponseEntity.created(location).body(FireConversor.toFireDto(fire));
+
+  }
+
+  @Override
   public ResponseEntity<FireResponseDto> getFireById(Long id) {
     final FireResponseDto fireResponseDto = FireConversor.toFireDto(fireManagementService.findFireById(id));
     return ResponseEntity.ok(fireResponseDto);
