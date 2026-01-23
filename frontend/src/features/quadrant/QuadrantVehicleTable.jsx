@@ -84,10 +84,13 @@ export default function QuadrantVehicleTable(props) {
       .unwrap()
       .then((payload) => {
         toast.success(t("vehicle-retracted-successfully"));
+        handleCloseDelete();
+        props.reloadData();
       })
-      .catch((error) => toast.error(t("vehicle-retracted-error")));
-    handleCloseDelete();
-    props.reloadData();
+      .catch((error) => {
+        toast.error(t("vehicle-retracted-error"));
+        handleCloseDelete();
+      });
   };
 
   var rows = [];

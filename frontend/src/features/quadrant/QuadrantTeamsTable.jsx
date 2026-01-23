@@ -82,10 +82,13 @@ export default function QuadrantTeamsTable(props) {
       .unwrap()
       .then((payload) => {
         toast.success(t("team-retracted-successfully"));
+        handleCloseDelete();
+        props.reloadData();
       })
-      .catch((error) => toast.error(t("team-retracted-error")));
-    handleCloseDelete();
-    props.reloadData();
+      .catch((error) => {
+        toast.error(t("team-retracted-error"));
+        handleCloseDelete();
+      });
   };
 
   var rows = [];

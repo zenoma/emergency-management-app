@@ -1,4 +1,5 @@
 import { baseApi } from "./baseApi";
+import { quadrantApi } from "./quadrantApi";
 
 export const vehicleApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -103,7 +104,7 @@ export const vehicleApi = baseApi.injectEndpoints({
         url: "/vehicles/" + payload.vehicleId + "/deploy",
         method: "POST",
         body: {
-          gid: payload.gid,
+          quadrantId: payload.quadrantId,
         },
         headers: {
           Authorization: "Bearer " + payload.token,
@@ -119,7 +120,7 @@ export const vehicleApi = baseApi.injectEndpoints({
         url: "/vehicles/" + payload.vehicleId + "/retract",
         method: "POST",
         body: {
-          gid: payload.gid,
+          quadrantId: payload.quadrantId,
         },
         headers: {
           Authorization: "Bearer " + payload.token,

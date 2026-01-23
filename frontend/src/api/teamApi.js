@@ -160,7 +160,7 @@ export const teamApi = baseApi.injectEndpoints({
         url: "/teams/" + payload.teamId + "/deploy",
         method: "POST",
         body: {
-          gid: payload.gid,
+          quadrantId: payload.quadrantId,
         },
         headers: {
           Authorization: "Bearer " + payload.token,
@@ -176,7 +176,7 @@ export const teamApi = baseApi.injectEndpoints({
         url: "/teams/" + payload.teamId + "/retract",
         method: "POST",
         body: {
-          gid: payload.gid,
+          quadrantId: payload.quadrantId,
         },
         headers: {
           Authorization: "Bearer " + payload.token,
