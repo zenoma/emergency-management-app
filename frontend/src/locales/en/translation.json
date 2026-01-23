@@ -130,6 +130,7 @@
   "quadrant-list": "Quadrant list",
   "quadrant-id": "Quadrant code",
   "quadrant-name": "Name",
+  "quadrants-empty-list": "There are no registered quadrants",
   "quadrant-map": "Affected quadrants",
   "quadrant-details": "Quadrant Information",
   "quadrant-teams-deployed": "Deployed Teams",

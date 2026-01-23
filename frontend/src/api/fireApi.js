@@ -77,8 +77,11 @@ export const fireApi = baseApi.injectEndpoints({
     }),
     extinguishQuadrantByFireId: build.mutation({
       query: (payload) => ({
-        url: "/fires/" + payload.fireId + "/extinguishQuadrant?quadrantId=" + payload.quadrantId,
+        url: "/fires/" + payload.fireId + "/extinguishQuadrant",
         method: "POST",
+        body: {
+          quadrantId: payload.quadrantId,
+        },
         headers: {
           Authorization: "Bearer " + payload.token,
           "Accept-Language": payload.locale,

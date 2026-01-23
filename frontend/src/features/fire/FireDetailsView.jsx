@@ -84,7 +84,7 @@ export default function FireDetailsView() {
   useEffect(() => {
     refetch();
 
-    if (data && data.quadrants.length > 0) {
+    if (data && data.quadrants && data.quadrants.length > 0) {
       setCoordinates(
         {
           lon: untransformCoordinates(data.quadrants[0].coordinates[0].x, data.quadrants[0].coordinates[0].y).longitude,
@@ -260,7 +260,7 @@ export default function FireDetailsView() {
             variant="outlined"
           >
             <Typography variant="h6">{t("quadrant-map")}</Typography>
-            {data && <Box sx={{ height: 450 }}><LandingMap quadrants={data.quadrants} /></Box>}
+            {data && <Box sx={{ height: 450 }}><LandingMap quadrants={data.quadrantInfo || []} /></Box>}
           </Paper>
         </Grid>
         <Grid item xs={4} sm={8} md={3}>
@@ -299,35 +299,43 @@ export default function FireDetailsView() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {data.quadrants.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        hover
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                        onClick={() =>
-                          navigate("/quadrant", {
-                            state: { quadrantId: row.id },
-                          })}
-                      >
-                        <TableCell component="th" scope="row">
-                          {row.id}
-                        </TableCell>
-                        <TableCell align="right">{row.nombre}</TableCell>
-                        <TableCell>
-                          <Button
-                            sx={{ color: "red" }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleExtinguishQuadrantOpenClick(row.id);
-                            }}
-                          >
-                            <FireExtinguisherIcon />
-                          </Button>
+                    {data.quadrantInfo && data.quadrantInfo.length > 0 ? (
+                      data.quadrantInfo.map((row) => (
+                        <TableRow
+                          key={row.id}
+                          hover
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
+                          onClick={() =>
+                            navigate("/quadrant", {
+                              state: { quadrantId: row.id },
+                            })}
+                        >
+                          <TableCell component="th" scope="row">
+                            {row.id}
+                          </TableCell>
+                          <TableCell align="right">{row.nombre}</TableCell>
+                          <TableCell>
+                            <Button
+                              sx={{ color: "red" }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleExtinguishQuadrantOpenClick(row.id);
+                              }}
+                            >
+                              <FireExtinguisherIcon />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={3} align="center">
+                          {t("quadrants-empty-list")}
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableBody>
                 </Table>
               </TableContainer>

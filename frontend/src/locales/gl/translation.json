@@ -130,6 +130,7 @@
   "quadrant-list": "Lista de cadrantes",
   "quadrant-id": "Código de cadrante",
   "quadrant-name": "Nome",
+  "quadrants-empty-list": "Non hai cadrantes rexistrados",
   "quadrant-map": "Cadrantes afectados",
   "quadrant-details": "Información do cadrante",
   "quadrant-teams-deployed": "Equipos despregados",

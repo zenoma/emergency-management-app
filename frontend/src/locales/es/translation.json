@@ -130,6 +130,7 @@
   "quadrant-list": "Lista de cuadrantes",
   "quadrant-id": "Código cuadrante",
   "quadrant-name": "Nombre",
+  "quadrants-empty-list": "No hay cuadrantes registrados",
   "quadrant-map": "Cuadrantes afectados",
   "quadrant-details": "Información del cuadrante",
   "quadrant-teams-deployed": "Equipos desplegados",
