@@ -1,27 +1,20 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-
+import { Box, Container, Typography, Button, Dialog } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
+
 import { useTranslation } from "react-i18next";
 import OrganizationDetailsCard from "../organization/OrganizationDetailsCard";
 
-export default function TeamCard(props) {
+export default function TeamCard({ data }) {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
-  const handleClickToOpen = () => {
-    setOpen(true);
-  };
+  if (!data) return null;
 
-  const handleToClose = () => {
-    setOpen(false);
-  };
+  const handleClickToOpen = () => setOpen(true);
+  const handleToClose = () => setOpen(false);
 
   return (
     <Container
@@ -34,56 +27,55 @@ export default function TeamCard(props) {
     >
       <Typography
         variant="h4"
-        margin={1}
-        sx={{ fontWeight: "bold", color: "primary.light" }}
+        sx={{ fontWeight: "bold", color: "primary.light", mb: 2 }}
       >
         {t("team-details")}
       </Typography>
-      <Box display="flex" alignItems="center" justifyContent="center">
+
+      <Box display="flex" justifyContent="center" alignItems="center" mb={1}>
         <Typography
           variant="h6"
-          margin={1}
-          sx={{
-            fontWeight: "bold",
-            color: "secondary.light",
-          }}
+          sx={{ fontWeight: "bold", color: "secondary.light", mr: 1 }}
         >
           {t("team-code")}:
         </Typography>
-        <Typography variant="h6" margin={1}>
-          {props.data["code"]}
-        </Typography>
-      </Box>{" "}
-      <Box display="flex" alignItems="center" justifyContent="center">
+        <Typography variant="h6">{data.code}</Typography>
+      </Box>
+
+      <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
         <Typography
           variant="h6"
-          margin={1}
-          sx={{
-            fontWeight: "bold",
-            color: "secondary.light",
-          }}
+          sx={{ fontWeight: "bold", color: "secondary.light", mr: 1 }}
         >
           {t("team-organization-belong")}:
         </Typography>
-        <Typography variant="h6">
-          {props.data["organization"]["name"]}
-        </Typography>
+        <Typography variant="h6">{data.organization.name}</Typography>
         <InfoIcon
-          variant="outlined"
           color="primary"
+          sx={{ ml: 1, cursor: "pointer" }}
           onClick={handleClickToOpen}
-        ></InfoIcon>
+        />
       </Box>
-      <Dialog open={open} onClose={handleToClose}>
-        <OrganizationDetailsCard data={props.data["organization"]} />
-        <Button onClick={handleToClose} color="primary" autoFocus>
-          t("close")
-        </Button>
+
+      <Dialog open={open} onClose={handleToClose} maxWidth="sm" fullWidth>
+        <Box p={2}>
+          <OrganizationDetailsCard data={data.organization} />
+          <Box display="flex" justifyContent="center" mt={2}>
+            <Button variant="contained" onClick={handleToClose} color="primary">
+              {t("close")}
+            </Button>
+          </Box>
+        </Box>
       </Dialog>
     </Container>
   );
 }
 
 TeamCard.propTypes = {
-  data: PropTypes.object,
+  data: PropTypes.shape({
+    code: PropTypes.string.isRequired,
+    organization: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
 };

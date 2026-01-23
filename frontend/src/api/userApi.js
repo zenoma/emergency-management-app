@@ -5,7 +5,7 @@ export const userApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getUsers: build.query({
       query: (payload) => ({
-        url: "/users/",
+        url: "/users",
         headers: {
           Authorization: "Bearer " + payload.token,
           "Accept-Language": payload.locale,
