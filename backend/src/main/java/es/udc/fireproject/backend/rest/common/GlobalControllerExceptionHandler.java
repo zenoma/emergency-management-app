@@ -1,5 +1,6 @@
 package es.udc.fireproject.backend.rest.common;
 
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.AlreadyExistException;
 import es.udc.fireproject.backend.model.exceptions.DuplicateInstanceException;
@@ -24,6 +25,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -99,6 +101,43 @@ public class GlobalControllerExceptionHandler {
 
     return new ErrorDto(errorMessage);
 
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleHttpMessageNotReadableException(
+      HttpMessageNotReadableException ex,
+      Locale locale) {
+
+    Throwable cause = ex.getCause();
+
+    if (cause instanceof ValueInstantiationException vie) {
+
+      Throwable rootCause = vie.getCause();
+      String detail = rootCause != null
+          ? rootCause.getMessage()
+          : vie.getMessage();
+
+      String errorMessage = messageSource.getMessage(
+          "error.enum.invalid",
+          new Object[]{detail},
+          detail,
+          locale
+      );
+
+      return new ErrorDto(errorMessage);
+    }
+
+    // Fallback genérico
+    String errorMessage = messageSource.getMessage(
+        BAD_REQUEST_EXCEPTION_CODE,
+        null,
+        BAD_REQUEST_EXCEPTION_CODE,
+        locale
+    );
+
+    return new ErrorDto(errorMessage);
   }
 
 

@@ -33,6 +33,7 @@ export const fireApi = baseApi.injectEndpoints({
         body: {
           description: payload.description,
           type: payload.type,
+          fireIndex: payload.fireIndex,
         },
         headers: {
           Authorization: "Bearer " + payload.token,
