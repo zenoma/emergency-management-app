@@ -106,7 +106,7 @@ public class NoticeServiceImpl implements NoticeService {
 
     List<Image> imageList = notice.getImageList();
     if (imageList != null && !imageList.isEmpty()) {
-      Image image = imageList.get(0);
+      Image image = imageList.getFirst();
       if (image != null) {
         String uploadDir = "public/images/" + notice.getId();
         try {

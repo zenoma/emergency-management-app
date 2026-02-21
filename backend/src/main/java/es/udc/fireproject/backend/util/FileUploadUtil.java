@@ -1,4 +1,4 @@
-package es.udc.fireproject.backend.rest.common;
+package es.udc.fireproject.backend.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +21,13 @@ public class FileUploadUtil {
       Files.createDirectories(uploadPath);
     }
 
+    // Sanitize filename to prevent path traversal
     String safeFileName = sanitizeFileName(fileName);
 
     try (InputStream inputStream = multipartFile.getInputStream()) {
       Path filePath = uploadPath.resolve(safeFileName).normalize();
 
+      // Ensure the resolved path is still under the upload directory
       if (!filePath.startsWith(uploadPath)) {
         throw new IOException("Cannot store file outside the designated upload directory: " + safeFileName);
       }
@@ -57,4 +59,5 @@ public class FileUploadUtil {
     }
     return fileName;
   }
+
 }
