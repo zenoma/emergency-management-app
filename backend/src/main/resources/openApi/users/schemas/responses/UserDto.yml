@@ -24,4 +24,9 @@ properties:
     type: string
   userRole:
     type: string
+  teamId:
+    type: integer
+    format: int64
+  teamCode:
+    type: string
 

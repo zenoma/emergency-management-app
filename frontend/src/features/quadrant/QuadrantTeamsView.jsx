@@ -54,7 +54,7 @@ export default function QuadrantTeamsView(props) {
     const payload = {
       teamId: selectedId,
       token: token,
-      gid: quadrantId,
+      quadrantId: quadrantId,
       locale: locale,
     };
 
@@ -125,7 +125,7 @@ export default function QuadrantTeamsView(props) {
         ) : quadrantInfo ? (
           <QuadrantTeamsTable
             reloadData={reloadData}
-            teams={quadrantInfo.teamDtoList}
+            teams={quadrantInfo.teamList}
             quadrantId={quadrantId}
           />
         ) : null}
@@ -134,7 +134,7 @@ export default function QuadrantTeamsView(props) {
             <AddIcon />
           </Fab>
         </Box>
-        <Dialog fullWidth open={open} onClose={handleClose}>
+        <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
           <DialogTitle sx={{ color: "primary.light" }}>{t("team-deploy-title")} </DialogTitle>
           <DialogContent>
             <TeamDataGrid childToParent={childToParent} />

@@ -8,10 +8,10 @@ import es.udc.fireproject.backend.rest.dtos.FireQuadrantLogDto;
 import es.udc.fireproject.backend.rest.dtos.GlobalStatisticsDto;
 import es.udc.fireproject.backend.rest.dtos.TeamQuadrantLogDto;
 import es.udc.fireproject.backend.rest.dtos.VehicleQuadrantLogDto;
-import es.udc.fireproject.backend.rest.dtos.conversors.FireQuadrantLogConversor;
-import es.udc.fireproject.backend.rest.dtos.conversors.GlobalStatisticsConversor;
-import es.udc.fireproject.backend.rest.dtos.conversors.TeamQuadrantLogConversor;
-import es.udc.fireproject.backend.rest.dtos.conversors.VehicleQuadrantLogConversor;
+import es.udc.fireproject.backend.rest.dtos.mappers.FireQuadrantLogMapper;
+import es.udc.fireproject.backend.rest.dtos.mappers.GlobalStatisticsMapper;
+import es.udc.fireproject.backend.rest.dtos.mappers.TeamQuadrantLogMapper;
+import es.udc.fireproject.backend.rest.dtos.mappers.VehicleQuadrantLogMapper;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class LogManagementController implements LogsApi {
     List<FireQuadrantLogDto> fireQuadrantLogDtos = new ArrayList<>();
 
     for (FireQuadrantLog fireQuadrantLog : logManagementService.findAllFireQuadrantLogs()) {
-      fireQuadrantLogDtos.add(FireQuadrantLogConversor.toFireQuadrantLogDto(fireQuadrantLog));
+      fireQuadrantLogDtos.add(FireQuadrantLogMapper.toFireQuadrantLogDto(fireQuadrantLog));
     }
 
     return ResponseEntity.ok(fireQuadrantLogDtos);
@@ -48,7 +48,7 @@ public class LogManagementController implements LogsApi {
         startDate.atStartOfDay(),
         endDate.plusDays(1).atStartOfDay())) {
 
-      fireQuadrantLogDtos.add(FireQuadrantLogConversor.toFireQuadrantLogDto(fireQuadrantLog));
+      fireQuadrantLogDtos.add(FireQuadrantLogMapper.toFireQuadrantLogDto(fireQuadrantLog));
     }
 
     return ResponseEntity.ok(fireQuadrantLogDtos);
@@ -63,7 +63,7 @@ public class LogManagementController implements LogsApi {
         quadrantId,
         startDate.atStartOfDay(),
         endDate.plusDays(1).atStartOfDay())) {
-      teamQuadrantLogDtos.add(TeamQuadrantLogConversor.toTeamQuadrantLogDto(teamQuadrantLog));
+      teamQuadrantLogDtos.add(TeamQuadrantLogMapper.toTeamQuadrantLogDto(teamQuadrantLog));
     }
 
     return ResponseEntity.ok(teamQuadrantLogDtos);
@@ -79,7 +79,7 @@ public class LogManagementController implements LogsApi {
         startDate.atStartOfDay(),
         endDate.plusDays(1).atStartOfDay())) {
 
-      vehicleQuadrantLogDtos.add(VehicleQuadrantLogConversor.toVehicleQuadrantDto(vehicleQuadrantLog));
+      vehicleQuadrantLogDtos.add(VehicleQuadrantLogMapper.toVehicleQuadrantDto(vehicleQuadrantLog));
     }
 
     return ResponseEntity.ok(vehicleQuadrantLogDtos);
@@ -88,7 +88,7 @@ public class LogManagementController implements LogsApi {
   @Override
   public ResponseEntity<GlobalStatisticsDto> getGlobalStatistics(Long fireId) {
 
-    GlobalStatisticsDto globalStatisticsDto = GlobalStatisticsConversor.toGlobalStatisticsDto(
+    GlobalStatisticsDto globalStatisticsDto = GlobalStatisticsMapper.toGlobalStatisticsDto(
         logManagementService.getGlobalStatisticsByFireId(fireId));
 
     return ResponseEntity.ok(globalStatisticsDto);

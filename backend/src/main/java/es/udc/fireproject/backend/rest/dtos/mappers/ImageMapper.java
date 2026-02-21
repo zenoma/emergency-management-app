@@ -1,11 +1,11 @@
-package es.udc.fireproject.backend.rest.dtos.conversors;
+package es.udc.fireproject.backend.rest.dtos.mappers;
 
 import es.udc.fireproject.backend.model.entities.image.Image;
 import es.udc.fireproject.backend.rest.dtos.ImageDto;
 
-public class ImageConversor {
+public class ImageMapper {
 
-  private ImageConversor() {
+  private ImageMapper() {
 
   }
 

@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useGetNoticesQuery } from "../../api/noticeApi";
 
 
-var URL = import.meta.env.REACT_APP_BACKEND_URL;
+var URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
 export default function MyNoticesList() {
   const [list, setList] = useState("");
@@ -45,7 +45,7 @@ export default function MyNoticesList() {
 
   const { data, error, isLoading } = useGetNoticesQuery(payload, { refetchOnMountOrArgChange: true });
 
-  if ((data === "") & (list === "")) {
+  if (data && data !== list) {
     setList(data);
   }
 
@@ -72,7 +72,7 @@ export default function MyNoticesList() {
       ),
     },
     {
-      field: 'status',
+      field: 'noticeStatus',
       headerName: t("notice-status"),
       width: 200,
       renderCell: (params) => (
@@ -86,15 +86,14 @@ export default function MyNoticesList() {
       headerName: t("notice-image"),
       width: 150,
       renderCell: (params) => {
-        if (params.row.images[0]) {
+        if (params.row.imageDtoList && params.row.imageDtoList[0]) {
           return (
             <img
-              src={`${URL}/images/${params.row.id}/${params.row.images[0].name}`}
-              alt={params.row.title}
-              style={{ width: 50, height: 50 }}
-              onClick={() => handleDialogOpen(params.row.id, params.row.images[0].name)}
+              src={`${URL}/images/${params.row.id}/${params.row.imageDtoList[0].name}`}
+              alt={params.row.name}
+              style={{ minWidth: 100, minHeight: 10, cursor: "pointer" }}
+              onClick={() => handleDialogOpen(params.row.id, params.row.imageDtoList[0].name)}
             />
-
           );
         } else {
           return null;
@@ -136,13 +135,13 @@ export default function MyNoticesList() {
           />
         </div>)
         : null}
-        <Dialog open={dialogOpen} onClose={handleDialogClose}>
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogContent>
           {selectedImage && <img src={`${URL}/images/${selectedNoticeId}/${selectedImage}`}
             alt="Imagen" style={{ maxWidth: "100%" }} />}
         </DialogContent>
       </Dialog>
     </Paper >
-    
+
   );
 }

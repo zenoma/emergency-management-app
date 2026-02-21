@@ -8,7 +8,7 @@ import es.udc.fireproject.backend.model.services.firemanagement.FireManagementSe
 import es.udc.fireproject.backend.rest.dtos.FireRequestDto;
 import es.udc.fireproject.backend.rest.dtos.FireResponseDto;
 import es.udc.fireproject.backend.rest.dtos.QuadrantFireRequestDto;
-import es.udc.fireproject.backend.rest.dtos.conversors.FireConversor;
+import es.udc.fireproject.backend.rest.dtos.mappers.FireMapper;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class FiresController implements FiresApi {
     List<FireResponseDto> fireResponseDtos = new ArrayList<>();
 
     for (Fire fire : fireManagementService.findAllFires()) {
-      fireResponseDtos.add(FireConversor.toFireDto(fire));
+      fireResponseDtos.add(FireMapper.toFireDto(fire));
     }
     return ResponseEntity.ok(fireResponseDtos);
   }
@@ -44,7 +44,7 @@ public class FiresController implements FiresApi {
   @Override
   public ResponseEntity<FireResponseDto> postFire(FireRequestDto fireRequestDto) {
 
-    Fire fire = FireConversor.toFire(fireRequestDto);
+    Fire fire = FireMapper.toFire(fireRequestDto);
 
     fire = fireManagementService.createFire(fire.getDescription(), fire.getType(), fire.getFireIndex());
 
@@ -52,13 +52,28 @@ public class FiresController implements FiresApi {
         .fromCurrentRequest().path("/{id}")
         .buildAndExpand(fire.getId()).toUri();
 
-    return ResponseEntity.created(location).body(FireConversor.toFireDto(fire));
+    return ResponseEntity.created(location).body(FireMapper.toFireDto(fire));
+
+  }
+
+  @Override
+  public ResponseEntity<FireResponseDto> putFire(Long id, FireRequestDto fireRequestDto) {
+
+    Fire fire = FireMapper.toFire(fireRequestDto);
+
+    fire = fireManagementService.updateFire(id, fire.getDescription(), fire.getType(), fire.getFireIndex());
+
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest().path("/{id}")
+        .buildAndExpand(fire.getId()).toUri();
+
+    return ResponseEntity.created(location).body(FireMapper.toFireDto(fire));
 
   }
 
   @Override
   public ResponseEntity<FireResponseDto> getFireById(Long id) {
-    final FireResponseDto fireResponseDto = FireConversor.toFireDto(fireManagementService.findFireById(id));
+    final FireResponseDto fireResponseDto = FireMapper.toFireDto(fireManagementService.findFireById(id));
     return ResponseEntity.ok(fireResponseDto);
   }
 
@@ -67,14 +82,14 @@ public class FiresController implements FiresApi {
       @PathVariable Long id)
 
       throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException {
-    return FireConversor.toFireDto(fireManagementService.extinguishFire(id));
+    return FireMapper.toFireDto(fireManagementService.extinguishFire(id));
   }
 
   @Override
   public ResponseEntity<FireResponseDto> postExtinguishQuadrant(Long id,
       QuadrantFireRequestDto quadrantFireRequestDto) throws ExtinguishedFireException, AlreadyDismantledException {
 
-    final FireResponseDto fireResponseDto = FireConversor.toFireDto(
+    final FireResponseDto fireResponseDto = FireMapper.toFireDto(
         fireManagementService.extinguishQuadrantByFireId(id, quadrantFireRequestDto.getQuadrantId()));
 
     return ResponseEntity.ok(fireResponseDto);
@@ -85,7 +100,7 @@ public class FiresController implements FiresApi {
 
     final Fire fire = fireManagementService.extinguishFire(id);
 
-    final FireResponseDto fireResponseDto = FireConversor.toFireDto(fire);
+    final FireResponseDto fireResponseDto = FireMapper.toFireDto(fire);
 
     return ResponseEntity.ok(fireResponseDto);
   }

@@ -1,4 +1,4 @@
-package es.udc.fireproject.backend.rest.dtos.conversors;
+package es.udc.fireproject.backend.rest.dtos.mappers;
 
 import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.fireproject.backend.model.entities.team.Team;
@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class QuadrantInfoConversor {
+public class QuadrantInfoMapper {
 
-  private QuadrantInfoConversor() {
+  private QuadrantInfoMapper() {
 
   }
 
@@ -20,13 +20,13 @@ public class QuadrantInfoConversor {
     List<TeamResponseDto> teamResponseDtos = new ArrayList<>();
     if (quadrant.getTeamList() != null && !quadrant.getTeamList().isEmpty()) {
       for (Team team : quadrant.getTeamList()) {
-        teamResponseDtos.add(TeamConversor.toTeamDtoWithoutQuadrantInfo(team));
+        teamResponseDtos.add(TeamMapper.toTeamDtoWithoutQuadrantInfo(team));
       }
     }
     List<VehicleResponseDto> vehicleResponseDtos = new ArrayList<>();
     if (quadrant.getVehicleList() != null && !quadrant.getVehicleList().isEmpty()) {
       for (Vehicle vehicle : quadrant.getVehicleList()) {
-        vehicleResponseDtos.add(VehicleConversor.toVehicleDtoWithoutQuadrantInfo(vehicle));
+        vehicleResponseDtos.add(VehicleMapper.toVehicleDtoWithoutQuadrantInfo(vehicle));
       }
     }
 

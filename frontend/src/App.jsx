@@ -41,7 +41,8 @@ import UserManagementView from "./features/user/management/UserManagementView";
 function App({ t }) {
 
   const dispatch = useDispatch();
-  const theme = useSelector((state) => state.theme);
+  const themeMode = useSelector((state) => state.theme.darkTheme);
+
 
   const { i18n } = useTranslation("home");
   const locale = i18n.language;
@@ -91,7 +92,7 @@ function App({ t }) {
   }
 
   return (
-    <ThemeProvider theme={theme.darkTheme ? darkTheme : lightTheme}>
+    <ThemeProvider theme={themeMode ? darkTheme : lightTheme}>
       <div className="App">
         <BrowserRouter>
           <CustomDrawer />

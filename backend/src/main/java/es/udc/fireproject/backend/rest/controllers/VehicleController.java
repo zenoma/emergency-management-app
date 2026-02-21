@@ -7,7 +7,7 @@ import es.udc.fireproject.backend.rest.dtos.VehicleQuadrantRequestDto;
 import es.udc.fireproject.backend.rest.dtos.VehicleRequestDto;
 import es.udc.fireproject.backend.rest.dtos.VehicleResponseDto;
 import es.udc.fireproject.backend.rest.dtos.VehicleUpdateRequestDto;
-import es.udc.fireproject.backend.rest.dtos.conversors.VehicleConversor;
+import es.udc.fireproject.backend.rest.dtos.mappers.VehicleMapper;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class VehicleController implements VehiclesApi {
         .fromCurrentRequest().path("/{id}")
         .buildAndExpand(vehicle.getId()).toUri();
 
-    return ResponseEntity.created(location).body(VehicleConversor.toVehicleDto(vehicle));
+    return ResponseEntity.created(location).body(VehicleMapper.toVehicleDto(vehicle));
   }
 
   @Override
@@ -52,14 +52,14 @@ public class VehicleController implements VehiclesApi {
     final Vehicle vehicle = personalManagementService.updateVehicle(id, vehicleUpdateRequestDto.getVehiclePlate(),
         vehicleUpdateRequestDto.getType());
 
-    return ResponseEntity.ok(VehicleConversor.toVehicleDto(vehicle));
+    return ResponseEntity.ok(VehicleMapper.toVehicleDto(vehicle));
   }
 
   @Override
   public ResponseEntity<VehicleResponseDto> getVehicleById(Long id) {
     final Vehicle vehicle = personalManagementService.findVehicleById(id);
 
-    return ResponseEntity.ok(VehicleConversor.toVehicleDto(vehicle));
+    return ResponseEntity.ok(VehicleMapper.toVehicleDto(vehicle));
   }
 
   @Override
@@ -69,11 +69,11 @@ public class VehicleController implements VehiclesApi {
 
     if (organizationId != null) {
       for (Vehicle vehicle : personalManagementService.findVehiclesByOrganizationId(organizationId)) {
-        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleMapper.toVehicleDto(vehicle));
       }
     } else {
       for (Vehicle vehicle : personalManagementService.findAllVehicles()) {
-        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleMapper.toVehicleDto(vehicle));
       }
     }
 
@@ -87,11 +87,11 @@ public class VehicleController implements VehiclesApi {
 
     if (organizationId != null) {
       for (Vehicle vehicle : personalManagementService.findActiveVehiclesByOrganizationId(organizationId)) {
-        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleMapper.toVehicleDto(vehicle));
       }
     } else {
       for (Vehicle vehicle : personalManagementService.findAllActiveVehicles()) {
-        vehicleResponseDtos.add(VehicleConversor.toVehicleDto(vehicle));
+        vehicleResponseDtos.add(VehicleMapper.toVehicleDto(vehicle));
       }
     }
     return ResponseEntity.ok(vehicleResponseDtos);
@@ -101,7 +101,7 @@ public class VehicleController implements VehiclesApi {
   public ResponseEntity<VehicleResponseDto> postVehicleDeployById(Long id,
       VehicleQuadrantRequestDto vehicleQuadrantRequestDto) {
 
-    final VehicleResponseDto vehicleResponseDto = VehicleConversor.toVehicleDto(
+    final VehicleResponseDto vehicleResponseDto = VehicleMapper.toVehicleDto(
         fireManagementService.deployVehicle(id, vehicleQuadrantRequestDto.getQuadrantId()));
 
     return ResponseEntity.ok(vehicleResponseDto);
@@ -110,7 +110,7 @@ public class VehicleController implements VehiclesApi {
   @Override
   public ResponseEntity<VehicleResponseDto> postVehicleRetractById(Long id) {
 
-    final VehicleResponseDto vehicleResponseDto = VehicleConversor.toVehicleDto(
+    final VehicleResponseDto vehicleResponseDto = VehicleMapper.toVehicleDto(
         fireManagementService.retractVehicle(id));
 
     return ResponseEntity.ok(vehicleResponseDto);

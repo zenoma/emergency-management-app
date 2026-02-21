@@ -106,7 +106,7 @@ public class FireManagementServiceImpl implements FireManagementService {
   public Fire createFire(String description, String type, FireIndex fireIndex) {
     Fire fire = new Fire(description, type, fireIndex);
     fire.setCreatedAt((LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
-    fire.setFireIndex(FireIndex.CERO);
+    fire.setFireIndex(FireIndex.valueOf(fireIndex.name()));
 
     ConstraintValidator.validate(fire);
 

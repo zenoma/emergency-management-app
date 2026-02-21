@@ -21,7 +21,7 @@ export const noticeApi = baseApi.injectEndpoints({
     }),
     getNotices: build.query({
       query: (payload) => ({
-        url: `/notices?id=` + payload.id,
+        url: `/notices?userId=` + payload.id,
         headers: {
           Authorization: "Bearer " + payload.token,
           "Accept-Language": payload.locale,

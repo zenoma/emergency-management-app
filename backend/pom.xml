@@ -16,7 +16,7 @@
     <artifactId>spring-boot-starter-parent</artifactId>
     <groupId>org.springframework.boot</groupId>
     <relativePath/>
-    <version>3.5.7</version>
+    <version>3.4.13</version>
   </parent>
 
 
@@ -27,7 +27,7 @@
     <jackson-jts.version>2.0.0</jackson-jts.version>
 
     <!-- Dependencias -->
-    <java.version>25</java.version>
+    <java.version>21</java.version>
     <jjwt.version>0.12.5</jjwt.version>
     <jts.version>1.19.0</jts.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
@@ -37,7 +37,7 @@
 
     <!-- Codificación -->
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <testcontainers.version>1.19.1</testcontainers.version>
+    <testcontainers.version>1.21.1</testcontainers.version>
   </properties>
 
   <dependencies>
@@ -261,7 +261,7 @@
               <version>1.18.42</version>
             </path>
           </annotationProcessorPaths>
-          <release>25</release>
+          <release>21</release>
         </configuration>
         <groupId>org.apache.maven.plugins</groupId>
         <version>3.13.0</version>

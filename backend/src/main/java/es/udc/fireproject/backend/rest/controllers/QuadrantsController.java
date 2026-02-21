@@ -5,8 +5,8 @@ import es.udc.fireproject.backend.model.services.firemanagement.FireManagementSe
 import es.udc.fireproject.backend.rest.dtos.LinkFireRequestDto;
 import es.udc.fireproject.backend.rest.dtos.QuadrantDto;
 import es.udc.fireproject.backend.rest.dtos.QuadrantInfoDto;
-import es.udc.fireproject.backend.rest.dtos.conversors.QuadrantConversor;
-import es.udc.fireproject.backend.rest.dtos.conversors.QuadrantInfoConversor;
+import es.udc.fireproject.backend.rest.dtos.mappers.QuadrantMapper;
+import es.udc.fireproject.backend.rest.dtos.mappers.QuadrantInfoMapper;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +26,11 @@ public class QuadrantsController implements QuadrantsApi {
 
     if (scale != null) {
       for (Quadrant quadrant : fireManagementService.findQuadrantsByEscala(scale)) {
-        quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
+        quadrantDtos.add(QuadrantMapper.toQuadrantDto(quadrant));
       }
     } else {
       for (Quadrant quadrant : fireManagementService.findAllQuadrants()) {
-        quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
+        quadrantDtos.add(QuadrantMapper.toQuadrantDto(quadrant));
       }
     }
     return ResponseEntity.ok(quadrantDtos);
@@ -38,7 +38,7 @@ public class QuadrantsController implements QuadrantsApi {
 
   @Override
   public ResponseEntity<QuadrantInfoDto> getQuadrantById(Integer id) {
-    final QuadrantInfoDto quadrantInfoDto = QuadrantInfoConversor.toQuadrantDto(
+    final QuadrantInfoDto quadrantInfoDto = QuadrantInfoMapper.toQuadrantDto(
         fireManagementService.findQuadrantById(id));
 
     return ResponseEntity.ok(quadrantInfoDto);
@@ -46,14 +46,14 @@ public class QuadrantsController implements QuadrantsApi {
 
 
   @Override
-  public ResponseEntity<List<QuadrantDto>> getQuadrantsWithActiveFire() {
-    List<QuadrantDto> quadrantDtos = new ArrayList<>();
+  public ResponseEntity<List<QuadrantInfoDto>> getQuadrantsWithActiveFire() {
+    List<QuadrantInfoDto> quadrantInfoDtos = new ArrayList<>();
 
     for (Quadrant quadrant : fireManagementService.findQuadrantsWithActiveFire()) {
-      quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
+      quadrantInfoDtos.add(QuadrantInfoMapper.toQuadrantDto(quadrant));
     }
 
-    return ResponseEntity.ok(quadrantDtos);
+    return ResponseEntity.ok(quadrantInfoDtos);
   }
 
   @Override
@@ -61,7 +61,7 @@ public class QuadrantsController implements QuadrantsApi {
 
     Quadrant quadrant = fireManagementService.linkFire(id, linkFireRequestDto.getFireId());
 
-    QuadrantInfoDto quadrantInfoDto = QuadrantInfoConversor.toQuadrantDtoWithoutTeamsAndVehicles(quadrant);
+    QuadrantInfoDto quadrantInfoDto = QuadrantInfoMapper.toQuadrantDtoWithoutTeamsAndVehicles(quadrant);
 
     return ResponseEntity.ok(quadrantInfoDto);
   }

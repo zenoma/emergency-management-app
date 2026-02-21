@@ -98,7 +98,6 @@ export default function OrganizationCreateDialog(props) {
       .then(() => {
         toast.success("Organización creada satisfactoriamente");
         handleClose();
-        props.reloadData();
       })
       .catch((error) => toast.error("No se ha podido crear la organización"));
   };
@@ -187,7 +186,8 @@ export default function OrganizationCreateDialog(props) {
               </Grid>
             </Grid>
             <Box sx={{ height: 300 }}>
-              <CoordinatesMap childToParent={childToParent} /></Box>
+              <CoordinatesMap childToParent={childToParent} />
+            </Box>
           </FormControl>
         </DialogContent>
         <DialogActions>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import ArticleIcon from "@mui/icons-material/Article";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -22,6 +22,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import ListSubheader from "@mui/material/ListSubheader";
 import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -33,7 +34,7 @@ import { logout, selectToken, selectUser } from "../user/login/LoginSlice";
 import { SwitchLanguajeDropdown } from "./SwitchLanguajeDropdown";
 import { SwitchThemeButton } from "./SwitchThemeButton";
 
-const drawerWidth = 240;
+const drawerWidth = 270;
 const loggedSettingsMenu = ["profile", "logout"];
 const notLoggedSettingsMenu = ["login", "sign-up"];
 
@@ -91,6 +92,7 @@ export default function PersistentDrawerLeft() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -154,6 +156,41 @@ export default function PersistentDrawerLeft() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const pathname = location.pathname || "/";
+
+  const isSelected = (name) => {
+    switch (name) {
+      case "":
+        return pathname === "/";
+      case "organizations":
+        return pathname.startsWith("/organizations");
+      case "my-team":
+        return pathname.startsWith("/my-team");
+      case "my-notices":
+        return pathname.startsWith("/my-notices");
+      case "fire-management":
+        return pathname.startsWith("/fire-management");
+      case "user-management":
+        return pathname.startsWith("/user-management");
+      case "notice-management":
+        return pathname.startsWith("/notice-management");
+      default:
+        return false;
+    }
+  };
+
+  const personalKeys = ["my-team", "my-notices"];
+  const gestionKeys = [
+    "organizations",
+    "fire-management",
+    "user-management",
+    "notice-management",
+  ];
+
+  const availablePages = pages.filter((item) => item.role.includes(userRole));
+  const personalPages = availablePages.filter((p) => personalKeys.includes(p.name));
+  const gestionPages = availablePages.filter((p) => gestionKeys.includes(p.name));
 
   return (
     <Box mt={10} sx={{ display: "flex", bgcolor: "secondary.light" }}>
@@ -251,61 +288,110 @@ export default function PersistentDrawerLeft() {
       <Drawer
         sx={{
           width: drawerWidth,
-          flexShrink: 0,
+          textAlign: "center",
           "& .MuiDrawer-paper": {
             width: drawerWidth,
             boxSizing: "border-box",
+            bgcolor: theme.palette.mode === "light" ? "background.paper" : "background.default",
+            borderRight: "1px solid",
+            borderColor: "divider",
+            borderTopRightRadius: 12,
+            borderBottomRightRadius: 12,
+            boxShadow: theme.shadows[8],
           },
         }}
         variant="persistent"
         anchor="left"
         open={open}
       >
-        <DrawerHeader sx={{ display: "flex" }}>
-          <List sx={{ flexGrow: 10 }}>
-            <ListItem
-              key="Home"
-              disablePadding
-              onClick={(e) => handleClickItemList(e, "")}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <HomeIcon />
-                </ListItemIcon>
-                <ListItemText primary="Home" />
-              </ListItemButton>
-            </ListItem>
-          </List>
-          <IconButton sx={{ flexGrow: 10 }} onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
+        <DrawerHeader sx={{ display: "flex", alignItems: "center", px: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexGrow: 1 }}>
+            <List sx={{ px: 1 }}>
+              <ListItem key="home" disablePadding onClick={(e) => handleClickItemList(e, "")}>
+                <ListItemButton
+                  selected={isSelected("")}
+                  sx={{ borderRadius: 2, mx: 1, mb: 0.5 }}>
+                  <ListItemIcon>
+                    <HomeIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={t("home", { defaultValue: "Home" })} />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </Box>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === "ltr" ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
 
-        <Divider />
-        <List>
-          {pages
-            .filter((item) => item.role.includes(userRole))
-            .map((item) => (
-              <ListItem
-                key={item.name}
-                disablePadding
-                onClick={(e) => handleClickItemList(e, item.name)}
-              >
-                <ListItemButton>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={t(item.name)} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-        </List>
-        <Divider />
-        <SwitchLanguajeDropdown />
-        <SwitchThemeButton />
-      </Drawer>
-    </Box>
+        {!!personalPages.length && (
+          <>
+            <Divider sx={{ my: 1 }} />
+            <List
+              subheader={
+                <ListSubheader component="div" disableSticky sx={{ bgcolor: "transparent", color: "text.secondary", fontWeight: 600 }}>
+                  {t("my-area")}
+                </ListSubheader>
+              }
+              sx={{ px: 1 }}
+            >
+              {personalPages.map((item) => (
+                <ListItem
+                  key={item.name}
+                  disablePadding
+                  onClick={(e) => handleClickItemList(e, item.name)}
+                >
+                  <ListItemButton
+                    selected={isSelected(item.name)}
+                    sx={{ borderRadius: 2, mx: 1, mb: 0.5 }}
+                  >
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={t(item.name)} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </>
+        )}
+
+        {!!gestionPages.length && (
+          <>
+            <Divider sx={{ my: 1 }} />
+            <List
+              subheader={
+                <ListSubheader component="div" disableSticky sx={{ bgcolor: "transparent", color: "text.secondary", fontWeight: 600 }}>
+                  {t("management", { defaultValue: "Gestión" })}
+                </ListSubheader>
+              }
+              sx={{ px: 1 }}
+            >
+              {gestionPages.map((item) => (
+                <ListItem
+                  key={item.name}
+                  disablePadding
+                  onClick={(e) => handleClickItemList(e, item.name)}
+                >
+                  <ListItemButton
+                    selected={isSelected(item.name)}
+                    sx={{ borderRadius: 2, mx: 1, mb: 0.5 }}
+                  >
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={t(item.name)} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </>
+        )}
+
+        <Divider sx={{ mt: 1 }} />
+
+
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1, p: 2 }}>
+          <SwitchLanguajeDropdown />
+          <SwitchThemeButton />
+        </Box>
+      </Drawer >
+    </Box >
   );
 }

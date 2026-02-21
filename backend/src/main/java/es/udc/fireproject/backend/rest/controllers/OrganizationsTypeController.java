@@ -4,7 +4,7 @@ import es.udc.fireproject.backend.model.entities.organization.OrganizationType;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
 import es.udc.fireproject.backend.rest.dtos.OrganizationTypeRequestDto;
 import es.udc.fireproject.backend.rest.dtos.OrganizationTypeResponseDto;
-import es.udc.fireproject.backend.rest.dtos.conversors.OrganizationTypeConversor;
+import es.udc.fireproject.backend.rest.dtos.mappers.OrganizationTypeMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +21,14 @@ public class OrganizationsTypeController implements OrganizationTypesApi {
 
     List<OrganizationType> organizationTypes = personalManagementService.findAllOrganizationTypes();
 
-    return ResponseEntity.ok(OrganizationTypeConversor.toOrganizationTypeDtoList(organizationTypes));
+    return ResponseEntity.ok(OrganizationTypeMapper.toOrganizationTypeDtoList(organizationTypes));
   }
 
   @Override
   public ResponseEntity<OrganizationTypeResponseDto> getOrganizationById(Long id) {
     OrganizationType organizationType = personalManagementService.findOrganizationTypeById(id);
 
-    return ResponseEntity.ok(OrganizationTypeConversor.toOrganizationTypeDto(organizationType));
+    return ResponseEntity.ok(OrganizationTypeMapper.toOrganizationTypeDto(organizationType));
   }
 
   @Override
@@ -38,6 +38,6 @@ public class OrganizationsTypeController implements OrganizationTypesApi {
     OrganizationType organizationType = personalManagementService.createOrganizationType(
         organizationTypeRequestDto.getName());
 
-    return ResponseEntity.ok(OrganizationTypeConversor.toOrganizationTypeDto(organizationType));
+    return ResponseEntity.ok(OrganizationTypeMapper.toOrganizationTypeDto(organizationType));
   }
 }

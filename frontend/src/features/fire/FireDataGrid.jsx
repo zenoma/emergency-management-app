@@ -10,6 +10,9 @@ import {
   FormControl,
   Grid,
   TextField,
+  InputLabel,
+  MenuItem,
+  Select,
   Typography,
 } from "@mui/material";
 import {
@@ -40,6 +43,8 @@ export default function FireDataGrid() {
 
   const [description, setDescription] = useState("");
   const [fireType, setFireType] = useState("");
+  const fireIndexSelector = ["CERO", "UNO", "DOS", "TRES"];
+  const [fireIndex, setFireIndex] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -48,6 +53,7 @@ export default function FireDataGrid() {
   const handleClose = () => {
     setDescription("");
     setFireType("");
+    setFireIndex("");
     setOpen(false);
   };
 
@@ -141,7 +147,7 @@ export default function FireDataGrid() {
     if (id === "description") {
       setDescription(value);
     }
-    if (id === "fireType") {
+    if (id === "type") {
       setFireType(value);
     }
   };
@@ -155,10 +161,16 @@ export default function FireDataGrid() {
   };
 
   const handleClick = () => {
+    if (!description.trim() || !fireType.trim() || !fireIndex) {
+      toast.error(t("fire-required-fields"));
+      return;
+    }
+
     const payload = {
       token: token,
       description: description,
       type: fireType,
+      fireIndex: fireIndex,
       locale: locale,
     };
 
@@ -203,16 +215,34 @@ export default function FireDataGrid() {
           sx={{
             height: 490,
             width: "100%",
-            "& .disabled": {
+            "& .extinguido": {
               backgroundColor: "lightgrey",
               "&:hover": {
                 backgroundColor: "darkgrey",
               },
             },
-            "& .active": {
-              backgroundColor: "error.light",
+            "& .cero": {
+              backgroundColor: "#ffcdd2",
               "&:hover": {
-                backgroundColor: "error.dark",
+                backgroundColor: "#ef9a9a",
+              },
+            },
+            "& .uno": {
+              backgroundColor: "#ef9a9a",
+              "&:hover": {
+                backgroundColor: "#e57373",
+              },
+            },
+            "& .dos": {
+              backgroundColor: "#e57373",
+              "&:hover": {
+                backgroundColor: "#ef5350",
+              },
+            },
+            "& .tres": {
+              backgroundColor: "#ef5350",
+              "&:hover": {
+                backgroundColor: "#e53935",
               },
             },
           }}
@@ -241,9 +271,15 @@ export default function FireDataGrid() {
             onFilterModelChange={handleFilterModelChange}
             getRowClassName={(params) => {
               if (params.row.fireIndex === "EXTINGUIDO") {
-                return "disabled";
-              } else {
-                return "active";
+                return "extinguido";
+              } else if (params.row.fireIndex === "CERO") {
+                return "cero";
+              } else if (params.row.fireIndex === "UNO") {
+                return "uno";
+              } else if (params.row.fireIndex === "DOS") {
+                return "dos";
+              } else if (params.row.fireIndex === "TRES") {
+                return "tres";
               }
             }}
             onRowClick={(e) =>
@@ -257,39 +293,58 @@ export default function FireDataGrid() {
               <AddIcon />
             </Fab>
           </Box>}
-          <Dialog fullWidth open={open} onClose={handleClose}>
+          <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
             <DialogTitle sx={{ color: "primary.light" }}>{t("fire-create-title")} </DialogTitle>
             <DialogContent>
-              <FormControl>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="description"
-                      label={t("fire-description")}
-                      type="text"
-                      autoComplete="current-description"
-                      margin="normal"
-                      value={description}
-                      onChange={(e) => handleChange(e)}
-                      required
-                      variant="standard"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="fireType"
-                      label={t("fire-type")}
-                      type="text"
-                      autoComplete="current-type"
-                      margin="normal"
-                      value={fireType}
-                      onChange={(e) => handleChange(e)}
-                      required
-                      variant="standard"
-                    />
-                  </Grid>
+              <Grid container spacing={2} sx={{ mt: 1 }}>
+                <Grid item xs={12}>
+                  <TextField
+                    id="description"
+                    label={t("fire-description")}
+                    type="text"
+                    autoComplete="current-description"
+                    value={description}
+                    onChange={(e) => handleChange(e)}
+                    required
+                    variant="outlined"
+                    fullWidth
+                  />
                 </Grid>
-              </FormControl>
+                <Grid item xs={12}>
+                  <TextField
+                    id="type"
+                    label={t("fire-type")}
+                    type="text"
+                    autoComplete="current-type"
+                    value={fireType}
+                    onChange={(e) => handleChange(e)}
+                    required
+                    variant="outlined"
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel id="fire-index-label">
+                      {t("fire-fireIndex")}
+                    </InputLabel>
+                    <Select
+                      id="fireIndex"
+                      labelId="fire-index-label"
+                      label={t("fire-fireIndex")}
+                      value={fireIndex}
+                      onChange={(e) => setFireIndex(e.target.value)}
+                      required
+                    >
+                      {fireIndexSelector.map((item, index) => (
+                        <MenuItem key={index} value={item}>
+                          {item}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>{t("cancel")}</Button>

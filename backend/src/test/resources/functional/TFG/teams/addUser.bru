@@ -1,18 +1,18 @@
 meta {
   name: addUser
   type: http
-  seq: 9
+  seq: 10
 }
 
 post {
-  url: {{base_url}}/teams/3/addUser
+  url: {{base_url}}/teams/5/addUser
   body: json
   auth: inherit
 }
 
 body:json {
   {
-      "memberId": "5"
+      "memberId": "4"
   }
 }
 

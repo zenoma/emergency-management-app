@@ -5,6 +5,8 @@ import es.udc.fireproject.backend.model.entities.image.ImageRepository;
 import es.udc.fireproject.backend.model.entities.notice.Notice;
 import es.udc.fireproject.backend.model.entities.notice.NoticeRepository;
 import es.udc.fireproject.backend.model.entities.notice.NoticeStatus;
+import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
+import es.udc.fireproject.backend.model.entities.quadrant.QuadrantRepository;
 import es.udc.fireproject.backend.model.entities.user.User;
 import es.udc.fireproject.backend.model.entities.user.UserRepository;
 import es.udc.fireproject.backend.model.exceptions.ImageAlreadyUploadedException;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,9 @@ public class NoticeServiceImpl implements NoticeService {
 
   @Autowired
   UserRepository userRepository;
+
+  @Autowired
+  QuadrantRepository quadrantRepository;
 
   @Override
   public Notice create(String body, Point location) {
@@ -160,6 +166,11 @@ public class NoticeServiceImpl implements NoticeService {
 
     return notice;
 
+  }
+
+  @Override
+  public Optional<Quadrant> findQuadrantByLocation(Point location) {
+    return quadrantRepository.findByContainingPoint(location);
   }
 
 }

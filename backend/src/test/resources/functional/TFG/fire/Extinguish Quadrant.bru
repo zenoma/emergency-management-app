@@ -1,13 +1,19 @@
 meta {
   name: Extinguish Quadrant
   type: http
-  seq: 4
+  seq: 5
 }
 
 post {
-  url: {{base_url}}/fires/4/extinguishFire
+  url: {{base_url}}/fires/13/extinguishQuadrant
   body: json
   auth: inherit
+}
+
+body:json {
+  {
+    "quadrantId": 1393
+  }
 }
 
 settings {

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import Map, { Layer, NavigationControl, Source } from "react-map-gl/maplibre";
+import { Marker } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Icon from "../../app/assets/images/pin.png";
 import { transformCoordinates } from "../../app/utils/coordinatesTransformations";

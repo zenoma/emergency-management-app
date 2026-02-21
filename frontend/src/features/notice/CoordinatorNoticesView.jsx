@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useDeleteNoticeMutation, useGetNoticesQuery, useUpdateNoticeMutation } from "../../api/noticeApi";
 
-var URL = import.meta.env.REACT_APP_BACKEND_URL;
+var URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
 
 export default function CoordinatorNoticesView() {
@@ -140,26 +140,47 @@ export default function CoordinatorNoticesView() {
       field: 'email',
       headerName: t("email"),
       width: 200,
+      valueGetter: (params) => params.row.userDto ? params.row.userDto.email : '',
       renderCell: (params) => {
-        return params.row.user ? (
+        return params.row.userDto ? (
           <Typography variant="body2" color="text.secondary">
-            {params.row.user.email}
+            {params.row.userDto.email}
           </Typography>
         ) : null;
       },
+    },
+    {
+      field: 'quadrantId',
+      headerName: t("notice-quadrant-id"),
+      width: 120,
+      renderCell: (params) => (
+        <Typography variant="body2" color="text.secondary">
+          {params.value || '-'}
+        </Typography>
+      ),
+    },
+    {
+      field: 'quadrantName',
+      headerName: t("notice-quadrant"),
+      width: 200,
+      renderCell: (params) => (
+        <Typography variant="body2" color="text.secondary">
+          {params.value || '-'}
+        </Typography>
+      ),
     },
     {
       field: 'image',
       headerName: t("notice-image"),
       width: 150,
       renderCell: (params) => {
-        if (params.row.images[0]) {
+        if (params.row.imageDtoList && params.row.imageDtoList[0]) {
           return (
             <img
-              src={`${URL}/images/${params.row.id}/${params.row.images[0].name}`}
+              src={`${URL}/images/${params.row.id}/${params.row.imageDtoList[0].name}`}
               alt={params.row.name}
               style={{ minWidth: 100, minHeight: 10, cursor: "pointer" }}
-              onClick={() => handleDialogOpen(params.row.id, params.row.images[0].name)}
+              onClick={() => handleDialogOpen(params.row.id, params.row.imageDtoList[0].name)}
             />
           );
         } else {
@@ -228,7 +249,7 @@ export default function CoordinatorNoticesView() {
       sx={{
         display: "inline-block",
         padding: "10px",
-        minWidth: "1000px",
+        minWidth: "1300px",
       }}
       variant="outlined"
     >

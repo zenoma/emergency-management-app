@@ -1,100 +1,106 @@
 import PropTypes from "prop-types";
-
 import { Paper, Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
+import { Box } from "@mui/material";
 
-export default function OrganizationDetailsCard(props) {
+export default function OrganizationDetailsCard({ data }) {
   const { t } = useTranslation();
+
+  if (!data) return null; // protección por si no hay data
 
   return (
     <Paper
-      sx={{
-        padding: 2,
-      }}
       variant="outlined"
+      sx={{
+        p: 3,
+        maxWidth: 600,
+        width: "100%",
+        mx: "auto",
+      }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "left",
-          padding: "5px",
+      {/* Título */}
+      <Typography
+        variant="h6"
+        sx={{
+          color: "primary.light",
+          fontWeight: "bold",
+          textAlign: "center",
+          mb: 3,
         }}
       >
-        <Typography
-          variant="h6"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "primary.light",
-          }}
-        >
-          {t("organization-details-title")}
-        </Typography>
-        <TableContainer>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell
-                  component="th"
-                  scope="row"
-                  sx={{ color: "secondary.light", padding: "20px" }}
-                >
-                  {t("organization-details-code")}
-                </TableCell>
-                <TableCell align="center">
-                  {props.data["code"]}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  component="th"
-                  scope="row"
-                  sx={{ color: "secondary.light", padding: "20px" }}
-                >
-                  {t("organization-details-name")}
-                </TableCell>
-                <TableCell align="center">
-                  {props.data["name"]}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  component="th"
-                  scope="row"
-                  sx={{ color: "secondary.light", padding: "20px" }}
-                >
-                  {t("organization-address")}
-                </TableCell>
-                <TableCell align="center">
-                  {props.data["headquartersAddress"]}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  component="th"
-                  scope="row"
-                  sx={{ color: "secondary.light", padding: "20px" }}
-                >
-                  {t("organization-type-name")}
-                </TableCell>
-                <TableCell align="center">
-                  {props.data["organizationType"]}
-                </TableCell>
-              </TableRow>
+        {t("organization-details-title")}
+      </Typography>
 
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 3,
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "secondary.light" }}
+            display="block"
+          >
+            {t("organization-details-code")}
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            {data.code}
+          </Typography>
+        </Box>
+
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "secondary.light" }}
+            display="block"
+          >
+            {t("organization-details-name")}
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            {data.name}
+          </Typography>
+        </Box>
+
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "secondary.light" }}
+            display="block"
+          >
+            {t("organization-address")}
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            {data.headquartersAddress}
+          </Typography>
+        </Box>
+
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "secondary.light" }}
+            display="block"
+          >
+            {t("organization-type-name")}
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            {data.organizationTypeName}
+          </Typography>
+        </Box>
+      </Box>
     </Paper>
-  )
-
+  );
 }
 
 OrganizationDetailsCard.propTypes = {
-  data: PropTypes.object,
+  data: PropTypes.shape({
+    code: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    headquartersAddress: PropTypes.string,
+    organizationTypeName: PropTypes.string,
+  }).isRequired,
 };

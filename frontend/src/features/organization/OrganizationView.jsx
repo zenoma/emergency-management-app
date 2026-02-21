@@ -42,18 +42,12 @@ export default function OrganizationsView() {
   const {
     data: organizationsList,
     isFetching,
-    refetch,
   } = useGetOrganizationsByOrganizationTypeQuery(payload, {
     refetchOnMountOrArgChange: true,
   });
 
   const handleRadioChange = (e) => {
     setSelectedOrganizationType(e.target.value);
-    reloadData();
-  };
-
-  const reloadData = () => {
-    refetch();
   };
 
   return (
@@ -111,7 +105,6 @@ export default function OrganizationsView() {
             <CircularProgress />
           ) : organizationsList ? (
             <OrganizationTable
-              reloadData={reloadData}
               organizations={organizationsList}
               organizationTypesList={organizationTypes}
             />
@@ -119,7 +112,6 @@ export default function OrganizationsView() {
 
           {userRole === "COORDINATOR" && <OrganizationCreateDialog
             organizationTypes={organizationTypes}
-            reloadData={reloadData}
           />}
         </FormControl>
       ) : null}

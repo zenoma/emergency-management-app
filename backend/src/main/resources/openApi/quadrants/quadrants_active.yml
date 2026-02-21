@@ -11,4 +11,4 @@ get:
           schema:
             type: array
             items:
-              $ref: './schemas/responses/QuadrantDto.yml'
+              $ref: './schemas/responses/QuadrantInfoDto.yml'

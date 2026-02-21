@@ -54,7 +54,7 @@ export default function QuadrantVehiclesView(props) {
     const payload = {
       vehicleId: selectedId,
       token: token,
-      gid: quadrantId,
+      quadrantId: quadrantId,
       locale: locale,
     };
     if (selectedId === -1) {
@@ -123,7 +123,7 @@ export default function QuadrantVehiclesView(props) {
         ) : quadrantInfo ? (
           <QuadrantVehicleTable
             reloadData={reloadData}
-            vehicles={quadrantInfo.vehicleDtoList}
+            vehicles={quadrantInfo.vehicleList}
             quadrantId={quadrantId}
           />
         ) : null}
@@ -132,7 +132,7 @@ export default function QuadrantVehiclesView(props) {
             <AddIcon />
           </Fab>
         </Box>
-        <Dialog fullWidth open={open} onClose={handleClose}>
+        <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
           <DialogTitle sx={{ color: "primary.light" }}>{t("vehicle-deploy-title")} </DialogTitle>
           <DialogContent>
             <VehicleDataGrid childToParent={childToParent} />

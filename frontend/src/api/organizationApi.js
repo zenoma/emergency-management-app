@@ -10,9 +10,8 @@ export const organizationApi = baseApi.injectEndpoints({
           "Accept-Language": payload.locale,
         },
       }),
-      transformResponse: (response, meta, arg) => {
-        return response;
-      },
+      providesTags: (result, error, arg) =>
+        result ? [{ type: "Organization", id: arg.organizationId }] : [],
     }),
     getOrganizationsByOrganizationType: build.query({
       query: (payload) => ({
@@ -23,9 +22,13 @@ export const organizationApi = baseApi.injectEndpoints({
           "Accept-Language": payload.locale,
         },
       }),
-      transformResponse: (response, meta, arg) => {
-        return response;
-      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map((org) => ({ type: "Organization", id: org.id })),
+              { type: "Organization", id: "LIST" },
+            ]
+          : [{ type: "Organization", id: "LIST" }],
     }),
     createOrganization: build.mutation({
       query: (payload) => ({
@@ -46,9 +49,7 @@ export const organizationApi = baseApi.injectEndpoints({
           "Accept-Language": payload.locale,
         },
       }),
-      transformResponse: (response, meta, arg) => {
-        return response;
-      },
+      invalidatesTags: [{ type: "Organization", id: "LIST" }],
     }),
     updateOrganization: build.mutation({
       query: (payload) => ({
@@ -68,9 +69,10 @@ export const organizationApi = baseApi.injectEndpoints({
           "Accept-Language": payload.locale,
         },
       }),
-      transformResponse: (response, meta, arg) => {
-        return response;
-      },
+      invalidatesTags: (result, error, arg) => [
+        { type: "Organization", id: arg.organizationId },
+        { type: "Organization", id: "LIST" },
+      ],
     }),
     deleteOrganizationById: build.mutation({
       query: (payload) => ({
@@ -81,9 +83,10 @@ export const organizationApi = baseApi.injectEndpoints({
           "Accept-Language": payload.locale,
         },
       }),
-      transformResponse: (response, meta, arg) => {
-        return response;
-      },
+      invalidatesTags: (result, error, arg) => [
+        { type: "Organization", id: arg.organizationId },
+        { type: "Organization", id: "LIST" },
+      ],
     }),
   }),
   refetchOnMountOrArgChange: true,

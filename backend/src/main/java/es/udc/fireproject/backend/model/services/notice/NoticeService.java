@@ -7,7 +7,9 @@ import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
+import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import java.util.List;
+import java.util.Optional;
 import org.locationtech.jts.geom.Point;
 
 public interface NoticeService {
@@ -30,5 +32,7 @@ public interface NoticeService {
   void checkNotice(Long id, NoticeStatus status) throws InstanceNotFoundException, NoticeCheckStatusException;
 
   Notice addImage(Long id, String name) throws InstanceNotFoundException, ImageAlreadyUploadedException;
+
+  Optional<Quadrant> findQuadrantByLocation(Point location);
 
 }

@@ -45,6 +45,7 @@ export default function TeamDataGrid({ childToParent }) {
       return teams.map((team) => ({
         ...team,
         organizationCode: team.organization.code,
+        quadrants: team.quadrantInfo.nombre ? team.quadrantInfo.nombre + " (#" + team.quadrantInfo.id + ")" : "",
       }));
     }
   };
@@ -62,6 +63,12 @@ export default function TeamDataGrid({ childToParent }) {
         headerName: t("team-organization-belong"),
         width: 250,
         hide: true,
+      },
+      {
+        field: "quadrants",
+        headerName: t("quadrant-id"),
+        width: 300,
+        sortable: false,
       },
     ],
     rows: initData(teams),

@@ -44,6 +44,7 @@ export default function VehicleDataGrid({ childToParent }) {
       return vehicles.map((vehicle) => ({
         ...vehicle,
         organizationCode: vehicle.organization.code,
+        quadrants: vehicle.quadrantInfo.nombre ? vehicle.quadrantInfo.nombre + " (#" + vehicle.quadrantInfo.id + ")" : "",
       }));
     }
   };
@@ -67,6 +68,12 @@ export default function VehicleDataGrid({ childToParent }) {
         headerName: t("team-organization-belong"),
         width: 200,
         hide: true,
+      },
+      {
+        field: "quadrants",
+        headerName: t("quadrant-id"),
+        width: 300,
+        sortable: false,
       },
     ],
     rows: initData(vehicles),

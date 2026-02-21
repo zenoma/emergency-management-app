@@ -31,6 +31,10 @@ export default function MyTeamView(props) {
     refetchOnMountOrArgChange: true,
   });
 
+  if (error?.noTeam) {
+    return <TeamNotFoundPage />;
+  }
+
   return (
     <Paper
       sx={{
@@ -41,14 +45,15 @@ export default function MyTeamView(props) {
         padding: "10px",
       }}
     >
+
       {error ? (
         <TeamNotFoundPage />
       ) : isLoading ? (
         <CircularProgress />
       ) : data ? (
         <Container>
-          <TeamCard data={data} />
-          <UsersList teamId={data.id} name={data.code} users={data.users} />
+          <TeamCard data={data[0]} />
+          <UsersList teamId={data[0].id} name={data[0].code} users={data[0].userList} />
         </Container>
       ) : null}
     </Paper>

@@ -87,7 +87,8 @@ export default function TeamItem(props) {
       .catch((error) => toast.error(t("user-deleted-error")));
   };
 
-  const users = props.users;
+  const users = props.users || [];
+
 
   var rows = [];
   if (users) {

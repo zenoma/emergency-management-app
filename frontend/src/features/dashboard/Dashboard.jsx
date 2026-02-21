@@ -33,7 +33,7 @@ export default function Dashboard() {
     });
   }, []);
 
-  
+
   return (
     <Grid container spacing={2} >
       <Grid item xs={12} md={6} lg={8}>
@@ -72,7 +72,7 @@ export default function Dashboard() {
               <Typography variant="h4" color="primary.light">
                 {t("notices")}
               </Typography>
-              <Notice />
+              <Notice lat={coordinates.lat} lon={coordinates.lon} />
             </Paper>
           </Grid>
         </Grid>
