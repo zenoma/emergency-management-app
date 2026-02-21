@@ -19,7 +19,7 @@ import es.udc.fireproject.backend.model.exceptions.IncorrectPasswordException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.InsufficientRolePermissionException;
 import es.udc.fireproject.backend.model.exceptions.UserWithoutTeamException;
-import es.udc.fireproject.backend.model.services.firemanagement.FireManagementServiceImpl;
+import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
 import es.udc.fireproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -60,7 +60,7 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
   private BCryptPasswordEncoder passwordEncoder;
 
   @Autowired
-  private FireManagementServiceImpl fireManagementService;
+  private FireManagementService fireManagementService;
 
   // ORGANIZATION SERVICES
   @Override

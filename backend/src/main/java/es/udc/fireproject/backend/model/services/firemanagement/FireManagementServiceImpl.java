@@ -13,7 +13,7 @@ import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.QuadrantNotLinkedToFireException;
-import es.udc.fireproject.backend.model.services.logsmanagement.LogManagementServiceImpl;
+import es.udc.fireproject.backend.model.services.logsmanagement.LogManagementService;
 import es.udc.fireproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -49,7 +49,7 @@ public class FireManagementServiceImpl implements FireManagementService {
 
   @Lazy
   @Autowired
-  LogManagementServiceImpl logManagementService;
+  LogManagementService logManagementService;
 
   // QUADRANT SERVICES
   @Override

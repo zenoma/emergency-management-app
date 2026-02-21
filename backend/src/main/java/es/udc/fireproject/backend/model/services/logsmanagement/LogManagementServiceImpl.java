@@ -15,8 +15,8 @@ import es.udc.fireproject.backend.model.entities.team.Team;
 import es.udc.fireproject.backend.model.entities.vehicle.Vehicle;
 import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
-import es.udc.fireproject.backend.model.services.firemanagement.FireManagementServiceImpl;
-import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementServiceImpl;
+import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
+import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -39,9 +39,9 @@ public class LogManagementServiceImpl implements LogManagementService {
   VehicleQuadrantLogRepository vehicleQuadrantLogRepository;
 
   @Autowired
-  FireManagementServiceImpl fireManagementService;
+  FireManagementService fireManagementService;
   @Autowired
-  PersonalManagementServiceImpl personalManagementService;
+  PersonalManagementService personalManagementService;
 
   @Autowired
   private QuadrantRepository quadrantRepository;
