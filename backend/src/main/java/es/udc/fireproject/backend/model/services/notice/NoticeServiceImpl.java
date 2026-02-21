@@ -9,6 +9,7 @@ import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.fireproject.backend.model.entities.quadrant.QuadrantRepository;
 import es.udc.fireproject.backend.model.entities.user.User;
 import es.udc.fireproject.backend.model.entities.user.UserRepository;
+import es.udc.fireproject.backend.model.exceptions.FileUploadException;
 import es.udc.fireproject.backend.model.exceptions.ImageAlreadyUploadedException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
@@ -111,7 +112,7 @@ public class NoticeServiceImpl implements NoticeService {
         try {
           FileUploadUtil.deleteFile(uploadDir, image.getName());
         } catch (IOException e) {
-          throw new RuntimeException(e);
+          throw new FileUploadException(e);
         }
         imageRepository.delete(image);
       }

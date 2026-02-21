@@ -35,8 +35,8 @@ export default function OrganizationsView() {
 
   const {
     data: organizationTypes,
-    errorOrganizationTypesQuery,
-    isLoadingOrganizationTypesQuery,
+    error: errorOrganizationTypesQuery,
+    isLoading: isLoadingOrganizationTypesQuery,
   } = useGetOrganizationTypesQuery({ token: token, locale: locale });
 
   const {

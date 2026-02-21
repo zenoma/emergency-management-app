@@ -102,6 +102,9 @@ export default function Login() {
       .then(() => {
         toast.info(t("succesfully-login"));
         navigate("/login");
+      })
+      .catch(() => {
+        // Error is handled by rtkQueryErrorHandler middleware
       });
   };
 

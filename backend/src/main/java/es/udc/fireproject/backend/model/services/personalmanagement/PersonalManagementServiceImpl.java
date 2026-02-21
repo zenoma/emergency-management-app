@@ -282,13 +282,13 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
   public Team findTeamByUserId(Long userId) throws InstanceNotFoundException {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new InstanceNotFoundException(USER_NOT_FOUND, userId));
-    try {
-      Long teamId = user.getTeam().getId();
-      return teamRepository.findById(teamId).orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, teamId));
 
-    } catch (NullPointerException e) {
+    if (user.getTeam() == null) {
       throw new UserWithoutTeamException(TEAM_NOT_FOUND, userId);
     }
+
+    Long teamId = user.getTeam().getId();
+    return teamRepository.findById(teamId).orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, teamId));
   }
 
   @Override
@@ -413,10 +413,10 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
   @Transactional(readOnly = true)
   public User login(String email, String password) throws IncorrectLoginException {
 
-    User user = userRepository.findByEmail(email).orElseThrow(() -> new IncorrectLoginException(email, password));
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new IncorrectLoginException(email));
 
     if (!passwordEncoder.matches(password, user.getPassword())) {
-      throw new IncorrectLoginException(email, password);
+      throw new IncorrectLoginException(email);
     }
 
     return user;

@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Alert, Box, CircularProgress, Grid, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -40,10 +40,26 @@ export default function QuadrantHistoryView() {
   };
 
 
-  const { data: teamLogs } = useGetTeamLogsByQuadrantIdQuery(payload);
-  const { data: quadrantInfo } = useGetQuadrantByIdQuery(payload);
-  const { data: vehicleLogs } = useGetVehicleLogsByQuadrantIdQuery(payload);
+  const { data: teamLogs, isError: isTeamLogsError } = useGetTeamLogsByQuadrantIdQuery(payload);
+  const { data: quadrantInfo, isLoading, isError: isQuadrantError } = useGetQuadrantByIdQuery(payload);
+  const { data: vehicleLogs, isError: isVehicleLogsError } = useGetVehicleLogsByQuadrantIdQuery(payload);
 
+  if (isLoading) {
+    return (
+      <Box sx={{ padding: 3, display: "flex", justifyContent: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isQuadrantError) {
+    return (
+      <Box sx={{ padding: 3 }}>
+        <BackButton />
+        <Alert severity="error">{t("generic-error")}</Alert>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ padding: 3 }}>
@@ -102,7 +118,9 @@ export default function QuadrantHistoryView() {
             >
               {t("quadrant-teams-deployed")}
             </Typography>
-            {teamLogs && <QuadrantHistoryTeamsTable teamLogs={teamLogs} />}
+            {isTeamLogsError ? (
+              <Alert severity="error">{t("generic-error")}</Alert>
+            ) : teamLogs && <QuadrantHistoryTeamsTable teamLogs={teamLogs} />}
           </Box>
         </Grid>
         <Grid item xs={4} sm={8} md={6}>
@@ -124,7 +142,9 @@ export default function QuadrantHistoryView() {
             >
               {t("quadrant-vehicles-deployed")}
             </Typography>
-            {vehicleLogs && (
+            {isVehicleLogsError ? (
+              <Alert severity="error">{t("generic-error")}</Alert>
+            ) : vehicleLogs && (
               <QuadrantHistoryVehiclesTable vehicleLogs={vehicleLogs} />
             )}
           </Box>

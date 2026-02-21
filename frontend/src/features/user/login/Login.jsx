@@ -54,6 +54,9 @@ export default function Login() {
         dispatch(validLogin(payload));
         toast.info(t("succesfully-login"));
         navigate("/profile");
+      })
+      .catch(() => {
+        // Error is handled by rtkQueryErrorHandler middleware
       });
   };
 

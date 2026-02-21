@@ -12,6 +12,7 @@ import es.udc.fireproject.backend.model.entities.vehicle.VehicleRepository;
 import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
+import es.udc.fireproject.backend.model.exceptions.QuadrantNotLinkedToFireException;
 import es.udc.fireproject.backend.model.services.logsmanagement.LogManagementServiceImpl;
 import es.udc.fireproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
@@ -159,7 +160,7 @@ public class FireManagementServiceImpl implements FireManagementService {
         .orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, quadrantId));
 
     if (quadrant.getFire() == null || !Objects.equals(quadrant.getFire().getId(), fire.getId())) {
-      throw new RuntimeException();
+      throw new QuadrantNotLinkedToFireException(id, quadrantId);
     }
 
     logManagementService.logFire(id, quadrant.getId());

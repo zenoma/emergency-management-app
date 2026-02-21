@@ -3,21 +3,15 @@ package es.udc.fireproject.backend.model.exceptions;
 public class IncorrectLoginException extends RuntimeException {
 
   private final String userName;
-  private final String password;
 
-  public IncorrectLoginException(String userName, String password) {
+  public IncorrectLoginException(String userName) {
 
     this.userName = userName;
-    this.password = password;
 
   }
 
   public String getUserName() {
     return userName;
-  }
-
-  public String getPassword() {
-    return password;
   }
 
 }

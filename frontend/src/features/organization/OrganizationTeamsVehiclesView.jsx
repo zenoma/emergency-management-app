@@ -1,5 +1,5 @@
 import InfoIcon from "@mui/icons-material/Info";
-import { Box, Button, Dialog, Grid, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Dialog, Grid, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -27,7 +27,7 @@ export default function OrganizationTeamsVehiclesView() {
     organizationId: organizationId,
     locale: locale
   };
-  const { data: organizationData } = useGetOrganizationByIdQuery(payload);
+  const { data: organizationData, isLoading, isError } = useGetOrganizationByIdQuery(payload);
 
   const handleInfoClickOpen = () => {
     setOpen(true);
@@ -36,6 +36,23 @@ export default function OrganizationTeamsVehiclesView() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  if (isLoading) {
+    return (
+      <Box sx={{ padding: 3, display: "flex", justifyContent: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box sx={{ padding: 3 }}>
+        <BackButton />
+        <Alert severity="error">{t("generic-error")}</Alert>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ padding: 3 }}>

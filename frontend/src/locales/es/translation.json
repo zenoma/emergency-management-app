@@ -194,5 +194,12 @@
   "rows-per-page": "Filas por página",
   "generic-error": "Oh no, ha ocurrido un error",
   "loading": "Cargando",
-  "my-area": "Mi área"
+  "my-area": "Mi área",
+  "organization-map-required": "Debe seleccionar una ubicación en el mapa",
+  "organization-type-required": "Debe seleccionar un tipo de organización",
+  "organization-created": "Organización creada correctamente",
+  "error-boundary-title": "Algo ha ido mal",
+  "error-boundary-message": "Se ha producido un error inesperado. Por favor, inténtelo de nuevo.",
+  "error-boundary-retry": "Reintentar",
+  "go-to-home": "Ir a Inicio"
 }

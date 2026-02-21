@@ -1,6 +1,8 @@
 import {
+  Alert,
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -75,7 +77,7 @@ export default function FireDetailsView() {
 
   const payload = { token: token, fireId: fireId, locale: locale };
 
-  const { data, refetch } = useGetFireByIdQuery(payload);
+  const { data, refetch, isLoading, isError } = useGetFireByIdQuery(payload);
 
   const [linkFire] = useLinkFireMutation();
   const [extinguishFire] = useExtinguishFireMutation();
@@ -230,6 +232,23 @@ export default function FireDetailsView() {
       .catch((error) => toast.error(t("quadrant-extinguished-error")));
     handleExtinguishQuadrantClose();
   };
+
+  if (isLoading) {
+    return (
+      <Box sx={{ padding: 3, display: "flex", justifyContent: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box sx={{ padding: 3 }}>
+        <BackButton />
+        <Alert severity="error">{t("generic-error")}</Alert>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ padding: 3 }}>
