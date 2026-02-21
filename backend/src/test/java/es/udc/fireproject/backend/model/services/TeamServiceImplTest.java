@@ -15,7 +15,7 @@ import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.AlreadyExistException;
 import es.udc.fireproject.backend.model.exceptions.DuplicateInstanceException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
-import es.udc.fireproject.backend.model.services.firemanagement.FireManagementServiceImpl;
+import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementServiceImpl;
 import es.udc.fireproject.backend.utils.OrganizationOM;
 import es.udc.fireproject.backend.utils.OrganizationTypeOM;
@@ -39,24 +39,21 @@ class TeamServiceImplTest {
 
   private final Long INVALID_TEAM_ID = -1L;
   private final Long INVALID_USER_ID = -1L;
-
   @Mock
   TeamRepository teamRepository;
-
   @Mock
   UserRepository userRepository;
-
   @Mock
   OrganizationRepository organizationRepository;
-
   @Mock
   OrganizationTypeRepository organizationTypeRepository;
+  @Mock
+  FireManagementService fireManagementService;
+  @Mock
+  BCryptPasswordEncoder passwordEncoder;
+
   @InjectMocks
   PersonalManagementServiceImpl personalManagementService;
-  @Mock
-  FireManagementServiceImpl fireManagementService;
-  @Mock
-  private BCryptPasswordEncoder passwordEncoder;
 
   @BeforeEach
   public void setUp() {

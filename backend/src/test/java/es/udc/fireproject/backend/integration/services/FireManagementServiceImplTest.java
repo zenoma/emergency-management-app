@@ -21,19 +21,18 @@ import es.udc.fireproject.backend.utils.TeamOM;
 import es.udc.fireproject.backend.utils.VehicleOM;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
+@RequiredArgsConstructor
 class FireManagementServiceImplTest extends IntegrationTest {
 
   private final Integer VALID_QUADRANT_ID = 1;
   private final Integer INVALID_QUADRANT_ID = -1;
   private final Long INVALID_FIRE_ID = -1L;
-  @Autowired
-  FireManagementService fireManagementService;
-  @Autowired
-  PersonalManagementService personalManagementService;
+  private final FireManagementService fireManagementService;
+  private final PersonalManagementService personalManagementService;
 
   // QUADRANT SERVICES
   @Test

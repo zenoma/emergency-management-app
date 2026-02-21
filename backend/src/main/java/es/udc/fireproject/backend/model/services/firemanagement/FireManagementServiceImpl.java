@@ -13,20 +13,20 @@ import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.QuadrantNotLinkedToFireException;
-import es.udc.fireproject.backend.model.services.logsmanagement.LogManagementServiceImpl;
+import es.udc.fireproject.backend.model.services.logsmanagement.LogManagementService;
 import es.udc.fireproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class FireManagementServiceImpl implements FireManagementService {
 
   public static final String QUADRANT_NOT_FOUND = "Quadrant not found";
@@ -35,21 +35,11 @@ public class FireManagementServiceImpl implements FireManagementService {
   public static final String VEHICLE_NOT_FOUND = "Vehicle not found";
 
 
-  @Autowired
-  QuadrantRepository quadrantRepository;
-
-  @Autowired
-  FireRepository fireRepository;
-
-  @Autowired
-  TeamRepository teamRepository;
-
-  @Autowired
-  VehicleRepository vehicleRepository;
-
-  @Lazy
-  @Autowired
-  LogManagementServiceImpl logManagementService;
+  private final QuadrantRepository quadrantRepository;
+  private final FireRepository fireRepository;
+  private final TeamRepository teamRepository;
+  private final VehicleRepository vehicleRepository;
+  private final LogManagementService logManagementService;
 
   // QUADRANT SERVICES
   @Override
@@ -137,7 +127,7 @@ public class FireManagementServiceImpl implements FireManagementService {
 
     for (Quadrant quadrant : quadrants
     ) {
-      logManagementService.logFire(id, quadrant.getId());
+      logManagementService.logFire(fire, quadrant);
       quadrant.setFire(null);
       quadrant.setLinkedAt(null);
       for (Team team : quadrant.getTeamList()) {
@@ -169,7 +159,7 @@ public class FireManagementServiceImpl implements FireManagementService {
       throw new QuadrantNotLinkedToFireException(id, quadrantId);
     }
 
-    logManagementService.logFire(id, quadrant.getId());
+    logManagementService.logFire(fire, quadrant);
     quadrant.setFire(null);
     quadrant.setLinkedAt(null);
     for (Team team : quadrant.getTeamList()) {
@@ -238,7 +228,7 @@ public class FireManagementServiceImpl implements FireManagementService {
     }
 
     if (team.getQuadrant() != null) {
-      logManagementService.logTeam(team.getId(), team.getQuadrant().getId());
+      logManagementService.logTeam(team, team.getQuadrant());
       team.setDeployAt(null);
       team.setQuadrant(null);
     }
@@ -279,7 +269,7 @@ public class FireManagementServiceImpl implements FireManagementService {
     }
 
     if (vehicle.getQuadrant() != null) {
-      logManagementService.logVehicle(vehicle.getId(), vehicle.getQuadrant().getId());
+      logManagementService.logVehicle(vehicle, vehicle.getQuadrant());
       vehicle.setDeployAt(null);
       vehicle.setQuadrant(null);
     }

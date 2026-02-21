@@ -21,22 +21,18 @@ import es.udc.fireproject.backend.utils.TeamOM;
 import es.udc.fireproject.backend.utils.VehicleOM;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
+@RequiredArgsConstructor
 class LogManagementServiceImplTest extends IntegrationTest {
 
   private static final Integer VALID_QUADRANT_ID = 1;
 
-  @Autowired
-  LogManagementService logManagementService;
-
-  @Autowired
-  FireManagementServiceImpl fireManagementService;
-
-  @Autowired
-  PersonalManagementServiceImpl personalManagementService;
+  private final LogManagementService logManagementService;
+  private final FireManagementServiceImpl fireManagementService;
+  private final PersonalManagementServiceImpl personalManagementService;
 
   @Test
   void givenNoData_whenFindAllFireQuadrantLogs_thenReturnNotEmptyList() {
@@ -73,9 +69,9 @@ class LogManagementServiceImplTest extends IntegrationTest {
     fire = fireManagementService.extinguishQuadrantByFireId(fire.getId(), quadrant.getId());
     fire = fireManagementService.extinguishQuadrantByFireId(fire.getId(), quadrant2.getId());
 
-    logManagementService.findFiresByFireIdAndLinkedAt(fire.getId(), starDate, endDate);
+    logManagementService.findFiresByFireIdAndLinkedAt(fire, starDate, endDate);
 
-    Assertions.assertNotNull(logManagementService.findFiresByFireIdAndLinkedAt(fire.getId(), starDate, endDate));
+    Assertions.assertNotNull(logManagementService.findFiresByFireIdAndLinkedAt(fire, starDate, endDate));
   }
 
   @Test
@@ -118,17 +114,17 @@ class LogManagementServiceImplTest extends IntegrationTest {
     LocalDateTime endDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
     Assertions.assertEquals(1,
-        logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), starDate, endDate)
+        logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant, starDate, endDate)
             .size());
     Assertions.assertEquals(1,
-        logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2.getId(), starDate,
+        logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2, starDate,
             endDate).size());
 
     Assertions.assertEquals(1,
-        logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), starDate,
+        logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant, starDate,
             endDate).size());
     Assertions.assertEquals(1,
-        logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2.getId(), starDate,
+        logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2, starDate,
             endDate).size());
 
   }

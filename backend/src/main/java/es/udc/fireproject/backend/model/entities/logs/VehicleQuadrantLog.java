@@ -22,7 +22,7 @@ import lombok.ToString;
 @Table(name = "vehicle_quadrant_log", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 public class VehicleQuadrantLog {
 

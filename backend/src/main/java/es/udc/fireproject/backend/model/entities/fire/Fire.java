@@ -25,7 +25,7 @@ import lombok.ToString;
 @Table(name = "fire", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 @AllArgsConstructor
 public class Fire {
@@ -49,6 +49,8 @@ public class Fire {
 
   @OneToMany(mappedBy = "fire",
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private List<Quadrant> quadrantGids;
 
   @Column(name = "extinguished_at")

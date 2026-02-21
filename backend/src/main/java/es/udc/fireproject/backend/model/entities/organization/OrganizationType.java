@@ -15,7 +15,7 @@ import lombok.ToString;
 @Table(name = "organization_type")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 public class OrganizationType {
 

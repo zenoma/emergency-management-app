@@ -11,16 +11,16 @@ import es.udc.fireproject.backend.model.exceptions.InsufficientRolePermissionExc
 import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
 import es.udc.fireproject.backend.utils.UserOM;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
+@RequiredArgsConstructor
 class UserServiceImplTest extends IntegrationTest {
 
   private static final Long INVALID_USER_ID = -1L;
 
-  @Autowired
-  private PersonalManagementService personalManagementService;
+  private final PersonalManagementService personalManagementService;
 
   @Test
   void givenValidData_whenSignUpAndLoginFromId_thenUserIsFound()

@@ -13,17 +13,16 @@ import es.udc.fireproject.backend.utils.OrganizationTypeOM;
 import es.udc.fireproject.backend.utils.VehicleOM;
 import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
+@RequiredArgsConstructor
 class VehicleServiceImplTest extends IntegrationTest {
 
   private final Long INVALID_VEHICLE_ID = -1L;
 
-  @Autowired
-  PersonalManagementService personalManagementService;
-
+  private final PersonalManagementService personalManagementService;
 
   @Test
   void givenInvalidId_whenFindVehicleById_thenReturnInstanceNotFoundException() {

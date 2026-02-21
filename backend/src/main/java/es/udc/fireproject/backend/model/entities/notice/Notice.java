@@ -28,7 +28,7 @@ import org.locationtech.jts.geom.Point;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -57,6 +57,8 @@ public class Notice {
   @OneToMany(
       mappedBy = "notice",
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private List<Image> imageList;
 
 

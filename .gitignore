@@ -5,6 +5,10 @@ backend/target/
 frontend/build/
 frontend/node_modules/
 
+# Environment variables (secrets)
+backend/.env
+.env
+
 # Eclipse configuration.
 backend/.classpath
 backend/.project

@@ -17,19 +17,17 @@ import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 
+@RequiredArgsConstructor
 class NoticeServiceImplTest extends IntegrationTest {
 
 
-  @Autowired
-  NoticeService noticeService;
-
-  @Autowired
-  PersonalManagementService personalManagementService;
+  private final NoticeService noticeService;
+  private final PersonalManagementService personalManagementService;
 
   @Test
   void givenValid_whenCreateNotice_thenCreatedSuccessfully() throws InstanceNotFoundException {

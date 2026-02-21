@@ -27,7 +27,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 @Table(name = "quadrants", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 public class Quadrant implements Serializable {
 
@@ -59,17 +59,19 @@ public class Quadrant implements Serializable {
   @OneToMany(
       mappedBy = "quadrant",
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private List<Team> teamList;
 
   @OneToMany(
       mappedBy = "quadrant",
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private List<Vehicle> vehicleList;
 
-  @ManyToOne(
-      optional = false,
-      fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @JoinColumn(name = "fire_id", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinColumn(name = "fire_id")
   private Fire fire;
 
   @Column(name = "fire_linked_at")

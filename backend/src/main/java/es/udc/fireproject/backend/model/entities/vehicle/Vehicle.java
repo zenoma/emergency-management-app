@@ -24,7 +24,7 @@ import lombok.ToString;
 @Table(name = "vehicle")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 public class Vehicle {
 
@@ -46,9 +46,11 @@ public class Vehicle {
   @JoinColumn(name = "organization_id", nullable = false)
   private Organization organization;
 
-  @ManyToOne(optional = false,
+  @ManyToOne(
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @JoinColumn(name = "quadrant_gid", nullable = false)
+  @JoinColumn(name = "quadrant_gid")
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private Quadrant quadrant;
 
   @Column(name = "deploy_at")

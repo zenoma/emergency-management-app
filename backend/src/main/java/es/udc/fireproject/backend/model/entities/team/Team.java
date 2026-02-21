@@ -25,8 +25,8 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
-@ToString(exclude = {"userList"})
+@EqualsAndHashCode
+@ToString
 public class Team {
 
   @Id
@@ -47,12 +47,12 @@ public class Team {
   @OneToMany(
       mappedBy = "team",
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private List<User> userList;
 
-  @ManyToOne(
-      optional = false,
-      fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @JoinColumn(name = "quadrant_gid", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinColumn(name = "quadrant_gid")
   private Quadrant quadrant;
 
   @Column(name = "deploy_at")
@@ -73,4 +73,3 @@ public class Team {
   }
 
 }
-

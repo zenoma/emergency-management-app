@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import org.locationtech.jts.geom.Point;
 
+
 public interface FireManagementService {
 
   // CUADRANT SERVICES
@@ -36,10 +37,10 @@ public interface FireManagementService {
   Fire createFire(String description, String type, FireIndex fireIndex);
 
   Fire extinguishFire(Long id)
-      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyDismantledException;
+      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException;
 
   Fire extinguishQuadrantByFireId(Long id, Integer quadrantId)
-      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyDismantledException;
+      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException;
 
   Fire updateFire(Long id, String description, String type, FireIndex fireIndex)
       throws InstanceNotFoundException, ExtinguishedFireException;

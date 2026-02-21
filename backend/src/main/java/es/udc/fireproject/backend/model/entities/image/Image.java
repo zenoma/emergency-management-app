@@ -20,7 +20,7 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 public class Image {
 
@@ -33,6 +33,8 @@ public class Image {
       optional = false,
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name = "notice_id", nullable = false)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private Notice notice;
 
   @Column(name = "name", nullable = false)

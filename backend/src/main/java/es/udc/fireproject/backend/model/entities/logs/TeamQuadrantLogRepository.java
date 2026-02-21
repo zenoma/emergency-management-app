@@ -17,4 +17,7 @@ public interface TeamQuadrantLogRepository extends JpaRepository<TeamQuadrantLog
   @Query("SELECT tql.team.id FROM TeamQuadrantLog tql WHERE tql.quadrant.id = :quadrantId")
   List<Long> findTeamsIdsByQuadrantsGid(@Param("quadrantId") Integer quadrantId);
 
+  @Query("SELECT tql.team.id FROM TeamQuadrantLog tql WHERE tql.quadrant.id IN :quadrantIds")
+  List<Long> findTeamsIdsByQuadrantsGids(@Param("quadrantIds") List<Integer> quadrantIds);
+
 }

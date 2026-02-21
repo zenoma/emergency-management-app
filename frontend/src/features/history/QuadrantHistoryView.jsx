@@ -87,13 +87,13 @@ export default function QuadrantHistoryView() {
                   <div style={{ fontWeight: 600 }}>
                     {t("start-date-picker")}
                   </div>
-                  {dayjs(startDate).format("DD-MM-YYYY HH:mm")}
+                  {dayjs(startDate).format("DD-MM-YYYY HH:mm:ss")}
                 </Typography>
                 <Typography variant="body1" color="textSecondary" m={1}>
                   <div style={{ fontWeight: 600 }}>
                     {t("end-date-picker")}
                   </div>
-                  {dayjs(endDate).format("DD-MM-YYYY HH:mm")}
+                  {dayjs(endDate).format("DD-MM-YYYY HH:mm:ss")}
                 </Typography>
               </Box>
             </div>

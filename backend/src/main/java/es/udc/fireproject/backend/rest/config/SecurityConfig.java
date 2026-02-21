@@ -61,6 +61,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.DELETE, "/notices/{id}").hasAnyRole(COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.PUT, "/notices/{id}/status").hasAnyRole(COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/notices/{id}/images").permitAll()
+            .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
 
             .requestMatchers(HttpMethod.GET, "/organizations").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.GET, "/organizations/{id}")
@@ -111,7 +112,7 @@ public class SecurityConfig {
             .hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/users/{id}/updateRole").hasAnyRole(COORDINATOR_ROLE)
 
-            .anyRequest().permitAll()
+            .anyRequest().authenticated()
         )
         .headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
