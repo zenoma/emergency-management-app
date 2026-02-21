@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Box, CardContent, CardHeader, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, CardContent, CardHeader, CircularProgress, Divider, Paper, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useGetWeatherQuery } from "../../api/weatherApi";
@@ -37,118 +36,83 @@ const WeatherInfo = (props) => {
         return null;
     }
 
-    const styles = {
-        container: {
-            margin: "auto",
-            padding: "16px",
-        },
-        headerCell: {
-            color: "secondary.light",
-        },
-        iconCell: {
-            display: "flex",
-            justifyContent: "center",
-        },
-        icon: {
-            fontSize: "48px",
-        },
-    };
     var iconurl = "http://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
 
     return (
-        <TableContainer component={Paper} sx={styles.container}>
+        <Paper sx={{ margin: "auto", padding: 2 }}>
             <Typography variant="h5"
                 sx={{
                     fontWeight: "bold",
                     color: "primary.light",
-
+                    mb: 1,
                 }}>
                 {t("weather-info-tittle")}{data.name}
             </Typography>
             <Typography variant="body1" align="center" sx={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center"
+                justifyContent: "center",
+                mb: 1,
             }}>
                 {data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1)}
-
                 <img src={iconurl} alt="weather-icon" />
             </Typography>
-            <Accordion >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6" sx={{ color: "primary.light" }}>
-                        {t("weather-temperature")}
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={styles.headerCell}>{t("weather-temperature")}</TableCell>
-                                    <TableCell sx={styles.headerCell}>{t("weather-temperature-min")}</TableCell>
-                                    <TableCell sx={styles.headerCell}>{t("weather-temperature-max")}</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell>{data.main.temp}°C</TableCell>
-                                    <TableCell>{data.main.temp_min}°C</TableCell>
-                                    <TableCell>{data.main.temp_max}°C</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </Box>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6" sx={{ color: "primary.light" }}>
-                        {t("weather-humidity-pressure")}
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                        <Table><TableHead>
-                            <TableRow>
-                                <TableCell sx={styles.headerCell}>{t("weather-humidity")}</TableCell>
-                                <TableCell sx={styles.headerCell}>{t("weather-pressure")}</TableCell>
-                            </TableRow>
-                        </TableHead>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell >{data.main.humidity}%</TableCell>
-                                    <TableCell >{data.main.pressure}hPa</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </Box>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6" sx={{ color: "primary.light" }}>
-                        {t("weather-wind")}
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                        <Table>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell sx={styles.headerCell}>{t("weather-wind-speed")}</TableCell>
-                                    <TableCell sx={styles.headerCell}>{t("weather-wind-direction")}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>{data.wind.speed}m/s</TableCell>
-                                    <TableCell>{data.wind.deg}°</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </Box>
-                </AccordionDetails>
-            </Accordion>
-        </TableContainer >
+
+            <Divider sx={{ mb: 1.5 }} />
+
+            {/* Temperatura */}
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "primary.light", mb: 0.5 }}>
+                {t("weather-temperature")}
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.5 }}>
+                <Box sx={{ textAlign: "center", flex: 1 }}>
+                    <Typography variant="caption" color="text.secondary">{t("weather-temperature")}</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: "medium" }}>{data.main.temp}°C</Typography>
+                </Box>
+                <Box sx={{ textAlign: "center", flex: 1 }}>
+                    <Typography variant="caption" color="text.secondary">{t("weather-temperature-min")}</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: "medium" }}>{data.main.temp_min}°C</Typography>
+                </Box>
+                <Box sx={{ textAlign: "center", flex: 1 }}>
+                    <Typography variant="caption" color="text.secondary">{t("weather-temperature-max")}</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: "medium" }}>{data.main.temp_max}°C</Typography>
+                </Box>
+            </Box>
+
+            <Divider sx={{ mb: 1.5 }} />
+
+            {/* Humedad y presión */}
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "primary.light", mb: 0.5 }}>
+                {t("weather-humidity-pressure")}
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.5 }}>
+                <Box sx={{ textAlign: "center", flex: 1 }}>
+                    <Typography variant="caption" color="text.secondary">{t("weather-humidity")}</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: "medium" }}>{data.main.humidity}%</Typography>
+                </Box>
+                <Box sx={{ textAlign: "center", flex: 1 }}>
+                    <Typography variant="caption" color="text.secondary">{t("weather-pressure")}</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: "medium" }}>{data.main.pressure} hPa</Typography>
+                </Box>
+            </Box>
+
+            <Divider sx={{ mb: 1.5 }} />
+
+            {/* Viento */}
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "primary.light", mb: 0.5 }}>
+                {t("weather-wind")}
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Box sx={{ textAlign: "center", flex: 1 }}>
+                    <Typography variant="caption" color="text.secondary">{t("weather-wind-speed")}</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: "medium" }}>{data.wind.speed} m/s</Typography>
+                </Box>
+                <Box sx={{ textAlign: "center", flex: 1 }}>
+                    <Typography variant="caption" color="text.secondary">{t("weather-wind-direction")}</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: "medium" }}>{data.wind.deg}°</Typography>
+                </Box>
+            </Box>
+        </Paper>
     )
 };
 

@@ -1,0 +1,27 @@
+get:
+  summary: Buscar cuadrante por coordenadas
+  operationId: getQuadrantByCoordinates
+  tags:
+    - QuadrantManagement
+  parameters:
+    - in: query
+      name: lon
+      required: true
+      schema:
+        type: number
+        format: double
+    - in: query
+      name: lat
+      required: true
+      schema:
+        type: number
+        format: double
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/QuadrantLocationDto.yml'
+    '404':
+      description: No quadrant found for the given coordinates

@@ -35,6 +35,15 @@ export const quadrantApi = baseApi.injectEndpoints({
       },
     }),
 
+    getQuadrantByCoordinates: build.query({
+      query: (payload) => ({
+        url: "/quadrants/findByCoordinates?lon=" + payload.lon + "&lat=" + payload.lat,
+      }),
+      transformResponse: (response, meta, arg) => {
+        return response;
+      },
+    }),
+
     linkFire: build.mutation({
       query: (payload) => ({
         url: "/quadrants/" + payload.quadrantId + "/linkFire",
@@ -58,5 +67,6 @@ export const {
   useGetQuadrantsByScaleQuery,
   useGetQuadrantByIdQuery,
   useGetQuadrantWithActiveFiresQuery,
+  useGetQuadrantByCoordinatesQuery,
   useLinkFireMutation,
 } = quadrantApi;
