@@ -49,6 +49,8 @@ public class Fire {
 
   @OneToMany(mappedBy = "fire",
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private List<Quadrant> quadrantGids;
 
   @Column(name = "extinguished_at")

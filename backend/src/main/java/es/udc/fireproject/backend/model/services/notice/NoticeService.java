@@ -24,6 +24,8 @@ public interface NoticeService {
   void deleteById(Long noticeId) throws InstanceNotFoundException, NoticeDeleteStatusException;
 
   List<Notice> findByUserId(Long userId);
+  List<Notice> findByUserIdWithImages(Long userId);
+  List<Notice> findAllWithImages();
 
   Notice findById(Long id) throws InstanceNotFoundException;
 

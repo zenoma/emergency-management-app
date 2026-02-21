@@ -127,6 +127,16 @@ public class NoticeServiceImpl implements NoticeService {
   }
 
   @Override
+  public List<Notice> findByUserIdWithImages(Long userId) {
+    return noticeRepository.findByUserIdWithImages(userId);
+  }
+
+  @Override
+  public List<Notice> findAllWithImages() {
+    return noticeRepository.findAllWithImages();
+  }
+
+  @Override
   public Notice findById(Long id) throws InstanceNotFoundException {
 
     return noticeRepository.findById(id)

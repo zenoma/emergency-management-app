@@ -33,6 +33,8 @@ public class Image {
       optional = false,
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name = "notice_id", nullable = false)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private Notice notice;
 
   @Column(name = "name", nullable = false)

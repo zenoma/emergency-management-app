@@ -77,7 +77,8 @@ public class NoticeController implements NoticesApi {
 
     //FIXME: Esta lógica debería ir en el caso de uso, no en el controlador
     List<NoticeResponseDto> noticeRequestDtos = new ArrayList<>();
-    List<Notice> notices = userId != null ? noticeService.findByUserId(userId) : noticeService.findAll();
+    List<Notice> notices = userId != null ? noticeService.findByUserIdWithImages(userId) : noticeService.findAllWithImages();
+    // fetch quadrant ids in batch to avoid N+1
     for (Notice notice : notices) {
       Quadrant quadrant = noticeService.findQuadrantByLocation(notice.getLocation()).orElse(null);
       noticeRequestDtos.add(NoticeMapper.toNoticeDto(notice, quadrant));

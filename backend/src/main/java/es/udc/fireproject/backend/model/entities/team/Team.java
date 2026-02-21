@@ -26,7 +26,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-@ToString(exclude = {"userList"})
+@ToString
 public class Team {
 
   @Id
@@ -47,6 +47,8 @@ public class Team {
   @OneToMany(
       mappedBy = "team",
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private List<User> userList;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})

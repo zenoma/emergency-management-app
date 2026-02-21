@@ -117,19 +117,9 @@ public class LogManagementServiceImpl implements LogManagementService {
     List<Integer> uniqueQuadrantsList = new ArrayList<>(uniqueQuadrants);
     Integer affectedQuadrants = uniqueQuadrantsList.size();
 
-    List<Long> teamsMobilized = new ArrayList<>();
-
-    for (Integer quadrantId : quadrantsGidList) {
-      List<Long> teamsIdList = teamQuadrantLogRepository.findTeamsIdsByQuadrantsGid(quadrantId);
-      teamsMobilized.addAll(teamsIdList);
-    }
-
-    List<Long> vehiclesMobilized = new ArrayList<>();
-
-    for (Integer quadrantId : quadrantsGidList) {
-      List<Long> vehiclesIdList = vehicleQuadrantLogRepository.findVehiclesIdsByQuadrantsGid(quadrantId);
-      vehiclesMobilized.addAll(vehiclesIdList);
-    }
+    // Batch queries to avoid N+1: fetch all team and vehicle ids for the affected quadrants in one query each
+    List<Long> teamsMobilized = teamQuadrantLogRepository.findTeamsIdsByQuadrantsGids(uniqueQuadrantsList);
+    List<Long> vehiclesMobilized = vehicleQuadrantLogRepository.findVehiclesIdsByQuadrantsGids(uniqueQuadrantsList);
 
     Double maxBurnedHectares =
         uniqueQuadrantsList.isEmpty() ? 0 : quadrantRepository.findHectaresByQuadrantIds(uniqueQuadrantsList);

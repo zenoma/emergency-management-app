@@ -49,6 +49,8 @@ public class Vehicle {
   @ManyToOne(
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name = "quadrant_gid")
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private Quadrant quadrant;
 
   @Column(name = "deploy_at")

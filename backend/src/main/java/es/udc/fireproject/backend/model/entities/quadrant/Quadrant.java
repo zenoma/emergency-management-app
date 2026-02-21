@@ -59,11 +59,15 @@ public class Quadrant implements Serializable {
   @OneToMany(
       mappedBy = "quadrant",
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private List<Team> teamList;
 
   @OneToMany(
       mappedBy = "quadrant",
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private List<Vehicle> vehicleList;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
