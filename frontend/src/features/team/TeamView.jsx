@@ -54,7 +54,7 @@ export default function TeamView() {
             <UsersList
               teamId={data.id}
               name={data.code}
-              users={data.users}
+              users={data.userList}
               reloadData={reloadData}
             />
             <TeamUserAdd teamId={data.id} reloadData={reloadData} />
