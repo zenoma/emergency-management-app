@@ -87,9 +87,9 @@ export default function LandingMap(props) {
             ];
           });
 
-          const teamSize = item.teamDtoList ? item.teamDtoList.length : -1;
-          const vehicleSize = item.vehicleDtoList
-            ? item.vehicleDtoList.length
+          const teamSize = item.teamList ? item.teamList.length : -1;
+          const vehicleSize = item.vehicleList
+            ? item.vehicleList.length
             : -1;
 
           const quadrantLabelStyle = {

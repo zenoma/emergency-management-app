@@ -61,8 +61,8 @@ export default function FireHistoryView() {
   const payload = {
     token: token,
     fireId: fireId,
-    startDate: dayjs(selectedStartDate).format("YYYY-MM-DDTHH:mm:ss"),
-    endDate: dayjs(selectedEndDate).format("YYYY-MM-DDTHH:mm:ss"),
+    startDate: dayjs(selectedStartDate).format("YYYY-MM-DD"),
+    endDate: dayjs(selectedEndDate).format("YYYY-MM-DD"),
     locale: locale
   };
 
@@ -72,8 +72,8 @@ export default function FireHistoryView() {
 
   useEffect(() => {
     if (fireData) {
-      setSelectedStartDate(dayjs(fireData.createdAt, "DD-MM-YYYY HH:mm:ss"));
-      setSelectedEndDate(dayjs(fireData.extinguishedAt, "DD-MM-YYYY HH:mm:ss"));
+      setSelectedStartDate(dayjs(fireData.createdAt));
+      setSelectedEndDate(dayjs(fireData.extinguishedAt));
     }
   }, [fireData]);
 
@@ -85,6 +85,7 @@ export default function FireHistoryView() {
     }
     else {
       setAreDatesValid(true);
+      setSelectedStartDate(date);
     }
   };
 
@@ -95,6 +96,7 @@ export default function FireHistoryView() {
     }
     else {
       setAreDatesValid(true);
+      setSelectedEndDate(date);
     }
   };
 
@@ -103,7 +105,7 @@ export default function FireHistoryView() {
       const uniqueQuadrants = [];
 
       for (let i = 0; i < fireLogs.length; i++) {
-        const quadrant = fireLogs[i].quadrantInfoDto;
+        const quadrant = fireLogs[i].quadrantInfo;
         const coordsStr = JSON.stringify(quadrant.coordinates);
         if (!uniqueQuadrants.some(q => JSON.stringify(q.coordinates) === coordsStr)) {
           uniqueQuadrants.push(quadrant);
@@ -140,7 +142,7 @@ export default function FireHistoryView() {
         spacing={{ xs: 2, md: 3 }}
         columns={{ xs: 4, sm: 8, md: 12 }}
       >
-        <Grid item xs={4} sm={8} md={4}>
+        <Grid item xs={12} sm={12} md={6}>
           <Paper
             sx={{
               color: "primary.light",
@@ -157,7 +159,7 @@ export default function FireHistoryView() {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={2} sm={8} md={4}>
+        <Grid item xs={12} sm={12} md={6}>
           <Paper
             sx={{
               color: "primary.light",
@@ -237,12 +239,12 @@ export default function FireHistoryView() {
                       {fireLogs &&
                         fireLogs.map((row, index) => (
                           <TableRow
-                            key={row.quadrantInfoDto.id + index}
+                            key={row.quadrantInfo.id + index}
                             hover
                             onClick={() =>
                               navigate("/quadrant-history", {
                                 state: {
-                                  quadrantId: row.quadrantInfoDto.id,
+                                  quadrantId: row.quadrantInfo.id,
                                   startDate: row.linkedAt,
                                   endDate: row.extinguishedAt,
                                 },
@@ -255,10 +257,10 @@ export default function FireHistoryView() {
                             }}
                           >
                             <TableCell component="th" scope="row">
-                              {row.quadrantInfoDto.id}
+                              {row.quadrantInfo.id}
                             </TableCell>
                             <TableCell align="right">
-                              {row.quadrantInfoDto.nombre}
+                              {row.quadrantInfo.nombre}
                             </TableCell>
                             <TableCell align="right">{row.linkedAt}</TableCell>
                             <TableCell align="right">
@@ -275,12 +277,11 @@ export default function FireHistoryView() {
             )}
           </Paper>
         </Grid>
-        <Grid item xs={2} sm={8} md={4}>
+        <Grid item xs={12} sm={12} md={12}>
           {globalStatistics && (
             <Paper
               sx={{
                 padding: 2,
-                height: "530px",
               }}
               variant="outlined"
             >

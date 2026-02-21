@@ -14,7 +14,7 @@ public interface QuadrantRepository extends JpaRepository<Quadrant, Integer> {
 
   List<Quadrant> findByFireIdNotNull();
 
-  @Query(value = "SELECT SUM(ST_Area(geom) / 10000) FROM quadrant WHERE id IN (:quadrantIds)", nativeQuery = true)
+  @Query(value = "SELECT SUM(ST_Area(geom) / 10000) FROM quadrants WHERE gid IN (:quadrantIds)", nativeQuery = true)
   Double findHectaresByQuadrantIds(@Param("quadrantIds") List<Integer> quadrantIds);
 
   @Query(value = "SELECT * FROM quadrants q WHERE ST_Contains(q.geom, :point) ORDER BY q.escala ASC LIMIT 1", nativeQuery = true)

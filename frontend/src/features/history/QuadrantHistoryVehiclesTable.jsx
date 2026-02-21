@@ -57,10 +57,10 @@ export default function QuadrantHistoryVehiclesTable(props) {
       vehicleLogs.forEach((vehicleLog) => {
         vehicles_aux.push(
           createData(
-            vehicleLog.vehicleDto.id,
-            vehicleLog.vehicleDto.vehiclePlate,
-            vehicleLog.vehicleDto.type,
-            vehicleLog.vehicleDto.organization.id,
+            vehicleLog.vehicleInfo.id,
+            vehicleLog.vehicleInfo.vehiclePlate,
+            vehicleLog.vehicleInfo.type,
+            vehicleLog.vehicleInfo.organization.id,
             vehicleLog.deployAt,
             vehicleLog.retractAt
           )

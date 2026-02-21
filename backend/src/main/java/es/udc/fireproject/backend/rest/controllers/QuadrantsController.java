@@ -46,14 +46,14 @@ public class QuadrantsController implements QuadrantsApi {
 
 
   @Override
-  public ResponseEntity<List<QuadrantDto>> getQuadrantsWithActiveFire() {
-    List<QuadrantDto> quadrantDtos = new ArrayList<>();
+  public ResponseEntity<List<QuadrantInfoDto>> getQuadrantsWithActiveFire() {
+    List<QuadrantInfoDto> quadrantInfoDtos = new ArrayList<>();
 
     for (Quadrant quadrant : fireManagementService.findQuadrantsWithActiveFire()) {
-      quadrantDtos.add(QuadrantConversor.toQuadrantDto(quadrant));
+      quadrantInfoDtos.add(QuadrantInfoConversor.toQuadrantDto(quadrant));
     }
 
-    return ResponseEntity.ok(quadrantDtos);
+    return ResponseEntity.ok(quadrantInfoDtos);
   }
 
   @Override

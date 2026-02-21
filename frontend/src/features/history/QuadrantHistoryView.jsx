@@ -24,8 +24,8 @@ export default function QuadrantHistoryView() {
 
 
   const quadrantId = location.state.quadrantId;
-  const startDate = dayjs(location.state.startDate, "DD-MM-YYYY HH:mm:ss");
-  const endDate = dayjs(location.state.endDate, "DD-MM-YYYY HH:mm:ss");
+  const startDate = dayjs(location.state.startDate);
+  const endDate = dayjs(location.state.endDate);
 
   const { t } = useTranslation();
   const { i18n } = useTranslation("home");
@@ -34,8 +34,8 @@ export default function QuadrantHistoryView() {
   const payload = {
     token: token,
     quadrantId: quadrantId,
-    startDate: dayjs(startDate).format("YYYY-MM-DDTHH:mm:ss"),
-    endDate: dayjs(endDate).format("YYYY-MM-DDTHH:mm:ss"),
+    startDate: dayjs(startDate).format("YYYY-MM-DD"),
+    endDate: dayjs(endDate).format("YYYY-MM-DD"),
     locale: locale
   };
 

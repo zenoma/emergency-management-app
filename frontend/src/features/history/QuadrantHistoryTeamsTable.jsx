@@ -49,9 +49,9 @@ export default function QuadrantHistoryTeamsTable(props) {
       teamLogs.forEach((teamLog) => {
         teams_aux.push(
           createData(
-            teamLog.teamDto.id,
-            teamLog.teamDto.code,
-            teamLog.teamDto.organization.code,
+            teamLog.teamInfo.id,
+            teamLog.teamInfo.code,
+            teamLog.teamInfo.organization.code,
             teamLog.deployAt,
             teamLog.retractAt
           )
