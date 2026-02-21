@@ -15,10 +15,8 @@ import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.InsufficientRolePermissionException;
 import java.util.List;
 import org.locationtech.jts.geom.Point;
-import org.springframework.stereotype.Service;
 
 
-@Service
 public interface PersonalManagementService {
 
   // ORGANIZATION SERVICES

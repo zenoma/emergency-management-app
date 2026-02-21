@@ -27,7 +27,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 @Table(name = "quadrants", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 public class Quadrant implements Serializable {
 

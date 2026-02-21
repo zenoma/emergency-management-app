@@ -20,13 +20,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class FireManagementServiceImpl implements FireManagementService {
 
   public static final String QUADRANT_NOT_FOUND = "Quadrant not found";
@@ -35,20 +35,11 @@ public class FireManagementServiceImpl implements FireManagementService {
   public static final String VEHICLE_NOT_FOUND = "Vehicle not found";
 
 
-  @Autowired
-  QuadrantRepository quadrantRepository;
-
-  @Autowired
-  FireRepository fireRepository;
-
-  @Autowired
-  TeamRepository teamRepository;
-
-  @Autowired
-  VehicleRepository vehicleRepository;
-
-  @Autowired
-  LogManagementService logManagementService;
+  private final QuadrantRepository quadrantRepository;
+  private final FireRepository fireRepository;
+  private final TeamRepository teamRepository;
+  private final VehicleRepository vehicleRepository;
+  private final LogManagementService logManagementService;
 
   // QUADRANT SERVICES
   @Override

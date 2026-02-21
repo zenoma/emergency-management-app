@@ -23,7 +23,7 @@ import org.locationtech.jts.geom.Point;
 @Table(name = "organization", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 public class Organization {
 

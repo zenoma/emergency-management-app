@@ -11,16 +11,16 @@ import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
+@RequiredArgsConstructor
 class OrganizationServiceImplTest extends IntegrationTest {
 
-  @Autowired
-  PersonalManagementService personalManagementService;
+  private final PersonalManagementService personalManagementService;
 
   @Test
   void givenInvalidString_whenCreateOrganizationType_theConstraintViolationException() {

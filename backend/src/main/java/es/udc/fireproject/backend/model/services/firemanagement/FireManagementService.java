@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import org.locationtech.jts.geom.Point;
 
+
 public interface FireManagementService {
 
   // CUADRANT SERVICES

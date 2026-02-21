@@ -4,7 +4,7 @@ import es.udc.fireproject.backend.model.entities.notice.Notice;
 import es.udc.fireproject.backend.model.entities.notice.NoticeStatus;
 import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.fireproject.backend.model.services.notice.NoticeService;
-import es.udc.fireproject.backend.rest.common.FileUploadUtil;
+import es.udc.fireproject.backend.util.FileUploadUtil;
 import es.udc.fireproject.backend.rest.config.JwtInfo;
 import es.udc.fireproject.backend.rest.config.JwtUtils;
 import es.udc.fireproject.backend.rest.dtos.NoticeRequestDto;

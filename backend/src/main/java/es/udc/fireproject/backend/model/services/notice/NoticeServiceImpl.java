@@ -16,32 +16,26 @@ import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
 import es.udc.fireproject.backend.model.services.utils.ConstraintValidator;
-import es.udc.fireproject.backend.rest.common.FileUploadUtil;
-import jakarta.transaction.Transactional;
+import es.udc.fireproject.backend.util.FileUploadUtil;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class NoticeServiceImpl implements NoticeService {
 
-  @Autowired
-  NoticeRepository noticeRepository;
-
-  @Autowired
-  ImageRepository imageRepository;
-
-  @Autowired
-  UserRepository userRepository;
-
-  @Autowired
-  QuadrantRepository quadrantRepository;
+  private final NoticeRepository noticeRepository;
+  private final ImageRepository imageRepository;
+  private final UserRepository userRepository;
+  private final QuadrantRepository quadrantRepository;
 
   @Override
   public Notice create(String body, Point location) {

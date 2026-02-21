@@ -26,8 +26,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PersonalManagementServiceImpl implements PersonalManagementService {
 
   private static final String USER_NOT_FOUND = "User not found";
@@ -42,25 +43,13 @@ public class PersonalManagementServiceImpl implements PersonalManagementService 
   private static final String VEHICLE_NOT_FOUND = "Vehicle not found";
   private static final String TARGET_USER_NOT_FOUND = "Target user not found";
 
-  @Autowired
-  TeamRepository teamRepository;
-
-  @Autowired
-  VehicleRepository vehicleRepository;
-
-  @Autowired
-  UserRepository userRepository;
-
-  @Autowired
-  private OrganizationTypeRepository organizationTypeRepository;
-  @Autowired
-  private OrganizationRepository organizationRepository;
-
-  @Autowired
-  private BCryptPasswordEncoder passwordEncoder;
-
-  @Autowired
-  private FireManagementService fireManagementService;
+  private final OrganizationTypeRepository organizationTypeRepository;
+  private final OrganizationRepository organizationRepository;
+  private final BCryptPasswordEncoder passwordEncoder;
+  private final TeamRepository teamRepository;
+  private final VehicleRepository vehicleRepository;
+  private final UserRepository userRepository;
+  private final FireManagementService fireManagementService;
 
   // ORGANIZATION SERVICES
   @Override

@@ -2,7 +2,6 @@ package es.udc.fireproject.backend.model.services.logsmanagement;
 
 import es.udc.fireproject.backend.model.entities.fire.Fire;
 import es.udc.fireproject.backend.model.entities.fire.FireIndex;
-import es.udc.fireproject.backend.model.entities.fire.FireRepository;
 import es.udc.fireproject.backend.model.entities.logs.FireQuadrantLog;
 import es.udc.fireproject.backend.model.entities.logs.FireQuadrantLogRepository;
 import es.udc.fireproject.backend.model.entities.logs.GlobalStatistics;
@@ -23,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,16 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LogManagementServiceImpl implements LogManagementService {
 
-  @Autowired
-  FireQuadrantLogRepository fireQuadrantLogRepository;
-  @Autowired
-  TeamQuadrantLogRepository teamQuadrantLogRepository;
-  @Autowired
-  VehicleQuadrantLogRepository vehicleQuadrantLogRepository;
-  @Autowired
-  private QuadrantRepository quadrantRepository;
-  @Autowired
-  private FireRepository fireRepository;
+  private final FireQuadrantLogRepository fireQuadrantLogRepository;
+  private final TeamQuadrantLogRepository teamQuadrantLogRepository;
+  private final VehicleQuadrantLogRepository vehicleQuadrantLogRepository;
+  private final QuadrantRepository quadrantRepository;
 
   @Override
   public FireQuadrantLog logFire(Fire fire, Quadrant quadrant) throws InstanceNotFoundException {

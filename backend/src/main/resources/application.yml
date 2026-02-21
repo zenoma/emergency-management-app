@@ -6,7 +6,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
   devtools:
     restart:
       trigger-file: reload

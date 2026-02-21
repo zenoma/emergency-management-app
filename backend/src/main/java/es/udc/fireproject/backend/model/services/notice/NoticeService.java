@@ -2,18 +2,17 @@ package es.udc.fireproject.backend.model.services.notice;
 
 import es.udc.fireproject.backend.model.entities.notice.Notice;
 import es.udc.fireproject.backend.model.entities.notice.NoticeStatus;
+import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.fireproject.backend.model.exceptions.ImageAlreadyUploadedException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
-import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import java.util.List;
 import java.util.Optional;
 import org.locationtech.jts.geom.Point;
 
 public interface NoticeService {
-
 
   Notice create(String body, Point location);
 
@@ -24,7 +23,9 @@ public interface NoticeService {
   void deleteById(Long noticeId) throws InstanceNotFoundException, NoticeDeleteStatusException;
 
   List<Notice> findByUserId(Long userId);
+
   List<Notice> findByUserIdWithImages(Long userId);
+
   List<Notice> findAllWithImages();
 
   Notice findById(Long id) throws InstanceNotFoundException;

@@ -17,17 +17,17 @@ import es.udc.fireproject.backend.utils.UserOM;
 import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
+@RequiredArgsConstructor
 class TeamServiceImplTest extends IntegrationTest {
 
   private static final Long INVALID_TEAM_ID = -1L;
   private static final Long INVALID_USER_ID = -1L;
 
-  @Autowired
-  PersonalManagementService personalManagementService;
+  private final PersonalManagementService personalManagementService;
 
   @Test
   void givenNoData_whenCallFindByCode_thenReturnEmptyList() {

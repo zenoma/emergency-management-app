@@ -21,22 +21,18 @@ import es.udc.fireproject.backend.utils.TeamOM;
 import es.udc.fireproject.backend.utils.VehicleOM;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
+@RequiredArgsConstructor
 class LogManagementServiceImplTest extends IntegrationTest {
 
   private static final Integer VALID_QUADRANT_ID = 1;
 
-  @Autowired
-  LogManagementService logManagementService;
-
-  @Autowired
-  FireManagementServiceImpl fireManagementService;
-
-  @Autowired
-  PersonalManagementServiceImpl personalManagementService;
+  private final LogManagementService logManagementService;
+  private final FireManagementServiceImpl fireManagementService;
+  private final PersonalManagementServiceImpl personalManagementService;
 
   @Test
   void givenNoData_whenFindAllFireQuadrantLogs_thenReturnNotEmptyList() {

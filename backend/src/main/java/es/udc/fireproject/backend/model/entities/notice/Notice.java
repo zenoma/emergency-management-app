@@ -28,7 +28,7 @@ import org.locationtech.jts.geom.Point;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor

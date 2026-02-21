@@ -25,7 +25,7 @@ import lombok.ToString;
 @Table(name = "fire", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 @AllArgsConstructor
 public class Fire {

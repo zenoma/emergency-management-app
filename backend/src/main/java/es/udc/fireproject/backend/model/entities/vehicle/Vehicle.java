@@ -24,7 +24,7 @@ import lombok.ToString;
 @Table(name = "vehicle")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @ToString
 public class Vehicle {
 
