@@ -77,6 +77,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/quadrants").permitAll()
             .requestMatchers(HttpMethod.GET, "/quadrants/{gid}").permitAll()
             .requestMatchers(HttpMethod.GET, "/quadrants/active").permitAll()
+            .requestMatchers(HttpMethod.GET, "/quadrants/findByCoordinates").permitAll()
             .requestMatchers(HttpMethod.POST, "/quadrants/{gid}/linkFire").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
 
             .requestMatchers(HttpMethod.POST, "/teams").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)

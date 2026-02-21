@@ -5,11 +5,16 @@ import es.udc.fireproject.backend.model.services.firemanagement.FireManagementSe
 import es.udc.fireproject.backend.rest.dtos.LinkFireRequestDto;
 import es.udc.fireproject.backend.rest.dtos.QuadrantDto;
 import es.udc.fireproject.backend.rest.dtos.QuadrantInfoDto;
+import es.udc.fireproject.backend.rest.dtos.QuadrantLocationDto;
 import es.udc.fireproject.backend.rest.dtos.mappers.QuadrantMapper;
 import es.udc.fireproject.backend.rest.dtos.mappers.QuadrantInfoMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -64,6 +69,25 @@ public class QuadrantsController implements QuadrantsApi {
     QuadrantInfoDto quadrantInfoDto = QuadrantInfoMapper.toQuadrantDtoWithoutTeamsAndVehicles(quadrant);
 
     return ResponseEntity.ok(quadrantInfoDto);
+  }
+
+  @Override
+  public ResponseEntity<QuadrantLocationDto> getQuadrantByCoordinates(Double lon, Double lat) {
+
+    GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 25829);
+    Coordinate coordinate = new Coordinate(lon, lat);
+
+    Optional<Quadrant> quadrant = fireManagementService.findQuadrantByLocation(
+        geometryFactory.createPoint(coordinate));
+
+    if (quadrant.isPresent()) {
+      QuadrantLocationDto dto = new QuadrantLocationDto();
+      dto.setId(quadrant.get().getId());
+      dto.setNombre(quadrant.get().getNombre());
+      return ResponseEntity.ok(dto);
+    } else {
+      return ResponseEntity.notFound().build();
+    }
   }
 
 }

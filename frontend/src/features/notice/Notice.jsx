@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { Button, TextField, Box } from "@mui/material";
+import { Button, TextField, Box, Typography, Chip } from "@mui/material";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import GridViewIcon from "@mui/icons-material/GridView";
 import { transformCoordinates } from "../../app/utils/coordinatesTransformations";
 import { useAddImageMutation, useCreateNoticeMutation } from "../../api/noticeApi";
 import { selectToken } from "../user/login/LoginSlice";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
-export default function Notice({ lat, lon }) {
+export default function Notice({ lat, lon, quadrantName }) {
   const [body, setBody] = useState("");
   const [image, setImage] = useState("");
 
@@ -61,8 +63,30 @@ export default function Notice({ lat, lon }) {
     setImage("");
   };
 
+  const hasCoordinates = lat !== 0 || lon !== 0;
+
   return (
     <Box>
+      {hasCoordinates && (
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, my: 1 }}>
+          <Chip
+            icon={<LocationOnIcon />}
+            label={`${lat.toFixed(4)}, ${lon.toFixed(4)}`}
+            variant="outlined"
+            color="primary"
+            size="small"
+          />
+          {quadrantName && (
+            <Chip
+              icon={<GridViewIcon />}
+              label={quadrantName}
+              variant="outlined"
+              color="secondary"
+              size="small"
+            />
+          )}
+        </Box>
+      )}
       <TextField
         fullWidth
         id="notice-body"
@@ -99,4 +123,5 @@ export default function Notice({ lat, lon }) {
 Notice.propTypes = {
   lat: PropTypes.number.isRequired,
   lon: PropTypes.number.isRequired,
+  quadrantName: PropTypes.string,
 };

@@ -9,6 +9,8 @@ import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import java.util.List;
+import java.util.Optional;
+import org.locationtech.jts.geom.Point;
 
 public interface FireManagementService {
 
@@ -22,6 +24,8 @@ public interface FireManagementService {
   Quadrant linkFire(Integer gid, Long id) throws InstanceNotFoundException;
 
   List<Quadrant> findQuadrantsWithActiveFire();
+
+  Optional<Quadrant> findQuadrantByLocation(Point location);
 
 
   // FIRE SERVICES

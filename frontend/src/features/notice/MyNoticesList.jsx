@@ -64,7 +64,8 @@ export default function MyNoticesList() {
     {
       field: 'body',
       headerName: t("notice-body"),
-      width: 400,
+      flex: 2,
+      minWidth: 150,
       renderCell: (params) => (
         <Typography variant="subtitle1" gutterBottom>
           {params.value}
@@ -74,7 +75,8 @@ export default function MyNoticesList() {
     {
       field: 'noticeStatus',
       headerName: t("notice-status"),
-      width: 200,
+      flex: 1,
+      minWidth: 80,
       renderCell: (params) => (
         <Typography variant="body2" color="text.secondary" sx={{ color: getStatusColor(params.row.status) }}>
           {params.row.status}
@@ -82,16 +84,39 @@ export default function MyNoticesList() {
       ),
     },
     {
+      field: 'quadrantId',
+      headerName: t("notice-quadrant-id"),
+      flex: 0.8,
+      minWidth: 80,
+      renderCell: (params) => (
+        <Typography variant="body2" color="text.secondary">
+          {params.value || '-'}
+        </Typography>
+      ),
+    },
+    {
+      field: 'quadrantName',
+      headerName: t("notice-quadrant"),
+      flex: 1.2,
+      minWidth: 100,
+      renderCell: (params) => (
+        <Typography variant="body2" color="text.secondary">
+          {params.value || '-'}
+        </Typography>
+      ),
+    },
+    {
       field: 'image',
       headerName: t("notice-image"),
-      width: 150,
+      flex: 1,
+      minWidth: 80,
       renderCell: (params) => {
         if (params.row.imageDtoList && params.row.imageDtoList[0]) {
           return (
             <img
               src={`${URL}/images/${params.row.id}/${params.row.imageDtoList[0].name}`}
               alt={params.row.name}
-              style={{ minWidth: 100, minHeight: 10, cursor: "pointer" }}
+              style={{ maxWidth: "100%", minHeight: 10, cursor: "pointer" }}
               onClick={() => handleDialogOpen(params.row.id, params.row.imageDtoList[0].name)}
             />
           );
@@ -104,9 +129,10 @@ export default function MyNoticesList() {
   return (
     <Paper
       sx={{
-        display: "inline-block",
         padding: "10px",
-        minWidth: "1000px",
+        width: "100%",
+        maxWidth: "100%",
+        boxSizing: "border-box",
       }}
       variant="outlined"
     >
