@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { Button, TextField, Box } from "@mui/material";
 import { transformCoordinates } from "../../app/utils/coordinatesTransformations";
@@ -7,9 +8,8 @@ import { selectToken } from "../user/login/LoginSlice";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
-export default function Notice() {
+export default function Notice({ lat, lon }) {
   const [body, setBody] = useState("");
-  const [coordinates, setCoordinates] = useState("");
   const [image, setImage] = useState("");
   const [bodyError, setBodyError] = useState(false);
 
@@ -24,15 +24,6 @@ export default function Notice() {
   const [addImage] = useAddImageMutation();
 
   const handleChange = (event) => {
-    navigator.geolocation.getCurrentPosition(function (position) {
-      setCoordinates(
-        transformCoordinates(
-          position.coords.longitude,
-          position.coords.latitude
-        )
-      );
-    });
-
     if (event.target.id === "notice-body") {
       setBody(event.target.value);
     } else if (event.target.id === "notice-image") {
@@ -53,17 +44,16 @@ export default function Notice() {
 
     setBodyError(false);
 
-
+    const coordinates = transformCoordinates(lon, lat);
     const payload = { body: body, coordinates: coordinates, token: token, locale: locale };
 
     createNotice(payload)
       .unwrap()
       .then((response) => {
         toast.info(t("notice-created-sucessfully"));
-        payload.imageFile = image;
-        payload.id = response.id;
         if (image) {
-          addImage(payload)
+          const imagePayload = { imageFile: image, id: response.id, token: token, locale: locale };
+          addImage(imagePayload)
             .unwrap()
             .then()
             .catch((error) => toast.error(t("notice-image-error")));
@@ -109,3 +99,8 @@ export default function Notice() {
     </Box>
   );
 }
+
+Notice.propTypes = {
+  lat: PropTypes.number.isRequired,
+  lon: PropTypes.number.isRequired,
+};

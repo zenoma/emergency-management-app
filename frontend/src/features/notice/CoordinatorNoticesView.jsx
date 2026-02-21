@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useDeleteNoticeMutation, useGetNoticesQuery, useUpdateNoticeMutation } from "../../api/noticeApi";
 
-var URL = import.meta.env.REACT_APP_BACKEND_URL;
+var URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
 
 export default function CoordinatorNoticesView() {
@@ -140,33 +140,47 @@ export default function CoordinatorNoticesView() {
       field: 'email',
       headerName: t("email"),
       width: 200,
+      valueGetter: (params) => params.row.userDto ? params.row.userDto.email : '',
       renderCell: (params) => {
-        return params.row.user ? (
+        return params.row.userDto ? (
           <Typography variant="body2" color="text.secondary">
-            {params.row.user.email}
+            {params.row.userDto.email}
           </Typography>
         ) : null;
       },
     },
-    // {
-    //   field: 'image',
-    //   headerName: t("notice-image"),
-    //   width: 150,
-    //   renderCell: (params) => {
-    //     if (params.row.images[0]) {
-    //       return (
-    //         <img
-    //           src={`${URL}/images/${params.row.id}/${params.row.images[0].name}`}
-    //           alt={params.row.name}
-    //           style={{ minWidth: 100, minHeight: 10, cursor: "pointer" }}
-    //           onClick={() => handleDialogOpen(params.row.id, params.row.images[0].name)}
-    //         />
-    //       );
-    //     } else {
-    //       return null;
-    //     }
-    //   }
-    // },
+    {
+      field: 'coordinates',
+      headerName: t("notice-coordinates"),
+      width: 200,
+      valueGetter: (params) => params.row.coordinates ? `${params.row.coordinates.lat}, ${params.row.coordinates.lon}` : '',
+      renderCell: (params) => {
+        return params.row.coordinates ? (
+          <Typography variant="body2" color="text.secondary">
+            {params.row.coordinates.lat.toFixed(4)}, {params.row.coordinates.lon.toFixed(4)}
+          </Typography>
+        ) : null;
+      },
+    },
+    {
+      field: 'image',
+      headerName: t("notice-image"),
+      width: 150,
+      renderCell: (params) => {
+        if (params.row.imageDtoList && params.row.imageDtoList[0]) {
+          return (
+            <img
+              src={`${URL}/images/${params.row.id}/${params.row.imageDtoList[0].name}`}
+              alt={params.row.name}
+              style={{ minWidth: 100, minHeight: 10, cursor: "pointer" }}
+              onClick={() => handleDialogOpen(params.row.id, params.row.imageDtoList[0].name)}
+            />
+          );
+        } else {
+          return null;
+        }
+      }
+    },
     {
       field: "notice-options",
       headerName: t("notice-options"),
