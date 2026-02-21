@@ -7,7 +7,7 @@ import es.udc.fireproject.backend.model.services.personalmanagement.PersonalMana
 import es.udc.fireproject.backend.rest.dtos.OrganizationRequestDto;
 import es.udc.fireproject.backend.rest.dtos.OrganizationResponseDto;
 import es.udc.fireproject.backend.rest.dtos.OrganizationUpdateRequestDto;
-import es.udc.fireproject.backend.rest.dtos.conversors.OrganizationConversor;
+import es.udc.fireproject.backend.rest.dtos.mappers.OrganizationMapper;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,16 +28,16 @@ public class OrganizationsController implements OrganizationsApi {
     List<OrganizationResponseDto> organizationResponseDtos = new ArrayList<>();
     if (nameOrCode != null) {
       for (Organization organization : personalManagementService.findOrganizationByNameOrCode(nameOrCode)) {
-        organizationResponseDtos.add(OrganizationConversor.toOrganizationResponseDto(organization));
+        organizationResponseDtos.add(OrganizationMapper.toOrganizationResponseDto(organization));
       }
     } else if (organizationTypeName != null) {
       for (Organization organization : personalManagementService.findOrganizationByOrganizationTypeName(
           organizationTypeName)) {
-        organizationResponseDtos.add(OrganizationConversor.toOrganizationResponseDto(organization));
+        organizationResponseDtos.add(OrganizationMapper.toOrganizationResponseDto(organization));
       }
     } else {
       for (Organization organization : personalManagementService.findAllOrganizations()) {
-        organizationResponseDtos.add(OrganizationConversor.toOrganizationResponseDto(organization));
+        organizationResponseDtos.add(OrganizationMapper.toOrganizationResponseDto(organization));
       }
     }
     return ResponseEntity.ok(organizationResponseDtos);
@@ -47,7 +47,7 @@ public class OrganizationsController implements OrganizationsApi {
   public ResponseEntity<OrganizationResponseDto> getOrganizationById(Long id) {
 
     final OrganizationResponseDto organizationResponseDto =
-        OrganizationConversor.toOrganizationResponseDto(personalManagementService.findOrganizationById(id));
+        OrganizationMapper.toOrganizationResponseDto(personalManagementService.findOrganizationById(id));
 
     return ResponseEntity.ok(organizationResponseDto);
   }
@@ -66,14 +66,14 @@ public class OrganizationsController implements OrganizationsApi {
   @Override
   public ResponseEntity<OrganizationResponseDto> postOrganization(OrganizationRequestDto organizationRequestDto) {
 
-    Organization organization = OrganizationConversor.toOrganization(organizationRequestDto);
+    Organization organization = OrganizationMapper.toOrganization(organizationRequestDto);
 
     OrganizationType organizationType = personalManagementService.findOrganizationTypeById(
         organization.getOrganizationType().getId());
     organization.setOrganizationType(organizationType);
     organization = personalManagementService.createOrganization(organization);
 
-    OrganizationResponseDto organizationResponseDto = OrganizationConversor.toOrganizationResponseDto(organization);
+    OrganizationResponseDto organizationResponseDto = OrganizationMapper.toOrganizationResponseDto(organization);
     return ResponseEntity.ok(organizationResponseDto);
   }
 
@@ -81,14 +81,14 @@ public class OrganizationsController implements OrganizationsApi {
   public ResponseEntity<OrganizationResponseDto> putOrganizationById(Long id,
       OrganizationUpdateRequestDto organizationUpdateRequestDto) {
 
-    Organization organization = OrganizationConversor.toOrganization(organizationUpdateRequestDto);
+    Organization organization = OrganizationMapper.toOrganization(organizationUpdateRequestDto);
 
     final Organization updatedOrganization = personalManagementService.updateOrganization(id, organization.getName(),
         organization.getCode(),
         organization.getHeadquartersAddress(),
         organization.getLocation());
 
-    return ResponseEntity.ok(OrganizationConversor.toOrganizationResponseDto(updatedOrganization));
+    return ResponseEntity.ok(OrganizationMapper.toOrganizationResponseDto(updatedOrganization));
   }
 
 

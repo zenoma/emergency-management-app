@@ -1,13 +1,13 @@
-package es.udc.fireproject.backend.rest.dtos.conversors;
+package es.udc.fireproject.backend.rest.dtos.mappers;
 
 import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.fireproject.backend.rest.dtos.QuadrantDto;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class QuadrantConversor {
+public class QuadrantMapper {
 
-  private QuadrantConversor() {
+  private QuadrantMapper() {
 
   }
 

@@ -1,4 +1,4 @@
-package es.udc.fireproject.backend.rest.dtos.conversors;
+package es.udc.fireproject.backend.rest.dtos.mappers;
 
 import es.udc.fireproject.backend.model.entities.fire.Fire;
 import es.udc.fireproject.backend.model.entities.fire.FireIndex;
@@ -10,9 +10,9 @@ import es.udc.fireproject.backend.rest.dtos.QuadrantInfoDto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FireConversor {
+public class FireMapper {
 
-  private FireConversor() {
+  private FireMapper() {
   }
 
   public static FireResponseDto toFireDto(Fire fire) {
@@ -20,7 +20,7 @@ public class FireConversor {
     List<QuadrantInfoDto> cuadrantDtoList = new ArrayList<>();
     if (fire.getQuadrantGids() != null && !fire.getQuadrantGids().isEmpty()) {
       for (Quadrant quadrant : fire.getQuadrantGids()) {
-        cuadrantDtoList.add(QuadrantInfoConversor.toQuadrantDto(quadrant));
+        cuadrantDtoList.add(QuadrantInfoMapper.toQuadrantDto(quadrant));
       }
     }
     FireResponseDto fireResponseDto = new FireResponseDto(

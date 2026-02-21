@@ -1,4 +1,4 @@
-package es.udc.fireproject.backend.rest.dtos.conversors;
+package es.udc.fireproject.backend.rest.dtos.mappers;
 
 import es.udc.fireproject.backend.model.entities.image.Image;
 import es.udc.fireproject.backend.model.entities.notice.Notice;
@@ -10,9 +10,9 @@ import es.udc.fireproject.backend.rest.dtos.NoticeResponseDto.StatusEnum;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NoticeConversor {
+public class NoticeMapper {
 
-  private NoticeConversor() {
+  private NoticeMapper() {
   }
 
 
@@ -20,7 +20,7 @@ public class NoticeConversor {
     List<ImageDto> imageDtoList = new ArrayList<>();
     if (notice.getImageList() != null && !notice.getImageList().isEmpty()) {
       for (Image image : notice.getImageList()) {
-        imageDtoList.add(ImageConversor.toImageDto(image));
+        imageDtoList.add(ImageMapper.toImageDto(image));
       }
     }
 
@@ -32,7 +32,7 @@ public class NoticeConversor {
         notice.getBody(),
         StatusEnum.valueOf(String.valueOf(notice.getStatus())),
         notice.getCreatedAt(),
-        notice.getUser() != null ? UserConversor.toUserDto(notice.getUser()) : null,
+        notice.getUser() != null ? UserMapper.toUserDto(notice.getUser()) : null,
         coordinatesDto,
         imageDtoList);
 

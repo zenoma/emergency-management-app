@@ -10,7 +10,7 @@ import es.udc.fireproject.backend.rest.config.JwtUtils;
 import es.udc.fireproject.backend.rest.dtos.NoticeRequestDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeResponseDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeStatusRequestDto;
-import es.udc.fireproject.backend.rest.dtos.conversors.NoticeConversor;
+import es.udc.fireproject.backend.rest.dtos.mappers.NoticeMapper;
 import es.udc.fireproject.backend.rest.exceptions.ImageRequiredException;
 import java.io.IOException;
 import java.net.URI;
@@ -58,14 +58,14 @@ public class NoticeController implements NoticesApi {
         .buildAndExpand(notice.getId()).toUri();
 
     return ResponseEntity.created(location).body(
-        NoticeConversor.toNoticeDto(notice, noticeService.findQuadrantByLocation(notice.getLocation()).orElse(null)));
+        NoticeMapper.toNoticeDto(notice, noticeService.findQuadrantByLocation(notice.getLocation()).orElse(null)));
 
   }
 
   @Override
   public ResponseEntity<NoticeResponseDto> getNoticeById(Long id) {
     Notice notice = noticeService.findById(id);
-    final NoticeResponseDto noticeResponseDto = NoticeConversor.toNoticeDto(notice,
+    final NoticeResponseDto noticeResponseDto = NoticeMapper.toNoticeDto(notice,
         noticeService.findQuadrantByLocation(notice.getLocation()).orElse(null));
 
     return ResponseEntity.ok(noticeResponseDto);
@@ -79,7 +79,7 @@ public class NoticeController implements NoticesApi {
     List<Notice> notices = userId != null ? noticeService.findByUserId(userId) : noticeService.findAll();
     for (Notice notice : notices) {
       Quadrant quadrant = noticeService.findQuadrantByLocation(notice.getLocation()).orElse(null);
-      noticeRequestDtos.add(NoticeConversor.toNoticeDto(notice, quadrant));
+      noticeRequestDtos.add(NoticeMapper.toNoticeDto(notice, quadrant));
     }
 
     return ResponseEntity.ok(noticeRequestDtos);
@@ -125,7 +125,7 @@ public class NoticeController implements NoticesApi {
       }
       String fileName = id + "-" + StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
 
-      NoticeResponseDto noticeResponseDto = NoticeConversor.toNoticeDto(
+      NoticeResponseDto noticeResponseDto = NoticeMapper.toNoticeDto(
           noticeService.addImage(id, fileName),
           noticeService.findQuadrantByLocation(
               noticeService.findById(id).getLocation()).orElse(null));

@@ -1,32 +1,32 @@
-package es.udc.fireproject.backend.rest.dtos.conversors;
+package es.udc.fireproject.backend.rest.dtos.mappers;
 
 import es.udc.fireproject.backend.model.entities.vehicle.Vehicle;
 import es.udc.fireproject.backend.rest.dtos.QuadrantInfoDto;
 import es.udc.fireproject.backend.rest.dtos.VehicleResponseDto;
 
-public class VehicleConversor {
+public class VehicleMapper {
 
-  private VehicleConversor() {
+  private VehicleMapper() {
   }
 
   public static Vehicle toVehicle(VehicleResponseDto vehicleResponseDto) {
     return new Vehicle(vehicleResponseDto.getVehiclePlate(),
         vehicleResponseDto.getType(),
-        OrganizationConversor.toOrganization(vehicleResponseDto.getOrganization()));
+        OrganizationMapper.toOrganization(vehicleResponseDto.getOrganization()));
 
   }
 
   public static VehicleResponseDto toVehicleDto(Vehicle vehicle) {
     QuadrantInfoDto quadrantInfoDto = new QuadrantInfoDto();
     if (vehicle.getQuadrant() != null) {
-      quadrantInfoDto = QuadrantInfoConversor.toQuadrantDtoWithoutTeamsAndVehicles(vehicle.getQuadrant());
+      quadrantInfoDto = QuadrantInfoMapper.toQuadrantDtoWithoutTeamsAndVehicles(vehicle.getQuadrant());
     }
 
     VehicleResponseDto vehicleResponseDto = new VehicleResponseDto(vehicle.getId(),
         vehicle.getVehiclePlate(),
         vehicle.getType(),
         vehicle.getCreatedAt(),
-        OrganizationConversor.toOrganizationResponseDto(vehicle.getOrganization()),
+        OrganizationMapper.toOrganizationResponseDto(vehicle.getOrganization()),
         vehicle.getDeployAt(),
         vehicle.getDismantleAt());
 
@@ -42,7 +42,7 @@ public class VehicleConversor {
         vehicle.getVehiclePlate(),
         vehicle.getType(),
         vehicle.getCreatedAt(),
-        OrganizationConversor.toOrganizationResponseDto(vehicle.getOrganization()),
+        OrganizationMapper.toOrganizationResponseDto(vehicle.getOrganization()),
         vehicle.getDeployAt(),
         vehicle.getDismantleAt());
 

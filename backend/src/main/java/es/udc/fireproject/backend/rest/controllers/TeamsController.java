@@ -12,8 +12,8 @@ import es.udc.fireproject.backend.rest.dtos.TeamQuadrantRequestDto;
 import es.udc.fireproject.backend.rest.dtos.TeamRequestDto;
 import es.udc.fireproject.backend.rest.dtos.TeamResponseDto;
 import es.udc.fireproject.backend.rest.dtos.UserDto;
-import es.udc.fireproject.backend.rest.dtos.conversors.TeamConversor;
-import es.udc.fireproject.backend.rest.dtos.conversors.UserConversor;
+import es.udc.fireproject.backend.rest.dtos.mappers.TeamMapper;
+import es.udc.fireproject.backend.rest.dtos.mappers.UserMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,15 +36,15 @@ public class TeamsController implements TeamsApi {
 
     if (code != null) {
       for (Team team : personalManagementService.findTeamByCode(code)) {
-        teamResponseDtoList.add(TeamConversor.toTeamDto(team));
+        teamResponseDtoList.add(TeamMapper.toTeamDto(team));
       }
     } else if (organizationId != null) {
       for (Team team : personalManagementService.findTeamsByOrganizationId(organizationId)) {
-        teamResponseDtoList.add(TeamConversor.toTeamDto(team));
+        teamResponseDtoList.add(TeamMapper.toTeamDto(team));
       }
     } else {
       for (Team team : personalManagementService.findTeamByCode("")) {
-        teamResponseDtoList.add(TeamConversor.toTeamDto(team));
+        teamResponseDtoList.add(TeamMapper.toTeamDto(team));
       }
     }
 
@@ -57,7 +57,7 @@ public class TeamsController implements TeamsApi {
         teamRequestDto.getCode(),
         teamRequestDto.getOrganizationId()
     );
-    return ResponseEntity.ok(TeamConversor.toTeamDto(team));
+    return ResponseEntity.ok(TeamMapper.toTeamDto(team));
   }
 
   @Override
@@ -67,11 +67,11 @@ public class TeamsController implements TeamsApi {
 
     if (organizationId != null) {
       for (Team team : personalManagementService.findActiveTeamsByOrganizationId(organizationId)) {
-        teamResponseDtoList.add(TeamConversor.toTeamDto(team));
+        teamResponseDtoList.add(TeamMapper.toTeamDto(team));
       }
     } else {
       for (Team team : personalManagementService.findAllActiveTeams()) {
-        teamResponseDtoList.add(TeamConversor.toTeamDto(team));
+        teamResponseDtoList.add(TeamMapper.toTeamDto(team));
       }
     }
 
@@ -89,12 +89,12 @@ public class TeamsController implements TeamsApi {
     final Long userId = jwtInfo.get().userId();
 
     final Team team = personalManagementService.findTeamByUserId(userId);
-    return ResponseEntity.ok(List.of(TeamConversor.toTeamDto(team)));
+    return ResponseEntity.ok(List.of(TeamMapper.toTeamDto(team)));
   }
 
   @Override
   public ResponseEntity<TeamResponseDto> getTeamById(Long id) {
-    final TeamResponseDto teamResponseDto = TeamConversor.toTeamDto(personalManagementService.findTeamById(id));
+    final TeamResponseDto teamResponseDto = TeamMapper.toTeamDto(personalManagementService.findTeamById(id));
     return ResponseEntity.ok(teamResponseDto);
   }
 
@@ -102,7 +102,7 @@ public class TeamsController implements TeamsApi {
   public ResponseEntity<TeamResponseDto> putTeamById(Long id, TeamRequestDto teamRequestDto) {
 
     final Team team = personalManagementService.updateTeam(id, teamRequestDto.getCode());
-    return ResponseEntity.ok(TeamConversor.toTeamDto(team));
+    return ResponseEntity.ok(TeamMapper.toTeamDto(team));
   }
 
   @Override
@@ -133,7 +133,7 @@ public class TeamsController implements TeamsApi {
 
     List<UserDto> userDtoList = new ArrayList<>();
     for (User user : personalManagementService.findAllUsersByTeamId(id)) {
-      userDtoList.add(UserConversor.toUserDto(user));
+      userDtoList.add(UserMapper.toUserDto(user));
     }
 
     return ResponseEntity.ok(userDtoList);
@@ -143,14 +143,14 @@ public class TeamsController implements TeamsApi {
   public ResponseEntity<TeamResponseDto> postTeamDeployById(Long id, TeamQuadrantRequestDto teamQuadrantRequestDto) {
 
     Team team = fireManagementService.deployTeam(id, teamQuadrantRequestDto.getQuadrantId());
-    return ResponseEntity.ok(TeamConversor.toTeamDto(team));
+    return ResponseEntity.ok(TeamMapper.toTeamDto(team));
   }
 
   @Override
   public ResponseEntity<TeamResponseDto> postTeamRetractById(Long id) {
 
     Team team = fireManagementService.retractTeam(id);
-    return ResponseEntity.ok(TeamConversor.toTeamDto(team));
+    return ResponseEntity.ok(TeamMapper.toTeamDto(team));
 
   }
 

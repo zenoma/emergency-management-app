@@ -14,7 +14,7 @@ import es.udc.fireproject.backend.rest.dtos.UserDto;
 import es.udc.fireproject.backend.rest.dtos.UserRoleRequestDto;
 import es.udc.fireproject.backend.rest.dtos.UserSignUpRequestDto;
 import es.udc.fireproject.backend.rest.dtos.UserUpdateRequestDto;
-import es.udc.fireproject.backend.rest.dtos.conversors.UserConversor;
+import es.udc.fireproject.backend.rest.dtos.mappers.UserMapper;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class UsersController implements UsersApi {
 
     List<UserDto> userDtos = new ArrayList<>();
     for (User user : personalManagementService.findAllUsers()) {
-      userDtos.add(UserConversor.toUserDto(user));
+      userDtos.add(UserMapper.toUserDto(user));
     }
 
     return ResponseEntity.ok(userDtos);
@@ -65,7 +65,7 @@ public class UsersController implements UsersApi {
         .buildAndExpand(user.getId()).toUri();
 
     return ResponseEntity.created(location)
-        .body(UserConversor.toAuthenticatedUserDto(generateServiceToken(user), user));
+        .body(UserMapper.toAuthenticatedUserDto(generateServiceToken(user), user));
 
   }
 
@@ -73,7 +73,7 @@ public class UsersController implements UsersApi {
   public ResponseEntity<AuthenticatedUserDto> postUsersLogin(LoginParamsDto params) {
     User user = personalManagementService.login(params.getUserName(), params.getPassword());
 
-    return ResponseEntity.ok(UserConversor.toAuthenticatedUserDto(generateServiceToken(user), user));
+    return ResponseEntity.ok(UserMapper.toAuthenticatedUserDto(generateServiceToken(user), user));
 
   }
 
@@ -89,7 +89,7 @@ public class UsersController implements UsersApi {
     final String token = JwtUtils.getToken().orElse("");
 
     User dto = personalManagementService.loginFromId(userId);
-    return ResponseEntity.ok(UserConversor.toAuthenticatedUserDto(token, dto));
+    return ResponseEntity.ok(UserMapper.toAuthenticatedUserDto(token, dto));
   }
 
   @Override
@@ -106,7 +106,7 @@ public class UsersController implements UsersApi {
       throw new PermissionException();
     }
 
-    return ResponseEntity.ok(UserConversor.toUserDto(
+    return ResponseEntity.ok(UserMapper.toUserDto(
         personalManagementService.updateProfile(id, userUpdateRequestDto.getFirstName(),
             userUpdateRequestDto.getLastName(),
             userUpdateRequestDto.getEmail(), Integer.valueOf(userUpdateRequestDto.getPhoneNumber()),
