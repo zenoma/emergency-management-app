@@ -2,6 +2,7 @@ package es.udc.fireproject.backend.model.services.logsmanagement;
 
 import es.udc.fireproject.backend.model.entities.fire.Fire;
 import es.udc.fireproject.backend.model.entities.fire.FireIndex;
+import es.udc.fireproject.backend.model.entities.fire.FireRepository;
 import es.udc.fireproject.backend.model.entities.logs.FireQuadrantLog;
 import es.udc.fireproject.backend.model.entities.logs.FireQuadrantLogRepository;
 import es.udc.fireproject.backend.model.entities.logs.GlobalStatistics;
@@ -15,20 +16,20 @@ import es.udc.fireproject.backend.model.entities.team.Team;
 import es.udc.fireproject.backend.model.entities.vehicle.Vehicle;
 import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
-import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
-import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class LogManagementServiceImpl implements LogManagementService {
 
   @Autowired
@@ -37,46 +38,28 @@ public class LogManagementServiceImpl implements LogManagementService {
   TeamQuadrantLogRepository teamQuadrantLogRepository;
   @Autowired
   VehicleQuadrantLogRepository vehicleQuadrantLogRepository;
-
-  @Autowired
-  FireManagementService fireManagementService;
-  @Autowired
-  PersonalManagementService personalManagementService;
-
   @Autowired
   private QuadrantRepository quadrantRepository;
-
+  @Autowired
+  private FireRepository fireRepository;
 
   @Override
-  public FireQuadrantLog logFire(Long fireId, Integer quadrantId) throws InstanceNotFoundException {
-
-    Quadrant quadrant = fireManagementService.findQuadrantById(quadrantId);
-
-    Fire fire = fireManagementService.findFireById(fireId);
-
+  public FireQuadrantLog logFire(Fire fire, Quadrant quadrant) throws InstanceNotFoundException {
     return fireQuadrantLogRepository.save(
         new FireQuadrantLog(fire, quadrant, quadrant.getLinkedAt(),
             LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
-
   }
 
 
   @Override
-  public TeamQuadrantLog logTeam(Long teamId, Integer quadrantId) throws InstanceNotFoundException {
-    Quadrant quadrant = fireManagementService.findQuadrantById(quadrantId);
-    Team team = personalManagementService.findTeamById(teamId);
-
+  public TeamQuadrantLog logTeam(Team team, Quadrant quadrant) throws InstanceNotFoundException {
     return teamQuadrantLogRepository.save(
         new TeamQuadrantLog(team, quadrant, team.getDeployAt(), LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
-
   }
 
 
   @Override
-  public VehicleQuadrantLog logVehicle(Long vehicleId, Integer quadrantId) throws InstanceNotFoundException {
-    Quadrant quadrant = fireManagementService.findQuadrantById(quadrantId);
-    Vehicle vehicle = personalManagementService.findVehicleById(vehicleId);
-
+  public VehicleQuadrantLog logVehicle(Vehicle vehicle, Quadrant quadrant) throws InstanceNotFoundException {
     return vehicleQuadrantLogRepository.save(
         new VehicleQuadrantLog(vehicle, quadrant, vehicle.getDeployAt(),
             LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
@@ -98,41 +81,38 @@ public class LogManagementServiceImpl implements LogManagementService {
   }
 
   @Override
-  public List<FireQuadrantLog> findFiresByFireIdAndLinkedAt(Long fireId, LocalDateTime startDate, LocalDateTime endDate)
+  public List<FireQuadrantLog> findFiresByFireIdAndLinkedAt(Fire fire, LocalDateTime startDate, LocalDateTime endDate)
       throws InstanceNotFoundException {
-    Fire fire = fireManagementService.findFireById(fireId);
 
-    return fireQuadrantLogRepository.findByFireIdAndLinkedAtBetweenOrderByLinkedAt(fireId, startDate, endDate);
+    return fireQuadrantLogRepository.findByFireIdAndLinkedAtBetweenOrderByLinkedAt(fire.getId(), startDate, endDate);
   }
 
   @Override
-  public List<TeamQuadrantLog> findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(Integer quadrantId,
+  public List<TeamQuadrantLog> findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(Quadrant quadrant,
       LocalDateTime startDate, LocalDateTime endDate) throws InstanceNotFoundException {
-    Quadrant quadrant = fireManagementService.findQuadrantById(quadrantId);
 
-    return teamQuadrantLogRepository.findByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrantId, startDate, endDate);
-  }
-
-  @Override
-  public List<VehicleQuadrantLog> findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(Integer quadrantId,
-      LocalDateTime startDate, LocalDateTime endDate) throws InstanceNotFoundException {
-    Quadrant quadrant = fireManagementService.findQuadrantById(quadrantId);
-
-    return vehicleQuadrantLogRepository.findByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrantId, startDate,
+    return teamQuadrantLogRepository.findByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), startDate,
         endDate);
   }
 
   @Override
-  public GlobalStatistics getGlobalStatisticsByFireId(Long fireId)
+  public List<VehicleQuadrantLog> findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(Quadrant quadrant,
+      LocalDateTime startDate, LocalDateTime endDate) throws InstanceNotFoundException {
+
+    return vehicleQuadrantLogRepository.findByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), startDate,
+        endDate);
+  }
+
+  @Override
+  public GlobalStatistics getGlobalStatisticsByFireId(Fire fire)
       throws InstanceNotFoundException, ExtinguishedFireException {
-    Fire fire = fireManagementService.findFireById(fireId);
 
     if (fire.getFireIndex() != FireIndex.EXTINGUIDO) {
       throw new ExtinguishedFireException(Fire.class.getSimpleName(), fire.getId().toString());
 
     }
 
-    List<Integer> quadrantsGidList = fireQuadrantLogRepository.findQuadrantIdsByFireId(fireId);
+    List<Integer> quadrantsGidList = fireQuadrantLogRepository.findQuadrantIdsByFireId(fire.getId());
     Set<Integer> uniqueQuadrants = new HashSet<>(quadrantsGidList);
     List<Integer> uniqueQuadrantsList = new ArrayList<>(uniqueQuadrants);
     Integer affectedQuadrants = uniqueQuadrantsList.size();

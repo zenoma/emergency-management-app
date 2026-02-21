@@ -73,9 +73,9 @@ class LogManagementServiceImplTest extends IntegrationTest {
     fire = fireManagementService.extinguishQuadrantByFireId(fire.getId(), quadrant.getId());
     fire = fireManagementService.extinguishQuadrantByFireId(fire.getId(), quadrant2.getId());
 
-    logManagementService.findFiresByFireIdAndLinkedAt(fire.getId(), starDate, endDate);
+    logManagementService.findFiresByFireIdAndLinkedAt(fire, starDate, endDate);
 
-    Assertions.assertNotNull(logManagementService.findFiresByFireIdAndLinkedAt(fire.getId(), starDate, endDate));
+    Assertions.assertNotNull(logManagementService.findFiresByFireIdAndLinkedAt(fire, starDate, endDate));
   }
 
   @Test
@@ -118,17 +118,17 @@ class LogManagementServiceImplTest extends IntegrationTest {
     LocalDateTime endDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
     Assertions.assertEquals(1,
-        logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), starDate, endDate)
+        logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant, starDate, endDate)
             .size());
     Assertions.assertEquals(1,
-        logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2.getId(), starDate,
+        logManagementService.findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2, starDate,
             endDate).size());
 
     Assertions.assertEquals(1,
-        logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant.getId(), starDate,
+        logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant, starDate,
             endDate).size());
     Assertions.assertEquals(1,
-        logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2.getId(), starDate,
+        logManagementService.findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(quadrant2, starDate,
             endDate).size());
 
   }

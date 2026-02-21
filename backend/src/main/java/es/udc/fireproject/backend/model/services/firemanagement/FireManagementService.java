@@ -36,10 +36,10 @@ public interface FireManagementService {
   Fire createFire(String description, String type, FireIndex fireIndex);
 
   Fire extinguishFire(Long id)
-      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyDismantledException;
+      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException;
 
   Fire extinguishQuadrantByFireId(Long id, Integer quadrantId)
-      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyDismantledException;
+      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException;
 
   Fire updateFire(Long id, String description, String type, FireIndex fireIndex)
       throws InstanceNotFoundException, ExtinguishedFireException;

@@ -47,7 +47,6 @@ public class FireManagementServiceImpl implements FireManagementService {
   @Autowired
   VehicleRepository vehicleRepository;
 
-  @Lazy
   @Autowired
   LogManagementService logManagementService;
 
@@ -137,7 +136,7 @@ public class FireManagementServiceImpl implements FireManagementService {
 
     for (Quadrant quadrant : quadrants
     ) {
-      logManagementService.logFire(id, quadrant.getId());
+      logManagementService.logFire(fire, quadrant);
       quadrant.setFire(null);
       quadrant.setLinkedAt(null);
       for (Team team : quadrant.getTeamList()) {
@@ -169,7 +168,7 @@ public class FireManagementServiceImpl implements FireManagementService {
       throw new QuadrantNotLinkedToFireException(id, quadrantId);
     }
 
-    logManagementService.logFire(id, quadrant.getId());
+    logManagementService.logFire(fire, quadrant);
     quadrant.setFire(null);
     quadrant.setLinkedAt(null);
     for (Team team : quadrant.getTeamList()) {
@@ -238,7 +237,7 @@ public class FireManagementServiceImpl implements FireManagementService {
     }
 
     if (team.getQuadrant() != null) {
-      logManagementService.logTeam(team.getId(), team.getQuadrant().getId());
+      logManagementService.logTeam(team, team.getQuadrant());
       team.setDeployAt(null);
       team.setQuadrant(null);
     }
@@ -279,7 +278,7 @@ public class FireManagementServiceImpl implements FireManagementService {
     }
 
     if (vehicle.getQuadrant() != null) {
-      logManagementService.logVehicle(vehicle.getId(), vehicle.getQuadrant().getId());
+      logManagementService.logVehicle(vehicle, vehicle.getQuadrant());
       vehicle.setDeployAt(null);
       vehicle.setQuadrant(null);
     }
