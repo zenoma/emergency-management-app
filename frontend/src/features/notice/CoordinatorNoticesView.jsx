@@ -150,17 +150,24 @@ export default function CoordinatorNoticesView() {
       },
     },
     {
-      field: 'coordinates',
-      headerName: t("notice-coordinates"),
+      field: 'quadrantId',
+      headerName: t("notice-quadrant-id"),
+      width: 120,
+      renderCell: (params) => (
+        <Typography variant="body2" color="text.secondary">
+          {params.value || '-'}
+        </Typography>
+      ),
+    },
+    {
+      field: 'quadrantName',
+      headerName: t("notice-quadrant"),
       width: 200,
-      valueGetter: (params) => params.row.coordinates ? `${params.row.coordinates.lat}, ${params.row.coordinates.lon}` : '',
-      renderCell: (params) => {
-        return params.row.coordinates ? (
-          <Typography variant="body2" color="text.secondary">
-            {params.row.coordinates.lat.toFixed(4)}, {params.row.coordinates.lon.toFixed(4)}
-          </Typography>
-        ) : null;
-      },
+      renderCell: (params) => (
+        <Typography variant="body2" color="text.secondary">
+          {params.value || '-'}
+        </Typography>
+      ),
     },
     {
       field: 'image',
@@ -242,7 +249,7 @@ export default function CoordinatorNoticesView() {
       sx={{
         display: "inline-block",
         padding: "10px",
-        minWidth: "1000px",
+        minWidth: "1300px",
       }}
       variant="outlined"
     >

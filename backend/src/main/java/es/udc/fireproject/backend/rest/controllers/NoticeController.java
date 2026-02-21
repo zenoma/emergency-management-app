@@ -2,6 +2,7 @@ package es.udc.fireproject.backend.rest.controllers;
 
 import es.udc.fireproject.backend.model.entities.notice.Notice;
 import es.udc.fireproject.backend.model.entities.notice.NoticeStatus;
+import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.fireproject.backend.model.services.notice.NoticeService;
 import es.udc.fireproject.backend.rest.common.FileUploadUtil;
 import es.udc.fireproject.backend.rest.config.JwtInfo;
@@ -56,13 +57,16 @@ public class NoticeController implements NoticesApi {
         .fromCurrentRequest().path("/{id}")
         .buildAndExpand(notice.getId()).toUri();
 
-    return ResponseEntity.created(location).body(NoticeConversor.toNoticeDto(notice));
+    return ResponseEntity.created(location).body(
+        NoticeConversor.toNoticeDto(notice, noticeService.findQuadrantByLocation(notice.getLocation()).orElse(null)));
 
   }
 
   @Override
   public ResponseEntity<NoticeResponseDto> getNoticeById(Long id) {
-    final NoticeResponseDto noticeResponseDto = NoticeConversor.toNoticeDto(noticeService.findById(id));
+    Notice notice = noticeService.findById(id);
+    final NoticeResponseDto noticeResponseDto = NoticeConversor.toNoticeDto(notice,
+        noticeService.findQuadrantByLocation(notice.getLocation()).orElse(null));
 
     return ResponseEntity.ok(noticeResponseDto);
   }
@@ -72,14 +76,10 @@ public class NoticeController implements NoticesApi {
 
     //FIXME: Esta lógica debería ir en el caso de uso, no en el controlador
     List<NoticeResponseDto> noticeRequestDtos = new ArrayList<>();
-    if (userId != null) {
-      for (Notice notice : noticeService.findByUserId(userId)) {
-        noticeRequestDtos.add(NoticeConversor.toNoticeDto(notice));
-      }
-    } else {
-      for (Notice notice : noticeService.findAll()) {
-        noticeRequestDtos.add(NoticeConversor.toNoticeDto(notice));
-      }
+    List<Notice> notices = userId != null ? noticeService.findByUserId(userId) : noticeService.findAll();
+    for (Notice notice : notices) {
+      Quadrant quadrant = noticeService.findQuadrantByLocation(notice.getLocation()).orElse(null);
+      noticeRequestDtos.add(NoticeConversor.toNoticeDto(notice, quadrant));
     }
 
     return ResponseEntity.ok(noticeRequestDtos);
@@ -125,7 +125,10 @@ public class NoticeController implements NoticesApi {
       }
       String fileName = id + "-" + StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
 
-      NoticeResponseDto noticeResponseDto = NoticeConversor.toNoticeDto(noticeService.addImage(id, fileName));
+      NoticeResponseDto noticeResponseDto = NoticeConversor.toNoticeDto(
+          noticeService.addImage(id, fileName),
+          noticeService.findQuadrantByLocation(
+              noticeService.findById(id).getLocation()).orElse(null));
 
       String uploadDir = "public/images/" + id;
       FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);

@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useGetNoticesQuery } from "../../api/noticeApi";
 
 
-var URL = import.meta.env.REACT_APP_BACKEND_URL;
+var URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
 export default function MyNoticesList() {
   const [list, setList] = useState("");
@@ -81,26 +81,25 @@ export default function MyNoticesList() {
         </Typography>
       ),
     },
-    // {
-    //   field: 'image',
-    //   headerName: t("notice-image"),
-    //   width: 150,
-    //   renderCell: (params) => {
-    //     if (params.row.images[0]) {
-    //       return (
-    //         <img
-    //           src={`${URL}/images/${params.row.id}/${params.row.images[0].name}`}
-    //           alt={params.row.title}
-    //           style={{ width: 50, height: 50 }}
-    //           onClick={() => handleDialogOpen(params.row.id, params.row.images[0].name)}
-    //         />
-
-    //       );
-    //     } else {
-    //       return null;
-    //     }
-    //   }
-    // },
+    {
+      field: 'image',
+      headerName: t("notice-image"),
+      width: 150,
+      renderCell: (params) => {
+        if (params.row.imageDtoList && params.row.imageDtoList[0]) {
+          return (
+            <img
+              src={`${URL}/images/${params.row.id}/${params.row.imageDtoList[0].name}`}
+              alt={params.row.name}
+              style={{ minWidth: 100, minHeight: 10, cursor: "pointer" }}
+              onClick={() => handleDialogOpen(params.row.id, params.row.imageDtoList[0].name)}
+            />
+          );
+        } else {
+          return null;
+        }
+      }
+    },
   ];
   return (
     <Paper

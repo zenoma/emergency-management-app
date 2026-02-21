@@ -35,6 +35,8 @@
   "notice-status": "Estado",
   "notice-image": "Imagen",
   "notice-coordinates": "Coordenadas",
+  "notice-quadrant": "Cuadrante",
+  "notice-quadrant-id": "Cód. Cuadrante",
   "notice-options": "Opciones",
   "notice-body-required": "La descripción del aviso es obligatoria",
   "notice-coordinates-required": "No se ha podido obtener la ubicación. Por favor, conceda los permisos de geolocalización.",

@@ -35,6 +35,8 @@
   "notice-status": "Status",
   "notice-image": "Image",
   "notice-coordinates": "Coordinates",
+  "notice-quadrant": "Quadrant",
+  "notice-quadrant-id": "Quadrant ID",
   "notice-options": "Options",
   "notice-body-required": "Notice description is required",
   "notice-coordinates-required": "Could not retrieve location. Please grant geolocation permissions.",

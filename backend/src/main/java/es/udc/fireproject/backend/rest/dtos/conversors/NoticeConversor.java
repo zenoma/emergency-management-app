@@ -2,6 +2,7 @@ package es.udc.fireproject.backend.rest.dtos.conversors;
 
 import es.udc.fireproject.backend.model.entities.image.Image;
 import es.udc.fireproject.backend.model.entities.notice.Notice;
+import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.fireproject.backend.rest.dtos.CoordinatesDto;
 import es.udc.fireproject.backend.rest.dtos.ImageDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeResponseDto;
@@ -15,7 +16,7 @@ public class NoticeConversor {
   }
 
 
-  public static NoticeResponseDto toNoticeDto(Notice notice) {
+  public static NoticeResponseDto toNoticeDto(Notice notice, Quadrant quadrant) {
     List<ImageDto> imageDtoList = new ArrayList<>();
     if (notice.getImageList() != null && !notice.getImageList().isEmpty()) {
       for (Image image : notice.getImageList()) {
@@ -27,7 +28,7 @@ public class NoticeConversor {
     coordinatesDto.setLon(notice.getLocation().getX());
     coordinatesDto.setLat(notice.getLocation().getY());
 
-    return new NoticeResponseDto(notice.getId(),
+    NoticeResponseDto dto = new NoticeResponseDto(notice.getId(),
         notice.getBody(),
         StatusEnum.valueOf(String.valueOf(notice.getStatus())),
         notice.getCreatedAt(),
@@ -35,5 +36,15 @@ public class NoticeConversor {
         coordinatesDto,
         imageDtoList);
 
+    if (quadrant != null) {
+      dto.setQuadrantName(quadrant.getNombre());
+      dto.setQuadrantId(quadrant.getId());
+    }
+
+    return dto;
+  }
+
+  public static NoticeResponseDto toNoticeDto(Notice notice) {
+    return toNoticeDto(notice, null);
   }
 }

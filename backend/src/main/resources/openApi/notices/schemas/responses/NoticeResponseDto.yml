@@ -27,3 +27,8 @@ properties:
     type: array
     items:
       $ref: "../../../notices/schemas/responses/ImageDto.yml"
+  quadrantName:
+    type: string
+  quadrantId:
+    type: integer
+    format: int32
