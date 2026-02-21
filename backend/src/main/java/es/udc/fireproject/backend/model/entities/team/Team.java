@@ -49,10 +49,8 @@ public class Team {
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   private List<User> userList;
 
-  @ManyToOne(
-      optional = false,
-      fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @JoinColumn(name = "quadrant_gid", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinColumn(name = "quadrant_gid")
   private Quadrant quadrant;
 
   @Column(name = "deploy_at")
@@ -73,4 +71,3 @@ public class Team {
   }
 
 }
-

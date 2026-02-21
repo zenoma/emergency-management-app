@@ -71,9 +71,8 @@ public class User {
   private UserRole userRole;
 
   @ManyToOne(
-      optional = false,
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @JoinColumn(name = "team_id", nullable = false)
+  @JoinColumn(name = "team_id")
   private Team team;
 
   public User() {

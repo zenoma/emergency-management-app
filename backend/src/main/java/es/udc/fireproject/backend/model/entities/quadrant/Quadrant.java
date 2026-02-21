@@ -66,10 +66,8 @@ public class Quadrant implements Serializable {
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   private List<Vehicle> vehicleList;
 
-  @ManyToOne(
-      optional = false,
-      fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @JoinColumn(name = "fire_id", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinColumn(name = "fire_id")
   private Fire fire;
 
   @Column(name = "fire_linked_at")
