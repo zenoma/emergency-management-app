@@ -1,5 +1,7 @@
 import {
+  Alert,
   Box,
+  CircularProgress,
   Grid,
   Paper,
   Table,
@@ -46,13 +48,13 @@ export default function FireHistoryView() {
   const fireId = location.state.fireId;
 
 
-  const { data: fireData } = useGetFireByIdQuery({
+  const { data: fireData, isLoading: isFireLoading, isError: isFireError } = useGetFireByIdQuery({
     token: token,
     fireId: fireId,
     locale: locale,
   });
 
-  const { data: globalStatistics } = useGetGlobalStatisticsByFireIdQuery({
+  const { data: globalStatistics, isError: isStatsError } = useGetGlobalStatisticsByFireIdQuery({
     token: token,
     fireId: fireId,
     locale: locale,
@@ -66,7 +68,7 @@ export default function FireHistoryView() {
     locale: locale
   };
 
-  const { data: fireLogs } = useGetFireLogsByFireIdQuery(payload, {
+  const { data: fireLogs, isError: isLogsError } = useGetFireLogsByFireIdQuery(payload, {
     refetchOnMountOrArgChange: true,
   });
 
@@ -122,6 +124,23 @@ export default function FireHistoryView() {
 
 
 
+  if (isFireLoading) {
+    return (
+      <Box sx={{ padding: 3, display: "flex", justifyContent: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isFireError) {
+    return (
+      <Box sx={{ padding: 3 }}>
+        <BackButton />
+        <Alert severity="error">{t("generic-error")}</Alert>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ padding: 3 }}>
       <BackButton />
@@ -155,7 +174,11 @@ export default function FireHistoryView() {
               {t("quadrant-map")}
             </Typography>
             <Box sx={{ height: "90%", padding: 1 }}>
-              {fireLogs && <LandingMap quadrants={quadrants} />}
+              {isLogsError ? (
+                <Alert severity="error">{t("generic-error")}</Alert>
+              ) : fireLogs ? (
+                <LandingMap quadrants={quadrants} />
+              ) : null}
             </Box>
           </Paper>
         </Grid>
@@ -278,7 +301,9 @@ export default function FireHistoryView() {
           </Paper>
         </Grid>
         <Grid item xs={12} sm={12} md={12}>
-          {globalStatistics && (
+          {isStatsError ? (
+            <Alert severity="error">{t("generic-error")}</Alert>
+          ) : globalStatistics && (
             <Paper
               sx={{
                 padding: 2,

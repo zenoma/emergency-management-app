@@ -2,7 +2,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 
-import { Card, CardHeader, CardMedia } from "@mui/material";
+import { Alert, Card, CardHeader, CardMedia } from "@mui/material";
 import LandingMap from "../map/LandingMap";
 import Notice from "../notice/Notice";
 
@@ -16,7 +16,7 @@ import WeatherInfo from "../weather/WeatherInfo";
 export default function Dashboard() {
   const { t } = useTranslation();
 
-  const { data: quadrants } = useGetQuadrantWithActiveFiresQuery();
+  const { data: quadrants, isError } = useGetQuadrantWithActiveFiresQuery();
 
   const [coordinates, setCoordinates] = useState({
     "lat": 0,
@@ -52,7 +52,9 @@ export default function Dashboard() {
           />
           <CardMedia>
             <Box sx={{ height: 500 }}>
-              {quadrants ? (
+              {isError ? (
+                <Alert severity="error">{t("generic-error")}</Alert>
+              ) : quadrants ? (
                 <LandingMap quadrants={quadrants} />
               ) : (
                 <Typography variant="body1">{t("loading")}</Typography>

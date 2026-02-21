@@ -11,7 +11,6 @@ import { useTranslation } from "react-i18next";
 export default function Notice({ lat, lon }) {
   const [body, setBody] = useState("");
   const [image, setImage] = useState("");
-  const [bodyError, setBodyError] = useState(false);
 
 
   const { t } = useTranslation();
@@ -37,12 +36,9 @@ export default function Notice({ lat, lon }) {
 
   const handleClick = async (e) => {
     if (!body.trim()) {
-      setBodyError(true);
       toast.error(t("notice-body-required"));
       return;
     }
-
-    setBodyError(false);
 
     const coordinates = transformCoordinates(lon, lat);
     const payload = { body: body, coordinates: coordinates, token: token, locale: locale };

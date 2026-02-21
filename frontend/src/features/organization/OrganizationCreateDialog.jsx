@@ -74,6 +74,15 @@ export default function OrganizationCreateDialog(props) {
   };
 
   const handleClick = async (e) => {
+    if (data === "") {
+      toast.warning(t("organization-map-required"));
+      return;
+    }
+    if (!organizationTypeId) {
+      toast.warning(t("organization-type-required"));
+      return;
+    }
+
     const payload = {
       code: code,
       name: name,
@@ -84,22 +93,13 @@ export default function OrganizationCreateDialog(props) {
       locale: locale
     };
 
-    if (data === "") {
-      toast.warning(
-        "Por favor indique la dirección de la organización en el mapa."
-      );
-    }
-    if (!organizationTypeId) {
-      toast.warning("Por favor indique el tipo de la organización");
-    }
-
     createOrganization(payload)
       .unwrap()
       .then(() => {
-        toast.success("Organización creada satisfactoriamente");
+        toast.success(t("organization-created"));
         handleClose();
       })
-      .catch((error) => toast.error("No se ha podido crear la organización"));
+      .catch((error) => toast.error(error?.data?.errorMessage || t("generic-error")));
   };
 
   useEffect(() => { }, [open]);

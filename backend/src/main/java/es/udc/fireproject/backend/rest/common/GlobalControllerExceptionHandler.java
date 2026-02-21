@@ -3,8 +3,10 @@ package es.udc.fireproject.backend.rest.common;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.AlreadyExistException;
+import es.udc.fireproject.backend.model.exceptions.DomainException;
 import es.udc.fireproject.backend.model.exceptions.DuplicateInstanceException;
 import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
+import es.udc.fireproject.backend.model.exceptions.FileUploadException;
 import es.udc.fireproject.backend.model.exceptions.ImageAlreadyUploadedException;
 import es.udc.fireproject.backend.model.exceptions.IncorrectLoginException;
 import es.udc.fireproject.backend.model.exceptions.IncorrectPasswordException;
@@ -14,9 +16,12 @@ import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
 import es.udc.fireproject.backend.model.exceptions.PermissionException;
+import es.udc.fireproject.backend.model.exceptions.QuadrantNotLinkedToFireException;
 import es.udc.fireproject.backend.model.exceptions.UserWithoutTeamException;
 import es.udc.fireproject.backend.rest.dtos.ErrorDto;
 import es.udc.fireproject.backend.rest.dtos.FieldErrorDto;
+import es.udc.fireproject.backend.rest.exceptions.ImageRequiredException;
+import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -59,6 +64,11 @@ public class GlobalControllerExceptionHandler {
   private static final String NOTICE_CHECK_STATUS_EXCEPTION_CODE = "project.exceptions.NoticeCheckStatusException";
   private static final String NOTICE_UPDATE_STATUS_EXCEPTION_CODE = "project.exceptions.NoticeUpdateStatusException";
   private static final String NOTICE_DELETE_STATUS_EXCEPTION_CODE = "project.exceptions.NoticeDeleteStatusException";
+  private static final String CONSTRAINT_VIOLATION_EXCEPTION_CODE = "project.exceptions.ConstraintViolationException";
+  private static final String IMAGE_REQUIRED_EXCEPTION_CODE = "project.exceptions.ImageRequiredException";
+  private static final String DOMAIN_EXCEPTION_CODE = "project.exceptions.DomainException";
+  private static final String FILE_UPLOAD_EXCEPTION_CODE = "project.exceptions.FileUploadException";
+  private static final String QUADRANT_NOT_LINKED_TO_FIRE_EXCEPTION_CODE = "project.exceptions.QuadrantNotLinkedToFireException";
 
   private final MessageSource messageSource;
 
@@ -77,7 +87,7 @@ public class GlobalControllerExceptionHandler {
   @ResponseBody
   public ErrorDto handleMethodArgumentNotValidException(MethodArgumentNotValidException exception, Locale locale) {
 
-    String nameMessage = messageSource.getMessage(exception.getMessage(), null, null, null);
+    String nameMessage = messageSource.getMessage(exception.getMessage(), null, exception.getMessage(), locale);
     String errorMessage = messageSource.getMessage(METHOD_ARGUMENT_NOT_VALID_EXCEPTION,
         new Object[]{nameMessage, exception.getBody()}, METHOD_ARGUMENT_NOT_VALID_EXCEPTION, locale);
 
@@ -91,7 +101,7 @@ public class GlobalControllerExceptionHandler {
   }
 
   @ExceptionHandler(NoResourceFoundException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
   public ErrorDto handleNoResourceFoundException(NoResourceFoundException exception, Locale locale) {
 
@@ -189,7 +199,7 @@ public class GlobalControllerExceptionHandler {
         ILLEGAL_ARGUMENT_EXCEPTION_CODE,
         locale);
 
-    return new ErrorDto(errorMessage + ": " + exception.getMessage());
+    return new ErrorDto(errorMessage);
 
   }
 
@@ -207,7 +217,7 @@ public class GlobalControllerExceptionHandler {
   }
 
   @ExceptionHandler(PermissionException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ResponseStatus(HttpStatus.FORBIDDEN)
   @ResponseBody
   public ErrorDto handlePermissionException(PermissionException exception, Locale locale) {
 
@@ -226,7 +236,7 @@ public class GlobalControllerExceptionHandler {
     String errorMessage = messageSource.getMessage(DATA_INTEGRITY_EXCEPTION_CODE, null,
         DATA_INTEGRITY_EXCEPTION_CODE, locale);
 
-    return new ErrorDto(errorMessage + "\n" + exception.getMessage());
+    return new ErrorDto(errorMessage);
 
   }
 
@@ -339,6 +349,68 @@ public class GlobalControllerExceptionHandler {
 
     return new ErrorDto(errorMessage);
 
+  }
+
+  @ExceptionHandler(ConstraintViolationException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleConstraintViolationException(ConstraintViolationException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(CONSTRAINT_VIOLATION_EXCEPTION_CODE, null,
+        CONSTRAINT_VIOLATION_EXCEPTION_CODE, locale);
+
+    List<FieldErrorDto> fieldErrors = exception.getConstraintViolations().stream()
+        .map(violation -> new FieldErrorDto(violation.getPropertyPath().toString(), violation.getMessage()))
+        .collect(Collectors.toList());
+
+    ErrorDto errorDto = new ErrorDto(errorMessage);
+    errorDto.setFieldErrors(fieldErrors);
+    return errorDto;
+  }
+
+  @ExceptionHandler(ImageRequiredException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleImageRequiredException(ImageRequiredException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(IMAGE_REQUIRED_EXCEPTION_CODE, null,
+        IMAGE_REQUIRED_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(DomainException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleDomainException(DomainException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(DOMAIN_EXCEPTION_CODE,
+        new Object[]{exception.getName(), exception.getId()}, DOMAIN_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(QuadrantNotLinkedToFireException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleQuadrantNotLinkedToFireException(QuadrantNotLinkedToFireException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(QUADRANT_NOT_LINKED_TO_FIRE_EXCEPTION_CODE,
+        new Object[]{exception.getQuadrantId(), exception.getFireId()},
+        QUADRANT_NOT_LINKED_TO_FIRE_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(FileUploadException.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseBody
+  public ErrorDto handleFileUploadException(FileUploadException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(FILE_UPLOAD_EXCEPTION_CODE, null,
+        FILE_UPLOAD_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
   }
 
 }

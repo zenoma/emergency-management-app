@@ -107,7 +107,7 @@ export default function UserDataGrid({ childToParent }) {
         refetch();
       })
       .catch((error) =>
-        toast.error(error.data.globalError)
+        toast.error(error?.data?.errorMessage || "Error")
       );
 
   }
@@ -128,7 +128,7 @@ export default function UserDataGrid({ childToParent }) {
         refetch();
       })
       .catch((error) =>
-        toast.error(error.data.globalError)
+        toast.error(error?.data?.errorMessage || "Error")
       );
   }
 

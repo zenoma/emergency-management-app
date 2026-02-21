@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Alert, Box, CircularProgress, Grid, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -23,7 +23,24 @@ export default function QuadrantView() {
     quadrantId: quadrantId,
     locale: locale
   };
-  const { data: quadrantInfo } = useGetQuadrantByIdQuery(payload);
+  const { data: quadrantInfo, isLoading, isError } = useGetQuadrantByIdQuery(payload);
+
+  if (isLoading) {
+    return (
+      <Box sx={{ padding: 3, display: "flex", justifyContent: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box sx={{ padding: 3 }}>
+        <BackButton />
+        <Alert severity="error">{t("generic-error")}</Alert>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ padding: 3 }}>

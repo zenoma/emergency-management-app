@@ -75,7 +75,7 @@ export default function CoordinatorNoticesView() {
         refetch();
       })
       .catch((error) =>
-        toast.error(error.data.globalError)
+        toast.error(error?.data?.errorMessage || t("generic-error"))
       );
   }
 
@@ -96,7 +96,7 @@ export default function CoordinatorNoticesView() {
         refetch();
       })
       .catch((error) =>
-        toast.error(error.data.globalError)
+        toast.error(error?.data?.errorMessage || t("generic-error"))
       );
   }
 

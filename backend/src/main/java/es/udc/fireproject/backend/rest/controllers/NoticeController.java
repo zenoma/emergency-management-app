@@ -11,6 +11,7 @@ import es.udc.fireproject.backend.rest.dtos.NoticeRequestDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeResponseDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeStatusRequestDto;
 import es.udc.fireproject.backend.rest.dtos.mappers.NoticeMapper;
+import es.udc.fireproject.backend.model.exceptions.FileUploadException;
 import es.udc.fireproject.backend.rest.exceptions.ImageRequiredException;
 import java.io.IOException;
 import java.net.URI;
@@ -136,7 +137,7 @@ public class NoticeController implements NoticesApi {
       return ResponseEntity.ok(noticeResponseDto);
 
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new FileUploadException(e);
     }
   }
 }

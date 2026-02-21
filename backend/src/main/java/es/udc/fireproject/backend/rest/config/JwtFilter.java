@@ -1,5 +1,7 @@
 package es.udc.fireproject.backend.rest.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import es.udc.fireproject.backend.rest.dtos.ErrorDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +21,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 public class JwtFilter extends BasicAuthenticationFilter {
 
   private final JwtGenerator jwtGenerator;
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   public JwtFilter(AuthenticationManager authenticationManager, JwtGenerator jwtGenerator) {
 
@@ -50,6 +54,10 @@ public class JwtFilter extends BasicAuthenticationFilter {
 
     } catch (Exception e) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+      response.setCharacterEncoding("UTF-8");
+      ErrorDto errorDto = new ErrorDto("Invalid or expired authentication token.");
+      objectMapper.writeValue(response.getOutputStream(), errorDto);
       return;
     }
 

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 
 import {
+  Alert,
   Box,
   Button,
   CircularProgress,
@@ -84,6 +85,7 @@ export default function QuadrantVehiclesView(props) {
   const {
     data: quadrantInfo,
     isFetching,
+    isError,
     refetch,
   } = useGetQuadrantByIdQuery(payload, {
     refetchOnMountOrArgChange: true,
@@ -120,6 +122,8 @@ export default function QuadrantVehiclesView(props) {
         </Typography>
         {isFetching ? (
           <CircularProgress />
+        ) : isError ? (
+          <Alert severity="error">{t("generic-error")}</Alert>
         ) : quadrantInfo ? (
           <QuadrantVehicleTable
             reloadData={reloadData}

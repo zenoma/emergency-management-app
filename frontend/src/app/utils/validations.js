@@ -1,6 +1,9 @@
 export const emailValidation = (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/i.test(value);
 
-export const phoneNumberValidation = (value) => value.match(/\d/g).length === 9;
+export const phoneNumberValidation = (value) => {
+  const matches = value.match(/\d/g);
+  return matches !== null && matches.length === 9;
+};
 
 export const dniValidation = (value) => {
   if (/^\d{8}[a-zA-Z]$/.test(value)) {

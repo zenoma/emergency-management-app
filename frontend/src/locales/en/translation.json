@@ -194,5 +194,12 @@
   "rows-per-page": "Rows per page",
   "generic-error": "Oh no, an error has occurred",
   "loading": "Loading",
-  "my-area": "My area"
+  "my-area": "My area",
+  "organization-map-required": "You must select a location on the map",
+  "organization-type-required": "You must select an organization type",
+  "organization-created": "Organization created successfully",
+  "error-boundary-title": "Something went wrong",
+  "error-boundary-message": "An unexpected error occurred. Please try again.",
+  "error-boundary-retry": "Try again",
+  "go-to-home": "Go to Home"
 }
