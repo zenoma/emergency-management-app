@@ -98,7 +98,6 @@ export default function OrganizationCreateDialog(props) {
       .then(() => {
         toast.success("Organización creada satisfactoriamente");
         handleClose();
-        props.reloadData();
       })
       .catch((error) => toast.error("No se ha podido crear la organización"));
   };

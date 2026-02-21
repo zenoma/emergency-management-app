@@ -102,7 +102,7 @@ export default function OrganizationTable(props) {
     };
     updateOrganization(payload)
       .unwrap()
-      .then((payload) => {
+      .then(() => {
         toast.success("Organización actualizada satisfactoriamente");
       })
       .catch((error) =>
@@ -110,7 +110,6 @@ export default function OrganizationTable(props) {
       );
 
     handleCloseEdit();
-    props.reloadData();
   };
 
   const childToParent = (childdata) => {
@@ -155,12 +154,14 @@ export default function OrganizationTable(props) {
 
     deleteOrganizationById(payload)
       .unwrap()
-      .then((payload) => {
+      .then(() => {
         toast.success("Organización borrada satisfactoriamente");
       })
+      .catch((error) =>
+        toast.error("No se ha podido borrar la organización")
+      );
 
     handleCloseDelete();
-    props.reloadData();
   };
 
   const handleClickOrganization = (organizationId) => {
