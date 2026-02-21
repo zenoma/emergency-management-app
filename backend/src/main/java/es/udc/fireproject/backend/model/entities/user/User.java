@@ -30,8 +30,8 @@ import lombok.ToString;
 @Table(name = "user", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(exclude = "password")
+@ToString(exclude = "password")
 @AllArgsConstructor
 public class User {
 
