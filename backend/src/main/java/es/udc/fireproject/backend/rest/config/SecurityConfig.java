@@ -111,7 +111,7 @@ public class SecurityConfig {
             .hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/users/{id}/updateRole").hasAnyRole(COORDINATOR_ROLE)
 
-            .anyRequest().permitAll()
+            .anyRequest().authenticated()
         )
         .headers(headers -> headers.frameOptions(frame -> frame.disable()));
 

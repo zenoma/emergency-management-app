@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/firedb
-    username: fireuser
-    password: fireuser
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/firedb}
+    username: ${DB_USERNAME:fireuser}
+    password: ${DB_PASSWORD:fireuser}
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,8 +21,8 @@ logging:
 
 project:
   jwt:
-    signKey: YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXo1Njc4OTA=
-    expirationMinutes: 1440
+    signKey: ${JWT_SIGN_KEY:ZGVmYXVsdERldktleUNoYW5nZUluUHJvZHVjdGlvbjEyMzQ1}
+    expirationMinutes: ${JWT_EXPIRATION_MINUTES:1440}
 
 
 
