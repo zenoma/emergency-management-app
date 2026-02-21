@@ -12,7 +12,7 @@ public class UserConversor {
 
   public static UserDto toUserDto(User user) {
 
-    return new UserDto(
+    UserDto dto = new UserDto(
         user.getId(),
         user.getFirstName(),
         user.getLastName(),
@@ -21,6 +21,13 @@ public class UserConversor {
         user.getDni(),
         user.getUserRole().toString()
     );
+
+    if (user.getTeam() != null) {
+      dto.setTeamId(user.getTeam().getId());
+      dto.setTeamCode(user.getTeam().getCode());
+    }
+
+    return dto;
   }
 
 

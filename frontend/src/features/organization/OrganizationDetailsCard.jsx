@@ -26,50 +26,72 @@ export default function OrganizationDetailsCard({ data }) {
           color: "primary.light",
           fontWeight: "bold",
           textAlign: "center",
-          mb: 2,
+          mb: 3,
         }}
       >
         {t("organization-details-title")}
       </Typography>
 
-      {/* Tabla de detalles */}
-      <TableContainer>
-        <Table>
-          <TableBody>
-            <TableRow>
-              <TableCell
-                component="th"
-                scope="row"
-                sx={{ color: "secondary.light", fontWeight: "bold", width: 200 }}
-              >
-                {t("organization-details-code")}
-              </TableCell>
-              <TableCell align="center">{data.code}</TableCell>
-            </TableRow>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 3,
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "secondary.light" }}
+            display="block"
+          >
+            {t("organization-details-code")}
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            {data.code}
+          </Typography>
+        </Box>
 
-            <TableRow>
-              <TableCell component="th" scope="row" sx={{ color: "secondary.light", fontWeight: "bold" }}>
-                {t("organization-details-name")}
-              </TableCell>
-              <TableCell align="center">{data.name}</TableCell>
-            </TableRow>
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "secondary.light" }}
+            display="block"
+          >
+            {t("organization-details-name")}
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            {data.name}
+          </Typography>
+        </Box>
 
-            <TableRow>
-              <TableCell component="th" scope="row" sx={{ color: "secondary.light", fontWeight: "bold" }}>
-                {t("organization-address")}
-              </TableCell>
-              <TableCell align="center">{data.headquartersAddress}</TableCell>
-            </TableRow>
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "secondary.light" }}
+            display="block"
+          >
+            {t("organization-address")}
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            {data.headquartersAddress}
+          </Typography>
+        </Box>
 
-            <TableRow>
-              <TableCell component="th" scope="row" sx={{ color: "secondary.light", fontWeight: "bold" }}>
-                {t("organization-type-name")}
-              </TableCell>
-              <TableCell align="center">{data.organizationTypeName}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "secondary.light" }}
+            display="block"
+          >
+            {t("organization-type-name")}
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            {data.organizationTypeName}
+          </Typography>
+        </Box>
+      </Box>
     </Paper>
   );
 }

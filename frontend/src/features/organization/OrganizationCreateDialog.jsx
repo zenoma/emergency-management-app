@@ -187,7 +187,8 @@ export default function OrganizationCreateDialog(props) {
               </Grid>
             </Grid>
             <Box sx={{ height: 300 }}>
-              <CoordinatesMap childToParent={childToParent} /></Box>
+              <CoordinatesMap childToParent={childToParent} />
+            </Box>
           </FormControl>
         </DialogContent>
         <DialogActions>

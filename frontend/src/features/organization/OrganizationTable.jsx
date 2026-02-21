@@ -158,9 +158,6 @@ export default function OrganizationTable(props) {
       .then((payload) => {
         toast.success("Organización borrada satisfactoriamente");
       })
-    // .catch((error) =>
-    //   toast.error("No se ha podido eliminar la organización")
-    // );
 
     handleCloseDelete();
     props.reloadData();
@@ -182,8 +179,8 @@ export default function OrganizationTable(props) {
           item.code,
           item.name,
           item.headquartersAddress,
-          item.lon,
-          item.lat
+          item.coordinates.lon,
+          item.coordinates.lat
         )
       );
     });

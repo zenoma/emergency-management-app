@@ -27,34 +27,51 @@ export default function TeamCard({ data }) {
     >
       <Typography
         variant="h4"
-        sx={{ fontWeight: "bold", color: "primary.light", mb: 2 }}
+        sx={{ fontWeight: "bold", color: "primary.light", mb: 3 }}
       >
         {t("team-details")}
       </Typography>
 
-      <Box display="flex" justifyContent="center" alignItems="center" mb={1}>
-        <Typography
-          variant="h6"
-          sx={{ fontWeight: "bold", color: "secondary.light", mr: 1 }}
-        >
-          {t("team-code")}:
-        </Typography>
-        <Typography variant="h6">{data.code}</Typography>
-      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 3,
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "secondary.light" }}
+            display="block"
+          >
+            {t("team-code")}
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            {data.code}
+          </Typography>
+        </Box>
 
-      <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-        <Typography
-          variant="h6"
-          sx={{ fontWeight: "bold", color: "secondary.light", mr: 1 }}
-        >
-          {t("team-organization-belong")}:
-        </Typography>
-        <Typography variant="h6">{data.organization.name}</Typography>
-        <InfoIcon
-          color="primary"
-          sx={{ ml: 1, cursor: "pointer" }}
-          onClick={handleClickToOpen}
-        />
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: "secondary.light" }}
+            display="block"
+          >
+            {t("team-organization-belong")}
+          </Typography>
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <Typography variant="h6" fontWeight="bold">
+              {data.organization.name}
+            </Typography>
+            <InfoIcon
+              color="primary"
+              sx={{ ml: 1, cursor: "pointer" }}
+              onClick={handleClickToOpen}
+            />
+          </Box>
+        </Box>
       </Box>
 
       <Dialog open={open} onClose={handleToClose} maxWidth="sm" fullWidth>
