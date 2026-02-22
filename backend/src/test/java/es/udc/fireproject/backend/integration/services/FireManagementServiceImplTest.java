@@ -13,7 +13,7 @@ import es.udc.fireproject.backend.model.exceptions.AlreadyExistException;
 import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
-import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
+import es.udc.fireproject.backend.model.services.personalmanagement.PersonaManagementFacade;
 import es.udc.fireproject.backend.utils.FireOM;
 import es.udc.fireproject.backend.utils.OrganizationOM;
 import es.udc.fireproject.backend.utils.OrganizationTypeOM;
@@ -32,7 +32,7 @@ class FireManagementServiceImplTest extends IntegrationTest {
   private final Integer INVALID_QUADRANT_ID = -1;
   private final Long INVALID_FIRE_ID = -1L;
   private final FireManagementService fireManagementService;
-  private final PersonalManagementService personalManagementService;
+  private final PersonaManagementFacade personaManagementFacade;
 
   // QUADRANT SERVICES
   @Test
@@ -163,18 +163,18 @@ class FireManagementServiceImplTest extends IntegrationTest {
     Fire fire = FireOM.withDefaultValues();
     fire = fireManagementService.createFire(fire.getDescription(), fire.getType(), fire.getFireIndex());
 
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personaManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personaManagementFacade.createOrganization(organization);
 
     Team team = TeamOM.withDefaultValues();
-    team = personalManagementService.createTeam(team.getCode(),
+    team = personaManagementFacade.createTeam(team.getCode(),
         organization.getId());
 
     Vehicle vehicle = VehicleOM.withDefaultValues();
-    vehicle = personalManagementService.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
+    vehicle = personaManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
         organization.getId());
 
     Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
@@ -187,8 +187,8 @@ class FireManagementServiceImplTest extends IntegrationTest {
     fire = fireManagementService.extinguishFire(fire.getId());
 
     Assertions.assertEquals(FireIndex.EXTINGUIDO, fireManagementService.findFireById(fire.getId()).getFireIndex());
-    Assertions.assertNull(personalManagementService.findVehicleById(vehicle.getId()).getQuadrant());
-    Assertions.assertNull(personalManagementService.findTeamById(team.getId()).getQuadrant());
+    Assertions.assertNull(personaManagementFacade.findVehicleById(vehicle.getId()).getQuadrant());
+    Assertions.assertNull(personaManagementFacade.findTeamById(team.getId()).getQuadrant());
   }
 
   @Test
@@ -249,18 +249,18 @@ class FireManagementServiceImplTest extends IntegrationTest {
     Fire fire = FireOM.withDefaultValues();
     fire = fireManagementService.createFire(fire.getDescription(), fire.getType(), fire.getFireIndex());
 
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personaManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personaManagementFacade.createOrganization(organization);
 
     Team team = TeamOM.withDefaultValues();
-    team = personalManagementService.createTeam(team.getCode(),
+    team = personaManagementFacade.createTeam(team.getCode(),
         organization.getId());
 
     Vehicle vehicle = VehicleOM.withDefaultValues();
-    vehicle = personalManagementService.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
+    vehicle = personaManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
         organization.getId());
 
     Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
@@ -281,18 +281,18 @@ class FireManagementServiceImplTest extends IntegrationTest {
     Fire fire = FireOM.withDefaultValues();
     fire = fireManagementService.createFire(fire.getDescription(), fire.getType(), fire.getFireIndex());
 
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personaManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personaManagementFacade.createOrganization(organization);
 
     Team team = TeamOM.withDefaultValues();
-    team = personalManagementService.createTeam(team.getCode(),
+    team = personaManagementFacade.createTeam(team.getCode(),
         organization.getId());
 
     Vehicle vehicle = VehicleOM.withDefaultValues();
-    vehicle = personalManagementService.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
+    vehicle = personaManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
         organization.getId());
 
     Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
@@ -335,92 +335,92 @@ class FireManagementServiceImplTest extends IntegrationTest {
   @Test
   void givenValidTeam_whenDeployTeam_thenTeamDeployed()
       throws InstanceNotFoundException, AlreadyExistException, AlreadyDismantledException {
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personaManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personaManagementFacade.createOrganization(organization);
 
     Team team = TeamOM.withDefaultValues();
-    team = personalManagementService.createTeam(team.getCode(),
+    team = personaManagementFacade.createTeam(team.getCode(),
         organization.getId());
 
     Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
 
     fireManagementService.deployTeam(team.getId(), quadrant.getId());
 
-    Assertions.assertNotNull(personalManagementService.findTeamById(team.getId()).getQuadrant());
-    Assertions.assertEquals(personalManagementService.findTeamById(team.getId()).getQuadrant(), quadrant);
+    Assertions.assertNotNull(personaManagementFacade.findTeamById(team.getId()).getQuadrant());
+    Assertions.assertEquals(personaManagementFacade.findTeamById(team.getId()).getQuadrant(), quadrant);
   }
 
   @Test
   void givenValidTeam_whenRetractTeam_thenTeamRetracted()
       throws InstanceNotFoundException, AlreadyExistException, AlreadyDismantledException {
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personaManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personaManagementFacade.createOrganization(organization);
 
     Team team = TeamOM.withDefaultValues();
-    team = personalManagementService.createTeam(team.getCode(),
+    team = personaManagementFacade.createTeam(team.getCode(),
         organization.getId());
 
     Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
 
     fireManagementService.deployTeam(team.getId(), quadrant.getId());
 
-    Assertions.assertNotNull(personalManagementService.findTeamById(team.getId()).getQuadrant());
-    Assertions.assertEquals(personalManagementService.findTeamById(team.getId()).getQuadrant(), quadrant);
+    Assertions.assertNotNull(personaManagementFacade.findTeamById(team.getId()).getQuadrant());
+    Assertions.assertEquals(personaManagementFacade.findTeamById(team.getId()).getQuadrant(), quadrant);
 
     fireManagementService.retractTeam(team.getId());
-    Assertions.assertNull(personalManagementService.findTeamById(team.getId()).getQuadrant());
+    Assertions.assertNull(personaManagementFacade.findTeamById(team.getId()).getQuadrant());
 
   }
 
   @Test
   void givenValidVehicle_whenDeployVehicle_thenVehicleDeployed()
       throws InstanceNotFoundException, AlreadyDismantledException {
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personaManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personaManagementFacade.createOrganization(organization);
 
     Vehicle vehicle = VehicleOM.withDefaultValues();
-    vehicle = personalManagementService.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
+    vehicle = personaManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
         organization.getId());
 
     Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
 
     fireManagementService.deployVehicle(vehicle.getId(), quadrant.getId());
 
-    Assertions.assertNotNull(personalManagementService.findVehicleById(vehicle.getId()).getQuadrant());
-    Assertions.assertEquals(personalManagementService.findVehicleById(vehicle.getId()).getQuadrant(), quadrant);
+    Assertions.assertNotNull(personaManagementFacade.findVehicleById(vehicle.getId()).getQuadrant());
+    Assertions.assertEquals(personaManagementFacade.findVehicleById(vehicle.getId()).getQuadrant(), quadrant);
   }
 
   @Test
   void givenValidVehicle_whenRetractVehicle_thenVehicleRetracted()
       throws InstanceNotFoundException, AlreadyDismantledException {
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personaManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personaManagementFacade.createOrganization(organization);
 
     Vehicle vehicle = VehicleOM.withDefaultValues();
-    vehicle = personalManagementService.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
+    vehicle = personaManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
         organization.getId());
 
     Quadrant quadrant = fireManagementService.findQuadrantById(VALID_QUADRANT_ID);
 
     fireManagementService.deployVehicle(vehicle.getId(), quadrant.getId());
 
-    Assertions.assertNotNull(personalManagementService.findVehicleById(vehicle.getId()).getQuadrant());
-    Assertions.assertEquals(personalManagementService.findVehicleById(vehicle.getId()).getQuadrant(), quadrant);
+    Assertions.assertNotNull(personaManagementFacade.findVehicleById(vehicle.getId()).getQuadrant());
+    Assertions.assertEquals(personaManagementFacade.findVehicleById(vehicle.getId()).getQuadrant(), quadrant);
 
     fireManagementService.retractVehicle(vehicle.getId());
-    Assertions.assertNull(personalManagementService.findVehicleById(vehicle.getId()).getQuadrant());
+    Assertions.assertNull(personaManagementFacade.findVehicleById(vehicle.getId()).getQuadrant());
   }
 
 }

@@ -3,7 +3,7 @@ package es.udc.fireproject.backend.rest.controllers;
 import es.udc.fireproject.backend.model.entities.user.User;
 import es.udc.fireproject.backend.model.entities.user.UserRole;
 import es.udc.fireproject.backend.model.exceptions.PermissionException;
-import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
+import es.udc.fireproject.backend.model.services.personalmanagement.PersonaManagementFacade;
 import es.udc.fireproject.backend.rest.config.JwtGenerator;
 import es.udc.fireproject.backend.rest.config.JwtInfo;
 import es.udc.fireproject.backend.rest.config.JwtUtils;
@@ -29,7 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class UsersController implements UsersApi {
 
 
-  private final PersonalManagementService personalManagementService;
+  private final PersonaManagementFacade personaManagementFacade;
 
   private final JwtGenerator jwtGenerator;
 
@@ -43,7 +43,7 @@ public class UsersController implements UsersApi {
     }
 
     List<UserDto> userDtos = new ArrayList<>();
-    for (User user : personalManagementService.findAllUsers()) {
+    for (User user : personaManagementFacade.findAllUsers()) {
       userDtos.add(UserMapper.toUserDto(user));
     }
 
@@ -53,7 +53,7 @@ public class UsersController implements UsersApi {
   @Override
   public ResponseEntity<AuthenticatedUserDto> postUsersSignUp(UserSignUpRequestDto userSignUpRequestDto) {
 
-    final User user = personalManagementService.signUp(userSignUpRequestDto.getEmail(),
+    final User user = personaManagementFacade.signUp(userSignUpRequestDto.getEmail(),
         userSignUpRequestDto.getPassword(),
         userSignUpRequestDto.getFirstName(),
         userSignUpRequestDto.getLastName(),
@@ -71,7 +71,7 @@ public class UsersController implements UsersApi {
 
   @Override
   public ResponseEntity<AuthenticatedUserDto> postUsersLogin(LoginParamsDto params) {
-    User user = personalManagementService.login(params.getUserName(), params.getPassword());
+    User user = personaManagementFacade.login(params.getUserName(), params.getPassword());
 
     return ResponseEntity.ok(UserMapper.toAuthenticatedUserDto(generateServiceToken(user), user));
 
@@ -88,7 +88,7 @@ public class UsersController implements UsersApi {
     final Long userId = jwtInfo.get().userId();
     final String token = JwtUtils.getToken().orElse("");
 
-    User dto = personalManagementService.loginFromId(userId);
+    User dto = personaManagementFacade.loginFromId(userId);
     return ResponseEntity.ok(UserMapper.toAuthenticatedUserDto(token, dto));
   }
 
@@ -107,7 +107,7 @@ public class UsersController implements UsersApi {
     }
 
     return ResponseEntity.ok(UserMapper.toUserDto(
-        personalManagementService.updateProfile(id, userUpdateRequestDto.getFirstName(),
+        personaManagementFacade.updateProfile(id, userUpdateRequestDto.getFirstName(),
             userUpdateRequestDto.getLastName(),
             userUpdateRequestDto.getEmail(), Integer.valueOf(userUpdateRequestDto.getPhoneNumber()),
             userUpdateRequestDto.getDni())));
@@ -128,7 +128,7 @@ public class UsersController implements UsersApi {
       throw new PermissionException();
     }
 
-    personalManagementService.changePassword(id,
+    personaManagementFacade.changePassword(id,
         changePasswordParamsDto.getOldPassword(),
         changePasswordParamsDto.getNewPassword());
 
@@ -152,7 +152,7 @@ public class UsersController implements UsersApi {
     } catch (IllegalArgumentException ex) {
       throw new IllegalArgumentException("userRole");
     }
-    personalManagementService.updateRole(userId, id, userRole);
+    personaManagementFacade.updateRole(userId, id, userRole);
 
     return ResponseEntity.noContent().build();
 

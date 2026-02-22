@@ -3,16 +3,16 @@ package es.udc.fireproject.backend.rest.controllers;
 import es.udc.fireproject.backend.model.entities.notice.Notice;
 import es.udc.fireproject.backend.model.entities.notice.NoticeStatus;
 import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
+import es.udc.fireproject.backend.model.exceptions.FileUploadException;
 import es.udc.fireproject.backend.model.services.notice.NoticeService;
-import es.udc.fireproject.backend.util.FileUploadUtil;
 import es.udc.fireproject.backend.rest.config.JwtInfo;
 import es.udc.fireproject.backend.rest.config.JwtUtils;
 import es.udc.fireproject.backend.rest.dtos.NoticeRequestDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeResponseDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeStatusRequestDto;
 import es.udc.fireproject.backend.rest.dtos.mappers.NoticeMapper;
-import es.udc.fireproject.backend.model.exceptions.FileUploadException;
 import es.udc.fireproject.backend.rest.exceptions.ImageRequiredException;
+import es.udc.fireproject.backend.util.FileUploadUtil;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -20,9 +20,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,17 +38,13 @@ public class NoticeController implements NoticesApi {
     final Optional<JwtInfo> jwtInfo = JwtUtils.getJwtInfo();
 
     Notice notice;
-    //FIXME: Este tratamiento debería ir en el caso de uso, no en el controlador
-    GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 25829);
-    Coordinate coordinate = new Coordinate(noticeRequestDto.getCoordinates().getLon(),
-        noticeRequestDto.getCoordinates().getLat());
 
-    //FIXME: Solo hace falta un método
     if (jwtInfo.isPresent()) {
-      notice = noticeService.create(noticeRequestDto.getBody(), geometryFactory.createPoint(coordinate),
-          jwtInfo.get().userId());
+      notice = noticeService.create(noticeRequestDto.getBody(), noticeRequestDto.getCoordinates().getLon(),
+          noticeRequestDto.getCoordinates().getLat(), jwtInfo.get().userId());
     } else {
-      notice = noticeService.create(noticeRequestDto.getBody(), geometryFactory.createPoint(coordinate));
+      notice = noticeService.create(noticeRequestDto.getBody(), noticeRequestDto.getCoordinates().getLon(),
+          noticeRequestDto.getCoordinates().getLat());
     }
 
     URI location = ServletUriComponentsBuilder
@@ -75,26 +68,22 @@ public class NoticeController implements NoticesApi {
   @Override
   public ResponseEntity<List<NoticeResponseDto>> getNotices(Long userId) {
 
-    //FIXME: Esta lógica debería ir en el caso de uso, no en el controlador
-    List<NoticeResponseDto> noticeRequestDtos = new ArrayList<>();
-    List<Notice> notices = userId != null ? noticeService.findByUserIdWithImages(userId) : noticeService.findAllWithImages();
-    // fetch quadrant ids in batch to avoid N+1
+    List<NoticeResponseDto> noticeResponseDtoList = new ArrayList<>();
+    List<Notice> notices =
+        userId != null ? noticeService.findByUserIdWithImages(userId) : noticeService.findAllWithImages();
     for (Notice notice : notices) {
       Quadrant quadrant = noticeService.findQuadrantByLocation(notice.getLocation()).orElse(null);
-      noticeRequestDtos.add(NoticeMapper.toNoticeDto(notice, quadrant));
+      noticeResponseDtoList.add(NoticeMapper.toNoticeDto(notice, quadrant));
     }
 
-    return ResponseEntity.ok(noticeRequestDtos);
+    return ResponseEntity.ok(noticeResponseDtoList);
   }
 
   @Override
   public ResponseEntity<Void> putNotice(Long id, NoticeRequestDto noticeRequestDto) {
 
-    GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 25829);
-    Coordinate coordinate = new Coordinate(noticeRequestDto.getCoordinates().getLon(),
+    noticeService.update(id, noticeRequestDto.getBody(), noticeRequestDto.getCoordinates().getLon(),
         noticeRequestDto.getCoordinates().getLat());
-
-    noticeService.update(id, noticeRequestDto.getBody(), geometryFactory.createPoint(coordinate));
 
     return ResponseEntity.noContent().build();
   }

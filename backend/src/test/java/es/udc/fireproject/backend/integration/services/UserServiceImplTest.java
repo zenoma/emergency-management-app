@@ -8,19 +8,19 @@ import es.udc.fireproject.backend.model.exceptions.IncorrectLoginException;
 import es.udc.fireproject.backend.model.exceptions.IncorrectPasswordException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.exceptions.InsufficientRolePermissionException;
-import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
+import es.udc.fireproject.backend.model.services.personalmanagement.PersonaManagementFacade;
 import es.udc.fireproject.backend.utils.UserOM;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-@RequiredArgsConstructor
-class UserServiceImplTest extends IntegrationTest {
+public class UserServiceImplTest extends IntegrationTest {
 
   private static final Long INVALID_USER_ID = -1L;
 
-  private final PersonalManagementService personalManagementService;
+  @Autowired
+  private PersonaManagementFacade personaManagementFacade;
 
   @Test
   void givenValidData_whenSignUpAndLoginFromId_thenUserIsFound()
@@ -28,14 +28,14 @@ class UserServiceImplTest extends IntegrationTest {
 
     User userOm = UserOM.withDefaultValues();
 
-    User user = personalManagementService.signUp(userOm.getEmail(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(),
         userOm.getPassword(),
         userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()),
         userOm.getDni());
 
-    User loggedInUser = personalManagementService.loginFromId(user.getId());
+    User loggedInUser = personaManagementFacade.loginFromId(user.getId());
 
     Assertions.assertEquals(user, loggedInUser, "Users must be the same");
 
@@ -45,11 +45,11 @@ class UserServiceImplTest extends IntegrationTest {
   void givenDuplicatedData_whenSignUp_thenDuplicateInstanceException() throws DuplicateInstanceException {
     User user = UserOM.withDefaultValues();
 
-    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+    personaManagementFacade.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
         String.valueOf(user.getPhoneNumber()), user.getDni());
 
     Assertions.assertThrows(DuplicateInstanceException.class, () ->
-            personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+            personaManagementFacade.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
                 String.valueOf(user.getPhoneNumber()), user.getDni()),
         "DuplicateInstanceException expected");
 
@@ -58,7 +58,7 @@ class UserServiceImplTest extends IntegrationTest {
   @Test
   void givenInvalidData_whenLoginFromId_thenInstanceNotFoundException() {
     Assertions.assertThrows(InstanceNotFoundException.class,
-        () -> personalManagementService.loginFromId(INVALID_USER_ID));
+        () -> personaManagementFacade.loginFromId(INVALID_USER_ID));
   }
 
   @Test
@@ -69,11 +69,11 @@ class UserServiceImplTest extends IntegrationTest {
 
     String clearPassword = userOm.getPassword();
 
-    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
-    User loggedInUser = personalManagementService.login(userOm.getEmail(), clearPassword);
+    User loggedInUser = personaManagementFacade.login(userOm.getEmail(), clearPassword);
 
     Assertions.assertEquals(user, loggedInUser, "Users must be the same");
 
@@ -86,17 +86,17 @@ class UserServiceImplTest extends IntegrationTest {
 
     String clearPassword = user.getPassword();
 
-    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+    personaManagementFacade.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
         String.valueOf(user.getPhoneNumber()), user.getDni());
 
     Assertions.assertThrows(IncorrectLoginException.class, () ->
-        personalManagementService.login(user.getEmail(), 'X' + clearPassword), " Password must be incorrect");
+        personaManagementFacade.login(user.getEmail(), 'X' + clearPassword), " Password must be incorrect");
 
   }
 
   @Test
   void givenInvalidEmail_whenLogin_thenIncorrectLoginException() {
-    Assertions.assertThrows(IncorrectLoginException.class, () -> personalManagementService.login("X", "Y"),
+    Assertions.assertThrows(IncorrectLoginException.class, () -> personaManagementFacade.login("X", "Y"),
         " User must not exist");
   }
 
@@ -107,7 +107,7 @@ class UserServiceImplTest extends IntegrationTest {
 
     User userOm = UserOM.withDefaultValues();
 
-    User user = personalManagementService.signUp(userOm.getEmail(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(),
         userOm.getPassword(),
         userOm.getFirstName(),
         userOm.getLastName(),
@@ -118,7 +118,7 @@ class UserServiceImplTest extends IntegrationTest {
     user.setLastName('X' + userOm.getLastName());
     user.setEmail('X' + userOm.getEmail());
 
-    User updatedUser = personalManagementService.updateProfile(user.getId(), 'X' + userOm.getFirstName(),
+    User updatedUser = personaManagementFacade.updateProfile(user.getId(), 'X' + userOm.getFirstName(),
         'X' + userOm.getLastName(),
         'X' + userOm.getEmail(), 111111111, "11111111S");
 
@@ -130,7 +130,7 @@ class UserServiceImplTest extends IntegrationTest {
   @Test
   void givenInvalidData_whenUpdateProfile_thenInstanceNotFoundException() {
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
-            personalManagementService.updateProfile(INVALID_USER_ID, "X", "X", "X", 111111111, "11111111S"),
+            personaManagementFacade.updateProfile(INVALID_USER_ID, "X", "X", "X", 111111111, "11111111S"),
         "User not existent");
   }
 
@@ -143,20 +143,20 @@ class UserServiceImplTest extends IntegrationTest {
 
     String oldPassword = userOm.getPassword();
     String newPassword = 'X' + oldPassword;
-    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
-    personalManagementService.changePassword(user.getId(), oldPassword, newPassword);
+    personaManagementFacade.changePassword(user.getId(), oldPassword, newPassword);
 
-    Assertions.assertDoesNotThrow(() -> personalManagementService.login(user.getEmail(), newPassword));
+    Assertions.assertDoesNotThrow(() -> personaManagementFacade.login(user.getEmail(), newPassword));
   }
 
 
   @Test
   void givenInvalidID_whenChangePassword_thenInstanceNotFoundException() {
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
-        personalManagementService.changePassword(INVALID_USER_ID, "X", "Y"), "User non existent");
+        personaManagementFacade.changePassword(INVALID_USER_ID, "X", "Y"), "User non existent");
   }
 
 
@@ -167,7 +167,7 @@ class UserServiceImplTest extends IntegrationTest {
     String oldPassword = userOm.getPassword();
     String newPassword = 'X' + oldPassword;
 
-    User user = personalManagementService.signUp(userOm.getEmail(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(),
         userOm.getPassword(),
         userOm.getFirstName(),
         userOm.getLastName(),
@@ -175,7 +175,7 @@ class UserServiceImplTest extends IntegrationTest {
         userOm.getDni());
 
     Assertions.assertThrows(IncorrectPasswordException.class, () ->
-            personalManagementService.changePassword(user.getId(), 'Y' + oldPassword, newPassword),
+            personaManagementFacade.changePassword(user.getId(), 'Y' + oldPassword, newPassword),
         "IncorrectPassword Exception expected");
 
   }
@@ -185,7 +185,7 @@ class UserServiceImplTest extends IntegrationTest {
   void givenValidData_whenSignUp_thenUserHasUserRole() throws DuplicateInstanceException {
     User user = UserOM.withDefaultValues();
 
-    personalManagementService.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
+    personaManagementFacade.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
         String.valueOf(user.getPhoneNumber()), user.getDni());
 
     Assertions.assertEquals(UserRole.USER, user.getUserRole(), "Role must be USER");
@@ -199,7 +199,7 @@ class UserServiceImplTest extends IntegrationTest {
     List<User> usersOmList = UserOM.withRandomNames(totalUsers);
     User userOm = usersOmList.get(0);
     User targetUserOm = usersOmList.get(1);
-    User user = personalManagementService.signUp(userOm.getEmail(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(),
         userOm.getPassword(),
         userOm.getFirstName(),
         userOm.getLastName(),
@@ -208,7 +208,7 @@ class UserServiceImplTest extends IntegrationTest {
 
     user.setUserRole(UserRole.COORDINATOR);
 
-    User targetUser = personalManagementService.signUp(targetUserOm.getEmail(),
+    User targetUser = personaManagementFacade.signUp(targetUserOm.getEmail(),
         targetUserOm.getPassword(),
         targetUserOm.getFirstName(),
         targetUserOm.getLastName(),
@@ -217,7 +217,7 @@ class UserServiceImplTest extends IntegrationTest {
 
     targetUserOm.setUserRole(UserRole.MANAGER);
 
-    personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
+    personaManagementFacade.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
 
     Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(), "Role must be MANAGER");
 
@@ -230,7 +230,7 @@ class UserServiceImplTest extends IntegrationTest {
     List<User> usersOmList = UserOM.withRandomNames(totalUsers);
     User userOm = usersOmList.get(0);
     User targetUserOm = usersOmList.get(1);
-    User user = personalManagementService.signUp(userOm.getEmail(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(),
         userOm.getPassword(),
         userOm.getFirstName(),
         userOm.getLastName(),
@@ -239,7 +239,7 @@ class UserServiceImplTest extends IntegrationTest {
 
     user.setUserRole(UserRole.COORDINATOR);
 
-    User targetUser = personalManagementService.signUp(targetUserOm.getEmail(),
+    User targetUser = personaManagementFacade.signUp(targetUserOm.getEmail(),
         targetUserOm.getPassword(),
         targetUserOm.getFirstName(),
         targetUserOm.getLastName(),
@@ -248,7 +248,7 @@ class UserServiceImplTest extends IntegrationTest {
 
     targetUser.setUserRole(UserRole.MANAGER);
 
-    personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR);
+    personaManagementFacade.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR);
 
     Assertions.assertEquals(UserRole.COORDINATOR, targetUser.getUserRole(), "Role must be MANAGER");
 
@@ -260,13 +260,13 @@ class UserServiceImplTest extends IntegrationTest {
     List<User> usersOmList = UserOM.withRandomNames(totalUsers);
     User userOm = usersOmList.get(0);
     User targetUserOm = usersOmList.get(1);
-    User user = personalManagementService.signUp(userOm.getEmail(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(),
         userOm.getPassword(),
         userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()),
         userOm.getDni());
-    User targetUser = personalManagementService.signUp(targetUserOm.getEmail(),
+    User targetUser = personaManagementFacade.signUp(targetUserOm.getEmail(),
         targetUserOm.getPassword(),
         targetUserOm.getFirstName(),
         targetUserOm.getLastName(),
@@ -274,7 +274,7 @@ class UserServiceImplTest extends IntegrationTest {
         targetUserOm.getDni());
 
     Assertions.assertThrows(InsufficientRolePermissionException.class,
-        () -> personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.MANAGER),
+        () -> personaManagementFacade.updateRole(user.getId(), targetUser.getId(), UserRole.MANAGER),
         "User has not enought permission");
 
   }
@@ -287,14 +287,14 @@ class UserServiceImplTest extends IntegrationTest {
     User userOm = usersOmList.get(0);
     User targetUserOm = usersOmList.get(1);
 
-    User user = personalManagementService.signUp(userOm.getEmail(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(),
         userOm.getPassword(),
         userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()),
         userOm.getDni());
 
-    User targetUser = personalManagementService.signUp(targetUserOm.getEmail(),
+    User targetUser = personaManagementFacade.signUp(targetUserOm.getEmail(),
         targetUserOm.getPassword(),
         targetUserOm.getFirstName(),
         targetUserOm.getLastName(),
@@ -303,7 +303,7 @@ class UserServiceImplTest extends IntegrationTest {
 
     user.setUserRole(UserRole.MANAGER);
     targetUser.setUserRole(UserRole.MANAGER);
-    personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
+    personaManagementFacade.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
 
     Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(),
         "Updated user role must be USER");
@@ -318,13 +318,13 @@ class UserServiceImplTest extends IntegrationTest {
     User userOm = usersOmList.get(0);
     User targetUserOm = usersOmList.get(1);
 
-    User user = personalManagementService.signUp(userOm.getEmail(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(),
         userOm.getPassword(),
         userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()),
         userOm.getDni());
-    User targetUser = personalManagementService.signUp(targetUserOm.getEmail(),
+    User targetUser = personaManagementFacade.signUp(targetUserOm.getEmail(),
         targetUserOm.getPassword(),
         targetUserOm.getFirstName(),
         targetUserOm.getLastName(),
@@ -335,7 +335,7 @@ class UserServiceImplTest extends IntegrationTest {
     targetUser.setUserRole(UserRole.MANAGER);
 
     Assertions.assertThrows(InsufficientRolePermissionException.class,
-        () -> personalManagementService.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR),
+        () -> personaManagementFacade.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR),
         "User has not enough permission");
 
   }

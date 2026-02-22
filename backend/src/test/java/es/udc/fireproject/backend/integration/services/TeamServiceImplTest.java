@@ -9,7 +9,7 @@ import es.udc.fireproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.fireproject.backend.model.exceptions.AlreadyExistException;
 import es.udc.fireproject.backend.model.exceptions.DuplicateInstanceException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
-import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
+import es.udc.fireproject.backend.model.services.personalmanagement.PersonaManagementFacade;
 import es.udc.fireproject.backend.utils.OrganizationOM;
 import es.udc.fireproject.backend.utils.OrganizationTypeOM;
 import es.udc.fireproject.backend.utils.TeamOM;
@@ -27,7 +27,7 @@ class TeamServiceImplTest extends IntegrationTest {
   private static final Long INVALID_TEAM_ID = -1L;
   private static final Long INVALID_USER_ID = -1L;
 
-  private final PersonalManagementService personalManagementService;
+  private final PersonaManagementFacade personalManagementService;
 
   @Test
   void givenNoData_whenCallFindByCode_thenReturnEmptyList() {

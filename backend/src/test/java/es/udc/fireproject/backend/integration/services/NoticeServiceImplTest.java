@@ -10,30 +10,28 @@ import es.udc.fireproject.backend.model.exceptions.NoticeCheckStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
 import es.udc.fireproject.backend.model.services.notice.NoticeService;
-import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
+import es.udc.fireproject.backend.model.services.personalmanagement.PersonaManagementFacade;
 import es.udc.fireproject.backend.utils.NoticeOm;
 import es.udc.fireproject.backend.utils.UserOM;
-import jakarta.validation.ConstraintViolationException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Point;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@RequiredArgsConstructor
-class NoticeServiceImplTest extends IntegrationTest {
+public class NoticeServiceImplTest extends IntegrationTest {
 
 
-  private final NoticeService noticeService;
-  private final PersonalManagementService personalManagementService;
+  @Autowired
+  private NoticeService noticeService;
+  @Autowired
+  private PersonaManagementFacade personaManagementFacade;
 
   @Test
   void givenValid_whenCreateNotice_thenCreatedSuccessfully() throws InstanceNotFoundException {
 
     Notice notice = NoticeOm.withDefaultValuesAndNoUser(1L);
-    notice = noticeService.create(notice.getBody(), notice.getLocation());
+    notice = noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY());
 
     Assertions.assertEquals(NoticeOm.withDefaultValuesAndNoUser(notice.getId()), notice);
 
@@ -41,24 +39,13 @@ class NoticeServiceImplTest extends IntegrationTest {
   }
 
   @Test
-  void givenInvalid_whenCreateNotice_thenConstraintViolationException() {
-    Notice notice = NoticeOm.withInvalidValues();
-    String body = notice.getBody();
-    Point location = notice.getLocation();
-    Assertions.assertThrows(ConstraintViolationException.class,
-        () -> noticeService.create(body,
-            location),
-        "ConstraintViolationException must be thrown");
-
-  }
-
-  @Test
   void givenValid_whenUpdateNotice_thenCreatedSuccessfully()
       throws NoticeUpdateStatusException, InstanceNotFoundException {
 
     Notice notice = NoticeOm.withDefaultValues();
-    notice = noticeService.create(notice.getBody(), notice.getLocation());
-    Notice noticeUpdated = noticeService.update(notice.getId(), "New body", notice.getLocation());
+    notice = noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY());
+    Notice noticeUpdated = noticeService.update(notice.getId(), "New body", notice.getLocation().getX(),
+        notice.getLocation().getY());
 
     Assertions.assertEquals(notice, noticeUpdated);
 
@@ -70,32 +57,32 @@ class NoticeServiceImplTest extends IntegrationTest {
   void givenAcceptedNotice_whenUpdateNotice_thenNoticeStatusException() {
 
     Notice notice = NoticeOm.withDefaultValues();
-    notice = noticeService.create(notice.getBody(), notice.getLocation());
+    notice = noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY());
     notice.setStatus(NoticeStatus.ACCEPTED);
 
     Notice finalNotice = notice;
     Assertions.assertThrows(NoticeUpdateStatusException.class,
-        () -> noticeService.update(finalNotice.getId(), finalNotice.getBody(), finalNotice.getLocation()),
+        () -> noticeService.update(finalNotice.getId(), finalNotice.getBody(), finalNotice.getLocation().getX(),
+            finalNotice.getLocation().getY()),
         "NoticeStatusException must be thrown");
 
   }
 
   @Test
   void givenNotCreated_whenUpdateNotice_thenInstanceNotFound() {
-    Notice notice = NoticeOm.withDefaultValues();
 
     Assertions.assertThrows(InstanceNotFoundException.class,
-        () -> noticeService.update(-1L, "", null),
+        () -> noticeService.update(-1L, "", 0, 0),
         "InstanceNotFoundException must be thrown");
 
   }
 
   @Test
   void givenValid_whenDeleteNotice_thenDeletedSuccessfully()
-      throws NoticeDeleteStatusException, InstanceNotFoundException, IOException {
+      throws NoticeDeleteStatusException, InstanceNotFoundException {
 
     Notice notice = NoticeOm.withDefaultValues();
-    notice = noticeService.create(notice.getBody(), notice.getLocation());
+    notice = noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY());
     noticeService.deleteById(notice.getId());
 
     Notice finalNotice = notice;
@@ -119,7 +106,7 @@ class NoticeServiceImplTest extends IntegrationTest {
       throws InstanceNotFoundException, NoticeCheckStatusException {
 
     Notice notice = NoticeOm.withDefaultValues();
-    notice = noticeService.create(notice.getBody(), notice.getLocation());
+    notice = noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY());
     noticeService.checkNotice(notice.getId(), NoticeStatus.ACCEPTED);
 
     Notice finalNotice = notice;
@@ -135,7 +122,7 @@ class NoticeServiceImplTest extends IntegrationTest {
 
     Notice notice = NoticeOm.withDefaultValues();
 
-    notice = noticeService.create(notice.getBody(), notice.getLocation());
+    notice = noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY());
 
     noticeService.checkNotice(notice.getId(), NoticeStatus.ACCEPTED);
     notice.setStatus(NoticeStatus.ACCEPTED);
@@ -161,7 +148,7 @@ class NoticeServiceImplTest extends IntegrationTest {
 
     Notice notice = NoticeOm.withDefaultValues();
 
-    notice = noticeService.create(notice.getBody(), notice.getLocation());
+    notice = noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY());
 
     Notice finalNotice = notice;
     notice.setStatus(NoticeStatus.ACCEPTED);
@@ -175,16 +162,19 @@ class NoticeServiceImplTest extends IntegrationTest {
   void givenValidData_whenFindByUserId_thenNoticesFound() throws InstanceNotFoundException, DuplicateInstanceException {
     Notice notice = NoticeOm.withDefaultValues();
     User userOM = UserOM.withDefaultValues();
-    User user = personalManagementService.signUp(userOM.getEmail(), userOM.getPassword(), userOM.getFirstName(),
+    User user = personaManagementFacade.signUp(userOM.getEmail(), userOM.getPassword(), userOM.getFirstName(),
         userOM.getLastName(),
         String.valueOf(userOM.getPhoneNumber()), userOM.getDni());
 
     List<Notice> noticeList = new ArrayList<>();
-    noticeList.add(noticeService.create(notice.getBody(), notice.getLocation(), user.getId()));
+    noticeList.add(
+        noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY(), user.getId()));
     notice.setBody("Body2");
-    noticeList.add(noticeService.create(notice.getBody(), notice.getLocation(), user.getId()));
+    noticeList.add(
+        noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY(), user.getId()));
     notice.setBody("Body3");
-    noticeList.add(noticeService.create(notice.getBody(), notice.getLocation(), user.getId()));
+    noticeList.add(
+        noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY(), user.getId()));
 
     Assertions.assertTrue(noticeService.findByUserId(user.getId()).containsAll(noticeList), "List must be the same");
   }
@@ -194,16 +184,19 @@ class NoticeServiceImplTest extends IntegrationTest {
 
     Notice notice = NoticeOm.withDefaultValues();
     User userOm = UserOM.withDefaultValues();
-    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+    User user = personaManagementFacade.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
     List<Notice> noticeList = new ArrayList<>();
-    noticeList.add(noticeService.create(notice.getBody(), notice.getLocation(), user.getId()));
+    noticeList.add(
+        noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY(), user.getId()));
     notice.setBody("Body2");
-    noticeList.add(noticeService.create(notice.getBody(), notice.getLocation(), user.getId()));
+    noticeList.add(
+        noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY(), user.getId()));
     notice.setBody("Body3");
-    noticeList.add(noticeService.create(notice.getBody(), notice.getLocation(), user.getId()));
+    noticeList.add(
+        noticeService.create(notice.getBody(), notice.getLocation().getX(), notice.getLocation().getY(), user.getId()));
 
     Assertions.assertTrue(noticeService.findAll().containsAll(noticeList), "List must be the same");
 

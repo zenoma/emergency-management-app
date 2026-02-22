@@ -24,7 +24,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,11 +41,15 @@ public class NoticeServiceImpl implements NoticeService {
   private final QuadrantRepository quadrantRepository;
 
   @Override
-  public Notice create(String body, Point location) {
+  public Notice create(String body, double lon, double lat) {
+
     Notice notice = new Notice();
     notice.setStatus(NoticeStatus.PENDING);
     notice.setBody(body);
+
+    Point location = locationFromCoordinates(lon, lat);
     notice.setLocation(location);
+
     notice.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     notice.setImageList(Collections.emptyList());
 
@@ -52,11 +59,15 @@ public class NoticeServiceImpl implements NoticeService {
   }
 
   @Override
-  public Notice create(String body, Point location, Long userId) throws InstanceNotFoundException {
+  public Notice create(String body, double lon, double lat, Long userId) throws InstanceNotFoundException {
+
     Notice notice = new Notice();
     notice.setStatus(NoticeStatus.PENDING);
     notice.setBody(body);
+
+    Point location = locationFromCoordinates(lon, lat);
     notice.setLocation(location);
+
     notice.setImageList(Collections.emptyList());
 
     User user = userRepository.findById(userId)
@@ -71,7 +82,7 @@ public class NoticeServiceImpl implements NoticeService {
   }
 
   @Override
-  public Notice update(Long id, String body, Point location)
+  public Notice update(Long id, String body, double lon, double lat)
       throws NoticeUpdateStatusException, InstanceNotFoundException {
 
     Notice notice = noticeRepository.findById(id)
@@ -81,6 +92,8 @@ public class NoticeServiceImpl implements NoticeService {
       throw new NoticeUpdateStatusException(notice.getId(), notice.getStatus().toString());
     }
     notice.setBody(body);
+
+    Point location = locationFromCoordinates(lon, lat);
     notice.setLocation(location);
 
     ConstraintValidator.validate(notice);
@@ -178,4 +191,9 @@ public class NoticeServiceImpl implements NoticeService {
     return quadrantRepository.findByContainingPoint(location);
   }
 
+  private Point locationFromCoordinates(double lon, double lat) {
+    GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 25829);
+    Coordinate coordinate = new Coordinate(lon, lat);
+    return geometryFactory.createPoint(coordinate);
+  }
 }

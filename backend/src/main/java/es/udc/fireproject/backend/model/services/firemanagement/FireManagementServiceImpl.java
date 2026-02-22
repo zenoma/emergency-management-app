@@ -31,15 +31,15 @@ public class FireManagementServiceImpl implements FireManagementService {
 
   public static final String QUADRANT_NOT_FOUND = "Quadrant not found";
   public static final String FIRE_NOT_FOUND = "Fire not found";
-  public static final String TEAM_NOT_FOUND = "Team not found";
-  public static final String VEHICLE_NOT_FOUND = "Vehicle not found";
+  private static final String TEAM_NOT_FOUND = "Team not found";
+  private static final String VEHICLE_NOT_FOUND = "Vehicle not found";
 
-
-  private final QuadrantRepository quadrantRepository;
-  private final FireRepository fireRepository;
-  private final TeamRepository teamRepository;
-  private final VehicleRepository vehicleRepository;
   private final LogManagementService logManagementService;
+
+  private final FireRepository fireRepository;
+  private final VehicleRepository vehicleRepository;
+  private final TeamRepository teamRepository;
+  private final QuadrantRepository quadrantRepository;
 
   // QUADRANT SERVICES
   @Override
@@ -112,7 +112,7 @@ public class FireManagementServiceImpl implements FireManagementService {
 
   @Override
   public Fire extinguishFire(Long id)
-      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException, AlreadyDismantledException {
+      throws InstanceNotFoundException, ExtinguishedFireException, AlreadyDismantledException {
 
     Fire fire = fireRepository.findById(id).orElseThrow(() -> new InstanceNotFoundException(FIRE_NOT_FOUND, id));
 
@@ -201,6 +201,7 @@ public class FireManagementServiceImpl implements FireManagementService {
   public Team deployTeam(Long teamId, Integer gid) throws InstanceNotFoundException, AlreadyDismantledException {
     Team team = teamRepository.findById(teamId)
         .orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, teamId));
+
     if (team.getDismantleAt() != null) {
       throw new AlreadyDismantledException(Team.class.getSimpleName(), team.getCode());
     }
@@ -223,6 +224,7 @@ public class FireManagementServiceImpl implements FireManagementService {
   public Team retractTeam(Long teamId) throws InstanceNotFoundException, AlreadyDismantledException {
     Team team = teamRepository.findById(teamId)
         .orElseThrow(() -> new InstanceNotFoundException(TEAM_NOT_FOUND, teamId));
+
     if (team.getDismantleAt() != null) {
       throw new AlreadyDismantledException(Team.class.getSimpleName(), team.getCode());
     }

@@ -9,12 +9,12 @@ import es.udc.fireproject.backend.rest.dtos.NoticeResponseDto;
 import es.udc.fireproject.backend.rest.dtos.NoticeResponseDto.StatusEnum;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
+@RequiredArgsConstructor
 public class NoticeMapper {
-
-  private NoticeMapper() {
-  }
-
 
   public static NoticeResponseDto toNoticeDto(Notice notice, Quadrant quadrant) {
     List<ImageDto> imageDtoList = new ArrayList<>();
