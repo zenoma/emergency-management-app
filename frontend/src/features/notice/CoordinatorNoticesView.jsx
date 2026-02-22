@@ -13,6 +13,7 @@ import { DataGrid, GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDe
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useDeleteNoticeMutation, useGetNoticesQuery, useUpdateNoticeMutation } from "../../api/noticeApi";
+import dayjs from "dayjs";
 
 var URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
@@ -119,7 +120,8 @@ export default function CoordinatorNoticesView() {
     {
       field: 'body',
       headerName: t("notice-body"),
-      width: 300,
+      flex: 2,
+      minWidth: 220,
       renderCell: (params) => (
         <Typography variant="subtitle1" gutterBottom>
           {params.value}
@@ -129,7 +131,8 @@ export default function CoordinatorNoticesView() {
     {
       field: 'status',
       headerName: t("notice-status"),
-      width: 100,
+      flex: 0.6,
+      minWidth: 90,
       renderCell: (params) => (
         <Typography variant="body2" color="text.secondary" sx={{ color: getStatusColor(params.row.status) }}>
           {params.row.status}
@@ -139,7 +142,8 @@ export default function CoordinatorNoticesView() {
     {
       field: 'email',
       headerName: t("email"),
-      width: 200,
+      flex: 1.2,
+      minWidth: 160,
       valueGetter: (params) => params.row.userDto ? params.row.userDto.email : '',
       renderCell: (params) => {
         return params.row.userDto ? (
@@ -152,7 +156,8 @@ export default function CoordinatorNoticesView() {
     {
       field: 'quadrantId',
       headerName: t("notice-quadrant-id"),
-      width: 120,
+      flex: 0.6,
+      minWidth: 90,
       renderCell: (params) => (
         <Typography variant="body2" color="text.secondary">
           {params.value || '-'}
@@ -162,7 +167,8 @@ export default function CoordinatorNoticesView() {
     {
       field: 'quadrantName',
       headerName: t("notice-quadrant"),
-      width: 200,
+      flex: 1,
+      minWidth: 140,
       renderCell: (params) => (
         <Typography variant="body2" color="text.secondary">
           {params.value || '-'}
@@ -170,9 +176,21 @@ export default function CoordinatorNoticesView() {
       ),
     },
     {
+      field: 'createdAt',
+      headerName: t("created-at"),
+      flex: 0.9,
+      minWidth: 150,
+      renderCell: (params) => (
+        <Typography variant="body2" color="text.secondary">
+          {params.value ? dayjs(params.value).format("DD-MM-YYYY HH:mm:ss") : '-'}
+        </Typography>
+      ),
+    },
+    {
       field: 'image',
       headerName: t("notice-image"),
-      width: 150,
+      flex: 0.8,
+      minWidth: 120,
       renderCell: (params) => {
         if (params.row.imageDtoList && params.row.imageDtoList[0]) {
           return (
@@ -191,10 +209,11 @@ export default function CoordinatorNoticesView() {
     {
       field: "notice-options",
       headerName: t("notice-options"),
-      width: 200,
+      flex: 1,
+      minWidth: 180,
       renderCell: (params) => (
         <Box onClick={(e) => e.stopPropagation()}
-          sx={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} >
+          sx={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }} >
           <Button
             sx={{ borderRadius: "20px" }}
             variant="contained"
@@ -249,7 +268,7 @@ export default function CoordinatorNoticesView() {
       sx={{
         display: "inline-block",
         padding: "10px",
-        minWidth: "1300px",
+        minWidth: "1700px",
       }}
       variant="outlined"
     >
@@ -265,7 +284,7 @@ export default function CoordinatorNoticesView() {
       ) : isLoading ? (
         <CircularProgress />
       ) : data ? (
-        <div style={{ height: 550, width: '100%' }}>
+        <div style={{ height: 650, width: '1700px' }}>
           <DataGrid
             components={{ Toolbar: CustomToolbar, loadingOverlay: CircularProgress }}
             rows={data}

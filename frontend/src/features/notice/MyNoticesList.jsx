@@ -6,6 +6,7 @@ import { CircularProgress, Dialog, DialogContent, Paper, Typography } from "@mui
 import { selectToken, selectUser } from "../user/login/LoginSlice";
 
 import { DataGrid } from '@mui/x-data-grid';
+import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { useGetNoticesQuery } from "../../api/noticeApi";
 
@@ -102,6 +103,17 @@ export default function MyNoticesList() {
       renderCell: (params) => (
         <Typography variant="body2" color="text.secondary">
           {params.value || '-'}
+        </Typography>
+      ),
+    },
+    {
+      field: 'createdAt',
+      headerName: t("created-at"),
+      flex: 1,
+      minWidth: 140,
+      renderCell: (params) => (
+        <Typography variant="body2" color="text.secondary">
+          {params.value ? dayjs(params.value).format("DD-MM-YYYY HH:mm:ss") : '-'}
         </Typography>
       ),
     },
