@@ -14,7 +14,6 @@ import es.udc.fireproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.fireproject.backend.model.exceptions.NoticeUpdateStatusException;
 import es.udc.fireproject.backend.model.services.notice.NoticeServiceImpl;
 import es.udc.fireproject.backend.utils.NoticeOm;
-import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -48,7 +47,8 @@ class NoticeServiceImplTest {
   @Test
   void givenValid_whenCreateNotice_thenCreatedSuccessfully() {
 
-    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation().getX(),
+        defaultNotice.getLocation().getY());
 
     Assertions.assertEquals(NoticeOm.withDefaultValues(), createdNotice);
 
@@ -57,21 +57,13 @@ class NoticeServiceImplTest {
   }
 
   @Test
-  void givenInvalid_whenCreateNotice_thenConstraintViolationException() {
-    String body = defaultNotice.getBody();
-    Assertions.assertThrows(ConstraintViolationException.class,
-        () -> noticeService.create(body,
-            null),
-        "ConstraintViolationException must be thrown");
-
-  }
-
-  @Test
   void givenValid_whenUpdateNotice_thenCreatedSuccessfully()
       throws NoticeUpdateStatusException, InstanceNotFoundException {
 
-    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
-    Notice noticeUpdated = noticeService.update(createdNotice.getId(), "New body", createdNotice.getLocation());
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation().getX(),
+        defaultNotice.getLocation().getY());
+    Notice noticeUpdated = noticeService.update(createdNotice.getId(), "New body", createdNotice.getLocation().getX(),
+        createdNotice.getLocation().getY());
 
     Assertions.assertEquals(createdNotice, noticeUpdated);
 
@@ -82,13 +74,15 @@ class NoticeServiceImplTest {
   @Test
   void givenAcceptedNotice_whenUpdateNotice_thenNoticeStatusException() {
 
-    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation().getX(),
+        defaultNotice.getLocation().getY());
     createdNotice.setStatus(NoticeStatus.ACCEPTED);
     when(noticeRepository.findById(any())).thenReturn(Optional.of(createdNotice));
 
     Notice finalNotice = createdNotice;
     Assertions.assertThrows(NoticeUpdateStatusException.class,
-        () -> noticeService.update(finalNotice.getId(), finalNotice.getBody(), finalNotice.getLocation()),
+        () -> noticeService.update(finalNotice.getId(), finalNotice.getBody(), finalNotice.getLocation().getX(),
+            finalNotice.getLocation().getY()),
         "NoticeStatusException must be thrown");
 
   }
@@ -98,7 +92,8 @@ class NoticeServiceImplTest {
 
     when(noticeRepository.findById(any())).thenReturn(Optional.empty());
     Assertions.assertThrows(InstanceNotFoundException.class,
-        () -> noticeService.update(defaultNotice.getId(), defaultNotice.getBody(), defaultNotice.getLocation()),
+        () -> noticeService.update(defaultNotice.getId(), defaultNotice.getBody(), defaultNotice.getLocation().getX(),
+            defaultNotice.getLocation().getY()),
         "InstanceNotFoundException must be thrown");
 
   }
@@ -107,7 +102,8 @@ class NoticeServiceImplTest {
   void givenValid_whenDeleteNotice_thenDeletedSuccessfully()
       throws InstanceNotFoundException, NoticeDeleteStatusException, IOException {
 
-    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation().getX(),
+        defaultNotice.getLocation().getY());
     noticeService.deleteById(createdNotice.getId());
 
     when(noticeRepository.findById(any())).thenReturn(Optional.empty());
@@ -146,7 +142,8 @@ class NoticeServiceImplTest {
   void givenValidNotice_whenCheckNotice_thenStatusChanged()
       throws NoticeCheckStatusException, InstanceNotFoundException {
 
-    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation().getX(),
+        defaultNotice.getLocation().getY());
 
     noticeService.checkNotice(createdNotice.getId(), NoticeStatus.ACCEPTED);
     createdNotice.setStatus(NoticeStatus.ACCEPTED);
@@ -172,7 +169,8 @@ class NoticeServiceImplTest {
   @Test
   void givenAcceptedNotice_whenCheckNotice_thenNoticeCheckStatusException() {
 
-    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation());
+    Notice createdNotice = noticeService.create(defaultNotice.getBody(), defaultNotice.getLocation().getX(),
+        defaultNotice.getLocation().getY());
 
     createdNotice.setStatus(NoticeStatus.ACCEPTED);
 

@@ -14,11 +14,12 @@ import org.locationtech.jts.geom.Point;
 
 public interface NoticeService {
 
-  Notice create(String body, Point location);
+  Notice create(String body, double lon, double lat);
 
-  Notice create(String body, Point location, Long userId) throws InstanceNotFoundException;
+  Notice create(String body, double lon, double lat, Long userId) throws InstanceNotFoundException;
 
-  Notice update(Long id, String body, Point location) throws NoticeUpdateStatusException, InstanceNotFoundException;
+  Notice update(Long id, String body, double lon, double lat)
+      throws NoticeUpdateStatusException, InstanceNotFoundException;
 
   void deleteById(Long noticeId) throws InstanceNotFoundException, NoticeDeleteStatusException;
 

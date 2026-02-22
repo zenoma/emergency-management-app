@@ -3,6 +3,7 @@ package es.udc.fireproject.backend.rest.config;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -28,6 +29,9 @@ public class SecurityConfig {
   private static final String USER_ROLE = "USER";
 
   private final JwtGenerator jwtGenerator;
+
+  @Value("${app.cors.allowed-origins:}")
+  private String allowedOriginsProperty;
 
 
   @Bean
@@ -125,7 +129,17 @@ public class SecurityConfig {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
     config.setAllowCredentials(true);
-    config.addAllowedOrigin("http://localhost:3000");
+    if (allowedOriginsProperty == null || allowedOriginsProperty.isBlank()) {
+      config.addAllowedOriginPattern("*");
+    } else {
+      String[] origins = allowedOriginsProperty.split(",");
+      for (String origin : origins) {
+        String o = origin.trim();
+        if (!o.isEmpty()) {
+          config.addAllowedOrigin(o);
+        }
+      }
+    }
     config.addAllowedHeader("*");
     config.addAllowedMethod("*");
 

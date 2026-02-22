@@ -4,7 +4,7 @@ import es.udc.fireproject.backend.model.entities.team.Team;
 import es.udc.fireproject.backend.model.entities.user.User;
 import es.udc.fireproject.backend.model.exceptions.PermissionException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementService;
-import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
+import es.udc.fireproject.backend.model.services.personalmanagement.PersonaManagementFacade;
 import es.udc.fireproject.backend.rest.config.JwtInfo;
 import es.udc.fireproject.backend.rest.config.JwtUtils;
 import es.udc.fireproject.backend.rest.dtos.TeamAddDeleteUserRequestDto;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TeamsController implements TeamsApi {
 
-  private final PersonalManagementService personalManagementService;
+  private final PersonaManagementFacade personaManagementFacade;
   private final FireManagementService fireManagementService;
 
   @Override
@@ -35,15 +35,15 @@ public class TeamsController implements TeamsApi {
     List<TeamResponseDto> teamResponseDtoList = new ArrayList<>();
 
     if (code != null) {
-      for (Team team : personalManagementService.findTeamByCode(code)) {
+      for (Team team : personaManagementFacade.findTeamByCode(code)) {
         teamResponseDtoList.add(TeamMapper.toTeamDto(team));
       }
     } else if (organizationId != null) {
-      for (Team team : personalManagementService.findTeamsByOrganizationId(organizationId)) {
+      for (Team team : personaManagementFacade.findTeamsByOrganizationId(organizationId)) {
         teamResponseDtoList.add(TeamMapper.toTeamDto(team));
       }
     } else {
-      for (Team team : personalManagementService.findTeamByCode("")) {
+      for (Team team : personaManagementFacade.findTeamByCode("")) {
         teamResponseDtoList.add(TeamMapper.toTeamDto(team));
       }
     }
@@ -53,7 +53,7 @@ public class TeamsController implements TeamsApi {
 
   @Override
   public ResponseEntity<TeamResponseDto> postTeam(TeamRequestDto teamRequestDto) {
-    Team team = personalManagementService.createTeam(
+    Team team = personaManagementFacade.createTeam(
         teamRequestDto.getCode(),
         teamRequestDto.getOrganizationId()
     );
@@ -66,11 +66,11 @@ public class TeamsController implements TeamsApi {
     List<TeamResponseDto> teamResponseDtoList = new ArrayList<>();
 
     if (organizationId != null) {
-      for (Team team : personalManagementService.findActiveTeamsByOrganizationId(organizationId)) {
+      for (Team team : personaManagementFacade.findActiveTeamsByOrganizationId(organizationId)) {
         teamResponseDtoList.add(TeamMapper.toTeamDto(team));
       }
     } else {
-      for (Team team : personalManagementService.findAllActiveTeams()) {
+      for (Team team : personaManagementFacade.findAllActiveTeams()) {
         teamResponseDtoList.add(TeamMapper.toTeamDto(team));
       }
     }
@@ -88,26 +88,26 @@ public class TeamsController implements TeamsApi {
 
     final Long userId = jwtInfo.get().userId();
 
-    final Team team = personalManagementService.findTeamByUserId(userId);
+    final Team team = personaManagementFacade.findTeamByUserId(userId);
     return ResponseEntity.ok(List.of(TeamMapper.toTeamDto(team)));
   }
 
   @Override
   public ResponseEntity<TeamResponseDto> getTeamById(Long id) {
-    final TeamResponseDto teamResponseDto = TeamMapper.toTeamDto(personalManagementService.findTeamById(id));
+    final TeamResponseDto teamResponseDto = TeamMapper.toTeamDto(personaManagementFacade.findTeamById(id));
     return ResponseEntity.ok(teamResponseDto);
   }
 
   @Override
   public ResponseEntity<TeamResponseDto> putTeamById(Long id, TeamRequestDto teamRequestDto) {
 
-    final Team team = personalManagementService.updateTeam(id, teamRequestDto.getCode());
+    final Team team = personaManagementFacade.updateTeam(id, teamRequestDto.getCode());
     return ResponseEntity.ok(TeamMapper.toTeamDto(team));
   }
 
   @Override
   public ResponseEntity<Void> deleteTeamById(Long id) {
-    personalManagementService.dismantleTeamById(id);
+    personaManagementFacade.dismantleTeamById(id);
     return ResponseEntity.noContent().build();
   }
 
@@ -115,7 +115,7 @@ public class TeamsController implements TeamsApi {
   public ResponseEntity<Void> postAddUserToTeamById(Long id,
       TeamAddDeleteUserRequestDto teamAddDeleteUserRequestDto) {
 
-    personalManagementService.addMember(id, teamAddDeleteUserRequestDto.getMemberId());
+    personaManagementFacade.addMember(id, teamAddDeleteUserRequestDto.getMemberId());
 
     return ResponseEntity.noContent().build();
   }
@@ -123,7 +123,7 @@ public class TeamsController implements TeamsApi {
   @Override
   public ResponseEntity<Void> postDeleteUserToTeamById(Long id,
       TeamAddDeleteUserRequestDto teamAddDeleteUserRequestDto) {
-    personalManagementService.deleteMember(id, teamAddDeleteUserRequestDto.getMemberId());
+    personaManagementFacade.deleteMember(id, teamAddDeleteUserRequestDto.getMemberId());
 
     return ResponseEntity.noContent().build();
   }
@@ -132,7 +132,7 @@ public class TeamsController implements TeamsApi {
   public ResponseEntity<List<UserDto>> getUsersOfTeamById(Long id) {
 
     List<UserDto> userDtoList = new ArrayList<>();
-    for (User user : personalManagementService.findAllUsersByTeamId(id)) {
+    for (User user : personaManagementFacade.findAllUsersByTeamId(id)) {
       userDtoList.add(UserMapper.toUserDto(user));
     }
 

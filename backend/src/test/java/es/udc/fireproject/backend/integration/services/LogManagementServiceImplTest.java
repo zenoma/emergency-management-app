@@ -13,7 +13,7 @@ import es.udc.fireproject.backend.model.exceptions.ExtinguishedFireException;
 import es.udc.fireproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.fireproject.backend.model.services.firemanagement.FireManagementServiceImpl;
 import es.udc.fireproject.backend.model.services.logsmanagement.LogManagementService;
-import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementServiceImpl;
+import es.udc.fireproject.backend.model.services.personalmanagement.PersonaManagementFacade;
 import es.udc.fireproject.backend.utils.FireOM;
 import es.udc.fireproject.backend.utils.OrganizationOM;
 import es.udc.fireproject.backend.utils.OrganizationTypeOM;
@@ -32,7 +32,7 @@ class LogManagementServiceImplTest extends IntegrationTest {
 
   private final LogManagementService logManagementService;
   private final FireManagementServiceImpl fireManagementService;
-  private final PersonalManagementServiceImpl personalManagementService;
+  private final PersonaManagementFacade personalManagementService;
 
   @Test
   void givenNoData_whenFindAllFireQuadrantLogs_thenReturnNotEmptyList() {

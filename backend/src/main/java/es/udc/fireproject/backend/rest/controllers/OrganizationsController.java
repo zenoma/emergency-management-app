@@ -3,7 +3,7 @@ package es.udc.fireproject.backend.rest.controllers;
 import es.udc.fireproject.backend.model.entities.organization.Organization;
 import es.udc.fireproject.backend.model.entities.organization.OrganizationType;
 import es.udc.fireproject.backend.model.exceptions.DomainException;
-import es.udc.fireproject.backend.model.services.personalmanagement.PersonalManagementService;
+import es.udc.fireproject.backend.model.services.personalmanagement.PersonaManagementFacade;
 import es.udc.fireproject.backend.rest.dtos.OrganizationRequestDto;
 import es.udc.fireproject.backend.rest.dtos.OrganizationResponseDto;
 import es.udc.fireproject.backend.rest.dtos.OrganizationUpdateRequestDto;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrganizationsController implements OrganizationsApi {
 
-  private final PersonalManagementService personalManagementService;
+  private final PersonaManagementFacade personaManagementFacade;
 
   @Override
   public ResponseEntity<List<OrganizationResponseDto>> getOrganizations(String nameOrCode,
@@ -27,16 +27,16 @@ public class OrganizationsController implements OrganizationsApi {
 
     List<OrganizationResponseDto> organizationResponseDtos = new ArrayList<>();
     if (nameOrCode != null) {
-      for (Organization organization : personalManagementService.findOrganizationByNameOrCode(nameOrCode)) {
+      for (Organization organization : personaManagementFacade.findOrganizationByNameOrCode(nameOrCode)) {
         organizationResponseDtos.add(OrganizationMapper.toOrganizationResponseDto(organization));
       }
     } else if (organizationTypeName != null) {
-      for (Organization organization : personalManagementService.findOrganizationByOrganizationTypeName(
+      for (Organization organization : personaManagementFacade.findOrganizationByOrganizationTypeName(
           organizationTypeName)) {
         organizationResponseDtos.add(OrganizationMapper.toOrganizationResponseDto(organization));
       }
     } else {
-      for (Organization organization : personalManagementService.findAllOrganizations()) {
+      for (Organization organization : personaManagementFacade.findAllOrganizations()) {
         organizationResponseDtos.add(OrganizationMapper.toOrganizationResponseDto(organization));
       }
     }
@@ -47,7 +47,7 @@ public class OrganizationsController implements OrganizationsApi {
   public ResponseEntity<OrganizationResponseDto> getOrganizationById(Long id) {
 
     final OrganizationResponseDto organizationResponseDto =
-        OrganizationMapper.toOrganizationResponseDto(personalManagementService.findOrganizationById(id));
+        OrganizationMapper.toOrganizationResponseDto(personaManagementFacade.findOrganizationById(id));
 
     return ResponseEntity.ok(organizationResponseDto);
   }
@@ -55,7 +55,7 @@ public class OrganizationsController implements OrganizationsApi {
   @Override
   public ResponseEntity<Void> deleteByOrganizationId(Long id) {
     try {
-      personalManagementService.deleteOrganizationById(id);
+      personaManagementFacade.deleteOrganizationById(id);
     } catch (DataIntegrityViolationException e) {
       throw new DomainException(e.getMessage(), String.valueOf(id));
     }
@@ -68,10 +68,10 @@ public class OrganizationsController implements OrganizationsApi {
 
     Organization organization = OrganizationMapper.toOrganization(organizationRequestDto);
 
-    OrganizationType organizationType = personalManagementService.findOrganizationTypeById(
+    OrganizationType organizationType = personaManagementFacade.findOrganizationTypeById(
         organization.getOrganizationType().getId());
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personaManagementFacade.createOrganization(organization);
 
     OrganizationResponseDto organizationResponseDto = OrganizationMapper.toOrganizationResponseDto(organization);
     return ResponseEntity.ok(organizationResponseDto);
@@ -83,7 +83,7 @@ public class OrganizationsController implements OrganizationsApi {
 
     Organization organization = OrganizationMapper.toOrganization(organizationUpdateRequestDto);
 
-    final Organization updatedOrganization = personalManagementService.updateOrganization(id, organization.getName(),
+    final Organization updatedOrganization = personaManagementFacade.updateOrganization(id, organization.getName(),
         organization.getCode(),
         organization.getHeadquartersAddress(),
         organization.getLocation());
