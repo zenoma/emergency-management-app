@@ -37,7 +37,9 @@ class MainActivity : AppCompatActivity() {
         fun navControllerSave(nc: androidx.navigation.NavController) = nc.currentDestination?.id
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val isMap = destination.id == R.id.nav_map
-            binding.appBarMain.toolbar.visibility = if (isMap) View.GONE else View.VISIBLE
+            // Always show top toolbar, including on map view (user requested)
+            binding.appBarMain.toolbar.visibility = View.VISIBLE
+            // Keep FAB hidden on map to avoid map-specific clutter
             binding.appBarMain.fab?.visibility = if (isMap) View.GONE else View.VISIBLE
         }
 
@@ -94,16 +96,25 @@ class MainActivity : AppCompatActivity() {
                 val email = prefs.getString("user_email", getString(R.string.nav_header_subtitle))
 
                 if (token.isNullOrBlank()) {
-                    // No logged user: show explicit login hint and icon
-                    headerTitle?.text = getString(R.string.nav_header_login_title)
-                    headerSubtitle?.text = getString(R.string.nav_header_login_subtitle)
-                    headerImage?.setImageResource(android.R.drawable.ic_dialog_email)
-
-                    // clicking header opens LoginActivity (make whole header clickable)
-                    header.setOnClickListener {
-                        val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                        startActivity(intent)
-                        binding.drawerLayout.closeDrawers()
+                    // No logged user: keep header visible (login affordance) but clear menu items
+                    try {
+                        it.menu.clear()
+                    } catch (e: Exception) {
+                        android.util.Log.w("MainActivityNav", "Failed to clear nav menu for unauthenticated user", e)
+                    }
+                    try {
+                        // show login prompt in header and make it clickable to open LoginActivity
+                        header.visibility = View.VISIBLE
+                        headerTitle?.text = getString(R.string.nav_header_login_title)
+                        headerSubtitle?.text = getString(R.string.nav_header_login_subtitle)
+                        headerImage?.setImageResource(android.R.drawable.ic_dialog_email)
+                        header.setOnClickListener {
+                            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                            startActivity(intent)
+                            binding.drawerLayout.closeDrawers()
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.w("MainActivityNav", "Failed to setup header for unauthenticated user", e)
                     }
                 } else {
                     // Show stored profile info and keep existing profile navigation
@@ -131,6 +142,76 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.appBarMain.contentMain.bottomNavView?.setupWithNavController(navController)
+
+        // Adjust bottom navigation items visibility depending on user role
+        try {
+            val bottomNav = binding.appBarMain.contentMain.bottomNavView
+            val prefsRole = this.getSharedPreferences("app_prefs", MODE_PRIVATE).getString("user_role", null)
+            val tokenPresent = this.getSharedPreferences("app_prefs", MODE_PRIVATE).getString("jwt_token", null)
+
+            if (tokenPresent.isNullOrBlank()) {
+                // no session: allow only map view in bottom nav
+                bottomNav?.visibility = View.VISIBLE
+                bottomNav?.menu?.findItem(R.id.nav_map)?.isVisible = true
+                bottomNav?.menu?.findItem(R.id.nav_send_notice)?.isVisible = true
+                bottomNav?.menu?.findItem(R.id.nav_organizations)?.isVisible = false
+                bottomNav?.menu?.findItem(R.id.nav_my_notices)?.isVisible = false
+
+                // navigate to map as the allowed unauthenticated view
+                try {
+                    val navOptions = androidx.navigation.NavOptions.Builder()
+                        .setLaunchSingleTop(true)
+                        .setPopUpTo(navController.graph.startDestinationId, true)
+                        .build()
+                    navController.navigate(R.id.nav_map, null, navOptions)
+                } catch (e: Exception) {
+                    android.util.Log.w("MainActivityNav", "Failed to navigate to map for unauthenticated user", e)
+                }
+            } else {
+                // role-based visibility map (mirror frontend rules)
+                val role = prefsRole ?: "USER"
+
+                // Drawer/menu visibility mapping (uses same rules as frontend)
+                val canOrganizations = role in setOf("COORDINATOR", "MANAGER", "USER")
+                val canMyTeam = role in setOf("COORDINATOR", "MANAGER", "USER")
+                val canMyNotices = role in setOf("COORDINATOR", "MANAGER", "USER")
+                val canFireManagement = role in setOf("COORDINATOR", "MANAGER")
+                val canUserManagement = role == "COORDINATOR"
+                val canNoticeManagement = role == "COORDINATOR"
+
+                // Adjust drawer items
+                try {
+                    val navView = binding.navView
+                    val menu = navView.menu
+                    // If role is null/empty -> treat as absence of role -> empty drawer
+                    if (prefsRole.isNullOrBlank()) {
+                        // hide all items
+                        for (i in 0 until menu.size()) {
+                            menu.getItem(i).isVisible = false
+                        }
+                    } else {
+                        menu.findItem(R.id.nav_organizations)?.isVisible = canOrganizations
+                        menu.findItem(R.id.nav_my_team)?.isVisible = canMyTeam
+                        menu.findItem(R.id.nav_my_notices)?.isVisible = canMyNotices
+                        menu.findItem(R.id.nav_fire_management)?.isVisible = canFireManagement
+                        menu.findItem(R.id.nav_user_management)?.isVisible = canUserManagement
+                        menu.findItem(R.id.nav_notice_management)?.isVisible = canNoticeManagement
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.w("MainActivityNav", "Failed to adjust drawer visibility", e)
+                }
+
+                // Bottom nav must always show these three items for logged in users
+                bottomNav?.visibility = View.VISIBLE
+                bottomNav?.menu?.findItem(R.id.nav_map)?.isVisible = true
+                bottomNav?.menu?.findItem(R.id.nav_send_notice)?.isVisible = true
+                bottomNav?.menu?.findItem(R.id.nav_organizations)?.isVisible = true
+                // hide other items
+                bottomNav?.menu?.findItem(R.id.nav_my_notices)?.isVisible = false
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("MainActivityNav", "Failed to adjust bottom nav visibility", e)
+        }
 
         // If a JWT token is stored, attempt to refresh profile info from backend
         val prefs = this.getSharedPreferences("app_prefs", MODE_PRIVATE)

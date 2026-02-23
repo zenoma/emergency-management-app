@@ -10,6 +10,10 @@
     <string name="menu_my_team">My team</string>
     <string name="menu_my_notices">My notices</string>
     <string name="menu_map">Map</string>
+    <string name="menu_send_notice">Send Notice</string>
+    <string name="menu_fire_management">Fire Management</string>
+    <string name="menu_user_management">User Management</string>
+    <string name="menu_notice_management">Notice Management</string>
 
     <string name="fab_content_description">Represents a view to invoke an action</string>
     <string name="profile">Profile</string>
