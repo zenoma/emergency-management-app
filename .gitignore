@@ -21,3 +21,34 @@ pa-project-backend.iml
 
 # VSCode configuration
 .vscode/
+
+
+# Android Studio / IntelliJ
+*.iml
+.idea/
+
+# Gradle
+.gradle/
+build/
+
+# Local configuration
+local.properties
+
+# Native build
+.externalNativeBuild/
+.cxx/
+
+# Captures (Android Studio screen recordings)
+/captures
+
+# macOS
+.DS_Store
+
+# Keystore files
+*.jks
+*.keystore
+*.keystore.*
+
+# Misc
+/app/build/
+

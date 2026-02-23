@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Emergency App</string>
+    <string name="navigation_drawer_open">Abrir menú</string>
+    <string name="navigation_drawer_close">Cerrar menú</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Cabecera de navegación</string>
+
+    <string name="menu_organizations">Organizaciones</string>
+    <string name="menu_my_team">Mi equipo</string>
+    <string name="menu_my_notices">Mis avisos</string>
+
+    <string name="menu_map">Mapa</string>
+    <string name="menu_user_management">Gestión usuarios</string>
+    <string name="menu_notice_management">Gestión avisos</string>
+    <string name="send_notice_error_no_location">Ubicación no disponible</string>
+    <string name="fab_content_description">Representa una vista para invocar una acción</string>
+    <string name="profile">Perfil</string>
+    <string name="select_language">Selecciona idioma</string>
+    <string name="profile_dni_format">DNI: %1$s</string>
+    <string name="profile_phone_format">Teléfono: %1$s</string>
+    <string name="profile_role_format">Rol: %1$s</string>
+    <string name="fill_credentials">Por favor introduce email y contraseña</string>
+    <string name="login_success">Login exitoso</string>
+    <string name="login_failed">Login fallido: compruebe credenciales</string>
+    <string name="nav_header_login_title">Por favor haz log in</string>
+    <string name="nav_header_login_subtitle">Pulse para registrarse</string>
+    <string name="menu_send_notice">Enviar aviso</string>
+    <string name="menu_fire_management">Gestión incendios</string>
+    <string name="notice_created">Aviso creado correctamente</string>
+
+</resources>

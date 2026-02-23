@@ -41,6 +41,8 @@ export default function CoordinatorNoticesView() {
   };
 
   const { data, error, isLoading, refetch } = useGetNoticesQuery(payload, { refetchOnMountOrArgChange: true });
+  // sort notices newest first so the grid shows recent items at the top
+  const sortedData = data ? [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
 
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -178,8 +180,10 @@ export default function CoordinatorNoticesView() {
     {
       field: 'createdAt',
       headerName: t("created-at"),
+      type: 'dateTime',
       flex: 0.9,
       minWidth: 150,
+      valueGetter: (params) => (params.value ? new Date(params.value) : null),
       renderCell: (params) => (
         <Typography variant="body2" color="text.secondary">
           {params.value ? dayjs(params.value).format("DD-MM-YYYY HH:mm:ss") : '-'}
@@ -268,7 +272,8 @@ export default function CoordinatorNoticesView() {
       sx={{
         display: "inline-block",
         padding: "10px",
-        minWidth: "1700px",
+        width: "100%",
+        boxSizing: "border-box",
       }}
       variant="outlined"
     >
@@ -284,12 +289,13 @@ export default function CoordinatorNoticesView() {
       ) : isLoading ? (
         <CircularProgress />
       ) : data ? (
-        <div style={{ height: 650, width: '1700px' }}>
+        <div style={{ height: 'calc(100vh - 200px)', width: '100%' }}>
           <DataGrid
             components={{ Toolbar: CustomToolbar, loadingOverlay: CircularProgress }}
-            rows={data}
+            rows={sortedData}
             columns={columns}
             loading={isLoading}
+            initialState={{ sorting: { sortModel: [{ field: 'createdAt', sort: 'desc' }] } }}
             disableSelectionOnClick
             disableColumnMenu
             filterModel={filterModel}

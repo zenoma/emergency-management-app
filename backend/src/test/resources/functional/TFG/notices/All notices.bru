@@ -1,0 +1,16 @@
+meta {
+  name: All notices
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/notices
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

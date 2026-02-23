@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_organizations">
+
+
+    <fragment
+        android:id="@+id/nav_organizations"
+        android:name="es.udc.emergencyapp.ui.organizations.OrganizationsFragment"
+        android:label="@string/menu_organizations"
+        tools:layout="@layout/fragment_organizations" />
+
+    <fragment
+        android:id="@+id/nav_my_team"
+        android:name="es.udc.emergencyapp.ui.myteam.MyTeamFragment"
+        android:label="@string/menu_my_team"
+        tools:layout="@layout/fragment_my_team" />
+
+    <fragment
+        android:id="@+id/nav_my_notices"
+        android:name="es.udc.emergencyapp.ui.notices.MyNoticesFragment"
+        android:label="@string/menu_my_notices"
+        tools:layout="@layout/fragment_my_notices" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="es.udc.emergencyapp.ui.profile.ProfileFragment"
+        android:label="@string/profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/nav_map"
+        android:name="es.udc.emergencyapp.ui.map.MapFragment"
+        android:label="@string/menu_map"
+        tools:layout="@layout/fragment_map" />
+
+    <fragment
+        android:id="@+id/nav_send_notice"
+        android:name="es.udc.emergencyapp.ui.sendnotice.SendNoticeFragment"
+        android:label="@string/menu_send_notice"
+        tools:layout="@layout/fragment_send_notice" />
+
+    <fragment
+        android:id="@+id/nav_fire_management"
+        android:name="es.udc.emergencyapp.ui.firemanagement.FireManagementFragment"
+        android:label="@string/menu_fire_management"
+        tools:layout="@layout/fragment_my_team" />
+
+    <fragment
+        android:id="@+id/nav_user_management"
+        android:name="es.udc.emergencyapp.ui.usermanagement.UserManagementFragment"
+        android:label="@string/menu_user_management"
+        tools:layout="@layout/fragment_my_team" />
+
+    <fragment
+        android:id="@+id/nav_notice_management"
+        android:name="es.udc.emergencyapp.ui.noticemanagement.NoticeManagementFragment"
+        android:label="@string/menu_notice_management"
+        tools:layout="@layout/fragment_my_team" />
+
+</navigation>

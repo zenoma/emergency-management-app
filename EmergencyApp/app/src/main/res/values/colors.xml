@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App color palette (synced with frontend theme) -->
+    <!-- Primary / Secondary: updated to deep navy primary + warm orange accent -->
+    <color name="primary_main">#FF0B3A66</color> <!-- deep navy -->
+    <color name="primary_variant">#FF052735</color> <!-- darker navy variant -->
+    <color name="on_primary">#FFFFFFFF</color>
+
+    <color name="secondary_main">#FFFF6A00</color> <!-- warm orange accent (pin) -->
+    <color name="secondary_variant">#FFF75A00</color> <!-- slightly darker orange -->
+    <color name="on_secondary">#FFFFFFFF</color>
+
+    <!-- Light theme surfaces -->
+    <color name="background_light">#FFF5F7F8</color>
+    <color name="surface_light">#FFFFFFFF</color>
+    <color name="on_background_light">#FF0F1115</color>
+
+    <!-- Dark theme surfaces -->
+    <color name="background_dark">#FF071E2B</color> <!-- deep, slightly teal-leaning navy -->
+    <!-- paper equivalent: slightly lighter card surface in dark mode -->
+    <color name="surface_dark_paper">#FF0B3450</color>
+    <color name="on_background_dark">#FFFFFFFF</color>
+
+    <!-- Common colors kept for compatibility -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

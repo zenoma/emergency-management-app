@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Emergency App</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_organizations">Organizations</string>
+    <string name="menu_my_team">My team</string>
+    <string name="menu_my_notices">My notices</string>
+    <string name="menu_map">Map</string>
+    <string name="menu_send_notice">Send Notice</string>
+    <string name="menu_fire_management">Fire Management</string>
+    <string name="menu_user_management">User Management</string>
+    <string name="menu_notice_management">Notice Management</string>
+    <string name="send_notice_error_no_location">Location unavailable</string>
+
+    <string name="fab_content_description">Represents a view to invoke an action</string>
+    <string name="profile">Profile</string>
+    <string name="select_language">Select language</string>
+    <string name="profile_dni_format">DNI: %1$s</string>
+    <string name="profile_phone_format">Phone: %1$s</string>
+    <string name="profile_role_format">Role: %1$s</string>
+    <string name="fill_credentials">Please enter email and password</string>
+    <string name="login_success">Login successful</string>
+    <string name="login_failed">Login failed: check credentials or server</string>
+    <string name="nav_header_login_title">Please log in</string>
+    <string name="nav_header_login_subtitle">Tap to sign in</string>
+    <string name="notice_created">Notice created successfully</string>
+</resources>
