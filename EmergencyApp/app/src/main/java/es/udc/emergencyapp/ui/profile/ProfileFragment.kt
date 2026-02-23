@@ -5,53 +5,53 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import es.udc.emergencyapp.LocaleHelper
+import es.udc.emergencyapp.MainActivity
 import es.udc.emergencyapp.R
+import es.udc.emergencyapp.databinding.FragmentProfileBinding
 
 
 class ProfileFragment : Fragment() {
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_profile, container, false)
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        val logoutButton = view.findViewById<Button>(R.id.button_logout)
-        logoutButton.setOnClickListener {
-            // Clear stored credentials and go back to LoginActivity
-            val prefs = requireContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        binding.buttonLogout.setOnClickListener {
+            val prefs = requireContext().getSharedPreferences(
+                "app_prefs",
+                android.content.Context.MODE_PRIVATE
+            )
             prefs.edit().clear().apply()
-            val intent = Intent(requireContext(), es.udc.emergencyapp.LoginActivity::class.java)
+            val intent = Intent(requireContext(), MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
 
-
-        // Load persisted user info (from signup) and populate profile fields
         val prefs = requireContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
         val name = prefs.getString("user_name", null)
         val email = prefs.getString("user_email", null)
-        val nameView = view.findViewById<android.widget.TextView>(R.id.profile_name)
-        val emailView = view.findViewById<android.widget.TextView>(R.id.profile_email)
-        val dniView = view.findViewById<android.widget.TextView>(R.id.profile_dni)
-        val phoneView = view.findViewById<android.widget.TextView>(R.id.profile_phone)
-        val roleView = view.findViewById<android.widget.TextView>(R.id.profile_role)
-        if (!name.isNullOrBlank()) nameView.text = name
-        if (!email.isNullOrBlank()) emailView.text = email
         val dni = prefs.getString("user_dni", null)
         val phone = prefs.getString("user_phone", null)
         val role = prefs.getString("user_role", null)
-        if (!dni.isNullOrBlank()) dniView.text = getString(R.string.profile_dni_format, dni)
-        if (!phone.isNullOrBlank()) phoneView.text = getString(R.string.profile_phone_format, phone)
-        if (!role.isNullOrBlank()) roleView.text = getString(R.string.profile_role_format, role)
+
+        if (!name.isNullOrBlank()) binding.profileName.text = name
+        if (!email.isNullOrBlank()) binding.profileEmail.text = email
+        if (!dni.isNullOrBlank()) binding.profileDni.text = getString(R.string.profile_dni_format, dni)
+        if (!phone.isNullOrBlank()) binding.profilePhone.text = getString(R.string.profile_phone_format, phone)
+        if (!role.isNullOrBlank()) binding.profileRole.text = getString(R.string.profile_role_format, role)
 
         // Language selector buttons (ImageButtons in layout)
-        val btnEs = view.findViewById<android.widget.ImageButton>(R.id.button_lang_es)
-        val btnEn = view.findViewById<android.widget.ImageButton>(R.id.button_lang_en)
-        val btnGl = view.findViewById<android.widget.ImageButton>(R.id.button_lang_gl)
+        val btnEs = binding.buttonLangEs
+        val btnEn = binding.buttonLangEn
+        val btnGl = binding.buttonLangGl
 
         // Visualize currently selected language by adjusting alpha
         fun updateLangSelection(selected: String) {
@@ -72,8 +72,13 @@ class ProfileFragment : Fragment() {
 
     private fun changeLanguage(lang: String) {
         LocaleHelper.persistLanguage(requireContext(), lang)
-        val ctx = LocaleHelper.setLocale(requireContext(), lang)
+        LocaleHelper.setLocale(requireContext(), lang)
         // recreate activity to apply language
         requireActivity().recreate()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

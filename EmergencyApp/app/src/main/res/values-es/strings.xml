@@ -15,5 +15,13 @@
     <string name="fab_content_description">Representa una vista para invocar una acción</string>
     <string name="profile">Perfil</string>
     <string name="select_language">Selecciona idioma</string>
+    <string name="profile_dni_format">DNI: %1$s</string>
+    <string name="profile_phone_format">Teléfono: %1$s</string>
+    <string name="profile_role_format">Rol: %1$s</string>
+    <string name="fill_credentials">Por favor introduce email y contraseña</string>
+    <string name="login_success">Login exitoso</string>
+    <string name="login_failed">Login fallido: compruebe credenciales</string>
+    <string name="nav_header_login_title">Por favor haz log in</string>
+    <string name="nav_header_login_subtitle">Pulse para registrarse</string>
 
 </resources>

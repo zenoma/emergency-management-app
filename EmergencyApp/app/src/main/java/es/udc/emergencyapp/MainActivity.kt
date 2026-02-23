@@ -2,7 +2,9 @@ package es.udc.emergencyapp
 
 import android.content.Context
 import android.os.Bundle
+import android.content.Intent
 import android.view.View
+import android.widget.ImageView
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -82,26 +84,41 @@ class MainActivity : AppCompatActivity() {
             }
             try {
                 val header = it.getHeaderView(0)
-                val headerImage = header.findViewById<View>(R.id.imageView)
+                val headerImage = header.findViewById<ImageView>(R.id.imageView)
                 val headerTitle = header.findViewById<android.widget.TextView>(R.id.header_name)
                 val headerSubtitle = header.findViewById<android.widget.TextView>(R.id.header_email)
 
                 val prefs = this.getSharedPreferences("app_prefs", MODE_PRIVATE)
+                val token = prefs.getString("jwt_token", null)
                 val name = prefs.getString("user_name", getString(R.string.nav_header_title))
                 val email = prefs.getString("user_email", getString(R.string.nav_header_subtitle))
-                headerTitle?.text = name
-                headerSubtitle?.text = email
 
-                // Make header image navigate to profile fragment
-                headerImage?.setOnClickListener {
-                    val currentId = navControllerSave(navController)
-                    if (currentId != R.id.nav_profile) {
-                        val options = androidx.navigation.NavOptions.Builder()
-                            .setLaunchSingleTop(true)
-                            .build()
-                        navController.navigate(R.id.nav_profile, null, options)
+                if (token.isNullOrBlank()) {
+                    // No logged user: show explicit login hint and icon
+                    headerTitle?.text = getString(R.string.nav_header_login_title)
+                    headerSubtitle?.text = getString(R.string.nav_header_login_subtitle)
+                    headerImage?.setImageResource(android.R.drawable.ic_dialog_email)
+
+                    // clicking header opens LoginActivity
+                    headerImage?.setOnClickListener {
+                        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                        startActivity(intent)
+                        binding.drawerLayout.closeDrawers()
                     }
-                    binding.drawerLayout.closeDrawers()
+                } else {
+                    // Show stored profile info and keep existing profile navigation
+                    headerTitle?.text = name
+                    headerSubtitle?.text = email
+                    headerImage?.setOnClickListener {
+                        val currentId = navControllerSave(navController)
+                        if (currentId != R.id.nav_profile) {
+                            val options = androidx.navigation.NavOptions.Builder()
+                                .setLaunchSingleTop(true)
+                                .build()
+                            navController.navigate(R.id.nav_profile, null, options)
+                        }
+                        binding.drawerLayout.closeDrawers()
+                    }
                 }
             } catch (e: Exception) {
                 android.util.Log.w(
