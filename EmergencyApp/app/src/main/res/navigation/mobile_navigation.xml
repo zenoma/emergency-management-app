@@ -3,29 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_transform">
+    app:startDestination="@+id/nav_organizations">
+
+    <!-- settings removed -->
+
+    <!-- Drawer placeholder fragments -->
+    <fragment
+        android:id="@+id/nav_organizations"
+        android:name="es.udc.emergencyapp.ui.organizations.OrganizationsFragment"
+        android:label="@string/menu_organizations"
+        tools:layout="@layout/fragment_organizations" />
 
     <fragment
-        android:id="@+id/nav_transform"
-        android:name="es.udc.emergencyapp.ui.transform.TransformFragment"
-        android:label="@string/menu_transform"
-        tools:layout="@layout/fragment_transform" />
+        android:id="@+id/nav_my_team"
+        android:name="es.udc.emergencyapp.ui.myteam.MyTeamFragment"
+        android:label="@string/menu_my_team"
+        tools:layout="@layout/fragment_my_team" />
 
     <fragment
-        android:id="@+id/nav_reflow"
-        android:name="es.udc.emergencyapp.ui.reflow.ReflowFragment"
-        android:label="@string/menu_reflow"
-        tools:layout="@layout/fragment_reflow" />
+        android:id="@+id/nav_my_notices"
+        android:name="es.udc.emergencyapp.ui.notices.MyNoticesFragment"
+        android:label="@string/menu_my_notices"
+        tools:layout="@layout/fragment_my_notices" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="es.udc.emergencyapp.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_profile"
+        android:name="es.udc.emergencyapp.ui.profile.ProfileFragment"
+        android:label="@string/profile"
+        tools:layout="@layout/fragment_profile" />
 
-    <fragment
-        android:id="@+id/nav_settings"
-        android:name="es.udc.emergencyapp.ui.settings.SettingsFragment"
-        android:label="@string/menu_settings"
-        tools:layout="@layout/fragment_settings" />
+    <!-- Placeholders matching frontend drawer items -->
+    <!-- Placeholder fragments for drawer items; they are reachable by id but not present in bottom nav -->
 </navigation>
