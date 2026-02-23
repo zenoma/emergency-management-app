@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -178,6 +179,13 @@ class SendNoticeFragment : Fragment() {
                 }
                 val payloadStr = payload.toString()
 
+                // read jwt token from shared prefs if present
+                val jwtToken = try {
+                    requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE).getString("jwt_token", null)
+                } catch (e: Exception) {
+                    null
+                }
+
                 var lastEx: Exception? = null
                 var success = false
                 var successCode = -1
@@ -190,6 +198,11 @@ class SendNoticeFragment : Fragment() {
                         val conn = (url.openConnection() as HttpURLConnection).apply {
                             requestMethod = "POST"
                             setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                            // attach JWT if available
+                            if (!jwtToken.isNullOrEmpty()) {
+                                setRequestProperty("Authorization", "Bearer $jwtToken")
+                                Log.d("SendNotice", "Attached JWT to request (masked)")
+                            }
                             connectTimeout = 8000
                             readTimeout = 8000
                             doOutput = true
