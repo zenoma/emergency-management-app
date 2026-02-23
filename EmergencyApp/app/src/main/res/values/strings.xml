@@ -14,6 +14,7 @@
     <string name="menu_fire_management">Fire Management</string>
     <string name="menu_user_management">User Management</string>
     <string name="menu_notice_management">Notice Management</string>
+    <string name="send_notice_error_no_location">Location unavailable</string>
 
     <string name="fab_content_description">Represents a view to invoke an action</string>
     <string name="profile">Profile</string>
