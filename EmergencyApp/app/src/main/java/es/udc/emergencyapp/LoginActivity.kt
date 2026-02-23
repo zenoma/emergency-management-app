@@ -1,5 +1,6 @@
 package es.udc.emergencyapp
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -30,5 +31,11 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        val lang = LocaleHelper.getPersistedLanguage(newBase)
+        val ctx = LocaleHelper.setLocale(newBase, lang)
+        super.attachBaseContext(ctx)
     }
 }

@@ -5,22 +5,13 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
 
     <!-- settings removed -->
     <string name="menu_organizations">Organizations</string>
     <string name="menu_my_team">My team</string>
     <string name="menu_my_notices">My notices</string>
 
-    <string name="lorem_ipsum_title">Lorem Ipsum"</string>
-    <string name="lorem_ipsum">Lorem Ipsum is simply placeholder text of the printing and
-        typesetting industry. Lorem Ipsum has been the industry\'s standard placeholder text ever
-        since the 1500s, when an unknown printer took a galley of type and scrambled it to make a
-        type specimen book"
-    </string>
     <string name="fab_content_description">Represents a view to invoke an action</string>
     <string name="profile">Profile</string>
-    <string name="image_view_item_transform_content_description">Represents an image view in the
-        item
-    </string>
+    <string name="select_language">Select language</string>
 </resources>

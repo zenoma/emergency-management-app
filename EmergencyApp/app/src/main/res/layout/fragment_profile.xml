@@ -61,6 +61,75 @@
             android:text="Logout"
             android:layout_marginTop="16dp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_language"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/button_lang_es"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/flag_es"
+                    android:contentDescription="ES flag"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerCrop"
+                    android:padding="6dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <ImageButton
+                    android:id="@+id/button_lang_en"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/flag_en"
+                    android:contentDescription="EN flag"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerCrop"
+                    android:padding="6dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <ImageButton
+                    android:id="@+id/button_lang_gl"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/flag_gl"
+                    android:contentDescription="GL flag"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerCrop"
+                    android:padding="6dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </ScrollView>

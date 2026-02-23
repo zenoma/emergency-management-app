@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Emergency App</string>
+    <string name="navigation_drawer_open">Abrir menú</string>
+    <string name="navigation_drawer_close">Cerrar menú</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Cabecera de navegación</string>
+
+    <string name="menu_organizations">Organizaciones</string>
+    <string name="menu_my_team">Mi equipo</string>
+    <string name="menu_my_notices">Mis avisos</string>
+
+    <string name="fab_content_description">Representa una vista para invocar una acción</string>
+    <string name="profile">Perfil</string>
+    <string name="select_language">Selecciona idioma</string>
+
+</resources>

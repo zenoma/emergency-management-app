@@ -1,8 +1,7 @@
 package es.udc.emergencyapp
 
+import android.content.Context
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -19,13 +18,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val lang = LocaleHelper.getPersistedLanguage(this)
+        LocaleHelper.setLocale(this, lang)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.appBarMain.toolbar)
 
-        binding.appBarMain.fab?.setOnClickListener { view ->
+        binding.appBarMain.fab?.setOnClickListener { _ ->
             val navController = findNavController(R.id.nav_host_fragment_content_main)
-            navController.navigate(R.id.nav_profile)
+            val currentId = navController.currentDestination?.id
+            if (currentId != R.id.nav_profile) {
+                val options = androidx.navigation.NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .build()
+                navController.navigate(R.id.nav_profile, null, options)
+            }
         }
 
         val navHostFragment =
@@ -44,12 +51,19 @@ class MainActivity : AppCompatActivity() {
             it.setNavigationItemSelectedListener { menuItem ->
                 val destId = menuItem.itemId
                 val currentId = navController.currentDestination?.id
+                "MainActivityNav"
                 if (destId != currentId) {
+                    val options = androidx.navigation.NavOptions.Builder()
+                        .setLaunchSingleTop(true)
+                        .build()
                     if (destId == R.id.nav_profile) {
-                        navController.navigate(R.id.nav_profile)
+                        navController.navigate(R.id.nav_profile, null, options)
                     } else {
-                        navController.popBackStack(R.id.nav_profile, true)
-                        navController.navigate(destId)
+                        val navOptions = androidx.navigation.NavOptions.Builder()
+                            .setLaunchSingleTop(true)
+                            .setPopUpTo(navController.graph.startDestinationId, false)
+                            .build()
+                        navController.navigate(destId, null, navOptions)
                     }
                 }
                 binding.drawerLayout?.closeDrawers()
@@ -68,16 +82,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        val lang = LocaleHelper.getPersistedLanguage(newBase)
+        val ctx = LocaleHelper.setLocale(newBase, lang)
+        super.attachBaseContext(ctx)
     }
 }
