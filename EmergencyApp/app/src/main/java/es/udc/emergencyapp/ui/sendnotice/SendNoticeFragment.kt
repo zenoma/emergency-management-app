@@ -2,21 +2,23 @@ package es.udc.emergencyapp.ui.sendnotice
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import es.udc.emergencyapp.R
 import es.udc.emergencyapp.databinding.FragmentSendNoticeBinding
 import org.json.JSONObject
 import org.locationtech.proj4j.CoordinateReferenceSystem
@@ -46,7 +48,8 @@ class SendNoticeFragment : Fragment() {
     private val requestCameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) startCameraCapture()
-            else Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
+            else Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
+                .show()
         }
 
     private val requestLocationPermissionLauncher =
@@ -82,7 +85,11 @@ class SendNoticeFragment : Fragment() {
 
     private fun onTakePhotoClicked() {
         // check camera permission at runtime
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             startCameraCapture()
         } else {
             requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
@@ -104,16 +111,61 @@ class SendNoticeFragment : Fragment() {
     }
 
     private fun fetchLocation() {
-        // lightweight: use last known location from fused provider if available
+        // Robust: check permission and query all enabled providers' last known location
         try {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                binding.textLocation.text = "Location: permission"
+                return
+            }
+
             val lm =
-                requireContext().getSystemService(android.content.Context.LOCATION_SERVICE) as android.location.LocationManager
-            val provider =
-                if (lm.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) android.location.LocationManager.GPS_PROVIDER else android.location.LocationManager.NETWORK_PROVIDER
-            val loc = lm.getLastKnownLocation(provider)
-            if (loc != null) {
-                lastLocation = loc
-                binding.textLocation.text = "Location: ${loc.latitude}, ${loc.longitude}"
+                requireContext().getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
+            var best: Location? = null
+            try {
+                val providers = lm.getProviders(true)
+                Log.d("SendNotice", "Available providers: $providers")
+                for (p in providers) {
+                    try {
+                        val l = lm.getLastKnownLocation(p)
+                        if (l != null) {
+                            if (best == null || l.time > best.time) best = l
+                        }
+                    } catch (se: SecurityException) {
+                        Log.w("SendNotice", "No permission for provider $p", se)
+                    } catch (ie: Exception) {
+                        Log.w("SendNotice", "Failed reading provider $p", ie)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w("SendNotice", "Failed to iterate providers", e)
+            }
+
+            // fallback try specific providers
+            if (best == null) {
+                try {
+                    val gps = try {
+                        lm.getLastKnownLocation(android.location.LocationManager.GPS_PROVIDER)
+                    } catch (e: Exception) {
+                        null
+                    }
+                    val net = try {
+                        lm.getLastKnownLocation(android.location.LocationManager.NETWORK_PROVIDER)
+                    } catch (e: Exception) {
+                        null
+                    }
+                    best = listOfNotNull(gps, net).maxByOrNull { it.time }
+                } catch (e: Exception) {
+                    Log.w("SendNotice", "Fallback lastKnownLocation failed", e)
+                }
+            }
+
+            if (best != null) {
+                lastLocation = best
+                binding.textLocation.text = "Location: ${best.latitude}, ${best.longitude}"
             } else {
                 binding.textLocation.text = "Location: unavailable"
             }
@@ -146,7 +198,6 @@ class SendNoticeFragment : Fragment() {
             Log.w("SendNotice", "Failed to read photo", e)
         }
 
-        // compute transformed variants and log them (helps detect axis/order issues)
         var rawLon = 0.0
         var rawLat = 0.0
         var v1: Pair<Double, Double> = Pair(0.0, 0.0)
@@ -158,10 +209,8 @@ class SendNoticeFragment : Fragment() {
             Log.w("SendNotice", "Debug transform failed", e)
         }
 
-        // send network request in background
         Thread {
             try {
-                // Try common emulator/device host mappings. Login/profile use 10.0.2.2:8080 so try that first.
                 val hostsToTry = listOf(
                     "http://10.0.2.2:8080",
                     "http://10.0.2.2:8000",
@@ -170,14 +219,12 @@ class SendNoticeFragment : Fragment() {
                     "http://192.168.1.100:8000"
                 )
 
-                // use previously computed transforms (v1) as the transformed coordinates
                 val (tLon, tLat) = v1
                 val coords = JSONObject().apply {
                     put("lon", tLon)
                     put("lat", tLat)
                 }
 
-                // include raw WGS84 and debug transforms to help server-side debugging
                 val raw = JSONObject().apply {
                     put("lon", rawLon)
                     put("lat", rawLat)
@@ -199,9 +246,9 @@ class SendNoticeFragment : Fragment() {
                 }
                 val payloadStr = payload.toString()
 
-                // read jwt token from shared prefs if present
                 val jwtToken = try {
-                    requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE).getString("jwt_token", null)
+                    requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                        .getString("jwt_token", null)
                 } catch (e: Exception) {
                     null
                 }
@@ -218,7 +265,6 @@ class SendNoticeFragment : Fragment() {
                         val conn = (url.openConnection() as HttpURLConnection).apply {
                             requestMethod = "POST"
                             setRequestProperty("Content-Type", "application/json; charset=utf-8")
-                            // attach JWT if available
                             if (!jwtToken.isNullOrEmpty()) {
                                 setRequestProperty("Authorization", "Bearer $jwtToken")
                                 Log.d("SendNotice", "Attached JWT to request (masked)")
@@ -242,12 +288,10 @@ class SendNoticeFragment : Fragment() {
                     } catch (e: Exception) {
                         lastEx = e
                         Log.w("SendNotice", "Failed to POST to $host", e)
-                        // try next host
                     }
                 }
 
                 if (!success) throw (lastEx ?: Exception("Unknown network error"))
-                // If we created the notice and we have a photo, upload it to /notices/{id}/images as multipart
                 if (success && successCode in 200..299 && photoBytes != null) {
                     try {
                         var createdId: Long? = null
@@ -257,14 +301,6 @@ class SendNoticeFragment : Fragment() {
                         } catch (e: Exception) {
                             Log.w("SendNotice", "Failed to parse create response JSON", e)
                         }
-                        // fallback: try to extract id from Location header if body parsing failed
-                        if (createdId == null && usedHost != null) {
-                            try {
-                                // attempt GET to the location URL returned by server (less reliable)
-                                // skip: we already have usedHost and response body usually contains id
-                            } catch (e: Exception) { /* ignore */ }
-                        }
-
                         if (createdId != null && usedHost != null) {
                             val uploadUrl = URL("$usedHost/notices/$createdId/images")
                             val boundary = "----AndroidBoundary${System.currentTimeMillis()}"
@@ -272,14 +308,19 @@ class SendNoticeFragment : Fragment() {
                             val lineEnd = "\r\n"
                             val conn2 = (uploadUrl.openConnection() as HttpURLConnection).apply {
                                 requestMethod = "POST"
-                                setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
-                                if (!jwtToken.isNullOrEmpty()) setRequestProperty("Authorization", "Bearer $jwtToken")
+                                setRequestProperty(
+                                    "Content-Type",
+                                    "multipart/form-data; boundary=$boundary"
+                                )
+                                if (!jwtToken.isNullOrEmpty()) setRequestProperty(
+                                    "Authorization",
+                                    "Bearer $jwtToken"
+                                )
                                 connectTimeout = 8000
                                 readTimeout = 8000
                                 doOutput = true
                             }
                             conn2.outputStream.use { out ->
-                                // write multipart preamble
                                 out.write((twoHyphens + boundary + lineEnd).toByteArray())
                                 out.write(("Content-Disposition: form-data; name=\"image\"; filename=\"photo.jpg\"" + lineEnd).toByteArray())
                                 out.write(("Content-Type: image/jpeg" + lineEnd + lineEnd).toByteArray())
@@ -289,11 +330,16 @@ class SendNoticeFragment : Fragment() {
                                 out.flush()
                             }
                             val upCode = conn2.responseCode
-                            val upResp = if (upCode in 200..299) conn2.inputStream.bufferedReader().use { it.readText() } else conn2.errorStream?.bufferedReader()?.use { it.readText() } ?: ""
+                            val upResp = if (upCode in 200..299) conn2.inputStream.bufferedReader()
+                                .use { it.readText() } else conn2.errorStream?.bufferedReader()
+                                ?.use { it.readText() } ?: ""
                             conn2.disconnect()
                             Log.d("SendNotice", "Image upload result: code=$upCode resp=$upResp")
                         } else {
-                            Log.w("SendNotice", "Cannot upload image, missing created notice id or host")
+                            Log.w(
+                                "SendNotice",
+                                "Cannot upload image, missing created notice id or host"
+                            )
                         }
                     } catch (e: Exception) {
                         Log.w("SendNotice", "Failed to upload image", e)
@@ -301,7 +347,42 @@ class SendNoticeFragment : Fragment() {
                 }
 
                 requireActivity().runOnUiThread {
-                    if (successCode in 200..299) {
+                    if (successCode == 201) {
+                        try {
+                            AlertDialog.Builder(requireContext())
+                                .setMessage(getString(R.string.notice_created))
+                                .setPositiveButton(android.R.string.ok) { dialogInterface, _ ->
+                                    try {
+                                        dialogInterface?.dismiss()
+                                    } catch (e: Exception) { /* ignore */
+                                    }
+                                    try {
+                                        (requireActivity() as? es.udc.emergencyapp.MainActivity)?.navigateToDrawerItem(
+                                            R.id.nav_my_notices
+                                        )
+                                    } catch (e: Exception) {
+                                        Log.w("SendNotice", "Navigation to My Notices failed", e)
+                                    }
+                                }
+                                .setOnCancelListener { _ ->
+                                    try {
+                                        (requireActivity() as? es.udc.emergencyapp.MainActivity)?.navigateToDrawerItem(
+                                            R.id.nav_my_notices
+                                        )
+                                    } catch (e: Exception) {
+                                        Log.w("SendNotice", "Navigation to My Notices failed", e)
+                                    }
+                                }
+                                .show()
+                        } catch (e: Exception) {
+                            Log.w("SendNotice", "Failed to show confirmation dialog", e)
+                            Toast.makeText(
+                                requireContext(),
+                                "Notice sent (via $usedHost)",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else if (successCode in 200..299) {
                         Toast.makeText(
                             requireContext(),
                             "Notice sent (via $usedHost)",
@@ -334,25 +415,16 @@ class SendNoticeFragment : Fragment() {
         _binding = null
     }
 
-    // Helper to transform coordinates to match frontend proj4 usage
-    // Frontend (frontend/src/app/utils/coordinatesTransformations.js) does:
-    //   firstProjection = proj4("EPSG:4326")
-    //   secondProjection = "+proj=utm +zone=29 +ellps=GRS80 ..."
-    //   result = proj4(firstProjection, secondProjection).forward([longitude, latitude])
-    // So we replicate that: source = EPSG:4326, target = same proj string, input order = (lon, lat)
     private fun transformWgs84ToUtm29(lon: Double, lat: Double): Pair<Double, Double> {
         return try {
             val ctFactory = CoordinateTransformFactory()
             val crsFactory = org.locationtech.proj4j.CRSFactory()
-            // Source: EPSG:4326 (let proj4j resolve any internal axis ordering)
             val srcCRS: CoordinateReferenceSystem = crsFactory.createFromName("EPSG:4326")
-            // Target: use the exact proj4 string used in frontend (GRS80, UTM zone 29)
             val tgtCRS: CoordinateReferenceSystem = crsFactory.createFromParameters(
                 null,
                 "+proj=utm +zone=29 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
             )
             val transform: CoordinateTransform = ctFactory.createTransform(srcCRS, tgtCRS)
-            // IMPORTANT: frontend passes [longitude, latitude] -> we do the same
             val srcCoord = ProjCoordinate(lon, lat)
             val dstCoord = ProjCoordinate()
             transform.transform(srcCoord, dstCoord)
@@ -362,25 +434,4 @@ class SendNoticeFragment : Fragment() {
             Pair(lon, lat)
         }
     }
-
-    // Alternative attempt: use EPSG:4326 by name and different target (try EPSG:25829 by code)
-    private fun transformWgs84ToUtm29Alternative(lon: Double, lat: Double): Pair<Double, Double> {
-        return try {
-            val ctFactory = CoordinateTransformFactory()
-            val crsFactory = org.locationtech.proj4j.CRSFactory()
-            val srcCRS: CoordinateReferenceSystem = crsFactory.createFromName("EPSG:4326")
-            val tgtCRS: CoordinateReferenceSystem = crsFactory.createFromName("EPSG:25829")
-            val transform: CoordinateTransform = ctFactory.createTransform(srcCRS, tgtCRS)
-            val srcCoord = ProjCoordinate(lon, lat)
-            val dstCoord = ProjCoordinate()
-            transform.transform(srcCoord, dstCoord)
-            Pair(dstCoord.x, dstCoord.y)
-        } catch (e: Exception) {
-            Log.w("SendNotice", "Alt coordinate transform failed", e)
-            Pair(lon, lat)
-        }
-    }
-
-    private fun formatPair(p: Pair<Double, Double>): String =
-        String.format("%.3f,%.3f", p.first, p.second)
 }

@@ -14,7 +14,7 @@ import { useGetNoticesQuery } from "../../api/noticeApi";
 var URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
 export default function MyNoticesList() {
-  const [list, setList] = useState("");
+  // no local copy of data needed; use query result directly
   const { t } = useTranslation();
   const { i18n } = useTranslation("home");
   const locale = i18n.language;
@@ -45,10 +45,8 @@ export default function MyNoticesList() {
   };
 
   const { data, error, isLoading } = useGetNoticesQuery(payload, { refetchOnMountOrArgChange: true });
-
-  if (data && data !== list) {
-    setList(data);
-  }
+  // ensure notices are displayed most recent first by sorting locally
+  const sortedData = data ? [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
 
   function getStatusColor(status) {
     switch (status) {
@@ -109,8 +107,10 @@ export default function MyNoticesList() {
     {
       field: 'createdAt',
       headerName: t("created-at"),
+      type: 'dateTime',
       flex: 1,
       minWidth: 140,
+      valueGetter: (params) => (params.value ? new Date(params.value) : null),
       renderCell: (params) => (
         <Typography variant="body2" color="text.secondary">
           {params.value ? dayjs(params.value).format("DD-MM-YYYY HH:mm:ss") : '-'}
@@ -160,11 +160,12 @@ export default function MyNoticesList() {
       ) : isLoading ? (
         <CircularProgress />
       ) : data ? (
-        <div style={{ height: 550, width: '100%' }}>
+        <div style={{ height: 'calc(100vh - 200px)', width: '100%' }}>
           <DataGrid
-            rows={data}
+            rows={sortedData}
             columns={columns}
             loading={isLoading}
+            initialState={{ sorting: { sortModel: [{ field: 'createdAt', sort: 'desc' }] } }}
             disableSelectionOnClick
             disableColumnMenu
             components={{

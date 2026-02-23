@@ -293,4 +293,32 @@ class MainActivity : AppCompatActivity() {
         val ctx = LocaleHelper.setLocale(newBase, lang)
         super.attachBaseContext(ctx)
     }
+
+    // Public helper so fragments can request the same navigation behavior as selecting an item
+    fun navigateToDrawerItem(itemId: Int) {
+        val navHostFragment = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment?) ?: return
+        val navController = navHostFragment.navController
+        val currentId = navController.currentDestination?.id
+        if (itemId != currentId) {
+            try {
+                val options = androidx.navigation.NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .build()
+                if (itemId == R.id.nav_profile) {
+                    navController.navigate(R.id.nav_profile, null, options)
+                } else {
+                    val navOptions = androidx.navigation.NavOptions.Builder()
+                        .setLaunchSingleTop(true)
+                        .setPopUpTo(navController.graph.startDestinationId, false)
+                        .build()
+                    navController.navigate(itemId, null, navOptions)
+                }
+            } catch (e: Exception) {
+                android.util.Log.w("MainActivityNav", "navigateToDrawerItem failed", e)
+            }
+        }
+        try {
+            binding.drawerLayout.closeDrawers()
+        } catch (e: Exception) { /* ignore */ }
+    }
 }

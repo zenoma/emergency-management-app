@@ -12,6 +12,9 @@
     <string name="menu_my_notices">Mis avisos</string>
 
     <string name="menu_map">Mapa</string>
+    <string name="menu_user_management">Gestión usuarios</string>
+    <string name="menu_notice_management">Gestión avisos</string>
+    <string name="send_notice_error_no_location">Ubicación no disponible</string>
     <string name="fab_content_description">Representa una vista para invocar una acción</string>
     <string name="profile">Perfil</string>
     <string name="select_language">Selecciona idioma</string>
@@ -23,5 +26,8 @@
     <string name="login_failed">Login fallido: compruebe credenciales</string>
     <string name="nav_header_login_title">Por favor haz log in</string>
     <string name="nav_header_login_subtitle">Pulse para registrarse</string>
+    <string name="menu_send_notice">Enviar aviso</string>
+    <string name="menu_fire_management">Gestión incendios</string>
+    <string name="notice_created">Aviso creado correctamente</string>
 
 </resources>

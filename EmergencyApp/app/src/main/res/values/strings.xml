@@ -27,4 +27,5 @@
     <string name="login_failed">Login failed: check credentials or server</string>
     <string name="nav_header_login_title">Please log in</string>
     <string name="nav_header_login_subtitle">Tap to sign in</string>
+    <string name="notice_created">Notice created successfully</string>
 </resources>
