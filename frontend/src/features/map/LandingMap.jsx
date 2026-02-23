@@ -193,8 +193,9 @@ export default function LandingMap(props) {
             type: "fill",
             layout: {},
             paint: {
-              "fill-color": "#FF8C00",
-              "fill-opacity": 0.3,
+              // more red and slightly less transparent
+              "fill-color": "#D62B2B",
+              "fill-opacity": 0.5,
             },
           };
 
@@ -203,8 +204,9 @@ export default function LandingMap(props) {
             type: "line",
             layout: {},
             paint: {
-              "line-color": "#000",
-              "line-width": 1,
+              // darker red border
+              "line-color": "#8B0000",
+              "line-width": 2,
             },
           };
 

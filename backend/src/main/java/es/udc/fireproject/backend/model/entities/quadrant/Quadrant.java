@@ -79,4 +79,48 @@ public class Quadrant implements Serializable {
 
   public Quadrant() {
   }
+
+  public Integer getId() {
+    return this.id;
+  }
+
+  public String getEscala() {
+    return this.escala;
+  }
+
+  public String getNombre() {
+    return this.nombre;
+  }
+
+  public String getFolla50() {
+    return this.folla50;
+  }
+
+  public String getFolla25() {
+    return this.folla25;
+  }
+
+  public String getFolla5() {
+    return this.folla5;
+  }
+
+  public MultiPolygon getGeom() {
+    return this.geom;
+  }
+
+  public Fire getFire() {
+    return this.fire;
+  }
+
+  public LocalDateTime getLinkedAt() {
+    return this.linkedAt;
+  }
+
+  public List<Team> getTeamList() {
+    return this.teamList;
+  }
+
+  public List<Vehicle> getVehicleList() {
+    return this.vehicleList;
+  }
 }
