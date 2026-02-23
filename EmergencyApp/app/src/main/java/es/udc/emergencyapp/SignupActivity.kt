@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
-import androidx.appcompat.app.AppCompatActivity
 
 class SignupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,9 +36,6 @@ class SignupActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Split full name into first/last
-            // already have firstName/lastName fields
-
             Thread {
                 try {
                     val url = URL("http://10.0.2.2:8080/users/signUp")
@@ -55,7 +52,6 @@ class SignupActivity : AppCompatActivity() {
                         put("email", email)
                         put("password", password)
                         put("dni", dni)
-                        // try to parse phone into number if possible
                         runCatching {
                             put("phoneNumber", phone.toLong())
                         }.onFailure {
@@ -67,7 +63,8 @@ class SignupActivity : AppCompatActivity() {
 
                     val code = conn.responseCode
                     val resp = try {
-                        if (code in 200..299) conn.inputStream.bufferedReader().use { it.readText() }
+                        if (code in 200..299) conn.inputStream.bufferedReader()
+                            .use { it.readText() }
                         else conn.errorStream?.bufferedReader()?.use { it.readText() } ?: ""
                     } catch (e: Exception) {
                         android.util.Log.w("SignupActivityNet", "Failed reading response stream", e)
@@ -76,18 +73,21 @@ class SignupActivity : AppCompatActivity() {
                     android.util.Log.d("SignupActivityNet", "Signup response code=$code body=$resp")
 
                     if (code == 200 || code == 201) {
-                        val obj = try { JSONObject(resp) } catch (e: Exception) { null }
+                        val obj = try {
+                            JSONObject(resp)
+                        } catch (_: Exception) {
+                            null
+                        }
                         val token = obj?.optString("token", null)
                         val userObj = obj?.optJSONObject("user")
 
-                        // persist results if any
-                        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                        val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
                         prefs.edit().apply {
                             if (token != null) putString("jwt_token", token)
                             if (userObj != null) {
-                        val first = userObj.optString("firstName", firstName)
-                        val last = userObj.optString("lastName", lastName)
-                        putString("user_name", (first + " " + last).trim())
+                                val first = userObj.optString("firstName", firstName)
+                                val last = userObj.optString("lastName", lastName)
+                                putString("user_name", ("$first $last").trim())
                                 putString("user_email", userObj.optString("email", email))
                                 putString("user_phone", userObj.optString("phoneNumber", ""))
                                 putString("user_dni", userObj.optString("dni", ""))
@@ -103,11 +103,15 @@ class SignupActivity : AppCompatActivity() {
                         runOnUiThread {
                             Toast.makeText(this, "Signup successful", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this, MainActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                         }
                     } else {
-                        android.util.Log.w("SignupActivityNet", "Signup failed code=$code body=$resp")
+                        android.util.Log.w(
+                            "SignupActivityNet",
+                            "Signup failed code=$code body=$resp"
+                        )
                         runOnUiThread {
                             Toast.makeText(this, "Signup failed", Toast.LENGTH_LONG).show()
                         }
@@ -116,7 +120,11 @@ class SignupActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     android.util.Log.w("SignupActivityNet", "Exception during signup", e)
                     runOnUiThread {
-                        Toast.makeText(this, "Signup failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            "Signup failed: ${e.localizedMessage}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }.start()

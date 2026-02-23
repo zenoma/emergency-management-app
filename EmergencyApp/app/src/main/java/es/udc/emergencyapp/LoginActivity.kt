@@ -7,10 +7,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
-import androidx.appcompat.app.AppCompatActivity
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +26,8 @@ class LoginActivity : AppCompatActivity() {
             val email = emailInput.text.toString().trim()
             val password = passwordInput.text.toString()
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, getString(R.string.fill_credentials), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.fill_credentials), Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
@@ -53,7 +54,8 @@ class LoginActivity : AppCompatActivity() {
 
                     val code = conn.responseCode
                     val resp = try {
-                        if (code in 200..299) conn.inputStream.bufferedReader().use { it.readText() }
+                        if (code in 200..299) conn.inputStream.bufferedReader()
+                            .use { it.readText() }
                         else conn.errorStream?.bufferedReader()?.use { it.readText() } ?: ""
                     } catch (e: Exception) {
                         android.util.Log.w("LoginActivityNet", "Failed reading response stream", e)
@@ -67,7 +69,6 @@ class LoginActivity : AppCompatActivity() {
                         val token = obj.optString("token", null)
                         val userObj = obj.optJSONObject("user")
 
-                        // Persist token + user data
                         val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
                         prefs.edit().apply {
                             if (token != null) putString("jwt_token", token)
@@ -83,16 +84,24 @@ class LoginActivity : AppCompatActivity() {
                             apply()
                         }
 
-                        // Navigate to MainActivity on UI thread
                         runOnUiThread {
-                            Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this,
+                                getString(R.string.login_success),
+                                Toast.LENGTH_SHORT
+                            ).show()
                             val intent = Intent(this, MainActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                         }
                     } else {
                         runOnUiThread {
-                            Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this,
+                                getString(R.string.login_failed),
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                         android.util.Log.w("LoginActivityNet", "Login failed code=$code body=$resp")
                     }
@@ -100,7 +109,11 @@ class LoginActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     android.util.Log.w("LoginActivityNet", "Exception during login", e)
                     runOnUiThread {
-                        Toast.makeText(this, getString(R.string.login_failed) + ": " + (e.localizedMessage ?: ""), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            getString(R.string.login_failed) + ": " + (e.localizedMessage ?: ""),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }.start()

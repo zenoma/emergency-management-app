@@ -99,8 +99,8 @@ class MainActivity : AppCompatActivity() {
                     headerSubtitle?.text = getString(R.string.nav_header_login_subtitle)
                     headerImage?.setImageResource(android.R.drawable.ic_dialog_email)
 
-                    // clicking header opens LoginActivity
-                    headerImage?.setOnClickListener {
+                    // clicking header opens LoginActivity (make whole header clickable)
+                    header.setOnClickListener {
                         val intent = Intent(this@MainActivity, LoginActivity::class.java)
                         startActivity(intent)
                         binding.drawerLayout.closeDrawers()
@@ -109,7 +109,8 @@ class MainActivity : AppCompatActivity() {
                     // Show stored profile info and keep existing profile navigation
                     headerTitle?.text = name
                     headerSubtitle?.text = email
-                    headerImage?.setOnClickListener {
+                    // make whole header navigate to profile
+                    header.setOnClickListener {
                         val currentId = navControllerSave(navController)
                         if (currentId != R.id.nav_profile) {
                             val options = androidx.navigation.NavOptions.Builder()

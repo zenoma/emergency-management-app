@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import es.udc.emergencyapp.R
+import es.udc.emergencyapp.databinding.FragmentMapBinding
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
@@ -17,6 +18,8 @@ import org.maplibre.android.style.layers.PropertyFactory.*
 import org.maplibre.android.style.sources.GeoJsonSource
 
 class MapFragment : Fragment() {
+    private var _binding: FragmentMapBinding? = null
+    private val binding get() = _binding!!
     private var mapView: MapView? = null
 
     override fun onCreateView(
@@ -27,8 +30,9 @@ class MapFragment : Fragment() {
         // Initialize MapLibre (try to support variants that require an apiKey)
         try { MapLibre.getInstance(requireContext()) } catch (_: Exception) {}
 
-        val view = inflater.inflate(R.layout.fragment_map, container, false)
-        mapView = view.findViewById(R.id.mapView)
+        _binding = FragmentMapBinding.inflate(inflater, container, false)
+        val view = binding.root
+        mapView = binding.mapView
         mapView?.onCreate(savedInstanceState)
 
         val lat = 42.6
@@ -82,6 +86,6 @@ class MapFragment : Fragment() {
     override fun onPause() { super.onPause(); mapView?.onPause() }
     override fun onStop() { super.onStop(); mapView?.onStop() }
     override fun onLowMemory() { super.onLowMemory(); mapView?.onLowMemory() }
-    override fun onDestroyView() { super.onDestroyView(); mapView?.onDestroy(); mapView = null }
+    override fun onDestroyView() { super.onDestroyView(); mapView?.onDestroy(); mapView = null; _binding = null }
     override fun onSaveInstanceState(outState: Bundle) { super.onSaveInstanceState(outState); mapView?.onSaveInstanceState(outState) }
 }
