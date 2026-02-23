@@ -21,7 +21,9 @@ class ProfileFragment : Fragment() {
 
         val logoutButton = view.findViewById<Button>(R.id.button_logout)
         logoutButton.setOnClickListener {
-            // Mock logout: go back to LoginActivity and clear task
+            // Clear stored credentials and go back to LoginActivity
+            val prefs = requireContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+            prefs.edit().clear().apply()
             val intent = Intent(requireContext(), es.udc.emergencyapp.LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -34,8 +36,17 @@ class ProfileFragment : Fragment() {
         val email = prefs.getString("user_email", null)
         val nameView = view.findViewById<android.widget.TextView>(R.id.profile_name)
         val emailView = view.findViewById<android.widget.TextView>(R.id.profile_email)
+        val dniView = view.findViewById<android.widget.TextView>(R.id.profile_dni)
+        val phoneView = view.findViewById<android.widget.TextView>(R.id.profile_phone)
+        val roleView = view.findViewById<android.widget.TextView>(R.id.profile_role)
         if (!name.isNullOrBlank()) nameView.text = name
         if (!email.isNullOrBlank()) emailView.text = email
+        val dni = prefs.getString("user_dni", null)
+        val phone = prefs.getString("user_phone", null)
+        val role = prefs.getString("user_role", null)
+        if (!dni.isNullOrBlank()) dniView.text = getString(R.string.profile_dni_format, dni)
+        if (!phone.isNullOrBlank()) phoneView.text = getString(R.string.profile_phone_format, phone)
+        if (!role.isNullOrBlank()) roleView.text = getString(R.string.profile_role_format, role)
 
         // Language selector buttons (ImageButtons in layout)
         val btnEs = view.findViewById<android.widget.ImageButton>(R.id.button_lang_es)

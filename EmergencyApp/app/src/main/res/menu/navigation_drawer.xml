@@ -20,9 +20,5 @@
             android:id="@+id/nav_my_notices"
             android:icon="@drawable/ic_gallery_black_24dp"
             android:title="@string/menu_my_notices" />
-        <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_person_black_24dp"
-            android:title="@string/profile" />
     </group>
 </menu>

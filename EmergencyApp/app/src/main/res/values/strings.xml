@@ -6,14 +6,18 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
 
-    <!-- settings removed -->
     <string name="menu_organizations">Organizations</string>
     <string name="menu_my_team">My team</string>
     <string name="menu_my_notices">My notices</string>
-    <!-- dashboard removed, kept for backward compatibility until resources are cleaned -->
-    <string name="menu_map">Mapa</string>
+    <string name="menu_map">Map</string>
 
     <string name="fab_content_description">Represents a view to invoke an action</string>
     <string name="profile">Profile</string>
     <string name="select_language">Select language</string>
+    <string name="profile_dni_format">DNI: %1$s</string>
+    <string name="profile_phone_format">Phone: %1$s</string>
+    <string name="profile_role_format">Role: %1$s</string>
+    <string name="fill_credentials">Please enter email and password</string>
+    <string name="login_success">Login successful</string>
+    <string name="login_failed">Login failed: check credentials or server</string>
 </resources>

@@ -11,6 +11,7 @@
     <string name="menu_my_team">Mi equipo</string>
     <string name="menu_my_notices">Mis avisos</string>
 
+    <string name="menu_map">Mapa</string>
     <string name="fab_content_description">Representa una vista para invocar una acción</string>
     <string name="profile">Perfil</string>
     <string name="select_language">Selecciona idioma</string>
