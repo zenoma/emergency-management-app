@@ -37,11 +37,18 @@ const darkTheme = createTheme({
   ...baseTheme,
   palette: {
     mode: "dark",
-    primary: { main: "#3EB489" },
-    secondary: { main: "#B43E69" },
+    // Brand colors inspired by the provided art: deep navy background + warm orange pin
+    primary: { main: "#0B3A66", contrastText: "#FFFFFF" }, // deep navy
+    secondary: { main: "#FF6A00", contrastText: "#FFFFFF" }, // warm orange accent
     background: {
-      default: "#0F1115",
-      paper: "rgba(255,255,255,0.04)",
+      // deep, slightly teal-leaning navy for app background
+      default: "#071E2B",
+      // cards/paper slightly lighter than the background
+      paper: "#0B3450",
+    },
+    text: {
+      primary: "#FFFFFF",
+      secondary: "rgba(255,255,255,0.8)",
     },
   },
 });
@@ -50,12 +57,17 @@ const lightTheme = createTheme({
   ...baseTheme,
   palette: {
     mode: "light",
-    primary: { main: "#3EB489" },
-    secondary: { main: "#B43E69" },
+    // Keep the brand primary navy for recognizability on light surfaces
+    primary: { main: "#0B3A66", contrastText: "#FFFFFF" },
+    secondary: { main: "#FF6A00", contrastText: "#FFFFFF" },
     background: {
       default: "#F5F7F8",
       paper: "#FFFFFF",
-    }
+    },
+    text: {
+      primary: "#0F1115",
+      secondary: "rgba(15,17,21,0.7)",
+    },
   },
 });
 
