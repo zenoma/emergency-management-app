@@ -43,6 +43,12 @@ class SendNoticeFragment : Fragment() {
             }
         }
 
+    private val requestCameraPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) startCameraCapture()
+            else Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
+        }
+
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) fetchLocation()
@@ -75,12 +81,26 @@ class SendNoticeFragment : Fragment() {
     }
 
     private fun onTakePhotoClicked() {
-        val resolver = requireContext().contentResolver
-        val values = ContentValues().apply {
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        // check camera permission at runtime
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            startCameraCapture()
+        } else {
+            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
-        photoUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-        takePictureLauncher.launch(photoUri)
+    }
+
+    private fun startCameraCapture() {
+        try {
+            val resolver = requireContext().contentResolver
+            val values = ContentValues().apply {
+                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            }
+            photoUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            takePictureLauncher.launch(photoUri)
+        } catch (e: Exception) {
+            Log.w("SendNotice", "Failed to start camera capture", e)
+            Toast.makeText(requireContext(), "Failed to start camera", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun fetchLocation() {
@@ -227,6 +247,58 @@ class SendNoticeFragment : Fragment() {
                 }
 
                 if (!success) throw (lastEx ?: Exception("Unknown network error"))
+                // If we created the notice and we have a photo, upload it to /notices/{id}/images as multipart
+                if (success && successCode in 200..299 && photoBytes != null) {
+                    try {
+                        var createdId: Long? = null
+                        try {
+                            val json = JSONObject(successResp)
+                            if (json.has("id")) createdId = json.getLong("id")
+                        } catch (e: Exception) {
+                            Log.w("SendNotice", "Failed to parse create response JSON", e)
+                        }
+                        // fallback: try to extract id from Location header if body parsing failed
+                        if (createdId == null && usedHost != null) {
+                            try {
+                                // attempt GET to the location URL returned by server (less reliable)
+                                // skip: we already have usedHost and response body usually contains id
+                            } catch (e: Exception) { /* ignore */ }
+                        }
+
+                        if (createdId != null && usedHost != null) {
+                            val uploadUrl = URL("$usedHost/notices/$createdId/images")
+                            val boundary = "----AndroidBoundary${System.currentTimeMillis()}"
+                            val twoHyphens = "--"
+                            val lineEnd = "\r\n"
+                            val conn2 = (uploadUrl.openConnection() as HttpURLConnection).apply {
+                                requestMethod = "POST"
+                                setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
+                                if (!jwtToken.isNullOrEmpty()) setRequestProperty("Authorization", "Bearer $jwtToken")
+                                connectTimeout = 8000
+                                readTimeout = 8000
+                                doOutput = true
+                            }
+                            conn2.outputStream.use { out ->
+                                // write multipart preamble
+                                out.write((twoHyphens + boundary + lineEnd).toByteArray())
+                                out.write(("Content-Disposition: form-data; name=\"image\"; filename=\"photo.jpg\"" + lineEnd).toByteArray())
+                                out.write(("Content-Type: image/jpeg" + lineEnd + lineEnd).toByteArray())
+                                out.write(photoBytes)
+                                out.write(lineEnd.toByteArray())
+                                out.write((twoHyphens + boundary + twoHyphens + lineEnd).toByteArray())
+                                out.flush()
+                            }
+                            val upCode = conn2.responseCode
+                            val upResp = if (upCode in 200..299) conn2.inputStream.bufferedReader().use { it.readText() } else conn2.errorStream?.bufferedReader()?.use { it.readText() } ?: ""
+                            conn2.disconnect()
+                            Log.d("SendNotice", "Image upload result: code=$upCode resp=$upResp")
+                        } else {
+                            Log.w("SendNotice", "Cannot upload image, missing created notice id or host")
+                        }
+                    } catch (e: Exception) {
+                        Log.w("SendNotice", "Failed to upload image", e)
+                    }
+                }
 
                 requireActivity().runOnUiThread {
                     if (successCode in 200..299) {
