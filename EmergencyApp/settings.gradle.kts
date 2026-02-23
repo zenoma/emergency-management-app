@@ -19,6 +19,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // MapLibre Android SDK repository
+        maven("https://maplibre.org/maven/")
     }
 }
 

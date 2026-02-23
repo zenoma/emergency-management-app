@@ -10,6 +10,8 @@
     <string name="menu_organizations">Organizations</string>
     <string name="menu_my_team">My team</string>
     <string name="menu_my_notices">My notices</string>
+    <!-- dashboard removed, kept for backward compatibility until resources are cleaned -->
+    <string name="menu_map">Mapa</string>
 
     <string name="fab_content_description">Represents a view to invoke an action</string>
     <string name="profile">Profile</string>

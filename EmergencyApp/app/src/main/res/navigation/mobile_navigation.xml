@@ -5,9 +5,7 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/nav_organizations">
 
-    <!-- settings removed -->
 
-    <!-- Drawer placeholder fragments -->
     <fragment
         android:id="@+id/nav_organizations"
         android:name="es.udc.emergencyapp.ui.organizations.OrganizationsFragment"
@@ -32,6 +30,10 @@
         android:label="@string/profile"
         tools:layout="@layout/fragment_profile" />
 
-    <!-- Placeholders matching frontend drawer items -->
-    <!-- Placeholder fragments for drawer items; they are reachable by id but not present in bottom nav -->
+    <fragment
+        android:id="@+id/nav_map"
+        android:name="es.udc.emergencyapp.ui.map.MapFragment"
+        android:label="@string/menu_map"
+        tools:layout="@layout/fragment_map" />
+
 </navigation>
