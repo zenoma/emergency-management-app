@@ -29,5 +29,18 @@
     <string name="menu_user_management">Xestión usuarios</string>
     <string name="menu_notice_management">Xestión avisos</string>
     <string name="notice_created">Aviso creado correctamente</string>
+    <string name="notice_default_title">Aviso</string>
+    <string name="notice_image_desc">Imaxe do aviso</string>
+    <string name="status_accepted">ACEPTADO</string>
+    <string name="status_rejected">RECHAZADO</string>
+    <string name="status_pending">PENDENTE</string>
+    <string name="label_description">Descrición</string>
+    <string name="label_status">Estado</string>
+    <string name="label_date">Data</string>
+    <string name="label_quadrant">Cuadrante</string>
+    <string name="label_details">Detalles</string>
+    <string name="label_id">ID</string>
+    <string name="label_user">Usuario</string>
+    <string name="label_coordinates">Coordenadas</string>
 
 </resources>

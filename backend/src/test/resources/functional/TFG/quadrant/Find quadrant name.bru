@@ -1,0 +1,21 @@
+meta {
+  name: Find quadrant name
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/quadrants/findByCoordinates?lat=4697208.470307613&lon=529707.7551201388
+  body: none
+  auth: none
+}
+
+params:query {
+  lat: 4697208.470307613
+  lon: 529707.7551201388
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

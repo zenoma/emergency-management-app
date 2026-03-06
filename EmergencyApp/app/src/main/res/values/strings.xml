@@ -27,5 +27,18 @@
     <string name="login_failed">Login failed: check credentials or server</string>
     <string name="nav_header_login_title">Please log in</string>
     <string name="nav_header_login_subtitle">Tap to sign in</string>
+    <string name="notice_default_title">Aviso</string>
+    <string name="notice_image_desc">Imagen del aviso</string>
     <string name="notice_created">Notice created successfully</string>
+    <string name="status_accepted">ACCEPTED</string>
+    <string name="status_rejected">REJECTED</string>
+    <string name="status_pending">PENDING</string>
+    <string name="label_description">Description</string>
+    <string name="label_status">Status</string>
+    <string name="label_date">Date</string>
+    <string name="label_quadrant">Quadrant</string>
+    <string name="label_details">Details</string>
+    <string name="label_id">ID</string>
+    <string name="label_user">User</string>
+    <string name="label_coordinates">Coordinates</string>
 </resources>

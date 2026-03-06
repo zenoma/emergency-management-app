@@ -64,11 +64,14 @@ export default function MyNoticesList() {
       field: 'body',
       headerName: t("notice-body"),
       flex: 2,
-      minWidth: 150,
+      minWidth: 200,
+      cellClassName: 'notice-body-cell',
       renderCell: (params) => (
-        <Typography variant="subtitle1" gutterBottom>
-          {params.value}
-        </Typography>
+        <div style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.25' }}>
+          <Typography variant="subtitle1">
+            {params.value}
+          </Typography>
+        </div>
       ),
     },
     {
@@ -82,40 +85,37 @@ export default function MyNoticesList() {
         </Typography>
       ),
     },
-    {
-      field: 'quadrantId',
-      headerName: t("notice-quadrant-id"),
-      flex: 0.8,
-      minWidth: 80,
-      renderCell: (params) => (
-        <Typography variant="body2" color="text.secondary">
-          {params.value || '-'}
-        </Typography>
-      ),
-    },
+    // quadrantId column removed to avoid overcrowding; quadrantName is shown instead
     {
       field: 'quadrantName',
       headerName: t("notice-quadrant"),
-      flex: 1.2,
-      minWidth: 100,
+      flex: 1,
+      minWidth: 140,
       renderCell: (params) => (
-        <Typography variant="body2" color="text.secondary">
-          {params.value || '-'}
-        </Typography>
+        <div style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+          <Typography variant="body2" color="text.secondary">
+            {params.value || '-'}
+          </Typography>
+        </div>
       ),
     },
     {
       field: 'createdAt',
       headerName: t("created-at"),
       type: 'dateTime',
-      flex: 1,
-      minWidth: 140,
+      flex: 0,
+      width: 260,
+      headerAlign: 'right',
+      align: 'right',
       valueGetter: (params) => (params.value ? new Date(params.value) : null),
       renderCell: (params) => (
-        <Typography variant="body2" color="text.secondary">
-          {params.value ? dayjs(params.value).format("DD-MM-YYYY HH:mm:ss") : '-'}
-        </Typography>
+        <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <Typography variant="body2" color="text.secondary" sx={{ overflow: 'hidden' }}>
+            {params.value ? dayjs(params.value).format("DD-MM-YYYY HH:mm:ss") : '-'}
+          </Typography>
+        </div>
       ),
+      cellClassName: 'notice-date-cell',
     },
     {
       field: 'image',
@@ -168,6 +168,28 @@ export default function MyNoticesList() {
             initialState={{ sorting: { sortModel: [{ field: 'createdAt', sort: 'desc' }] } }}
             disableSelectionOnClick
             disableColumnMenu
+            rowHeight={120}
+            headerHeight={64}
+            sx={{
+              '& .MuiDataGrid-cell': {
+                whiteSpace: 'normal',
+                wordBreak: 'break-word',
+                alignItems: 'flex-start',
+                paddingTop: '12px',
+                paddingBottom: '12px',
+              },
+              '& .notice-date-cell': {
+                whiteSpace: 'nowrap',
+                paddingTop: '12px',
+                paddingBottom: '12px',
+                display: 'flex',
+                justifyContent: 'flex-end'
+              },
+              '& .MuiDataGrid-columnHeader': {
+                whiteSpace: 'normal',
+                overflow: 'visible',
+              }
+            }}
             components={{
               loadingOverlay: CircularProgress,
             }}

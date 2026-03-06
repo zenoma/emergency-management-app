@@ -24,4 +24,12 @@
     <!-- Common colors kept for compatibility -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!-- Status colors aligned with frontend -->
+    <color name="status_accepted">#FF4CAF50</color> <!-- green -->
+    <color name="status_rejected">#FFF44336</color> <!-- red -->
+    <color name="status_pending">#FF9E9E9E</color> <!-- grey -->
+    <!-- Sync with frontend palette -->
+    <color name="palette_primary">#FF0B3A66</color>
+    <color name="palette_secondary">#FFFF6A00</color>
+    <color name="palette_surface">#FFFFFFFF</color>
 </resources>
