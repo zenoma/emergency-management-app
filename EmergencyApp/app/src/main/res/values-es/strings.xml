@@ -26,8 +26,21 @@
     <string name="login_failed">Login fallido: compruebe credenciales</string>
     <string name="nav_header_login_title">Por favor haz log in</string>
     <string name="nav_header_login_subtitle">Pulse para registrarse</string>
+    <string name="notice_default_title">Aviso</string>
+    <string name="notice_image_desc">Imagen del aviso</string>
     <string name="menu_send_notice">Enviar aviso</string>
     <string name="menu_fire_management">Gestión incendios</string>
     <string name="notice_created">Aviso creado correctamente</string>
+    <string name="status_accepted">ACEPTADO</string>
+    <string name="status_rejected">RECHAZADO</string>
+    <string name="status_pending">PENDIENTE</string>
+    <string name="label_description">Descripción</string>
+    <string name="label_status">Estado</string>
+    <string name="label_date">Fecha</string>
+    <string name="label_quadrant">Cuadrante</string>
+    <string name="label_details">Detalles</string>
+    <string name="label_id">ID</string>
+    <string name="label_user">Usuario</string>
+    <string name="label_coordinates">Coordenadas</string>
 
 </resources>

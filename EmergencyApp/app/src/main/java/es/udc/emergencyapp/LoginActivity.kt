@@ -80,6 +80,9 @@ class LoginActivity : AppCompatActivity() {
                                 putString("user_phone", userObj.optString("phoneNumber", ""))
                                 putString("user_dni", userObj.optString("dni", ""))
                                 putString("user_role", userObj.optString("userRole", ""))
+                                // persist user id so other screens can use the logged-in user's id
+                                val uid = try { userObj.optLong("id", -1L) } catch (e: Exception) { -1L }
+                                if (uid > 0) putLong("user_id", uid)
                             }
                             apply()
                         }

@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { Button, TextField, Box, Typography, Chip } from "@mui/material";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import GridViewIcon from "@mui/icons-material/GridView";
 import { transformCoordinates } from "../../app/utils/coordinatesTransformations";
 import { useAddImageMutation, useCreateNoticeMutation } from "../../api/noticeApi";
+import { useGetQuadrantByCoordinatesQuery } from "../../api/quadrantApi";
 import { selectToken } from "../user/login/LoginSlice";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -65,26 +65,20 @@ export default function Notice({ lat, lon, quadrantName }) {
 
   const hasCoordinates = lat !== 0 || lon !== 0;
 
+  // fetch quadrant name from coordinates so we can show a human-friendly name
+  const { data: quadrantData } = useGetQuadrantByCoordinatesQuery({ lon, lat }, { skip: !hasCoordinates });
+
   return (
     <Box>
       {hasCoordinates && (
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, my: 1 }}>
           <Chip
-            icon={<LocationOnIcon />}
-            label={`${lat.toFixed(4)}, ${lon.toFixed(4)}`}
+            icon={<GridViewIcon />}
+            label={quadrantData?.name || quadrantName || '-'}
             variant="outlined"
-            color="primary"
+            color="secondary"
             size="small"
           />
-          {quadrantName && (
-            <Chip
-              icon={<GridViewIcon />}
-              label={quadrantName}
-              variant="outlined"
-              color="secondary"
-              size="small"
-            />
-          )}
         </Box>
       )}
       <TextField
