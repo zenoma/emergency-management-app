@@ -1,0 +1,133 @@
+\chapter{Diseño}
+\label{chap:deseño}
+
+\lettrine{X}{xxx},\dots
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+\section{Introducción y objetivos}
+
+\section{Resumen de patrones usados}
+
+\section{Arquitectura general}
+
+{ \color{red} Aspectos a considerar
+    \begin{itemize}
+      \item Arquitectura aplicación SPA
+      \item División en subsistemas: En una aplicación SPA al menos backend y frontend pero podría haber más si se decide implementar utilidades e.g. como módulos independientes (e.g. como proyectos maven / jars independientes)
+    \end{itemize}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Subsistema Backend %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Subsistema Backend}
+
+\subsection{Objetivos}
+
+\subsection{Arquitectura}
+
+{ \color{red} Aspectos a considerar
+    \begin{itemize}
+      \item Diagrama de paquetes general del subsistema (figura y descripción de la misma)
+    \end{itemize}
+}
+
+\subsection{Modelo del dominio}
+
+\subsubsection{Diagrama de entidades}
+
+{ \color{red} Aspectos a considerar
+    \begin{itemize}
+      \item Diagrama de clases persistentes de la aplicación
+      \item Para cada indicar, tanto de su semántica como de sus atributos.
+      \item Justificar decisiones de diseño (¿desnormalizaciones?, métodos de lógica - Domain Model Pattern - ?)
+    \end{itemize}
+}
+\subsubsection{Modelo de datos}
+
+{ \color{red} Aspectos a considerar
+    \begin{itemize}
+      \item Diagrama entidad-relación
+      \item Diccionario de Datos (en su ausencia - por temas de espacio bastante razonable - compensable con defición clara en diagrama de entidades).
+    \end{itemize}
+}
+
+\subsubsection{Consideraciones adicionales de modelado de datos}
+
+{ \color{red} Aspectos a considerar
+    \begin{itemize}
+      \item Claves primarias autogeneradas
+      \item Anotaciones para relaciones entre entidades
+      \item Optimistic Locking y @Version en Hibernate
+      \item Relaciones LAZY/EAGER
+      \item Optimizaciones hibernate en navegación entre entidades
+      \item Optimizaciones hibernate - cache primer nivel
+    \end{itemize}
+}
+
+\subsection{Capa de acceso a datos}
+
+{ \color{red} Aspectos a considerar
+    \begin{itemize}
+      \item Arquitectura de un DAO
+      \item Aspectos más relevantes de los DAOs implementados
+    \end{itemize}
+}
+
+\subsection{Capa de lógica de negocio}
+
+{ \color{red} Aspectos a considerar
+    \begin{itemize}
+      \item Arquitectura de servicios del modelo: Interfaces + clases asociadas
+      \item Incluir descripción de métodos (en algunos casos podrían comentarse de forma agregada algunas operaciones por ejemplo gestión de usuarios (añadir/eliminar/modificar) en lugar de comentar de uno en uno.
+      \item Incluir descripción de algoritmos en los casos que sea necesario. Podría incluirse un diagrama de secuencia para complementar algún algoritmo.
+    \end{itemize}
+}
+
+\subsection{Capa servicios}
+
+{ \color{red} Aspectos a considerar
+    \begin{itemize}
+      \item Diseño controladores
+      \item API REST (intentar que sea REST-full cuando haya un mapping directo ... overloading del POST en otro caso
+      \item Gestión de errores y aspectos de internacionalización de mensajes de error
+      \item Autenticación y aspectos de control de acceso a los diferentes endpoints (SecurityConfig). Soporte de redirección tras autenticación, si implementado.
+    \end{itemize}
+}
+
+\subsection{Otros?}
+
+{ \color{red} Aspectos a resaltar
+    \begin{itemize}
+      \item Integración con otros sistemas o librerías a nivel de backend, e.g. pago con PayPal. 
+      \item Tb se podrían destacar aspectos como chats con websockets o algoritmos. Importante dejar claro todo lo que se comente en "objetivos" y "aportaciones" principales del proyecto.
+    \end{itemize}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Subsistema Frontend %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Subsistema Frontend}
+
+\subsection{Objetivos}
+
+\subsection{Arquitectura}
+
+{ \color{red} Aspectos a considerar
+    \begin{itemize}
+      \item Arquitectura de capas: al menos capa de acceso al servicio y capa de componentes de interfaz
+    \end{itemize}
+}
+
+\subsection{Capa de acceso al servicio}
+
+\subsection{Capa de componentes de interfaz}
+
+\subsection{Otros?}
+
+{ \color{red} Aspectos a considerar
+    \begin{itemize}
+      \item Internacionalización de mensajes de texto 
+      \item Integración con otros sistemas / librerías
+    \end{itemize}
+}
