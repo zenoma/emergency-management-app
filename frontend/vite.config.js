@@ -17,6 +17,18 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/ow/, ''),
       },
+      // Proxy backend API calls to avoid CORS during development
+      '/users': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        // leave path as-is
+        rewrite: (path) => path,
+      },
+      '/quadrants': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path,
+      },
     }
   },
   resolve: {
@@ -25,4 +37,3 @@ export default defineConfig({
     },
   },
 });
-

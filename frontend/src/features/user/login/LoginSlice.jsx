@@ -17,7 +17,8 @@ export const loginSlice = createSlice({
       localStorage.setItem("token", "");
     },
   },
-  extraReducers: {},
+  // Use builder callback form — object notation is deprecated in RTK
+  extraReducers: (builder) => {},
 });
 
 export const selectUser = (state) => state.login.user;
