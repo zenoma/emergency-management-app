@@ -140,7 +140,7 @@
 % Especificar 99 para TFM MUEI; 79 para TFG GEI
 \AddToHook{shipout/background}{\put(1in,-1in){%
 %\AddEverypageHook{%
-  \ifthenelse{\(\value{page}>79\) \AND \(\NOT \equal{\@chapapp}{\appendixname}\)}
+  \ifthenelse{\(\value{page}>99\) \AND \(\NOT \equal{\@chapapp}{\appendixname}\)}
              {\message{Estilo TFG warning: sobrepasado límite antes apéndices!}\thispagestyle{sobrante}}
 }}
 
