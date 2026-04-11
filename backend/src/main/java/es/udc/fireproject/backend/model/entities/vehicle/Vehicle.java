@@ -1,16 +1,8 @@
 package es.udc.fireproject.backend.model.entities.vehicle;
 
-import es.udc.fireproject.backend.model.entities.organization.Organization;
-import es.udc.fireproject.backend.model.entities.quadrant.Quadrant;
-import jakarta.persistence.CascadeType;
+import es.udc.fireproject.backend.model.entities.resource.Resource;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -26,11 +18,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
-public class Vehicle {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  protected Long id;
+public class Vehicle extends Resource {
 
   @Column(name = "vehicle_plate")
   @NotBlank
@@ -39,31 +27,17 @@ public class Vehicle {
   @Column(name = "type")
   private String type;
 
-  @Column(name = "created_at", nullable = false)
-  private LocalDateTime createdAt;
-
-  @ManyToOne(optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @JoinColumn(name = "organization_id", nullable = false)
-  private Organization organization;
-
-  @ManyToOne(
-      fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @JoinColumn(name = "quadrant_gid")
-  @EqualsAndHashCode.Exclude
-  @ToString.Exclude
-  private Quadrant quadrant;
-
-  @Column(name = "deploy_at")
-  private LocalDateTime deployAt;
-
-  @Column(name = "dismantle_at")
-  private LocalDateTime dismantleAt;
-
 
   public Vehicle() {
   }
 
-  public Vehicle(String vehiclePlate, String type, Organization organization) {
+  public Vehicle(String vehiclePlate, String type) {
+    this.vehiclePlate = vehiclePlate;
+    this.type = type;
+    this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+  }
+
+  public Vehicle(String vehiclePlate, String type, es.udc.fireproject.backend.model.entities.organization.Organization organization) {
     this.vehiclePlate = vehiclePlate;
     this.type = type;
     this.organization = organization;
