@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/firedb}
-    username: ${DB_USERNAME:fireuser}
-    password: ${DB_PASSWORD:fireuser}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/emergencydb}
+    username: ${DB_USERNAME:emergencyuser}
+    password: ${DB_PASSWORD:emergencypass}
   jpa:
     hibernate:
       ddl-auto: update

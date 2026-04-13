@@ -16,8 +16,8 @@ tags:
     description: Operations related to users management
   - name: QuadrantManagement
     description: Operations related to quadrants management
-  - name: FireManagement
-    description: Operations related to fires management
+  - name: EmergencyManagement
+    description: Operations related to emergencies management
   - name: OrganizationManagement
     description: Operations related to organizations management
   - name: OrganizationTypeManagement
@@ -55,17 +55,17 @@ paths:
     $ref: './quadrants/quadrants_$id$.yml'
   /quadrants/findByCoordinates:
     $ref: './quadrants/quadrants_findByCoordinates.yml'
-  /quadrants/{id}/linkFire:
-    $ref: './quadrants/quadrants_$id$_linkFire.yml'
+  /quadrants/{id}/linkEmergency:
+    $ref: './quadrants/quadrants_$id$_linkEmergency.yml'
 
-  /fires:
-    $ref: './fires/fires.yml'
-  /fires/{id}:
-    $ref: './fires/fires_$id$.yml'
-  /fires/{id}/extinguishQuadrant:
-    $ref: './fires/fires_$id$_extinguishQuadrant.yml'
-  /fires/{id}/extinguishFire:
-    $ref: './fires/fires_$id$_extinguishFire.yml'
+  /emergencies:
+    $ref: './emergencies/emergencies.yml'
+  /emergencies/{id}:
+    $ref: './emergencies/emergencies_$id$.yml'
+  /emergencies/{id}/extinguishQuadrant:
+    $ref: './emergencies/emergencies_$id$_extinguishQuadrant.yml'
+  /emergencies/{id}/extinguishEmergency:
+    $ref: './emergencies/emergencies_$id$_extinguishEmergency.yml'
 
   /organizations:
     $ref: './organizations/organizations.yml'
@@ -110,10 +110,10 @@ paths:
     $ref: './vehicles/vehicles_$id$_retract.yml'
 
 
-  /logs/fires:
-    $ref: './logManagement/fires.yml'
-  /logs/fires/{id}:
-    $ref: './logManagement/fires_$id$.yml'
+  /logs/emergencies:
+    $ref: './logManagement/emergencies.yml'
+  /logs/emergencies/{id}:
+    $ref: './logManagement/emergencies_$id$.yml'
   /logs/teams:
     $ref: './logManagement/teams.yml'
   /logs/vehicles:

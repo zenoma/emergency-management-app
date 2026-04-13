@@ -1,0 +1,16 @@
+meta {
+  name: Extinguish Emergency
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/emergencies/4/extinguishFire
+  body: json
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,11 +1,11 @@
 get:
-  summary: Estadísticas globales de un incendio
+  summary: Estadísticas globales de una emergencia
   operationId: getGlobalStatistics
   tags:
     - LogManagement
   parameters:
     - in: query
-      name: fireId
+      name: emergencyId
       schema:
         type: integer
         format: int64

@@ -1,0 +1,24 @@
+meta {
+  name: Create Emergency
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/emergencies
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "description": "aaa",
+    "type": "aaaa",
+    "emergencyIndex": "CERO"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

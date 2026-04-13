@@ -1,0 +1,14 @@
+type: object
+required:
+  - description
+  - type
+  - emergencyIndex
+properties:
+  description:
+    type: string
+  type:
+    type: string
+  emergencyIndex:
+    type: string
+    enum: [ EXTINGUIDO, CERO, UNO, DOS, TRES ]
+
