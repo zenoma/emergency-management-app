@@ -1,10 +1,10 @@
 import { baseApi } from "./baseApi";
 
-export const fireApi = baseApi.injectEndpoints({
+export const emergencyApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getFires: build.query({
+    getEmergencies: build.query({
       query: (payload) => ({
-        url: "/fires",
+        url: "/emergencies",
         headers: {
           Authorization: "Bearer " + payload.token,
           "Accept-Language": payload.locale,
@@ -14,9 +14,9 @@ export const fireApi = baseApi.injectEndpoints({
         return response;
       },
     }),
-    getFireById: build.query({
+    getEmergencyById: build.query({
       query: (payload) => ({
-        url: "/fires/" + payload.fireId,
+        url: "/emergencies/" + payload.emergencyId,
         headers: {
           Authorization: "Bearer " + payload.token,
           "Accept-Language": payload.locale,
@@ -26,14 +26,14 @@ export const fireApi = baseApi.injectEndpoints({
         return response;
       },
     }),
-    createFire: build.mutation({
+    createEmergency: build.mutation({
       query: (payload) => ({
-        url: "/fires",
+        url: "/emergencies",
         method: "POST",
         body: {
           description: payload.description,
           type: payload.type,
-          fireIndex: payload.fireIndex,
+          emergencyIndex: payload.emergencyIndex,
         },
         headers: {
           Authorization: "Bearer " + payload.token,
@@ -44,14 +44,14 @@ export const fireApi = baseApi.injectEndpoints({
         return response;
       },
     }),
-    updateFire: build.mutation({
+    updateEmergency: build.mutation({
       query: (payload) => ({
-        url: "/fires/" + payload.fireId,
+        url: "/emergencies/" + payload.emergencyId,
         method: "PUT",
         body: {
           description: payload.description,
           type: payload.type,
-          fireIndex: payload.fireIndex,
+          emergencyIndex: payload.emergencyIndex,
         },
         headers: {
           Authorization: "Bearer " + payload.token,
@@ -62,9 +62,9 @@ export const fireApi = baseApi.injectEndpoints({
         return response;
       },
     }),
-    extinguishFire: build.mutation({
+    extinguishEmergency: build.mutation({
       query: (payload) => ({
-        url: "/fires/" + payload.fireId + "/extinguishFire",
+        url: "/emergencies/" + payload.emergencyId + "/extinguishEmergency",
         method: "POST",
         headers: {
           Authorization: "Bearer " + payload.token,
@@ -75,9 +75,9 @@ export const fireApi = baseApi.injectEndpoints({
         return response;
       },
     }),
-    extinguishQuadrantByFireId: build.mutation({
+    extinguishQuadrantByEmergencyId: build.mutation({
       query: (payload) => ({
-        url: "/fires/" + payload.fireId + "/extinguishQuadrant",
+        url: "/emergencies/" + payload.emergencyId + "/extinguishQuadrant",
         method: "POST",
         body: {
           quadrantId: payload.quadrantId,
@@ -95,10 +95,10 @@ export const fireApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetFiresQuery,
-  useGetFireByIdQuery,
-  useCreateFireMutation,
-  useUpdateFireMutation,
-  useExtinguishFireMutation,
-  useExtinguishQuadrantByFireIdMutation
-} = fireApi;
+  useGetEmergenciesQuery,
+  useGetEmergencyByIdQuery,
+  useCreateEmergencyMutation,
+  useUpdateEmergencyMutation,
+  useExtinguishEmergencyMutation,
+  useExtinguishQuadrantByEmergencyIdMutation,
+} = emergencyApi;

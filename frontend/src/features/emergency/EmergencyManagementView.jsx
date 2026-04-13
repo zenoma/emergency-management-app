@@ -1,8 +1,8 @@
 import { Paper } from "@mui/material";
 import React from "react";
-import FireDataGrid from "./FireDataGrid";
+import EmergencyDataGrid from "./EmergencyDataGrid";
 
-export default function FireManagementView() {
+export default function EmergencyManagementView() {
   return (
     <Paper
       sx={{
@@ -11,7 +11,7 @@ export default function FireManagementView() {
         minWidth: "1000px",
       }}
     >
-      <FireDataGrid />
+      <EmergencyDataGrid />
     </Paper>
   );
 }

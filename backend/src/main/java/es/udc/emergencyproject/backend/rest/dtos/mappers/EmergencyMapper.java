@@ -5,9 +5,7 @@ import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyIndex;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyResponseDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyResponseDto.EmergencyIndexEnum;
-import es.udc.emergencyproject.backend.rest.dtos.QuadrantInfoDto;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 public class EmergencyMapper {
 
@@ -16,8 +14,7 @@ public class EmergencyMapper {
 
   public static EmergencyResponseDto toEmergencyDto(Emergency emergency) {
 
-    List<QuadrantInfoDto> cuadrantDtoList = new ArrayList<>();
-    EmergencyResponseDto fireResponseDto = new EmergencyResponseDto(
+    EmergencyResponseDto emergencyResponseDto = new EmergencyResponseDto(
         emergency.getId(),
         emergency.getDescription(),
         emergency.getType(),
@@ -25,9 +22,12 @@ public class EmergencyMapper {
         emergency.getCreatedAt(),
         emergency.getExtinguishedAt());
 
-    fireResponseDto.setQuadrantInfo(cuadrantDtoList);
+    emergencyResponseDto.setQuadrantInfo(
+        emergency.getQuadrantGids() != null ?
+            emergency.getQuadrantGids().stream().map(QuadrantInfoMapper::toQuadrantDto).toList()
+            : Collections.emptyList());
 
-    return fireResponseDto;
+    return emergencyResponseDto;
   }
 
   public static EmergencyResponseDto toEmergencyDtoWithoutQuadrants(Emergency emergency) {

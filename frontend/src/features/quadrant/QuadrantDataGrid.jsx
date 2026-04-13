@@ -18,7 +18,7 @@ export default function QuadrantDataGrid({ childToParent }) {
 
   const { t } = useTranslation();
   const { i18n } = useTranslation("home");
-  const locale = i18n.language;  
+  const locale = i18n.language;
 
   var localeText;
 
@@ -59,8 +59,8 @@ export default function QuadrantDataGrid({ childToParent }) {
         width: 200,
       },
       {
-        field: "fireId",
-        headerName: t("quadrant-fire-id"),
+        field: "emergencyId",
+        headerName: t("quadrant-emergency-id"),
         width: 200,
       },
     ],
@@ -119,7 +119,7 @@ export default function QuadrantDataGrid({ childToParent }) {
           pagination
           localeText={localeText}
           getRowClassName={(params) => {
-            if (params.row.fireId !== undefined) {
+            if (params.row.emergencyId !== undefined) {
               return "disabled";
             }
           }}

@@ -74,7 +74,7 @@ public class Quadrant implements Serializable {
   @JoinColumn(name = "emergency_id")
   private Emergency emergency;
 
-  @Column(name = "fire_linked_at")
+  @Column(name = "emergency_linked_at")
   private LocalDateTime linkedAt;
 
   public Quadrant() {

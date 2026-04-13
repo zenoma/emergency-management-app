@@ -12,9 +12,9 @@ public class QuadrantMapper {
   }
 
   public static QuadrantDto toQuadrantDto(Quadrant quadrant) {
-    Long fireId = null;
+    Long emergencyId = null;
     if (quadrant.getEmergency() != null) {
-      fireId = quadrant.getEmergency().getId();
+      emergencyId = quadrant.getEmergency().getId();
     }
     return new QuadrantDto(quadrant.getId(),
         quadrant.getEscala(),
@@ -22,7 +22,7 @@ public class QuadrantMapper {
         quadrant.getFolla50(),
         quadrant.getFolla25(),
         quadrant.getFolla5(),
-        fireId,
+        emergencyId,
         quadrant.getLinkedAt(),
         new ArrayList(Arrays.asList(quadrant.getGeom().getCoordinates())));
   }

@@ -10,14 +10,14 @@ import Box from "@mui/material/Box";
 
 import Paper from "@mui/material/Paper";
 import { useTranslation } from "react-i18next";
-import { useGetQuadrantWithActiveFiresQuery, useGetQuadrantByCoordinatesQuery } from "../../api/quadrantApi";
+import { useGetQuadrantWithActiveEmergenciesQuery, useGetQuadrantByCoordinatesQuery } from "../../api/quadrantApi";
 import { transformCoordinates } from "../../app/utils/coordinatesTransformations";
 import WeatherInfo from "../weather/WeatherInfo";
 
 export default function Dashboard() {
   const { t } = useTranslation();
 
-  const { data: quadrants, isError } = useGetQuadrantWithActiveFiresQuery();
+  const { data: quadrants, isError } = useGetQuadrantWithActiveEmergenciesQuery();
 
   const [coordinates, setCoordinates] = useState({
     "lat": 0,

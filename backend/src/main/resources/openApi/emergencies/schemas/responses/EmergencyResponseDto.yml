@@ -3,7 +3,7 @@ required:
   - id
   - description
   - type
-  - EmergencyIndex
+  - emergencyIndex
   - createdAt
   - extinguishedAt
 properties:
@@ -14,7 +14,7 @@ properties:
     type: string
   type:
     type: string
-  EmergencyIndex:
+  emergencyIndex:
     type: string
     enum: [ EXTINGUIDO, CERO, UNO, DOS, TRES ]
   createdAt:

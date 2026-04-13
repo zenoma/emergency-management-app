@@ -6,7 +6,7 @@ required:
   - folla50
   - folla25
   - folla5
-  - EmergencyId
+  - emergencyId
   - linkedAt
   - coordinates
 properties:
@@ -23,7 +23,7 @@ properties:
     type: string
   folla5:
     type: string
-  EmergencyId:
+  emergencyId:
     type: integer
     format: int64
   linkedAt:

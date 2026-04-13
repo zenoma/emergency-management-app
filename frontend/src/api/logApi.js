@@ -2,11 +2,11 @@ import { baseApi } from "./baseApi";
 
 export const logApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getFireLogsByFireId: build.query({
+    getEmergencyLogsByEmergencyId: build.query({
       query: (payload) => ({
         url:
-          "/logs/fires/" +
-          payload.fireId +
+          "/logs/emergencies/" +
+          payload.emergencyId +
           "?startDate=" +
           payload.startDate +
           "&endDate=" +
@@ -56,9 +56,9 @@ export const logApi = baseApi.injectEndpoints({
         return response;
       },
     }),
-    getGlobalStatisticsByFireId: build.query({
+    getGlobalStatisticsByEmergencyId: build.query({
       query: (payload) => ({
-        url: "/logs/statistics?fireId=" + payload.fireId,
+        url: "/logs/statistics?emergencyId=" + payload.emergencyId,
         headers: {
           Authorization: "Bearer " + payload.token,
           "Accept-Language": payload.locale,
@@ -72,8 +72,8 @@ export const logApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetFireLogsByFireIdQuery,
+  useGetEmergencyLogsByEmergencyIdQuery,
   useGetTeamLogsByQuadrantIdQuery,
   useGetVehicleLogsByQuadrantIdQuery,
-  useGetGlobalStatisticsByFireIdQuery,
+  useGetGlobalStatisticsByEmergencyIdQuery,
 } = logApi;

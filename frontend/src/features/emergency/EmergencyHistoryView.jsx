@@ -23,16 +23,16 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useGetFireByIdQuery } from "../../api/fireApi";
+import { useGetEmergencyByIdQuery } from "../../api/emergencyApi";
 import {
-  useGetFireLogsByFireIdQuery,
-  useGetGlobalStatisticsByFireIdQuery,
+  useGetEmergencyLogsByEmergencyIdQuery,
+  useGetGlobalStatisticsByEmergencyIdQuery,
 } from "../../api/logApi";
 import LandingMap from "../map/LandingMap";
 import { selectToken } from "../user/login/LoginSlice";
 import BackButton from "../utils/BackButton";
 
-export default function FireHistoryView() {
+export default function EmergencyHistoryView() {
   const token = useSelector(selectToken);
   const location = useLocation();
   const navigate = useNavigate();
@@ -45,39 +45,39 @@ export default function FireHistoryView() {
   const [selectedEndDate, setSelectedEndDate] = useState(dayjs());
   const [areDatesValid, setAreDatesValid] = useState(true);
 
-  const fireId = location.state.fireId;
+  const emergencyId = location.state.emergencyId;
 
 
-  const { data: fireData, isLoading: isFireLoading, isError: isFireError } = useGetFireByIdQuery({
+  const { data: emergencyData, isLoading: isEmergencyLoading, isError: isEmergencyError } = useGetEmergencyByIdQuery({
     token: token,
-    fireId: fireId,
+    emergencyId: emergencyId,
     locale: locale,
   });
 
-  const { data: globalStatistics, isError: isStatsError } = useGetGlobalStatisticsByFireIdQuery({
+  const { data: globalStatistics, isError: isStatsError } = useGetGlobalStatisticsByEmergencyIdQuery({
     token: token,
-    fireId: fireId,
+    emergencyId: emergencyId,
     locale: locale,
   });
 
   const payload = {
     token: token,
-    fireId: fireId,
+    emergencyId: emergencyId,
     startDate: dayjs(selectedStartDate).format("YYYY-MM-DD"),
     endDate: dayjs(selectedEndDate).format("YYYY-MM-DD"),
     locale: locale
   };
 
-  const { data: fireLogs, isError: isLogsError } = useGetFireLogsByFireIdQuery(payload, {
+  const { data: emergencyLogs, isError: isLogsError } = useGetEmergencyLogsByEmergencyIdQuery(payload, {
     refetchOnMountOrArgChange: true,
   });
 
   useEffect(() => {
-    if (fireData) {
-      setSelectedStartDate(dayjs(fireData.createdAt));
-      setSelectedEndDate(dayjs(fireData.extinguishedAt));
+    if (emergencyData) {
+      setSelectedStartDate(dayjs(emergencyData.createdAt));
+      setSelectedEndDate(dayjs(emergencyData.extinguishedAt));
     }
-  }, [fireData]);
+  }, [emergencyData]);
 
 
   const handleStartDateChange = (date) => {
@@ -106,8 +106,8 @@ export default function FireHistoryView() {
     function getQuadrants() {
       const uniqueQuadrants = [];
 
-      for (let i = 0; i < fireLogs.length; i++) {
-        const quadrant = fireLogs[i].quadrantInfo;
+      for (let i = 0; i < emergencyLogs.length; i++) {
+        const quadrant = emergencyLogs[i].quadrantInfo;
         const coordsStr = JSON.stringify(quadrant.coordinates);
         if (!uniqueQuadrants.some(q => JSON.stringify(q.coordinates) === coordsStr)) {
           uniqueQuadrants.push(quadrant);
@@ -117,14 +117,14 @@ export default function FireHistoryView() {
       setQuadrants(uniqueQuadrants);
     }
 
-    if (fireLogs) {
-      getQuadrants(fireLogs);
+    if (emergencyLogs) {
+      getQuadrants(emergencyLogs);
     }
-  }, [fireLogs]);
+  }, [emergencyLogs]);
 
 
 
-  if (isFireLoading) {
+  if (isEmergencyLoading) {
     return (
       <Box sx={{ padding: 3, display: "flex", justifyContent: "center" }}>
         <CircularProgress />
@@ -132,7 +132,7 @@ export default function FireHistoryView() {
     );
   }
 
-  if (isFireError) {
+  if (isEmergencyError) {
     return (
       <Box sx={{ padding: 3 }}>
         <BackButton />
@@ -149,11 +149,11 @@ export default function FireHistoryView() {
         margin={1}
         sx={{ fontWeight: "bold", color: "primary.light" }}
       >
-        {t("fire-history-title")}
+        {t("emergency-history-title")}
       </Typography>
-      {fireData && (
+      {emergencyData && (
         <Typography variant="h6" margin={1}>
-          {fireData.description} ({"#" + fireId})
+          {emergencyData.description} ({"#" + emergencyId})
         </Typography>
       )}
       <Grid
@@ -176,7 +176,7 @@ export default function FireHistoryView() {
             <Box sx={{ height: "90%", padding: 1 }}>
               {isLogsError ? (
                 <Alert severity="error">{t("generic-error")}</Alert>
-              ) : fireLogs ? (
+              ) : emergencyLogs ? (
                 <LandingMap quadrants={quadrants} />
               ) : null}
             </Box>
@@ -192,7 +192,7 @@ export default function FireHistoryView() {
             variant="outlined"
           >
             <Typography variant="h6">{t("tittle-date-picker")}</Typography>
-            {fireData && (
+            {emergencyData && (
               <div
               >
                 <Box
@@ -259,8 +259,8 @@ export default function FireHistoryView() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {fireLogs &&
-                        fireLogs.map((row, index) => (
+                      {emergencyLogs &&
+                        emergencyLogs.map((row, index) => (
                           <TableRow
                             key={row.quadrantInfo.id + index}
                             hover

@@ -32,12 +32,12 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
-  useExtinguishFireMutation,
-  useExtinguishQuadrantByFireIdMutation,
-  useGetFireByIdQuery,
-  useUpdateFireMutation,
-} from "../../api/fireApi";
-import { useLinkFireMutation } from "../../api/quadrantApi";
+  useExtinguishEmergencyMutation,
+  useExtinguishQuadrantByEmergencyIdMutation,
+  useGetEmergencyByIdQuery,
+  useUpdateEmergencyMutation,
+} from "../../api/emergencyApi";
+import { useLinkEmergencyMutation } from "../../api/quadrantApi";
 import LandingMap from "../map/LandingMap";
 import QuadrantDataGrid from "../quadrant/QuadrantDataGrid";
 import { selectToken } from "../user/login/LoginSlice";
@@ -45,14 +45,14 @@ import BackButton from "../utils/BackButton";
 import WeatherInfo from "../weather/WeatherInfo";
 import { untransformCoordinates } from "../../app/utils/coordinatesTransformations";
 
-const fireIndexSelector = ["CERO", "UNO", "DOS", "TRES"];
+const emergencyIndexSelector = ["CERO", "UNO", "DOS", "TRES"];
 
 
-export default function FireDetailsView() {
+export default function EmergencyDetailsView() {
   const token = useSelector(selectToken);
 
   const location = useLocation();
-  const fireId = location.state.fireId;
+  const emergencyId = location.state.emergencyId || location.state.emergencyId;
 
   const { t } = useTranslation();
   const { i18n } = useTranslation("home");
@@ -66,7 +66,7 @@ export default function FireDetailsView() {
 
   const [description, setDescription] = useState();
   const [type, setType] = useState();
-  const [fireIndex, setFireIndex] = useState();
+  const [emergencyIndex, setEmergencyIndex] = useState();
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openQuadrantExtinguish, setOpenQuadrantExtinguish] = useState(false);
@@ -75,13 +75,13 @@ export default function FireDetailsView() {
 
   const [coordinates, setCoordinates] = useState("");
 
-  const payload = { token: token, fireId: fireId, locale: locale };
+  const payload = { token: token, emergencyId: emergencyId, locale: locale };
 
-  const { data, refetch, isLoading, isError } = useGetFireByIdQuery(payload);
+  const { data, refetch, isLoading, isError } = useGetEmergencyByIdQuery(payload);
 
-  const [linkFire] = useLinkFireMutation();
-  const [extinguishFire] = useExtinguishFireMutation();
-  const [extinguishQuadrantByFireId] = useExtinguishQuadrantByFireIdMutation();
+  const [linkEmergency] = useLinkEmergencyMutation ? useLinkEmergencyMutation() : [null];
+  const [extinguishEmergency] = useExtinguishEmergencyMutation();
+  const [extinguishQuadrantByEmergencyId] = useExtinguishQuadrantByEmergencyIdMutation();
 
   useEffect(() => {
     refetch();
@@ -112,12 +112,12 @@ export default function FireDetailsView() {
   const handleClick = () => {
     const payload = {
       token: token,
-      fireId: fireId,
+      emergencyId: emergencyId,
       quadrantId: selectedId,
       locale: locale
     };
 
-    linkFire(payload)
+    linkEmergency(payload)
       .unwrap()
       .then(() => {
         toast.success(t("quadrant-linked-successfully"));
@@ -138,18 +138,18 @@ export default function FireDetailsView() {
   const handleExtinguishClick = () => {
     const payload = {
       token: token,
-      fireId: fireId,
+      emergencyId: emergencyId,
       locale: locale
     };
 
-    extinguishFire(payload)
+    extinguishEmergency(payload)
       .unwrap()
       .then(() => {
-        toast.success(t("fire-extinguished-successfully"));
+        toast.success(t("emergency-extinguished-successfully"));
         setOpenExtinguish(false);
-        navigate("/fire-management");
+        navigate("/emergency-management");
       })
-      .catch((error) => toast.error(t("fire-extinguished-error")));
+      .catch((error) => toast.error(t("emergency-extinguished-error")));
   };
 
 
@@ -160,28 +160,28 @@ export default function FireDetailsView() {
   const handleClickOpenEdit = (data) => {
     setDescription(data.description);
     setType(data.type);
-    setFireIndex(data.fireIndex);
+    setEmergencyIndex(data.emergencyIndex);
     setOpenEdit(true);
   };
 
-  const [updateFire] = useUpdateFireMutation();
+  const [updateEmergency] = useUpdateEmergencyMutation();
 
   const handleEditClick = () => {
     const payload = {
-      fireId: fireId,
+      emergencyId: emergencyId,
       token: token,
       description: description,
       type: type,
-      fireIndex: fireIndex,
+      emergencyIndex: emergencyIndex,
       locale: locale
     };
 
-    updateFire(payload)
+    updateEmergency(payload)
       .unwrap()
       .then((payload) => {
-        toast.success(t("fire-updated-successfully"));
+        toast.success(t("emergency-updated-successfully"));
       })
-      .catch((error) => toast.error(t("fire-updated-error")));
+      .catch((error) => toast.error(t("emergency-updated-error")));
 
     refetch();
     handleCloseEdit();
@@ -199,7 +199,7 @@ export default function FireDetailsView() {
         setType(value);
         break;
       default:
-        setFireIndex(value);
+        setEmergencyIndex(value);
         break;
     }
   };
@@ -217,12 +217,12 @@ export default function FireDetailsView() {
   const handleExtinguishQuadrantClick = () => {
     const payload = {
       token: token,
-      fireId: fireId,
+      emergencyId: emergencyId,
       quadrantId: quadrantId,
       locale: locale
     };
 
-    extinguishQuadrantByFireId(payload)
+    extinguishQuadrantByEmergencyId(payload)
       .unwrap()
       .then(() => {
         toast.success(t("quadrant-extinguished-successfully"));
@@ -258,7 +258,7 @@ export default function FireDetailsView() {
         margin={1}
         sx={{ fontWeight: "bold", color: "primary.light" }}
       >
-        {t("fire-details-title")}
+        {t("emergency-details-title")}
       </Typography>
       {data && (
         <Paper
@@ -278,7 +278,7 @@ export default function FireDetailsView() {
           <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap", justifyContent: "center" }}>
             <Box>
               <Typography variant="overline" sx={{ color: "secondary.light" }} display="block">
-                {t("fire-id")}
+                {t("emergency-id")}
               </Typography>
               <Typography variant="h6" fontWeight="bold">
                 #{data.id}
@@ -286,7 +286,7 @@ export default function FireDetailsView() {
             </Box>
             <Box>
               <Typography variant="overline" sx={{ color: "secondary.light" }} display="block">
-                {t("fire-description")}
+                {t("emergency-description")}
               </Typography>
               <Typography variant="h6" fontWeight="bold">
                 {data.description}
@@ -294,7 +294,7 @@ export default function FireDetailsView() {
             </Box>
             <Box>
               <Typography variant="overline" sx={{ color: "secondary.light" }} display="block">
-                {t("fire-type")}
+                {t("emergency-type")}
               </Typography>
               <Typography variant="h6" fontWeight="bold">
                 {data.type}
@@ -302,10 +302,10 @@ export default function FireDetailsView() {
             </Box>
             <Box>
               <Typography variant="overline" sx={{ color: "secondary.light" }} display="block">
-                {t("fire-fireIndex")}
+                {t("emergency-emergencyIndex")}
               </Typography>
               <Typography variant="h6" fontWeight="bold">
-                {data.fireIndex}
+                {data.emergencyIndex}
               </Typography>
             </Box>
           </Box>
@@ -426,7 +426,7 @@ export default function FireDetailsView() {
               }}
               variant="outlined"
             >
-              <Typography variant="h6">{t("fire-options")}</Typography>
+              <Typography variant="h6">{t("emergency-options")}</Typography>
               <Button
                 fullWidth
                 variant="contained"
@@ -445,7 +445,7 @@ export default function FireDetailsView() {
                 }}
                 onClick={() => handleExtinguishOpenClick()}
               >
-                {t("fire-extinguish")}
+                {t("emergency-extinguish")}
               </Button>
               <Dialog
                 open={openQuadrantExtinguish}
@@ -479,11 +479,11 @@ export default function FireDetailsView() {
                 aria-describedby="alert-dialog-description"
               >
                 <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
-                  {t("fire-extinguish-dialog")}
+                  {t("emergency-extinguish-dialog")}
                 </DialogTitle>
                 <DialogContent>
                   <Typography variant="body2">
-                    {t("fire-extinguish-text")}
+                    {t("emergency-extinguish-text")}
                   </Typography>
                 </DialogContent>
                 <DialogActions>
@@ -493,7 +493,7 @@ export default function FireDetailsView() {
                     color="error"
                     autoFocus
                   >
-                    {t("fire-extinguish")}
+                    {t("emergency-extinguish")}
                   </Button>
                 </DialogActions>
               </Dialog>
@@ -520,14 +520,14 @@ export default function FireDetailsView() {
       </Dialog>
 
       <Dialog maxWidth={"md"} open={openEdit}>
-        <DialogTitle sx={{ color: "primary.light" }}>{t("fire-updated-title")}</DialogTitle>
+        <DialogTitle sx={{ color: "primary.light" }}>{t("emergency-updated-title")}</DialogTitle>
         <DialogContent>
           <FormControl>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
                   id="description"
-                  label={t("fire-description")}
+                  label={t("emergency-description")}
                   type="text"
                   autoComplete="current-code"
                   margin="normal"
@@ -541,7 +541,7 @@ export default function FireDetailsView() {
               <Grid item xs={6}>
                 <TextField
                   id="type"
-                  label={t("fire-type")}
+                  label={t("emergency-type")}
                   type="text"
                   autoComplete="current-code"
                   margin="normal"
@@ -555,17 +555,17 @@ export default function FireDetailsView() {
               <Grid item xs={6}>
                 <FormControl fullWidth >
                   <InputLabel id="input-label-id" >
-                    {t("fire-fireIndex")}
+                    {t("emergency-emergencyIndex")}
                   </InputLabel>
                   <Select
-                    id="fireIndex"
-                    label={t("fire-fireIndex")}
-                    value={fireIndex}
+                    id="emergencyIndex"
+                    label={t("emergency-emergencyIndex")}
+                    value={emergencyIndex}
                     onChange={(e) => handleChange(e)}
                     required
                     sx={{ margin: 2 }}
                   >
-                    {fireIndexSelector.map((item, index) => (
+                    {emergencyIndexSelector.map((item, index) => (
                       <MenuItem key={index} value={item}>
                         {item}
                       </MenuItem>

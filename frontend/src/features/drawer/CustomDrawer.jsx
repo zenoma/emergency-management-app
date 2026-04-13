@@ -56,7 +56,7 @@ const pages = [
     role: ["COORDINATOR", "MANAGER", "USER"],
   },
   {
-    name: "fire-management",
+    name: "emergency-management",
     icon: <WhatshotIcon />,
     role: ["COORDINATOR", "MANAGER"],
   },
@@ -133,8 +133,8 @@ export default function PersistentDrawerLeft() {
       case "my-notices":
         navigate("/my-notices");
         break;
-      case "fire-management":
-        navigate("/fire-management");
+      case "emergency-management":
+        navigate("/emergency-management");
         break;
       case "user-management":
         navigate("/user-management");
@@ -169,8 +169,8 @@ export default function PersistentDrawerLeft() {
         return pathname.startsWith("/my-team");
       case "my-notices":
         return pathname.startsWith("/my-notices");
-      case "fire-management":
-        return pathname.startsWith("/fire-management");
+      case "emergency-management":
+        return pathname.startsWith("/emergency-management");
       case "user-management":
         return pathname.startsWith("/user-management");
       case "notice-management":
@@ -183,7 +183,7 @@ export default function PersistentDrawerLeft() {
   const personalKeys = ["my-team", "my-notices"];
   const gestionKeys = [
     "organizations",
-    "fire-management",
+    "emergency-management",
     "user-management",
     "notice-management",
   ];

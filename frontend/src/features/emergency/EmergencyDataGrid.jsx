@@ -29,10 +29,10 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useCreateFireMutation, useGetFiresQuery } from "../../api/fireApi";
+import { useCreateEmergencyMutation, useGetEmergenciesQuery } from "../../api/emergencyApi";
 import { selectToken, selectUser } from "../user/login/LoginSlice";
 
-export default function FireDataGrid() {
+export default function EmergencyDataGrid() {
   const token = useSelector(selectToken);
   const userRole = useSelector(selectUser).userRole;
 
@@ -42,9 +42,9 @@ export default function FireDataGrid() {
   const [pageSize, setPageSize] = useState(10);
 
   const [description, setDescription] = useState("");
-  const [fireType, setFireType] = useState("");
-  const fireIndexSelector = ["CERO", "UNO", "DOS", "TRES"];
-  const [fireIndex, setFireIndex] = useState("");
+  const [emergencyType, setEmergencyType] = useState("");
+  const emergencyIndexSelector = ["CERO", "UNO", "DOS", "TRES"];
+  const [emergencyIndex, setEmergencyIndex] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -52,8 +52,8 @@ export default function FireDataGrid() {
 
   const handleClose = () => {
     setDescription("");
-    setFireType("");
-    setFireIndex("");
+    setEmergencyType("");
+    setEmergencyIndex("");
     setOpen(false);
   };
 
@@ -68,43 +68,43 @@ export default function FireDataGrid() {
   const locale = i18n.language;
 
   const {
-    data: fires,
+    data: emergencies,
     error,
     isLoading,
     refetch,
-  } = useGetFiresQuery(
+  } = useGetEmergenciesQuery(
     { token: token, locale: locale },
     {
       refetchOnMountOrArgChange: true,
     }
   );
 
-  const [createFire] = useCreateFireMutation();
+  const [createEmergency] = useCreateEmergencyMutation();
 
   const data = {
     columns: [
       {
         field: "id",
-        headerName: t("fire-id"),
+        headerName: t("emergency-id"),
         groupable: false,
         aggregable: false,
       },
       {
         field: "description",
-        headerName: t("fire-description"),
+        headerName: t("emergency-description"),
         minWidth: 200,
         hide: true,
       },
       {
         field: "type",
-        headerName: t("fire-type"),
+        headerName: t("emergency-type"),
         groupable: false,
         minWidth: 100,
         aggregable: false,
       },
       {
-        field: "fireIndex",
-        headerName: t("fire-index"),
+        field: "emergencyIndex",
+        headerName: t("emergency-index"),
         groupable: false,
         minWidth: 150,
         aggregable: false,
@@ -112,18 +112,18 @@ export default function FireDataGrid() {
 
       {
         field: "createdAt",
-        headerName: t("fire-created-at"),
+        headerName: t("emergency-created-at"),
         minWidth: 200,
         aggregable: false,
       },
       {
         field: "extinguishedAt",
-        headerName: t("fire-extinguished-at"),
+        headerName: t("emergency-extinguished-at"),
         minWidth: 200,
         aggregable: false,
       },
     ],
-    rows: fires,
+    rows: emergencies,
     initialState: {
       columns: {
         columnVisibilityModel: {
@@ -148,40 +148,40 @@ export default function FireDataGrid() {
       setDescription(value);
     }
     if (id === "type") {
-      setFireType(value);
+      setEmergencyType(value);
     }
   };
 
   const handleRowClick = (row) => {
-    navigate("/fire-details", { state: { fireId: row.id } });
+    navigate("/emergency-details", { state: { emergencyId: row.id } });
   };
 
   const handleDisabledRowClick = (row) => {
-    navigate("/fire-history", { state: { fireId: row.id } });
+    navigate("/emergency-history", { state: { emergencyId: row.id } });
   };
 
   const handleClick = () => {
-    if (!description.trim() || !fireType.trim() || !fireIndex) {
-      toast.error(t("fire-required-fields"));
+    if (!description.trim() || !emergencyType.trim() || !emergencyIndex) {
+      toast.error(t("emergency-required-fields"));
       return;
     }
 
     const payload = {
       token: token,
       description: description,
-      type: fireType,
-      fireIndex: fireIndex,
+      type: emergencyType,
+      emergencyIndex: emergencyIndex,
       locale: locale,
     };
 
-    createFire(payload)
+    createEmergency(payload)
       .unwrap()
       .then(() => {
-        toast.success(t("fire-created-successfully"));
+        toast.success(t("emergency-created-successfully"));
         refetch();
         handleClose();
       })
-      .catch((error) => toast.error(t("fire-created-error")));
+      .catch((error) => toast.error(t("emergency-created-error")));
   };
 
   function CustomToolbar() {
@@ -195,7 +195,7 @@ export default function FireDataGrid() {
   }
 
   const statusFilterModel = {
-    items: [{ columnField: "fireIndex", operatorValue: 'isAnyOf', value: ['CERO', 'UNO', 'DOS', 'TRES'], label: 'Extinguido' }]
+    items: [{ columnField: "emergencyIndex", operatorValue: 'isAnyOf', value: ['CERO', 'UNO', 'DOS', 'TRES'], label: 'Extinguido' }]
   };
 
   const [filterModel, setFilterModel] = useState(statusFilterModel);
@@ -210,7 +210,7 @@ export default function FireDataGrid() {
         <h1>{t("generic-error")}</h1>
       ) : isLoading ? (
         <div>Loading</div>
-      ) : fires ? (
+      ) : emergencies ? (
         <Box
           sx={{
             height: 490,
@@ -252,7 +252,7 @@ export default function FireDataGrid() {
             margin={1}
             sx={{ fontWeight: "bold", color: "primary.light" }}
           >
-            {t("fire-list")}
+            {t("emergency-list")}
           </Typography>
           <DataGrid
             {...data}
@@ -270,20 +270,20 @@ export default function FireDataGrid() {
             filterModel={filterModel}
             onFilterModelChange={handleFilterModelChange}
             getRowClassName={(params) => {
-              if (params.row.fireIndex === "EXTINGUIDO") {
+              if (params.row.emergencyIndex === "EXTINGUIDO") {
                 return "extinguido";
-              } else if (params.row.fireIndex === "CERO") {
+              } else if (params.row.emergencyIndex === "CERO") {
                 return "cero";
-              } else if (params.row.fireIndex === "UNO") {
+              } else if (params.row.emergencyIndex === "UNO") {
                 return "uno";
-              } else if (params.row.fireIndex === "DOS") {
+              } else if (params.row.emergencyIndex === "DOS") {
                 return "dos";
-              } else if (params.row.fireIndex === "TRES") {
+              } else if (params.row.emergencyIndex === "TRES") {
                 return "tres";
               }
             }}
             onRowClick={(e) =>
-              e.row.fireIndex === "EXTINGUIDO"
+              e.row.emergencyIndex === "EXTINGUIDO"
                 ? handleDisabledRowClick(e.row)
                 : handleRowClick(e.row)
             }
@@ -294,13 +294,13 @@ export default function FireDataGrid() {
             </Fab>
           </Box>}
           <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-            <DialogTitle sx={{ color: "primary.light" }}>{t("fire-create-title")} </DialogTitle>
+            <DialogTitle sx={{ color: "primary.light" }}>{t("emergency-create-title")} </DialogTitle>
             <DialogContent>
               <Grid container spacing={2} sx={{ mt: 1 }}>
                 <Grid item xs={12}>
                   <TextField
                     id="description"
-                    label={t("fire-description")}
+                    label={t("emergency-description")}
                     type="text"
                     autoComplete="current-description"
                     value={description}
@@ -313,10 +313,10 @@ export default function FireDataGrid() {
                 <Grid item xs={12}>
                   <TextField
                     id="type"
-                    label={t("fire-type")}
+                    label={t("emergency-type")}
                     type="text"
                     autoComplete="current-type"
-                    value={fireType}
+                    value={emergencyType}
                     onChange={(e) => handleChange(e)}
                     required
                     variant="outlined"
@@ -325,18 +325,18 @@ export default function FireDataGrid() {
                 </Grid>
                 <Grid item xs={12}>
                   <FormControl fullWidth variant="outlined">
-                    <InputLabel id="fire-index-label">
-                      {t("fire-fireIndex")}
+                    <InputLabel id="emergency-index-label">
+                      {t("emergency-emergencyIndex")}
                     </InputLabel>
                     <Select
-                      id="fireIndex"
-                      labelId="fire-index-label"
-                      label={t("fire-fireIndex")}
-                      value={fireIndex}
-                      onChange={(e) => setFireIndex(e.target.value)}
+                      id="emergencyIndex"
+                      labelId="emergency-index-label"
+                      label={t("emergency-emergencyIndex")}
+                      value={emergencyIndex}
+                      onChange={(e) => setEmergencyIndex(e.target.value)}
                       required
                     >
-                      {fireIndexSelector.map((item, index) => (
+                      {emergencyIndexSelector.map((item, index) => (
                         <MenuItem key={index} value={item}>
                           {item}
                         </MenuItem>
