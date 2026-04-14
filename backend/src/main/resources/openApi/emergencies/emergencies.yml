@@ -1,0 +1,34 @@
+get:
+  summary: Lista de emergencias
+  operationId: getAllEmergencys
+  tags:
+    - EmergencyManagement
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/EmergencyResponseDto.yml'
+post:
+  summary: Crear nueva emergencia
+  operationId: postEmergency
+  tags:
+    - EmergencyManagement
+  security:
+    - bearerAuth: [ ]
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/EmergencyRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/EmergencyResponseDto.yml'

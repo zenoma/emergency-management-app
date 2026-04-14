@@ -1,11 +1,11 @@
 services:
   db:
     image: postgis/postgis:latest
-    container_name: postgres-postgis-fireuser
+    container_name: emergencydb
     environment:
-      POSTGRES_USER: fireuser
-      POSTGRES_PASSWORD: fireuser
-      POSTGRES_DB: firedb
+      POSTGRES_USER: emergencyuser
+      POSTGRES_PASSWORD: emergencypass
+      POSTGRES_DB: emergencydb
     ports:
       - "5432:5432"
     volumes:

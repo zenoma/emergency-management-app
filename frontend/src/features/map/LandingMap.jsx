@@ -69,11 +69,11 @@ export default function LandingMap(props) {
   ];
 
   const location = useLocation();
-  const isFireDetails = location.pathname === "/fire-details";
+  const isEmergencyDetails = location.pathname === "/emergency-details";
 
   const handleClick = (event) => {
     const feature = event.features && event.features[0];
-    if (isFireDetails && feature && token) {
+    if (isEmergencyDetails && feature && token) {
       navigate("/quadrant", {
         state: {
           quadrantId: feature.layer.id,

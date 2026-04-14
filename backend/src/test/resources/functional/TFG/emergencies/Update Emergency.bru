@@ -1,0 +1,24 @@
+meta {
+  name: Update Emergency
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{base_url}}/emergencies/16
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "description": "eee",
+      "type": "eee",
+      "fireIndex": "EXTINGUIDO"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

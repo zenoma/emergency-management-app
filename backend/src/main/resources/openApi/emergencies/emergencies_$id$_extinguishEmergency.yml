@@ -1,0 +1,21 @@
+post:
+  summary: Extinguir un emergencia extinguiendo los cuadrantes afectados
+  operationId: postExtinguishEmergency
+  tags:
+    - EmergencyManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/EmergencyResponseDto.yml'

@@ -1,6 +1,6 @@
 get:
   summary: Lista cuadrantes activos
-  operationId: getQuadrantsWithActiveFire
+  operationId: getQuadrantsWithActiveEmergency
   tags:
     - QuadrantManagement
   responses:

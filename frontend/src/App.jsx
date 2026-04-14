@@ -28,9 +28,9 @@ import {
 
 import { CircularProgress } from "@mui/material";
 import { useTranslation, withTranslation } from "react-i18next";
-import FireDetailsView from "./features/fire/FireDetailsView";
-import FireHistoryView from "./features/fire/FireHistoryView";
-import FireManagementView from "./features/fire/FireManagementView";
+import EmergencyDetailsView from "./features/emergency/EmergencyDetailsView";
+import EmergencyHistoryView from "./features/emergency/EmergencyHistoryView";
+import EmergencyManagementView from "./features/emergency/EmergencyManagementView";
 import QuadrantHistoryView from "./features/history/QuadrantHistoryView";
 import CoordinatorNoticesView from "./features/notice/CoordinatorNoticesView";
 import OrganizationTeamsVehiclesView from "./features/organization/OrganizationTeamsVehiclesView";
@@ -121,9 +121,9 @@ function App({ t }) {
             />
             <Route path="/my-notices" element={logged ? <MyNoticesList /> : <Navigate replace to="/" />} />
 
-            <Route path="/fire-management" element={userRole !== 'USER' ? <FireManagementView /> : <Navigate to="/" />} />
-            <Route path="/fire-details/" element={userRole !== 'USER' ? <FireDetailsView /> : <Navigate to="/" />} />
-            <Route path="/fire-history" element={userRole !== 'USER' ? <FireHistoryView /> : <Navigate to="/" />} />
+            <Route path="/emergency-management" element={userRole !== 'USER' ? <EmergencyManagementView /> : <Navigate to="/" />} />
+            <Route path="/emergency-details/" element={userRole !== 'USER' ? <EmergencyDetailsView /> : <Navigate to="/" />} />
+            <Route path="/emergency-history" element={userRole !== 'USER' ? <EmergencyHistoryView /> : <Navigate to="/" />} />
             <Route path="/quadrant" element={userRole !== 'USER' ? <QuadrantView /> : <Navigate to="/" />} />
             <Route path="/quadrant-history" element={userRole !== 'USER' ? <QuadrantHistoryView /> : <Navigate to="/" />} />
 

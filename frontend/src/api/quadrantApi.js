@@ -26,7 +26,7 @@ export const quadrantApi = baseApi.injectEndpoints({
         return response;
       },
     }),
-    getQuadrantWithActiveFires: build.query({
+    getQuadrantWithActiveEmergencies: build.query({
       query: () => ({
         url: "/quadrants/active",
       }),
@@ -44,12 +44,12 @@ export const quadrantApi = baseApi.injectEndpoints({
       },
     }),
 
-    linkFire: build.mutation({
+    linkEmergency: build.mutation({
       query: (payload) => ({
-        url: "/quadrants/" + payload.quadrantId + "/linkFire",
+        url: "/quadrants/" + payload.quadrantId + "/linkEmergency",
         method: "POST",
         body: {
-          fireId: payload.fireId,
+          emergencyId: payload.emergencyId,
         },
         headers: {
           Authorization: "Bearer " + payload.token,
@@ -66,7 +66,7 @@ export const quadrantApi = baseApi.injectEndpoints({
 export const {
   useGetQuadrantsByScaleQuery,
   useGetQuadrantByIdQuery,
-  useGetQuadrantWithActiveFiresQuery,
+  useGetQuadrantWithActiveEmergenciesQuery,
   useGetQuadrantByCoordinatesQuery,
-  useLinkFireMutation,
+  useLinkEmergencyMutation,
 } = quadrantApi;

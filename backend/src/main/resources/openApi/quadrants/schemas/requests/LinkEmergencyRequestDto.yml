@@ -1,0 +1,7 @@
+type: object
+required:
+  - emergencyId
+properties:
+  emergencyId:
+    type: integer
+    format: int64
