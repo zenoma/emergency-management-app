@@ -14,7 +14,7 @@ import es.udc.emergencyproject.backend.model.exceptions.IncorrectLoginException;
 import es.udc.emergencyproject.backend.model.exceptions.IncorrectPasswordException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.emergencyproject.backend.model.exceptions.InsufficientRolePermissionException;
-import es.udc.emergencyproject.backend.model.services.personalmanagement.UserServiceImpl;
+import es.udc.emergencyproject.backend.model.services.personal.impl.UserServiceImpl;
 import es.udc.emergencyproject.backend.utils.UserOM;
 import java.util.List;
 import java.util.Optional;

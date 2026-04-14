@@ -1,7 +1,0 @@
-type: object
-required:
-  - quadrantId
-properties:
-  quadrantId:
-    type: integer
-    format: int32

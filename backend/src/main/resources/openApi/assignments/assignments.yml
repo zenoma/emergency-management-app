@@ -1,0 +1,46 @@
+get:
+  summary: Lista de asignaciones
+  operationId: getAssignments
+  tags:
+    - AssignmentManagement
+  parameters:
+    - in: query
+      name: emergencyQuadrantId
+      schema:
+        type: integer
+        format: int64
+    - in: query
+      name: resourceId
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/AssignmentResponseDto.yml'
+
+post:
+  summary: Crear nueva asignación
+  operationId: postAssignment
+  tags:
+    - AssignmentManagement
+  security:
+    - bearerAuth: [ ]
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/AssignmentRequestDto.yml'
+  responses:
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/AssignmentResponseDto.yml'

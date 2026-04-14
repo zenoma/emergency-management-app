@@ -1,0 +1,27 @@
+meta {
+  name: Link quadrants
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{base_url}}/emergencies/3/linkQuadrants
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "quadrantGids": [
+      1,
+      2,
+      3,
+      5
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

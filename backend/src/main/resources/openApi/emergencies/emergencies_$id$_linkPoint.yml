@@ -1,0 +1,27 @@
+post:
+  summary: Link an emergency to a point (coordinates)
+  operationId: postLinkEmergencyToPoint
+  tags:
+    - EmergencyManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../common/schemas/CoordinatesDto.yml'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/EmergencyResponseDto.yml'

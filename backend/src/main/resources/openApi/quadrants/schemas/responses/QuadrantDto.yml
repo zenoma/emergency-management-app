@@ -6,8 +6,6 @@ required:
   - folla50
   - folla25
   - folla5
-  - emergencyId
-  - linkedAt
   - coordinates
 properties:
   id:
@@ -23,12 +21,6 @@ properties:
     type: string
   folla5:
     type: string
-  emergencyId:
-    type: integer
-    format: int64
-  linkedAt:
-    type: string
-    format: localDateTime
   coordinates:
     type: array
     items:

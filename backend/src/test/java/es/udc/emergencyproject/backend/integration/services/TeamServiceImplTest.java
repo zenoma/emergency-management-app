@@ -9,7 +9,8 @@ import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledExcepti
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyExistException;
 import es.udc.emergencyproject.backend.model.exceptions.DuplicateInstanceException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
-import es.udc.emergencyproject.backend.model.services.personalmanagement.PersonaManagementFacade;
+import es.udc.emergencyproject.backend.model.services.personal.PersonalManagementFacade;
+import es.udc.emergencyproject.backend.model.services.resources.ResourceManagementFacade;
 import es.udc.emergencyproject.backend.utils.OrganizationOM;
 import es.udc.emergencyproject.backend.utils.OrganizationTypeOM;
 import es.udc.emergencyproject.backend.utils.TeamOM;
@@ -27,29 +28,30 @@ class TeamServiceImplTest extends IntegrationTest {
   private static final Long INVALID_TEAM_ID = -1L;
   private static final Long INVALID_USER_ID = -1L;
 
-  private final PersonaManagementFacade personalManagementService;
+  private final PersonalManagementFacade personalManagementFacade;
+  private final ResourceManagementFacade resourceManagementFacade;
 
   @Test
   void givenNoData_whenCallFindByCode_thenReturnEmptyList() {
-    final List<Team> result = personalManagementService.findTeamByCode("");
+    final List<Team> result = resourceManagementFacade.findTeamByCode("");
 
     Assertions.assertTrue(result.isEmpty(), "Result must be Empty");
   }
 
   @Test
   void givenValidData_whenCallFindByCode_thenReturnFoundTeam() throws InstanceNotFoundException, AlreadyExistException {
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
 
     Team team = TeamOM.withDefaultValues();
-    team = personalManagementService.createTeam(team.getCode(),
+    team = resourceManagementFacade.createTeam(team.getCode(),
         organization.getId());
     List<Team> resultList = List.of(team);
 
-    final List<Team> result = personalManagementService.findTeamByCode(team.getCode());
+    final List<Team> result = resourceManagementFacade.findTeamByCode(team.getCode());
 
     Assertions.assertEquals(resultList, result, "Result must contain the same elements");
   }
@@ -57,15 +59,15 @@ class TeamServiceImplTest extends IntegrationTest {
 
   @Test
   void givenInvalidData_whenCallCreate_thenReturnConstraintViolationException() {
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
 
     Long id = organization.getId();
     Assertions.assertThrows(ConstraintViolationException.class, () ->
-            personalManagementService.createTeam("", id)
+            resourceManagementFacade.createTeam("", id)
         , "ConstraintViolationException error was expected");
   }
 
@@ -73,7 +75,7 @@ class TeamServiceImplTest extends IntegrationTest {
   void givenInvalidOrganizationId_whenCallCreate_thenReturnInstanceNotFoundException() {
 
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
-            personalManagementService.createTeam("", 1L)
+            resourceManagementFacade.createTeam("", 1L)
         , "InstanceNotFoundException error was expected");
   }
 
@@ -81,18 +83,18 @@ class TeamServiceImplTest extends IntegrationTest {
   @Test
   void givenValidId_whenDismantle_thenDismantleSuccessfully()
       throws InstanceNotFoundException, AlreadyExistException, AlreadyDismantledException {
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
 
     Team team = TeamOM.withDefaultValues();
-    team = personalManagementService.createTeam(team.getCode(),
+    team = resourceManagementFacade.createTeam(team.getCode(),
         organization.getId());
-    personalManagementService.dismantleTeamById(team.getId());
+    resourceManagementFacade.dismantleTeamById(team.getId());
 
-    Assertions.assertNotNull(personalManagementService.findTeamById(team.getId()).getDismantleAt(),
+    Assertions.assertNotNull(resourceManagementFacade.findTeamById(team.getId()).getDismantleAt(),
         "Expected result must be not empty");
   }
 
@@ -103,40 +105,40 @@ class TeamServiceImplTest extends IntegrationTest {
     Team team = TeamOM.withDefaultValues();
     Organization organization = team.getOrganization();
     OrganizationType organizationType = organization.getOrganizationType();
-    personalManagementService.createOrganizationType(organizationType.getName());
-    organization = personalManagementService.createOrganization(organization);
+    personalManagementFacade.createOrganizationType(organizationType.getName());
+    organization = personalManagementFacade.createOrganization(organization);
 
-    team = personalManagementService.createTeam(team.getCode(), organization.getId());
+    team = resourceManagementFacade.createTeam(team.getCode(), organization.getId());
     team.setCode("");
 
     Long id = team.getId();
     String code = team.getCode();
-    Assertions.assertThrows(ConstraintViolationException.class, () -> personalManagementService.updateTeam(id, code),
+    Assertions.assertThrows(ConstraintViolationException.class, () -> resourceManagementFacade.updateTeam(id, code),
         "ConstraintViolationException error was expected");
   }
 
   @Test
   void givenInvalidId_whenUpdate_thenInstanceNotFoundException() {
 
-    Assertions.assertThrows(InstanceNotFoundException.class, () -> personalManagementService.updateTeam(-1L, ""),
+    Assertions.assertThrows(InstanceNotFoundException.class, () -> resourceManagementFacade.updateTeam(-1L, ""),
         "InstanceNotFoundException error was expected");
   }
 
   @Test
   void givenValidCode_whenUpdate_thenUpdateSuccessfully()
       throws InstanceNotFoundException, AlreadyExistException, AlreadyDismantledException {
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
 
     Team team = TeamOM.withDefaultValues();
-    team = personalManagementService.createTeam(team.getCode(),
+    team = resourceManagementFacade.createTeam(team.getCode(),
         organization.getId());
     team.setCode("New Name");
 
-    Team updatedTeam = personalManagementService.updateTeam(team.getId(), team.getCode());
+    Team updatedTeam = resourceManagementFacade.updateTeam(team.getId(), team.getCode());
     Assertions.assertEquals(team, updatedTeam);
   }
 
@@ -145,24 +147,24 @@ class TeamServiceImplTest extends IntegrationTest {
       throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException, AlreadyExistException {
 
     OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
-    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+    personalManagementFacade.createOrganizationType(organizationTypeOm.getName());
 
     Organization organizationOm = OrganizationOM.withDefaultValues();
-    Organization organization = personalManagementService.createOrganization(organizationOm);
+    Organization organization = personalManagementFacade.createOrganization(organizationOm);
 
     Team teamOm = TeamOM.withDefaultValues();
-    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+    Team team = resourceManagementFacade.createTeam(teamOm.getCode(), organization.getId());
 
     User userOm = UserOM.withDefaultValues();
-    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+    User user = personalManagementFacade.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
     user.setTeam(team);
 
-    personalManagementService.addMember(team.getId(), user.getId());
+    resourceManagementFacade.addMemberToTeam(team.getId(), user.getId());
 
-    Assertions.assertTrue(personalManagementService.findAllUsersByTeamId(team.getId()).contains(user),
+    Assertions.assertTrue(resourceManagementFacade.findAllUsersByTeamId(team.getId()).contains(user),
         "User must belong to the Team");
   }
 
@@ -171,16 +173,16 @@ class TeamServiceImplTest extends IntegrationTest {
       throws InstanceNotFoundException, DuplicateInstanceException, AlreadyExistException {
 
     OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
-    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+    personalManagementFacade.createOrganizationType(organizationTypeOm.getName());
 
     Organization organizationOm = OrganizationOM.withDefaultValues();
-    Organization organization = personalManagementService.createOrganization(organizationOm);
+    Organization organization = personalManagementFacade.createOrganization(organizationOm);
 
     Team teamOm = TeamOM.withDefaultValues();
-    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+    Team team = resourceManagementFacade.createTeam(teamOm.getCode(), organization.getId());
 
     User userOm = UserOM.withDefaultValues();
-    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+    User user = personalManagementFacade.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
@@ -188,11 +190,11 @@ class TeamServiceImplTest extends IntegrationTest {
 
     final Team finalTeam = user.getTeam();
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
-            personalManagementService.addMember(finalTeam.getId(), INVALID_USER_ID),
+            resourceManagementFacade.addMemberToTeam(finalTeam.getId(), INVALID_USER_ID),
         "InstanceNotFoundException error was expected");
 
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
-            personalManagementService.addMember(INVALID_TEAM_ID, userOm.getId()),
+            resourceManagementFacade.addMemberToTeam(INVALID_TEAM_ID, userOm.getId()),
         "InstanceNotFoundException error was expected");
 
   }
@@ -203,25 +205,25 @@ class TeamServiceImplTest extends IntegrationTest {
       throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException, AlreadyExistException {
 
     OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
-    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+    personalManagementFacade.createOrganizationType(organizationTypeOm.getName());
 
     Organization organizationOm = OrganizationOM.withDefaultValues();
-    Organization organization = personalManagementService.createOrganization(organizationOm);
+    Organization organization = personalManagementFacade.createOrganization(organizationOm);
 
     Team teamOm = TeamOM.withDefaultValues();
-    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+    Team team = resourceManagementFacade.createTeam(teamOm.getCode(), organization.getId());
 
     User userOm = UserOM.withDefaultValues();
-    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+    User user = personalManagementFacade.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
-    personalManagementService.addMember(team.getId(), user.getId());
+    resourceManagementFacade.addMemberToTeam(team.getId(), user.getId());
 
-    Assertions.assertTrue(personalManagementService.findAllUsersByTeamId(team.getId()).contains(user),
+    Assertions.assertTrue(resourceManagementFacade.findAllUsersByTeamId(team.getId()).contains(user),
         "User must belong to the Team");
 
-    personalManagementService.deleteMember(team.getId(), user.getId());
+    resourceManagementFacade.deleteMemberFromTeam(team.getId(), user.getId());
 
     Assertions.assertNull(user.getTeam(), "User must not belong to the Team");
   }
@@ -231,31 +233,31 @@ class TeamServiceImplTest extends IntegrationTest {
       throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException, AlreadyExistException {
 
     OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
-    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+    personalManagementFacade.createOrganizationType(organizationTypeOm.getName());
 
     Organization organizationOm = OrganizationOM.withDefaultValues();
-    Organization organization = personalManagementService.createOrganization(organizationOm);
+    Organization organization = personalManagementFacade.createOrganization(organizationOm);
 
     Team teamOm = TeamOM.withDefaultValues();
-    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+    Team team = resourceManagementFacade.createTeam(teamOm.getCode(), organization.getId());
 
     User userOm = UserOM.withDefaultValues();
-    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+    User user = personalManagementFacade.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
     user.setTeam(team);
-    personalManagementService.addMember(user.getTeam().getId(), user.getId());
+    resourceManagementFacade.addMemberToTeam(user.getTeam().getId(), user.getId());
 
-    Assertions.assertTrue(personalManagementService.findAllUsersByTeamId(user.getTeam().getId()).contains(user),
+    Assertions.assertTrue(resourceManagementFacade.findAllUsersByTeamId(user.getTeam().getId()).contains(user),
         "User must belong to the Team");
 
     final Team finalTeam = user.getTeam();
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
-            personalManagementService.deleteMember(finalTeam.getId(), INVALID_USER_ID),
+            resourceManagementFacade.deleteMemberFromTeam(finalTeam.getId(), INVALID_USER_ID),
         "InstanceNotFoundException error was expected");
     Assertions.assertThrows(InstanceNotFoundException.class, () ->
-            personalManagementService.deleteMember(INVALID_TEAM_ID, user.getId()),
+            resourceManagementFacade.deleteMemberFromTeam(INVALID_TEAM_ID, user.getId()),
         "InstanceNotFoundException error was expected");
 
   }
@@ -265,18 +267,18 @@ class TeamServiceImplTest extends IntegrationTest {
       throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException, AlreadyExistException {
 
     OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
-    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+    personalManagementFacade.createOrganizationType(organizationTypeOm.getName());
 
     Organization organizationOm = OrganizationOM.withDefaultValues();
-    Organization organization = personalManagementService.createOrganization(organizationOm);
+    Organization organization = personalManagementFacade.createOrganization(organizationOm);
 
     Team teamOm = TeamOM.withDefaultValues();
-    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+    Team team = resourceManagementFacade.createTeam(teamOm.getCode(), organization.getId());
 
     int itemNumber = 3;
     List<User> userList = UserOM.withRandomNames(itemNumber);
     for (User userOm : userList) {
-      User user = personalManagementService.signUp(userOm.getEmail(),
+      User user = personalManagementFacade.signUp(userOm.getEmail(),
           userOm.getPassword(),
           userOm.getFirstName(),
           userOm.getLastName(),
@@ -284,10 +286,10 @@ class TeamServiceImplTest extends IntegrationTest {
           userOm.getDni());
 
       user.setTeam(team);
-      personalManagementService.addMember(team.getId(), user.getId());
+      resourceManagementFacade.addMemberToTeam(team.getId(), user.getId());
     }
 
-    Assertions.assertEquals(personalManagementService.findAllUsersByTeamId(team.getId()).size(), itemNumber,
+    Assertions.assertEquals(resourceManagementFacade.findAllUsersByTeamId(team.getId()).size(), itemNumber,
         "Size must be equal to added Members");
   }
 
@@ -295,18 +297,18 @@ class TeamServiceImplTest extends IntegrationTest {
   void givenTeamInvalidID_whenFindAllUsers_thenConstraintViolationException()
       throws InstanceNotFoundException, DuplicateInstanceException, AlreadyDismantledException, AlreadyExistException {
     OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
-    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+    personalManagementFacade.createOrganizationType(organizationTypeOm.getName());
 
     Organization organizationOm = OrganizationOM.withDefaultValues();
-    Organization organization = personalManagementService.createOrganization(organizationOm);
+    Organization organization = personalManagementFacade.createOrganization(organizationOm);
 
     Team teamOm = TeamOM.withDefaultValues();
-    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+    Team team = resourceManagementFacade.createTeam(teamOm.getCode(), organization.getId());
 
     int itemNumber = 3;
     List<User> userList = UserOM.withRandomNames(itemNumber);
     for (User userOm : userList) {
-      User user = personalManagementService.signUp(userOm.getEmail(),
+      User user = personalManagementFacade.signUp(userOm.getEmail(),
           userOm.getPassword(),
           userOm.getFirstName(),
           userOm.getLastName(),
@@ -314,12 +316,12 @@ class TeamServiceImplTest extends IntegrationTest {
           userOm.getDni());
 
       user.setTeam(team);
-      personalManagementService.addMember(team.getId(), user.getId());
+      resourceManagementFacade.addMemberToTeam(team.getId(), user.getId());
 
     }
 
     Assertions.assertThrows(InstanceNotFoundException.class,
-        () -> personalManagementService.findAllUsersByTeamId(INVALID_TEAM_ID),
+        () -> resourceManagementFacade.findAllUsersByTeamId(INVALID_TEAM_ID),
         "InstanceNotFoundException error was expected");
 
   }
@@ -329,47 +331,47 @@ class TeamServiceImplTest extends IntegrationTest {
   void givenUserId_whenFindByUserId_thenTeamFound()
       throws DuplicateInstanceException, InstanceNotFoundException, AlreadyDismantledException, AlreadyExistException {
     OrganizationType organizationTypeOm = OrganizationTypeOM.withDefaultValues();
-    personalManagementService.createOrganizationType(organizationTypeOm.getName());
+    personalManagementFacade.createOrganizationType(organizationTypeOm.getName());
 
     Organization organizationOm = OrganizationOM.withDefaultValues();
-    Organization organization = personalManagementService.createOrganization(organizationOm);
+    Organization organization = personalManagementFacade.createOrganization(organizationOm);
 
     Team teamOm = TeamOM.withDefaultValues();
-    Team team = personalManagementService.createTeam(teamOm.getCode(), organization.getId());
+    Team team = resourceManagementFacade.createTeam(teamOm.getCode(), organization.getId());
 
     User userOm = UserOM.withDefaultValues();
-    User user = personalManagementService.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+    User user = personalManagementFacade.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
-    team = personalManagementService.addMember(team.getId(), user.getId());
+    team = resourceManagementFacade.addMemberToTeam(team.getId(), user.getId());
 
-    Assertions.assertEquals(team, personalManagementService.findTeamByUserId(user.getId()));
+    Assertions.assertEquals(team, resourceManagementFacade.findTeamByUserId(user.getId()));
 
   }
 
   @Test
   void givenTeams_whenFindActiveTeamsByOrganizationId_thenActiveTeamsFound()
       throws InstanceNotFoundException, AlreadyExistException, AlreadyDismantledException {
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
 
     Team team = TeamOM.withDefaultValues();
-    team = personalManagementService.createTeam(team.getCode(),
+    team = resourceManagementFacade.createTeam(team.getCode(),
         organization.getId());
-    personalManagementService.dismantleTeamById(team.getId());
+    resourceManagementFacade.dismantleTeamById(team.getId());
 
     Team team2 = TeamOM.withDefaultValues();
     team2.setCode("TEAM-02");
-    team2 = personalManagementService.createTeam(team2.getCode(),
+    team2 = resourceManagementFacade.createTeam(team2.getCode(),
         organization.getId());
 
     Team team3 = TeamOM.withDefaultValues();
     team3.setCode("TEAM-03");
-    team3 = personalManagementService.createTeam(team3.getCode(),
+    team3 = resourceManagementFacade.createTeam(team3.getCode(),
         organization.getId());
 
     ArrayList<Team> teams = new ArrayList<>();
@@ -377,42 +379,42 @@ class TeamServiceImplTest extends IntegrationTest {
     teams.add(team2);
     teams.add(team3);
 
-    Assertions.assertEquals(teams, personalManagementService.findActiveTeamsByOrganizationId(organization.getId()));
+    Assertions.assertEquals(teams, resourceManagementFacade.findActiveTeamsByOrganizationId(organization.getId()));
   }
 
 
   @Test
   void givenTeams_whenFindAllActiveTeams_thenActiveTeamsFound()
       throws InstanceNotFoundException, AlreadyExistException, AlreadyDismantledException {
-    OrganizationType organizationType = personalManagementService.createOrganizationType(
+    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
         OrganizationTypeOM.withDefaultValues().getName());
     Organization organization = OrganizationOM.withDefaultValues();
     organization.setOrganizationType(organizationType);
-    organization = personalManagementService.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
 
     Team team = TeamOM.withDefaultValues();
-    team = personalManagementService.createTeam(team.getCode(),
+    team = resourceManagementFacade.createTeam(team.getCode(),
         organization.getId());
-    personalManagementService.dismantleTeamById(team.getId());
+    resourceManagementFacade.dismantleTeamById(team.getId());
 
     Team team2 = TeamOM.withDefaultValues();
     team2.setCode("TEAM-02");
-    team2 = personalManagementService.createTeam(team2.getCode(),
+    team2 = resourceManagementFacade.createTeam(team2.getCode(),
         organization.getId());
 
     Organization organization2 = OrganizationOM.withOrganizationTypeAndRandomNames("Organization 2");
     organization2.setOrganizationType(organizationType);
-    organization2 = personalManagementService.createOrganization(organization2);
+    organization2 = personalManagementFacade.createOrganization(organization2);
 
     Team team3 = TeamOM.withDefaultValues();
     team3.setCode("TEAM-03");
-    team3 = personalManagementService.createTeam(team3.getCode(),
+    team3 = resourceManagementFacade.createTeam(team3.getCode(),
         organization2.getId());
-    personalManagementService.dismantleTeamById(team3.getId());
+    resourceManagementFacade.dismantleTeamById(team3.getId());
 
     Team team4 = TeamOM.withDefaultValues();
     team4.setCode("TEAM-04");
-    team4 = personalManagementService.createTeam(team4.getCode(),
+    team4 = resourceManagementFacade.createTeam(team4.getCode(),
         organization2.getId());
 
     ArrayList<Team> teams = new ArrayList<>();
@@ -420,7 +422,7 @@ class TeamServiceImplTest extends IntegrationTest {
     teams.add(team2);
     teams.add(team4);
 
-    Assertions.assertEquals(teams, personalManagementService.findAllActiveTeams());
+    Assertions.assertEquals(teams, resourceManagementFacade.findAllActiveTeams());
   }
 
 

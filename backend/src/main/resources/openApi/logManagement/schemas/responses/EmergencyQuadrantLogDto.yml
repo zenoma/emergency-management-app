@@ -6,7 +6,7 @@ required:
   - extinguishedAt
 properties:
   quadrantInfo:
-    $ref: "../../../quadrants/schemas/responses/QuadrantInfoDto.yml"
+    $ref: "../../../quadrants/schemas/responses/QuadrantDto.yml"
   emergencyInfo:
     $ref: "../../../emergencies/schemas/responses/EmergencyResponseDto.yml"
   linkedAt:

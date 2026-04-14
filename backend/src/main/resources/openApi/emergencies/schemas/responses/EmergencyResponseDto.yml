@@ -2,7 +2,7 @@ type: object
 required:
   - id
   - description
-  - type
+  - emergencyTypeName
   - emergencyIndex
   - createdAt
   - extinguishedAt
@@ -12,7 +12,7 @@ properties:
     format: int64
   description:
     type: string
-  type:
+  emergencyTypeName:
     type: string
   emergencyIndex:
     type: string
@@ -23,9 +23,9 @@ properties:
   extinguishedAt:
     type: string
     format: localDateTime
+  location:
+    $ref: "../../../common/schemas/CoordinatesDto.yml"
   quadrantInfo:
     type: array
     items:
-      $ref: "../../../quadrants/schemas/responses/QuadrantInfoDto.yml"
-
-
+      $ref: "../../../quadrants/schemas/responses/QuadrantDto.yml"

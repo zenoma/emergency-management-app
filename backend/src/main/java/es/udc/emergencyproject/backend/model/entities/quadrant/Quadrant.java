@@ -1,34 +1,22 @@
 package es.udc.emergencyproject.backend.model.entities.quadrant;
 
-import es.udc.emergencyproject.backend.model.entities.emergency.Emergency;
-import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
-import es.udc.emergencyproject.backend.model.entities.resource.vehicle.Vehicle;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.locationtech.jts.geom.MultiPolygon;
 
 @Entity
 @Table(name = "quadrants", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode
-@ToString
+@NoArgsConstructor
 public class Quadrant implements Serializable {
 
   private static final long serialVersionUID = 4848346612436497001L;
@@ -56,71 +44,5 @@ public class Quadrant implements Serializable {
   @Column(name = "geom", columnDefinition = "geometry(MultiPolygon, 25829)")
   private MultiPolygon geom;
 
-  @OneToMany(
-      mappedBy = "quadrant",
-      fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @EqualsAndHashCode.Exclude
-  @ToString.Exclude
-  private List<Team> teamList;
 
-  @OneToMany(
-      mappedBy = "quadrant",
-      fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @EqualsAndHashCode.Exclude
-  @ToString.Exclude
-  private List<Vehicle> vehicleList;
-
-  @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @JoinColumn(name = "emergency_id")
-  private Emergency emergency;
-
-  @Column(name = "emergency_linked_at")
-  private LocalDateTime linkedAt;
-
-  public Quadrant() {
-  }
-
-  public Integer getId() {
-    return this.id;
-  }
-
-  public String getEscala() {
-    return this.escala;
-  }
-
-  public String getNombre() {
-    return this.nombre;
-  }
-
-  public String getFolla50() {
-    return this.folla50;
-  }
-
-  public String getFolla25() {
-    return this.folla25;
-  }
-
-  public String getFolla5() {
-    return this.folla5;
-  }
-
-  public MultiPolygon getGeom() {
-    return this.geom;
-  }
-
-  public Emergency getEmergency() {
-    return this.emergency;
-  }
-
-  public LocalDateTime getLinkedAt() {
-    return this.linkedAt;
-  }
-
-  public List<Team> getTeamList() {
-    return this.teamList;
-  }
-
-  public List<Vehicle> getVehicleList() {
-    return this.vehicleList;
-  }
 }

@@ -1,13 +1,11 @@
 package es.udc.emergencyproject.backend.rest.controllers;
 
 import es.udc.emergencyproject.backend.model.entities.resource.vehicle.Vehicle;
-import es.udc.emergencyproject.backend.model.services.emergencymanagement.EmergencyManagementService;
-import es.udc.emergencyproject.backend.model.services.personalmanagement.PersonaManagementFacade;
-import es.udc.emergencyproject.backend.rest.dtos.VehicleQuadrantRequestDto;
+import es.udc.emergencyproject.backend.model.services.resources.ResourceManagementFacade;
 import es.udc.emergencyproject.backend.rest.dtos.VehicleRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.VehicleResponseDto;
 import es.udc.emergencyproject.backend.rest.dtos.VehicleUpdateRequestDto;
-import es.udc.emergencyproject.backend.rest.dtos.mappers.VehicleMapper;
+import es.udc.emergencyproject.backend.rest.mappers.VehicleMapper;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +18,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequiredArgsConstructor
 public class VehicleController implements VehiclesApi {
 
-  private final PersonaManagementFacade personaManagementFacade;
-
-  private final EmergencyManagementService emergencyManagementService;
+  private final ResourceManagementFacade resourceManagementFacade;
 
   @Override
   public ResponseEntity<VehicleResponseDto> postVehicle(VehicleRequestDto vehicleRequestDto) {
 
-    Vehicle vehicle = personaManagementFacade.createVehicle(
+    Vehicle vehicle = resourceManagementFacade.createVehicle(
         vehicleRequestDto.getVehiclePlate(),
         vehicleRequestDto.getType(),
         vehicleRequestDto.getOrganizationId()
@@ -41,7 +37,7 @@ public class VehicleController implements VehiclesApi {
 
   @Override
   public ResponseEntity<Void> deleteVehicleById(Long id) {
-    personaManagementFacade.dismantleVehicleById(id);
+    resourceManagementFacade.dismantleVehicleById(id);
 
     return ResponseEntity.noContent().build();
   }
@@ -49,7 +45,7 @@ public class VehicleController implements VehiclesApi {
   @Override
   public ResponseEntity<VehicleResponseDto> putVehicleById(Long id, VehicleUpdateRequestDto vehicleUpdateRequestDto) {
 
-    final Vehicle vehicle = personaManagementFacade.updateVehicle(id, vehicleUpdateRequestDto.getVehiclePlate(),
+    final Vehicle vehicle = resourceManagementFacade.updateVehicle(id, vehicleUpdateRequestDto.getVehiclePlate(),
         vehicleUpdateRequestDto.getType());
 
     return ResponseEntity.ok(VehicleMapper.toVehicleDto(vehicle));
@@ -57,7 +53,7 @@ public class VehicleController implements VehiclesApi {
 
   @Override
   public ResponseEntity<VehicleResponseDto> getVehicleById(Long id) {
-    final Vehicle vehicle = personaManagementFacade.findVehicleById(id);
+    final Vehicle vehicle = resourceManagementFacade.findVehicleById(id);
 
     return ResponseEntity.ok(VehicleMapper.toVehicleDto(vehicle));
   }
@@ -68,11 +64,11 @@ public class VehicleController implements VehiclesApi {
     List<VehicleResponseDto> vehicleResponseDtos = new ArrayList<>();
 
     if (organizationId != null) {
-      for (Vehicle vehicle : personaManagementFacade.findVehiclesByOrganizationId(organizationId)) {
+      for (Vehicle vehicle : resourceManagementFacade.findVehiclesByOrganizationId(organizationId)) {
         vehicleResponseDtos.add(VehicleMapper.toVehicleDto(vehicle));
       }
     } else {
-      for (Vehicle vehicle : personaManagementFacade.findAllVehicles()) {
+      for (Vehicle vehicle : resourceManagementFacade.findAllVehicles()) {
         vehicleResponseDtos.add(VehicleMapper.toVehicleDto(vehicle));
       }
     }
@@ -86,34 +82,15 @@ public class VehicleController implements VehiclesApi {
     List<VehicleResponseDto> vehicleResponseDtos = new ArrayList<>();
 
     if (organizationId != null) {
-      for (Vehicle vehicle : personaManagementFacade.findActiveVehiclesByOrganizationId(organizationId)) {
+      for (Vehicle vehicle : resourceManagementFacade.findActiveVehiclesByOrganizationId(organizationId)) {
         vehicleResponseDtos.add(VehicleMapper.toVehicleDto(vehicle));
       }
     } else {
-      for (Vehicle vehicle : personaManagementFacade.findAllActiveVehicles()) {
+      for (Vehicle vehicle : resourceManagementFacade.findAllActiveVehicles()) {
         vehicleResponseDtos.add(VehicleMapper.toVehicleDto(vehicle));
       }
     }
     return ResponseEntity.ok(vehicleResponseDtos);
   }
 
-  @Override
-  public ResponseEntity<VehicleResponseDto> postVehicleDeployById(Long id,
-      VehicleQuadrantRequestDto vehicleQuadrantRequestDto) {
-
-    final VehicleResponseDto vehicleResponseDto = VehicleMapper.toVehicleDto(
-        emergencyManagementService.deployVehicle(id, vehicleQuadrantRequestDto.getQuadrantId()));
-
-    return ResponseEntity.ok(vehicleResponseDto);
-  }
-
-  @Override
-  public ResponseEntity<VehicleResponseDto> postVehicleRetractById(Long id) {
-
-    final VehicleResponseDto vehicleResponseDto = VehicleMapper.toVehicleDto(
-        emergencyManagementService.retractVehicle(id));
-
-    return ResponseEntity.ok(vehicleResponseDto);
-
-  }
 }

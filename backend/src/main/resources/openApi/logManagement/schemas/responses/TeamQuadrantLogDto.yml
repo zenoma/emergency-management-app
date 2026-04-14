@@ -8,7 +8,7 @@ properties:
   teamInfo:
     $ref: "../../../teams/schemas/responses/TeamResponseDto.yml"
   quadrantInfo:
-    $ref: "../../../quadrants/schemas/responses/QuadrantInfoDto.yml"
+    $ref: "../../../quadrants/schemas/responses/QuadrantDto.yml"
   deployAt:
     type: string
     format: localDateTime

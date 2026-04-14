@@ -10,7 +10,7 @@ import es.udc.emergencyproject.backend.model.exceptions.NoticeCheckStatusExcepti
 import es.udc.emergencyproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.emergencyproject.backend.model.exceptions.NoticeUpdateStatusException;
 import es.udc.emergencyproject.backend.model.services.notice.NoticeService;
-import es.udc.emergencyproject.backend.model.services.personalmanagement.PersonaManagementFacade;
+import es.udc.emergencyproject.backend.model.services.personal.PersonalManagementFacade;
 import es.udc.emergencyproject.backend.utils.NoticeOm;
 import es.udc.emergencyproject.backend.utils.UserOM;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class NoticeServiceImplTest extends IntegrationTest {
   @Autowired
   private NoticeService noticeService;
   @Autowired
-  private PersonaManagementFacade personaManagementFacade;
+  private PersonalManagementFacade personalManagementFacade;
 
   @Test
   void givenValid_whenCreateNotice_thenCreatedSuccessfully() throws InstanceNotFoundException {
@@ -162,7 +162,7 @@ public class NoticeServiceImplTest extends IntegrationTest {
   void givenValidData_whenFindByUserId_thenNoticesFound() throws InstanceNotFoundException, DuplicateInstanceException {
     Notice notice = NoticeOm.withDefaultValues();
     User userOM = UserOM.withDefaultValues();
-    User user = personaManagementFacade.signUp(userOM.getEmail(), userOM.getPassword(), userOM.getFirstName(),
+    User user = personalManagementFacade.signUp(userOM.getEmail(), userOM.getPassword(), userOM.getFirstName(),
         userOM.getLastName(),
         String.valueOf(userOM.getPhoneNumber()), userOM.getDni());
 
@@ -184,7 +184,7 @@ public class NoticeServiceImplTest extends IntegrationTest {
 
     Notice notice = NoticeOm.withDefaultValues();
     User userOm = UserOM.withDefaultValues();
-    User user = personaManagementFacade.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
+    User user = personalManagementFacade.signUp(userOm.getEmail(), userOm.getPassword(), userOm.getFirstName(),
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 

@@ -1,0 +1,9 @@
+type: object
+required:
+  - quadrantGids
+properties:
+  quadrantGids:
+    type: array
+    items:
+      type: integer
+      format: int32

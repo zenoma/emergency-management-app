@@ -81,7 +81,7 @@ export default function EmergencyDetailsView() {
 
   const [linkEmergency] = useLinkEmergencyMutation ? useLinkEmergencyMutation() : [null];
   const [extinguishEmergency] = useExtinguishEmergencyMutation();
-  const [extinguishQuadrantByEmergencyId] = useExtinguishQuadrantByEmergencyIdMutation();
+  const [removeQuadrantByEmergencyId] = useRemoveQuadrantByEmergencyIdMutation();
 
   useEffect(() => {
     refetch();
@@ -222,7 +222,7 @@ export default function EmergencyDetailsView() {
       locale: locale
     };
 
-    extinguishQuadrantByEmergencyId(payload)
+    removeQuadrantByEmergencyId(payload)
       .unwrap()
       .then(() => {
         toast.success(t("quadrant-extinguished-successfully"));

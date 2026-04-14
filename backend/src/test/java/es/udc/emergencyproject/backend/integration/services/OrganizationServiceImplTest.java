@@ -4,7 +4,7 @@ import es.udc.emergencyproject.backend.IntegrationTest;
 import es.udc.emergencyproject.backend.model.entities.organization.Organization;
 import es.udc.emergencyproject.backend.model.entities.organization.OrganizationType;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
-import es.udc.emergencyproject.backend.model.services.personalmanagement.PersonaManagementFacade;
+import es.udc.emergencyproject.backend.model.services.personal.PersonalManagementFacade;
 import es.udc.emergencyproject.backend.utils.OrganizationOM;
 import es.udc.emergencyproject.backend.utils.OrganizationTypeOM;
 import jakarta.validation.ConstraintViolationException;
@@ -20,14 +20,14 @@ import org.locationtech.jts.geom.Point;
 @RequiredArgsConstructor
 class OrganizationServiceImplTest extends IntegrationTest {
 
-  private final PersonaManagementFacade personaManagementFacade;
+  private final PersonalManagementFacade personalManagementFacade;
 
   @Test
   void givenInvalidString_whenCreateOrganizationType_theConstraintViolationException() {
 
     String name = OrganizationTypeOM.withInvalidName().getName();
     Assertions.assertThrows(ConstraintViolationException.class,
-        () -> personaManagementFacade.createOrganizationType(name),
+        () -> personalManagementFacade.createOrganizationType(name),
         "ConstraintViolationException error was expected");
   }
 
@@ -35,11 +35,11 @@ class OrganizationServiceImplTest extends IntegrationTest {
   void givenValidData_whenCreationOrganization_thenReturnOrganizationWithId() {
 
     OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
-    organizationType = personaManagementFacade.createOrganizationType(organizationType.getName());
+    organizationType = personalManagementFacade.createOrganizationType(organizationType.getName());
 
     Organization organization = OrganizationOM.withDefaultValues();
 
-    Organization result = personaManagementFacade.createOrganization(organization.getCode(),
+    Organization result = personalManagementFacade.createOrganization(organization.getCode(),
         organization.getName(),
         organization.getHeadquartersAddress(),
         organization.getLocation(),
@@ -54,11 +54,11 @@ class OrganizationServiceImplTest extends IntegrationTest {
   void givenValidOrganization_whenCreationOrganization_thenReturnOrganizationWithId() {
 
     OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
-    personaManagementFacade.createOrganizationType(organizationType.getName());
+    personalManagementFacade.createOrganizationType(organizationType.getName());
 
     Organization organization = OrganizationOM.withDefaultValues();
 
-    Organization result = personaManagementFacade.createOrganization(organization);
+    Organization result = personalManagementFacade.createOrganization(organization);
 
     Assertions.assertNotNull(result.getId(), "Id must be not Null");
     Assertions.assertNotNull(result.getCreatedAt(), "Created date must be not Null");
@@ -72,7 +72,7 @@ class OrganizationServiceImplTest extends IntegrationTest {
     Organization organization = OrganizationOM.withInvalidValues();
 
     Assertions.assertThrows(ConstraintViolationException.class,
-        () -> personaManagementFacade.createOrganization(organization),
+        () -> personalManagementFacade.createOrganization(organization),
         "ConstraintViolationException error was expected");
 
   }
@@ -81,9 +81,9 @@ class OrganizationServiceImplTest extends IntegrationTest {
   void givenValidName_whenFindByNameOrCode_thenFoundOrganization() {
     final Organization organization = OrganizationOM.withDefaultValues();
 
-    final OrganizationType createdOrganizationType = personaManagementFacade.createOrganizationType(
+    final OrganizationType createdOrganizationType = personalManagementFacade.createOrganizationType(
         organization.getOrganizationType().getName());
-    final Organization createdOrganization = personaManagementFacade.createOrganization(organization);
+    final Organization createdOrganization = personalManagementFacade.createOrganization(organization);
 
     final List<Organization> organizationList = new ArrayList<>();
     organization.setId(createdOrganization.getId());
@@ -91,14 +91,14 @@ class OrganizationServiceImplTest extends IntegrationTest {
     organizationList.add(organization);
 
     Assertions.assertEquals(organizationList,
-        personaManagementFacade.findOrganizationByNameOrCode(organization.getName()));
+        personalManagementFacade.findOrganizationByNameOrCode(organization.getName()));
   }
 
 
   @Test
   void givenInvalidName_whenFindByNameOrCode_thenReturnEmptyList() {
 
-    Assertions.assertTrue(personaManagementFacade.findOrganizationByNameOrCode("").isEmpty(),
+    Assertions.assertTrue(personalManagementFacade.findOrganizationByNameOrCode("").isEmpty(),
         "Found item must be null");
   }
 
@@ -106,59 +106,59 @@ class OrganizationServiceImplTest extends IntegrationTest {
   @Test
   void givenValidId_whenFindById_thenFoundOrganization() throws InstanceNotFoundException {
     Organization organization = OrganizationOM.withDefaultValues();
-    personaManagementFacade.createOrganizationType(organization.getOrganizationType().getName());
-    organization = personaManagementFacade.createOrganization(organization);
+    personalManagementFacade.createOrganizationType(organization.getOrganizationType().getName());
+    organization = personalManagementFacade.createOrganization(organization);
 
-    Assertions.assertEquals(organization, personaManagementFacade.findOrganizationById(organization.getId()));
+    Assertions.assertEquals(organization, personalManagementFacade.findOrganizationById(organization.getId()));
   }
 
   @Test
   void givenInvalidName_whenFindOrganizationById_thenInstanceNotFoundException() {
 
-    Assertions.assertThrows(InstanceNotFoundException.class, () -> personaManagementFacade.findOrganizationById(-1L),
+    Assertions.assertThrows(InstanceNotFoundException.class, () -> personalManagementFacade.findOrganizationById(-1L),
         "InstanceNotFoundException not thrown");
   }
 
   @Test
   void givenValidId_whenFindOrganizationTypeById_thenFoundOrganizationType() throws InstanceNotFoundException {
     OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
-    organizationType = personaManagementFacade.createOrganizationType(organizationType.getName());
+    organizationType = personalManagementFacade.createOrganizationType(organizationType.getName());
 
     Assertions.assertEquals(organizationType,
-        personaManagementFacade.findOrganizationTypeById(organizationType.getId()));
+        personalManagementFacade.findOrganizationTypeById(organizationType.getId()));
   }
 
   @Test
   void givenInvalidName_whenFindOrganizationTypeById_thenInstanceNotFoundException() {
 
     Assertions.assertThrows(InstanceNotFoundException.class,
-        () -> personaManagementFacade.findOrganizationTypeById(-1L), "InstanceNotFoundException not thrown");
+        () -> personalManagementFacade.findOrganizationTypeById(-1L), "InstanceNotFoundException not thrown");
   }
 
   @Test
   void givenValidId_whenFindByOrganizationTypeName_thenFoundOrganization() {
     List<OrganizationType> organizationTypes = OrganizationTypeOM.withNames(Arrays.asList("Type1", "Type2", "Type3"));
     organizationTypes.forEach(organizationType ->
-        personaManagementFacade.createOrganizationType(organizationType.getName()));
+        personalManagementFacade.createOrganizationType(organizationType.getName()));
 
     List<Organization> organizations = new ArrayList<>();
     Organization organization = OrganizationOM.withOrganizationTypeAndRandomNames(organizationTypes.get(0).getName());
-    organization = personaManagementFacade.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
     organizations.add(organization);
 
     organization = OrganizationOM.withOrganizationTypeAndRandomNames(organizationTypes.get(0).getName());
-    organization = personaManagementFacade.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
     organizations.add(organization);
 
     organization = OrganizationOM.withOrganizationTypeAndRandomNames(organizationTypes.get(1).getName());
-    personaManagementFacade.createOrganization(organization);
+    personalManagementFacade.createOrganization(organization);
 
     Assertions.assertEquals(organizations.size(),
-        personaManagementFacade.findOrganizationByOrganizationTypeName(organizationTypes.get(0).getName()).size(),
+        personalManagementFacade.findOrganizationByOrganizationTypeName(organizationTypes.get(0).getName()).size(),
         "The result must contain the same number of items");
 
     Assertions.assertTrue(
-        personaManagementFacade.findOrganizationByOrganizationTypeName(organizationTypes.get(0).getName())
+        personalManagementFacade.findOrganizationByOrganizationTypeName(organizationTypes.get(0).getName())
             .containsAll(organizations),
         "The result must contain all items");
   }
@@ -166,7 +166,7 @@ class OrganizationServiceImplTest extends IntegrationTest {
   @Test
   void givenInvalidName_whenFindByOrganizationTypeName_thenReturnEmptyList() {
 
-    Assertions.assertTrue(personaManagementFacade.findOrganizationByOrganizationTypeName("").isEmpty(),
+    Assertions.assertTrue(personalManagementFacade.findOrganizationByOrganizationTypeName("").isEmpty(),
         "The result must be an empty list");
   }
 
@@ -174,10 +174,10 @@ class OrganizationServiceImplTest extends IntegrationTest {
   @Test
   void givenData_whenFindAllOrganizationTypes_thenReturnFoundOrganizationType() {
     final OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
-    final OrganizationType createdOrganizationType = personaManagementFacade.createOrganizationType(
+    final OrganizationType createdOrganizationType = personalManagementFacade.createOrganizationType(
         organizationType.getName());
 
-    final List<OrganizationType> result = personaManagementFacade.findAllOrganizationTypes();
+    final List<OrganizationType> result = personalManagementFacade.findAllOrganizationTypes();
 
     organizationType.setId(createdOrganizationType.getId());
 
@@ -186,7 +186,7 @@ class OrganizationServiceImplTest extends IntegrationTest {
 
   @Test
   void givenNoData_whenCallFindAll_thenReturnEmptyList() {
-    final List<Organization> result = personaManagementFacade.findAllOrganizations();
+    final List<Organization> result = personalManagementFacade.findAllOrganizations();
 
     Assertions.assertTrue(result.isEmpty(), "Result must be Empty");
   }
@@ -194,14 +194,14 @@ class OrganizationServiceImplTest extends IntegrationTest {
   @Test
   void givenData_whenFindAll_thenReturnNotEmptyList() {
     final OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
-    personaManagementFacade.createOrganizationType(organizationType.getName());
+    personalManagementFacade.createOrganizationType(organizationType.getName());
     final Organization organization = OrganizationOM.withDefaultValues();
-    final Organization createdOrganization = personaManagementFacade.createOrganization(organization);
+    final Organization createdOrganization = personalManagementFacade.createOrganization(organization);
 
     organization.getOrganizationType().setId(createdOrganization.getOrganizationType().getId());
     organization.setId(createdOrganization.getId());
 
-    final List<Organization> result = personaManagementFacade.findAllOrganizations();
+    final List<Organization> result = personalManagementFacade.findAllOrganizations();
 
     Assertions.assertFalse(result.isEmpty(), "Result must be not empty");
     Assertions.assertTrue(result.contains(organization), "Result must contain the same Data");
@@ -210,26 +210,26 @@ class OrganizationServiceImplTest extends IntegrationTest {
   @Test
   void givenValidId_whenDelete_thenDeletedSuccessfully() {
     final OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
-    personaManagementFacade.createOrganizationType(organizationType.getName());
+    personalManagementFacade.createOrganizationType(organizationType.getName());
 
     Organization organization = OrganizationOM.withDefaultValues();
-    organization = personaManagementFacade.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
 
-    personaManagementFacade.deleteOrganizationById(organization.getId());
+    personalManagementFacade.deleteOrganizationById(organization.getId());
 
-    Assertions.assertTrue(personaManagementFacade.findAllOrganizations().isEmpty(), "Expected result must be Empty");
+    Assertions.assertTrue(personalManagementFacade.findAllOrganizations().isEmpty(), "Expected result must be Empty");
   }
 
 
   @Test
   void givenValidData_whenUpdate_thenUpdatedSuccessfully() throws InstanceNotFoundException {
     final OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
-    personaManagementFacade.createOrganizationType(organizationType.getName());
+    personalManagementFacade.createOrganizationType(organizationType.getName());
 
     Organization organization = OrganizationOM.withDefaultValues();
-    organization = personaManagementFacade.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
 
-    Organization updatedOrganization = personaManagementFacade.updateOrganization(organization.getId(),
+    Organization updatedOrganization = personalManagementFacade.updateOrganization(organization.getId(),
         "New Name",
         "New Code",
         "New HeadQuarters Address",
@@ -243,14 +243,14 @@ class OrganizationServiceImplTest extends IntegrationTest {
   @Test
   void givenInvadalidData_whenUpdate_thenConstraintViolationException() {
     final OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
-    personaManagementFacade.createOrganizationType(organizationType.getName());
+    personalManagementFacade.createOrganizationType(organizationType.getName());
 
     Organization organization = OrganizationOM.withDefaultValues();
-    organization = personaManagementFacade.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
 
     Long id = organization.getId();
     Point location = organization.getLocation();
-    Assertions.assertThrows(ConstraintViolationException.class, () -> personaManagementFacade.updateOrganization(id,
+    Assertions.assertThrows(ConstraintViolationException.class, () -> personalManagementFacade.updateOrganization(id,
             "",
             "",
             "",
@@ -263,13 +263,13 @@ class OrganizationServiceImplTest extends IntegrationTest {
   @Test
   void givenInvadalidId_whenUpdate_thenInstanceNotFoundException() {
     final OrganizationType organizationType = OrganizationTypeOM.withDefaultValues();
-    personaManagementFacade.createOrganizationType(organizationType.getName());
+    personalManagementFacade.createOrganizationType(organizationType.getName());
 
     Organization organization = OrganizationOM.withDefaultValues();
-    organization = personaManagementFacade.createOrganization(organization);
+    organization = personalManagementFacade.createOrganization(organization);
 
     Point location = organization.getLocation();
-    Assertions.assertThrows(InstanceNotFoundException.class, () -> personaManagementFacade.updateOrganization(-1L,
+    Assertions.assertThrows(InstanceNotFoundException.class, () -> personalManagementFacade.updateOrganization(-1L,
             "",
             "",
             "",

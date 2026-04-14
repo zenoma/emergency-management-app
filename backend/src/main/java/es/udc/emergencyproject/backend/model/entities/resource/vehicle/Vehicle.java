@@ -2,6 +2,7 @@ package es.udc.emergencyproject.backend.model.entities.resource.vehicle;
 
 import es.udc.emergencyproject.backend.model.entities.organization.Organization;
 import es.udc.emergencyproject.backend.model.entities.resource.Resource;
+import es.udc.emergencyproject.backend.model.entities.resource.ResourceType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -43,6 +44,7 @@ public class Vehicle extends Resource {
     this.type = type;
     this.organization = organization;
     this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    this.resourceType = ResourceType.VEHICLE;
   }
 
 }

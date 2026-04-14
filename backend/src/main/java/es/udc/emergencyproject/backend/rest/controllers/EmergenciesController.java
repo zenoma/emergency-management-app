@@ -1,18 +1,26 @@
 package es.udc.emergencyproject.backend.rest.controllers;
 
 import es.udc.emergencyproject.backend.model.entities.emergency.Emergency;
+import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.emergencyproject.backend.model.exceptions.ExtinguishedEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
-import es.udc.emergencyproject.backend.model.services.emergencymanagement.EmergencyManagementService;
+import es.udc.emergencyproject.backend.model.services.emergency.EmergencyManagementService;
+import es.udc.emergencyproject.backend.rest.dtos.CoordinatesDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyResponseDto;
+import es.udc.emergencyproject.backend.rest.dtos.EmergencyTypeDto;
+import es.udc.emergencyproject.backend.rest.dtos.LinkQuadrantsRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.QuadrantEmergencyRequestDto;
-import es.udc.emergencyproject.backend.rest.dtos.mappers.EmergencyMapper;
+import es.udc.emergencyproject.backend.rest.mappers.EmergencyMapper;
+import es.udc.emergencyproject.backend.rest.mappers.EmergencyTypeMapper;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,11 +47,20 @@ public class EmergenciesController implements EmergenciesApi {
   }
 
   @Override
+  public ResponseEntity<List<EmergencyTypeDto>> getAllEmergencyTypes() {
+    List<EmergencyType> types =
+        emergencyManagementService.findAllEmergencyTypes();
+
+    return ResponseEntity.ok(EmergencyTypeMapper.toEmergencyTypeDtoList(types));
+  }
+
+  @Override
   public ResponseEntity<EmergencyResponseDto> postEmergency(EmergencyRequestDto emergencyRequestDto) {
 
     Emergency emergency = EmergencyMapper.toEmergency(emergencyRequestDto);
 
-    emergency = emergencyManagementService.createEmergency(emergency.getDescription(), emergency.getType(),
+    Long typeId = emergency.getEmergencyType() != null ? emergency.getEmergencyType().getId() : null;
+    emergency = emergencyManagementService.createEmergency(emergency.getDescription(), typeId,
         emergency.getEmergencyIndex());
 
     URI location = ServletUriComponentsBuilder
@@ -59,7 +76,8 @@ public class EmergenciesController implements EmergenciesApi {
 
     Emergency emergency = EmergencyMapper.toEmergency(emergencyRequestDto);
 
-    emergency = emergencyManagementService.updateEmergency(id, emergency.getDescription(), emergency.getType(),
+    Long updateTypeId = emergency.getEmergencyType() != null ? emergency.getEmergencyType().getId() : null;
+    emergency = emergencyManagementService.updateEmergency(id, emergency.getDescription(), updateTypeId,
         emergency.getEmergencyIndex());
 
     URI location = ServletUriComponentsBuilder
@@ -86,15 +104,38 @@ public class EmergenciesController implements EmergenciesApi {
   }
 
   @Override
-  public ResponseEntity<EmergencyResponseDto> postExtinguishQuadrant(Long id,
+  public ResponseEntity<EmergencyResponseDto> postLinkEmergencyToPoint(Long id, CoordinatesDto coordinatesDto) {
+
+    GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 25829);
+    Coordinate coordinate = new Coordinate(coordinatesDto.getLon(), coordinatesDto.getLat());
+
+    EmergencyResponseDto emergencyResponseDto = EmergencyMapper.toEmergencyDto(
+        emergencyManagementService.linkEmergencyToPoint(id, geometryFactory.createPoint(coordinate)));
+
+    return ResponseEntity.ok(emergencyResponseDto);
+
+  }
+
+  @Override
+  public ResponseEntity<EmergencyResponseDto> postLinkEmergencyToQuadrants(
+      Long id, LinkQuadrantsRequestDto requestDto) {
+
+    Emergency emergency = emergencyManagementService.linkEmergencyToQuadrants(id, requestDto.getQuadrantGids());
+
+    return ResponseEntity.ok(EmergencyMapper.toEmergencyDto(emergency));
+  }
+
+  @Override
+  public ResponseEntity<EmergencyResponseDto> postRemoveQuadrant(Long id,
       QuadrantEmergencyRequestDto quadrantEmergencyRequestDto)
       throws ExtinguishedEmergencyException, AlreadyDismantledException {
 
     final EmergencyResponseDto emergencyResponseDto = EmergencyMapper.toEmergencyDto(
-        emergencyManagementService.extinguishQuadrantByEmergencyId(id, quadrantEmergencyRequestDto.getQuadrantId()));
+        emergencyManagementService.removeQuadrantByEmergencyId(id, quadrantEmergencyRequestDto.getQuadrantId()));
 
     return ResponseEntity.ok(emergencyResponseDto);
   }
+
 
   @Override
   public ResponseEntity<EmergencyResponseDto> postExtinguishEmergency(Long id) {

@@ -12,22 +12,20 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.locationtech.jts.geom.Point;
 
 @Entity
 @Table(name = "emergency", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode
-@ToString
-@AllArgsConstructor
 @NoArgsConstructor
 public class Emergency {
 
@@ -38,8 +36,11 @@ public class Emergency {
   @Column(name = "description", nullable = false)
   private String description;
 
-  @Column(name = "type", nullable = false)
-  private String type;
+  @jakarta.validation.constraints.NotNull
+  @jakarta.persistence.ManyToOne(cascade = {jakarta.persistence.CascadeType.MERGE, jakarta.persistence.CascadeType.PERSIST, jakarta.persistence.CascadeType.REFRESH})
+  @jakarta.persistence.JoinColumn(name = "type_id")
+  private EmergencyType emergencyType;
+
 
   @Enumerated(EnumType.STRING)
   @Column(name = "emergency_index", nullable = false)
@@ -55,6 +56,21 @@ public class Emergency {
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private List<Quadrant> quadrantGids;
+  private List<EmergencyQuadrant> emergencyQuadrants;
+
+  @Column(name = "location", columnDefinition = "geometry(Point, 25829)")
+  private Point location;
+
+
+  @Transient
+  public List<Quadrant> getQuadrantGids() {
+    if (this.emergencyQuadrants == null) {
+      return null;
+    }
+    return this.emergencyQuadrants.stream()
+        .map(EmergencyQuadrant::getQuadrant)
+        .filter(java.util.Objects::nonNull)
+        .toList();
+  }
 
 }

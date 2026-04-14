@@ -20,8 +20,6 @@ properties:
     type: array
     items:
       $ref: "../../../users/schemas/responses/UserDto.yml"
-  quadrantInfo:
-    $ref: "../../../quadrants/schemas/responses/QuadrantInfoDto.yml"
   organization:
     $ref: "../../../organizations/schemas/responses/OrganizationResponseDto.yml"
   deployAt:

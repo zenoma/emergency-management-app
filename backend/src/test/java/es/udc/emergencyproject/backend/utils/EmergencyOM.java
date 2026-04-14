@@ -9,7 +9,8 @@ public class EmergencyOM {
 
     Emergency e = new Emergency();
     e.setDescription("Description");
-    e.setType("Type 1");
+    //FIXME: Crear un EmergencyTypeOM
+    e.setEmergencyType(null);
     e.setEmergencyIndex(EmergencyIndex.UNO);
     return e;
   }

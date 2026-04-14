@@ -75,9 +75,9 @@ export const emergencyApi = baseApi.injectEndpoints({
         return response;
       },
     }),
-    extinguishQuadrantByEmergencyId: build.mutation({
+    removeQuadrantByEmergencyId: build.mutation({
       query: (payload) => ({
-        url: "/emergencies/" + payload.emergencyId + "/extinguishQuadrant",
+        url: "/emergencies/" + payload.emergencyId + "/removeQuadrant",
         method: "POST",
         body: {
           quadrantId: payload.quadrantId,
@@ -100,5 +100,5 @@ export const {
   useCreateEmergencyMutation,
   useUpdateEmergencyMutation,
   useExtinguishEmergencyMutation,
-  useExtinguishQuadrantByEmergencyIdMutation,
+  useRemoveQuadrantByEmergencyIdMutation,
 } = emergencyApi;

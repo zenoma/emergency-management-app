@@ -1,0 +1,23 @@
+meta {
+  name: Create Emergency
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/assignments
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "emergencyQuadrantId": "1",
+    "resourceId": "1"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
