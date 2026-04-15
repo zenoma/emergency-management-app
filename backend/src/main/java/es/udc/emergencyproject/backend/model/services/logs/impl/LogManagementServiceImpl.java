@@ -13,8 +13,8 @@ import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.emergencyproject.backend.model.entities.quadrant.QuadrantRepository;
 import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
 import es.udc.emergencyproject.backend.model.entities.resource.vehicle.Vehicle;
-import es.udc.emergencyproject.backend.model.exceptions.ExtinguishedEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
+import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.services.logs.LogManagementService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -103,10 +103,10 @@ public class LogManagementServiceImpl implements LogManagementService {
 
   @Override
   public GlobalStatistics getGlobalStatisticsByEmergencyId(Emergency emergency)
-      throws InstanceNotFoundException, ExtinguishedEmergencyException {
+      throws InstanceNotFoundException, ResolvedEmergencyException {
 
-    if (emergency.getEmergencyIndex() != EmergencyIndex.EXTINGUIDO) {
-      throw new ExtinguishedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
+    if (emergency.getEmergencyIndex() != EmergencyIndex.RESUELTO) {
+      throw new ResolvedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
 
     }
 

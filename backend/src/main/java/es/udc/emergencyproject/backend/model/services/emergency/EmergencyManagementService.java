@@ -4,8 +4,8 @@ import es.udc.emergencyproject.backend.model.entities.emergency.Emergency;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyIndex;
 import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
-import es.udc.emergencyproject.backend.model.exceptions.ExtinguishedEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
+import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import java.util.List;
 import java.util.Optional;
 import org.locationtech.jts.geom.Point;
@@ -37,14 +37,14 @@ public interface EmergencyManagementService {
 
   Emergency createEmergency(String description, Long emergencyTypeId, EmergencyIndex emergencyIndex);
 
-  Emergency extinguishEmergency(Long id)
-      throws InstanceNotFoundException, ExtinguishedEmergencyException, AlreadyDismantledException;
+  Emergency resolveEmergency(Long id)
+      throws InstanceNotFoundException, ResolvedEmergencyException, AlreadyDismantledException;
 
   Emergency removeQuadrantByEmergencyId(Long id, Integer quadrantId)
-      throws InstanceNotFoundException, ExtinguishedEmergencyException, AlreadyDismantledException;
+      throws InstanceNotFoundException, ResolvedEmergencyException, AlreadyDismantledException;
 
   Emergency updateEmergency(Long id, String description, Long emergencyTypeId, EmergencyIndex emergencyIndex)
-      throws InstanceNotFoundException, ExtinguishedEmergencyException;
+      throws InstanceNotFoundException, ResolvedEmergencyException;
 
   java.util.List<es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType> findAllEmergencyTypes();
 

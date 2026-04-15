@@ -32,8 +32,8 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
-  useExtinguishEmergencyMutation,
-  useExtinguishQuadrantByEmergencyIdMutation,
+  useResolveEmergencyMutation,
+  useRemoveQuadrantByEmergencyIdMutation,
   useGetEmergencyByIdQuery,
   useUpdateEmergencyMutation,
 } from "../../api/emergencyApi";
@@ -69,8 +69,8 @@ export default function EmergencyDetailsView() {
   const [emergencyIndex, setEmergencyIndex] = useState();
 
   const [openEdit, setOpenEdit] = useState(false);
-  const [openQuadrantExtinguish, setOpenQuadrantExtinguish] = useState(false);
-  const [openExtinguish, setOpenExtinguish] = useState(false);
+  const [openQuadrantResolve, setOpenQuadrantResolve] = useState(false);
+  const [openResolve, setOpenResolve] = useState(false);
 
 
   const [coordinates, setCoordinates] = useState("");
@@ -80,7 +80,7 @@ export default function EmergencyDetailsView() {
   const { data, refetch, isLoading, isError } = useGetEmergencyByIdQuery(payload);
 
   const [linkEmergency] = useLinkEmergencyMutation ? useLinkEmergencyMutation() : [null];
-  const [extinguishEmergency] = useExtinguishEmergencyMutation();
+  const [resolveEmergency] = useResolveEmergencyMutation();
   const [removeQuadrantByEmergencyId] = useRemoveQuadrantByEmergencyIdMutation();
 
   useEffect(() => {
@@ -127,29 +127,29 @@ export default function EmergencyDetailsView() {
       .catch((error) => toast.error(t("quadrant-linked-error")));
   };
 
-  const handleExtinguishOpenClick = () => {
-    setOpenExtinguish(true);
+  const handleResolveOpenClick = () => {
+    setOpenResolve(true);
   };
 
-  const handleExtinguishClose = () => {
-    setOpenExtinguish(false);
+  const handleResolveClose = () => {
+    setOpenResolve(false);
   };
 
-  const handleExtinguishClick = () => {
+  const handleResolveClick = () => {
     const payload = {
       token: token,
       emergencyId: emergencyId,
       locale: locale
     };
 
-    extinguishEmergency(payload)
+    resolveEmergency(payload)
       .unwrap()
       .then(() => {
-        toast.success(t("emergency-extinguished-successfully"));
-        setOpenExtinguish(false);
+        toast.success(t("emergency-resolved-successfully"));
+        setOpenResolve(false);
         navigate("/emergency-management");
       })
-      .catch((error) => toast.error(t("emergency-extinguished-error")));
+      .catch((error) => toast.error(t("emergency-resolved-error")));
   };
 
 
@@ -205,16 +205,16 @@ export default function EmergencyDetailsView() {
   };
 
 
-  const handleExtinguishQuadrantOpenClick = (quadrantId) => {
+  const handleResolveQuadrantOpenClick = (quadrantId) => {
     setQuadrantId(quadrantId);
-    setOpenQuadrantExtinguish(true);
+    setOpenQuadrantResolve(true);
   };
 
-  const handleExtinguishQuadrantClose = () => {
-    setOpenQuadrantExtinguish(false);
+  const handleResolveQuadrantClose = () => {
+    setOpenQuadrantResolve(false);
   };
 
-  const handleExtinguishQuadrantClick = () => {
+  const handleResolveQuadrantClick = () => {
     const payload = {
       token: token,
       emergencyId: emergencyId,
@@ -225,12 +225,12 @@ export default function EmergencyDetailsView() {
     removeQuadrantByEmergencyId(payload)
       .unwrap()
       .then(() => {
-        toast.success(t("quadrant-extinguished-successfully"));
-        setOpenExtinguish(false);
+        toast.success(t("quadrant-resolved-successfully"));
+        setOpenResolve(false);
         refetch();
       })
-      .catch((error) => toast.error(t("quadrant-extinguished-error")));
-    handleExtinguishQuadrantClose();
+      .catch((error) => toast.error(t("quadrant-resolved-error")));
+    handleResolveQuadrantClose();
   };
 
   if (isLoading) {
@@ -387,7 +387,7 @@ export default function EmergencyDetailsView() {
                               sx={{ color: "red" }}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleExtinguishQuadrantOpenClick(row.id);
+                                handleResolveQuadrantOpenClick(row.id);
                               }}
                             >
                               <FireExtinguisherIcon />
@@ -445,58 +445,58 @@ export default function EmergencyDetailsView() {
                 }}
                 onClick={() => handleExtinguishOpenClick()}
               >
-                {t("emergency-extinguish")}
+                {t("emergency-resolve")}
               </Button>
-              <Dialog
-                open={openQuadrantExtinguish}
-                onClose={handleExtinguishQuadrantClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
-                  {t("quadrant-extinguish-dialog")}
-                </DialogTitle>
-                <DialogContent>
-                  <Typography variant="body2">
-                    {t("quadrant-extinguish-text")}
-                  </Typography>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleExtinguishQuadrantClose}>{t("cancel")}</Button>
-                  <Button
-                    onClick={handleExtinguishQuadrantClick}
-                    color="error"
-                    autoFocus
-                  >
-                    {t("quadrant-extinguish")}
-                  </Button>
-                </DialogActions>
-              </Dialog>
-              <Dialog
-                open={openExtinguish}
-                onClose={handleExtinguishClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
-                  {t("emergency-extinguish-dialog")}
-                </DialogTitle>
-                <DialogContent>
-                  <Typography variant="body2">
-                    {t("emergency-extinguish-text")}
-                  </Typography>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleExtinguishClose}>{t("cancel")}</Button>
-                  <Button
-                    onClick={handleExtinguishClick}
-                    color="error"
-                    autoFocus
-                  >
-                    {t("emergency-extinguish")}
-                  </Button>
-                </DialogActions>
-              </Dialog>
+                <Dialog
+                  open={openQuadrantResolve}
+                  onClose={handleResolveQuadrantClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
+                    {t("quadrant-resolve-dialog")}
+                  </DialogTitle>
+                  <DialogContent>
+                    <Typography variant="body2">
+                      {t("quadrant-resolve-text")}
+                    </Typography>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleResolveQuadrantClose}>{t("cancel")}</Button>
+                    <Button
+                      onClick={handleResolveQuadrantClick}
+                      color="error"
+                      autoFocus
+                    >
+                      {t("quadrant-resolve")}
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+                <Dialog
+                  open={openResolve}
+                  onClose={handleResolveClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
+                    {t("emergency-resolve-dialog")}
+                  </DialogTitle>
+                  <DialogContent>
+                    <Typography variant="body2">
+                      {t("emergency-resolve-text")}
+                    </Typography>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleResolveClose}>{t("cancel")}</Button>
+                    <Button
+                      onClick={handleResolveClick}
+                      color="error"
+                      autoFocus
+                    >
+                      {t("emergency-resolve")}
+                    </Button>
+                  </DialogActions>
+                </Dialog>
             </Paper>
           )}
           {coordinates && <WeatherInfo sx={{ padding: 2 }} lat={coordinates.lat} lon={coordinates.lon} />}

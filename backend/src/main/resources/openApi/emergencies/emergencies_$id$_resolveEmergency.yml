@@ -1,6 +1,6 @@
 post:
-  summary: Extinguir un emergencia extinguiendo los cuadrantes afectados
-  operationId: postExtinguishEmergency
+  summary: Resolver una emergencia desvinculando los cuadrantes afectados
+  operationId: postResolveEmergency
   tags:
     - EmergencyManagement
   security:

@@ -7,7 +7,6 @@ import es.udc.emergencyproject.backend.model.exceptions.DomainException;
 import es.udc.emergencyproject.backend.model.exceptions.DuplicateInstanceException;
 import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToPointException;
 import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToQuadrantsException;
-import es.udc.emergencyproject.backend.model.exceptions.ExtinguishedEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.FileUploadException;
 import es.udc.emergencyproject.backend.model.exceptions.ImageAlreadyUploadedException;
 import es.udc.emergencyproject.backend.model.exceptions.IncorrectLoginException;
@@ -20,6 +19,7 @@ import es.udc.emergencyproject.backend.model.exceptions.NoticeUpdateStatusExcept
 import es.udc.emergencyproject.backend.model.exceptions.PermissionException;
 import es.udc.emergencyproject.backend.model.exceptions.QuadrantAlreadyLinkedToEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.QuadrantNotLinkedToEmergencyException;
+import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.UserWithoutTeamException;
 import es.udc.emergencyproject.backend.rest.dtos.ErrorDto;
 import es.udc.emergencyproject.backend.rest.dtos.FieldErrorDto;
@@ -58,7 +58,7 @@ public class GlobalControllerExceptionHandler {
   private static final String DATA_INTEGRITY_EXCEPTION_CODE = "project.exceptions.DataIntegrityViolationException";
   private static final String ALREADY_DISMANTLED_EXCEPTION_CODE = "project.exceptions.AlreadyDismantledException";
   private static final String ALREADY_EXIST_EXCEPTION_CODE = "project.exceptions.AlreadyExistException";
-  private static final String EXTINGUISHED_EMERGENCY_EXCEPTION_CODE = "project.exceptions.ExtinguishedEmergencyException";
+  private static final String RESOLVED_EMERGENCY_EXCEPTION_CODE = "project.exceptions.ResolvedEmergencyException";
 
   private static final String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
   private static final String INCORRECT_PASSWORD_EXCEPTION_CODE = "project.exceptions.IncorrectPasswordException";
@@ -268,13 +268,13 @@ public class GlobalControllerExceptionHandler {
 
   }
 
-  @ExceptionHandler(ExtinguishedEmergencyException.class)
+  @ExceptionHandler(ResolvedEmergencyException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorDto handleExtinguishedEmergencyException(ExtinguishedEmergencyException exception, Locale locale) {
+  public ErrorDto handleResolvedEmergencyException(ResolvedEmergencyException exception, Locale locale) {
 
-    String errorMessage = messageSource.getMessage(EXTINGUISHED_EMERGENCY_EXCEPTION_CODE,
-        new Object[]{exception.getId()}, EXTINGUISHED_EMERGENCY_EXCEPTION_CODE, locale);
+    String errorMessage = messageSource.getMessage(RESOLVED_EMERGENCY_EXCEPTION_CODE,
+        new Object[]{exception.getId()}, RESOLVED_EMERGENCY_EXCEPTION_CODE, locale);
 
     return new ErrorDto(errorMessage);
   }

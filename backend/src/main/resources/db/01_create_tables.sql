@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS emergency
     location    geometry(Point, 25829),
     type_id     BIGINT,
     emergency_index  VARCHAR(255) NOT NULL,
-    extinguished_at TIMESTAMP(3)
+    resolved_at TIMESTAMP(3)
 );
 
 CREATE TABLE organization_type
@@ -156,7 +156,7 @@ CREATE TABLE emergency_quadrant_log
     emergency_id    BIGINT,
     quadrant_gid    BIGINT,
     linked_at       TIMESTAMP(3) NOT NULL,
-    extinguished_at TIMESTAMP(3) NOT NULL
+    resolved_at TIMESTAMP(3) NOT NULL
 );
 
 CREATE TABLE assignment

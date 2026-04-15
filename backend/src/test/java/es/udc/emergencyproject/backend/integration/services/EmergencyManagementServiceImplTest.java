@@ -143,7 +143,7 @@ class EmergencyManagementServiceImplTest extends IntegrationTest {
 //
 //    emergencyManagementService.extinguishEmergency(emergency.getId());
 //
-//    Assertions.assertEquals(EmergencyIndex.EXTINGUIDO,
+//    Assertions.assertEquals(EmergencyIndex.RESUELTO,
 //        emergencyManagementService.findEmergencyById(emergency.getId()).getEmergencyIndex());
 //  }
 //
@@ -178,7 +178,7 @@ class EmergencyManagementServiceImplTest extends IntegrationTest {
 //
 //    emergency = emergencyManagementService.extinguishEmergency(emergency.getId());
 //
-//    Assertions.assertEquals(EmergencyIndex.EXTINGUIDO,
+//    Assertions.assertEquals(EmergencyIndex.RESUELTO,
 //        emergencyManagementService.findEmergencyById(emergency.getId()).getEmergencyIndex());
 //    Assertions.assertNull(personalManagementFacade.findVehicleById(vehicle.getId()).getQuadrant());
 //    Assertions.assertNull(personalManagementFacade.findTeamById(team.getId()).getQuadrant());

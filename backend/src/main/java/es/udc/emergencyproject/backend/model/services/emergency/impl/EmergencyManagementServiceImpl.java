@@ -11,10 +11,10 @@ import es.udc.emergencyproject.backend.model.entities.quadrant.QuadrantRepositor
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToPointException;
 import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToQuadrantsException;
-import es.udc.emergencyproject.backend.model.exceptions.ExtinguishedEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.emergencyproject.backend.model.exceptions.QuadrantAlreadyLinkedToEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.QuadrantNotLinkedToEmergencyException;
+import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.services.emergency.EmergencyManagementService;
 import es.udc.emergencyproject.backend.model.services.logs.LogManagementService;
 import es.udc.emergencyproject.backend.model.services.utils.ConstraintValidator;
@@ -84,8 +84,8 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     var emergency = emergencyRepository.findById(emergencyId)
         .orElseThrow(() -> new InstanceNotFoundException(EMERGENCY_NOT_FOUND, emergencyId));
 
-    if (emergency.getEmergencyIndex() == EmergencyIndex.EXTINGUIDO) {
-      throw new ExtinguishedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
+    if (emergency.getEmergencyIndex() == EmergencyIndex.RESUELTO) {
+      throw new ResolvedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
     }
 
     if (emergency.getLocation() != null) {
@@ -118,8 +118,8 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
       throws InstanceNotFoundException {
     var emergency = emergencyRepository.findById(emergencyId)
         .orElseThrow(() -> new InstanceNotFoundException(EMERGENCY_NOT_FOUND, emergencyId));
-    if (emergency.getEmergencyIndex() == EmergencyIndex.EXTINGUIDO) {
-      throw new ExtinguishedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
+    if (emergency.getEmergencyIndex() == EmergencyIndex.RESUELTO) {
+      throw new ResolvedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
     }
 
     List<EmergencyQuadrant> quadrants = emergencyQuadrantRepository.findByEmergencyId(emergencyId);
@@ -141,7 +141,7 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
   // EMERGENCY SERVICES
   @Override
   public List<Emergency> findAllEmergencies() {
-    return emergencyRepository.findAllByOrderByExtinguishedAtDescIdAsc();
+    return emergencyRepository.findAllByOrderByResolvedAtDescIdAsc();
   }
 
   @Override
@@ -174,18 +174,18 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
   }
 
   @Override
-  public Emergency extinguishEmergency(Long id)
-      throws InstanceNotFoundException, ExtinguishedEmergencyException, AlreadyDismantledException {
+  public Emergency resolveEmergency(Long id)
+      throws InstanceNotFoundException, ResolvedEmergencyException, AlreadyDismantledException {
 
     Emergency emergency = emergencyRepository.findById(id)
         .orElseThrow(() -> new InstanceNotFoundException(EMERGENCY_NOT_FOUND, id));
 
-    if (emergency.getEmergencyIndex() == EmergencyIndex.EXTINGUIDO) {
-      throw new ExtinguishedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
+    if (emergency.getEmergencyIndex() == EmergencyIndex.RESUELTO) {
+      throw new ResolvedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
     }
 
-    emergency.setEmergencyIndex(EmergencyIndex.EXTINGUIDO);
-    emergency.setExtinguishedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+    emergency.setEmergencyIndex(EmergencyIndex.RESUELTO);
+    emergency.setResolvedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
     List<EmergencyQuadrant> quadrants = emergencyQuadrantRepository.findByEmergencyId(id);
 
@@ -196,13 +196,13 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
 
   @Override
   public Emergency removeQuadrantByEmergencyId(Long id, Integer quadrantId)
-      throws InstanceNotFoundException, ExtinguishedEmergencyException, AlreadyDismantledException {
+      throws InstanceNotFoundException, ResolvedEmergencyException, AlreadyDismantledException {
 
     Emergency emergency = emergencyRepository.findById(id)
         .orElseThrow(() -> new InstanceNotFoundException(EMERGENCY_NOT_FOUND, id));
 
-    if (emergency.getEmergencyIndex() == EmergencyIndex.EXTINGUIDO) {
-      throw new ExtinguishedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
+    if (emergency.getEmergencyIndex() == EmergencyIndex.RESUELTO) {
+      throw new ResolvedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
     }
 
     EmergencyQuadrant eq = emergencyQuadrantRepository.findByEmergencyIdAndQuadrantId(id, quadrantId);
@@ -224,11 +224,11 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     Emergency emergency = emergencyRepository.findById(id)
         .orElseThrow(() -> new InstanceNotFoundException(EMERGENCY_NOT_FOUND, id));
 
-    if (emergencyIndex == EmergencyIndex.EXTINGUIDO) {
-      throw new ExtinguishedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
+    if (emergencyIndex == EmergencyIndex.RESUELTO) {
+      throw new ResolvedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
     }
 
-    if (emergency.getEmergencyIndex() != EmergencyIndex.EXTINGUIDO) {
+    if (emergency.getEmergencyIndex() != EmergencyIndex.RESUELTO) {
       emergency.setDescription(description);
       emergency.setEmergencyIndex(emergencyIndex);
       if (emergencyTypeId != null) {
@@ -239,7 +239,7 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
         emergency.setEmergencyType(et);
       }
     } else {
-      throw new ExtinguishedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
+      throw new ResolvedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
     }
 
     return emergencyRepository.save(emergency);

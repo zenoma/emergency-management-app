@@ -3,8 +3,7 @@ package es.udc.emergencyproject.backend.rest.controllers;
 import es.udc.emergencyproject.backend.model.entities.emergency.Emergency;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
-import es.udc.emergencyproject.backend.model.exceptions.ExtinguishedEmergencyException;
-import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
+import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.services.emergency.EmergencyManagementService;
 import es.udc.emergencyproject.backend.rest.dtos.CoordinatesDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyRequestDto;
@@ -22,9 +21,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -95,13 +91,6 @@ public class EmergenciesController implements EmergenciesApi {
     return ResponseEntity.ok(emergencyResponseDto);
   }
 
-  @PostMapping("/{id}/extinguishEmergency")
-  public EmergencyResponseDto extinguishEmergency(@RequestAttribute Long userId,
-      @PathVariable Long id)
-
-      throws InstanceNotFoundException, ExtinguishedEmergencyException, AlreadyDismantledException {
-    return EmergencyMapper.toEmergencyDto(emergencyManagementService.extinguishEmergency(id));
-  }
 
   @Override
   public ResponseEntity<EmergencyResponseDto> postLinkEmergencyToPoint(Long id, CoordinatesDto coordinatesDto) {
@@ -128,7 +117,7 @@ public class EmergenciesController implements EmergenciesApi {
   @Override
   public ResponseEntity<EmergencyResponseDto> postRemoveQuadrant(Long id,
       QuadrantEmergencyRequestDto quadrantEmergencyRequestDto)
-      throws ExtinguishedEmergencyException, AlreadyDismantledException {
+      throws ResolvedEmergencyException, AlreadyDismantledException {
 
     final EmergencyResponseDto emergencyResponseDto = EmergencyMapper.toEmergencyDto(
         emergencyManagementService.removeQuadrantByEmergencyId(id, quadrantEmergencyRequestDto.getQuadrantId()));
@@ -138,9 +127,9 @@ public class EmergenciesController implements EmergenciesApi {
 
 
   @Override
-  public ResponseEntity<EmergencyResponseDto> postExtinguishEmergency(Long id) {
+  public ResponseEntity<EmergencyResponseDto> postResolveEmergency(Long id) {
 
-    final Emergency emergency = emergencyManagementService.extinguishEmergency(id);
+    final Emergency emergency = emergencyManagementService.resolveEmergency(id);
 
     final EmergencyResponseDto emergencyResponseDto = EmergencyMapper.toEmergencyDto(emergency);
 

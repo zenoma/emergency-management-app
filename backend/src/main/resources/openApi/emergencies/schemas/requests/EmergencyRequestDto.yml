@@ -11,7 +11,7 @@ properties:
     format: int64
   emergencyIndex:
     type: string
-    enum: [ EXTINGUIDO, CERO, UNO, DOS, TRES ]
+    enum: [ RESUELTO, CERO, UNO, DOS, TRES ]
 example:
   description: "Fuego en zona forestal cerca de A Coruña"
   emergencyTypeId: 1

@@ -48,7 +48,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/emergencies/types").permitAll()
             .requestMatchers(HttpMethod.POST, "/emergencies").hasAnyRole(COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.GET, "/emergencies/{id}").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
-            .requestMatchers(HttpMethod.POST, "/emergencies/{id}/extinguishEmergency").hasAnyRole(COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.POST, "/emergencies/{id}/resolveEmergency").hasAnyRole(COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/emergencies/{id}/removeQuadrant")
             .hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.PUT, "/emergencies/{id}").hasAnyRole(COORDINATOR_ROLE)

@@ -49,8 +49,8 @@ public class Emergency {
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
 
-  @Column(name = "extinguished_at")
-  private LocalDateTime extinguishedAt;
+  @Column(name = "resolved_at")
+  private LocalDateTime resolvedAt;
 
   @OneToMany(mappedBy = "emergency",
       fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})

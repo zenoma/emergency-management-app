@@ -8,15 +8,16 @@ import es.udc.emergencyproject.backend.model.entities.logs.VehicleQuadrantLog;
 import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
 import es.udc.emergencyproject.backend.model.entities.resource.vehicle.Vehicle;
-import es.udc.emergencyproject.backend.model.exceptions.ExtinguishedEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
+import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface LogManagementService {
 
   EmergencyQuadrantLog logEmergency(Emergency emergency,
-      es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadrant emergencyQuadrant) throws InstanceNotFoundException;
+      es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadrant emergencyQuadrant)
+      throws InstanceNotFoundException;
 
   TeamQuadrantLog logTeam(Team team,
       Quadrant quadrant) throws InstanceNotFoundException;
@@ -41,5 +42,5 @@ public interface LogManagementService {
       LocalDateTime startDate, LocalDateTime endDate) throws InstanceNotFoundException;
 
   GlobalStatistics getGlobalStatisticsByEmergencyId(Emergency emergency)
-      throws InstanceNotFoundException, ExtinguishedEmergencyException;
+      throws InstanceNotFoundException, ResolvedEmergencyException;
 }

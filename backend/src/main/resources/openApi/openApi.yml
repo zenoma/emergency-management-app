@@ -66,8 +66,8 @@ paths:
     $ref: './emergencies/emergencies_types.yml'
   /emergencies/{id}/removeQuadrant:
     $ref: './emergencies/emergencies_$id$_removeQuadrant.yml'
-  /emergencies/{id}/extinguishEmergency:
-    $ref: './emergencies/emergencies_$id$_extinguishEmergency.yml'
+  /emergencies/{id}/resolveEmergency:
+    $ref: './emergencies/emergencies_$id$_resolveEmergency.yml'
   /emergencies/{id}/linkPoint:
     $ref: './emergencies/emergencies_$id$_linkPoint.yml'
   /emergencies/{id}/linkQuadrants:

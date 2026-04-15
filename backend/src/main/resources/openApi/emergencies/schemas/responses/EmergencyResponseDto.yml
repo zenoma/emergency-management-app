@@ -5,7 +5,7 @@ required:
   - emergencyTypeName
   - emergencyIndex
   - createdAt
-  - extinguishedAt
+  - resolvedAt
 properties:
   id:
     type: integer
@@ -16,11 +16,11 @@ properties:
     type: string
   emergencyIndex:
     type: string
-    enum: [ EXTINGUIDO, CERO, UNO, DOS, TRES ]
+    enum: [ RESUELTO, CERO, UNO, DOS, TRES ]
   createdAt:
     type: string
     format: localDateTime
-  extinguishedAt:
+  resolvedAt:
     type: string
     format: localDateTime
   location:

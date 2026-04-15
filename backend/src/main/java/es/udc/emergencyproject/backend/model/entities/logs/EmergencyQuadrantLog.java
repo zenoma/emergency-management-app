@@ -43,17 +43,17 @@ public class EmergencyQuadrantLog {
   private Quadrant quadrant;
   @Column(name = "linked_at", nullable = false)
   private LocalDateTime linkedAt;
-  @Column(name = "extinguished_at", nullable = false)
-  private LocalDateTime extinguishedAt;
+  @Column(name = "resolved_at", nullable = false)
+  private LocalDateTime resolvedAt;
 
   public EmergencyQuadrantLog() {
   }
 
   public EmergencyQuadrantLog(Emergency emergency, Quadrant quadrant, LocalDateTime linkedAt,
-      LocalDateTime extinguishedAt) {
+      LocalDateTime resolvedAt) {
     this.emergency = emergency;
     this.quadrant = quadrant;
     this.linkedAt = linkedAt;
-    this.extinguishedAt = extinguishedAt;
+    this.resolvedAt = resolvedAt;
   }
 }

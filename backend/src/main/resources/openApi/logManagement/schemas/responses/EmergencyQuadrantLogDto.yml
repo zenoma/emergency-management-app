@@ -3,7 +3,7 @@ required:
   - quadrantInfo
   - emergencyInfo
   - linkedAt
-  - extinguishedAt
+  - resolvedAt
 properties:
   quadrantInfo:
     $ref: "../../../quadrants/schemas/responses/QuadrantDto.yml"
@@ -12,7 +12,6 @@ properties:
   linkedAt:
     type: string
     format: localDateTime
-  extinguishedAt:
+  resolvedAt:
     type: string
     format: localDateTime
-

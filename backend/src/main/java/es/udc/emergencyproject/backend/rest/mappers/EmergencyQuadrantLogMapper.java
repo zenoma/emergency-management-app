@@ -19,7 +19,7 @@ public class EmergencyQuadrantLogMapper {
         emergencyQuadrantLog.getQuadrant());
 
     return new EmergencyQuadrantLogDto(quadrantDto, emergencyResponseDto, emergencyQuadrantLog.getLinkedAt(),
-        emergencyQuadrantLog.getExtinguishedAt());
+        emergencyQuadrantLog.getResolvedAt());
 
   }
 

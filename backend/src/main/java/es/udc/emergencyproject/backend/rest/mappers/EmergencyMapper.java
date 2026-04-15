@@ -24,7 +24,7 @@ public class EmergencyMapper {
     }
     emergencyResponseDto.setEmergencyIndex(EmergencyIndexEnum.fromValue(emergency.getEmergencyIndex().toString()));
     emergencyResponseDto.setCreatedAt(emergency.getCreatedAt());
-    emergencyResponseDto.setExtinguishedAt(emergency.getExtinguishedAt());
+    emergencyResponseDto.setResolvedAt(emergency.getResolvedAt());
 
     emergencyResponseDto.setQuadrantInfo(
         emergency.getQuadrantGids() != null ?
@@ -49,7 +49,7 @@ public class EmergencyMapper {
         emergency.getEmergencyType().getName(),
         EmergencyIndexEnum.fromValue(emergency.getEmergencyIndex().toString()),
         emergency.getCreatedAt(),
-        emergency.getExtinguishedAt());
+        emergency.getResolvedAt());
   }
 
   public static Emergency toEmergency(EmergencyRequestDto emergencyRequestDto) {

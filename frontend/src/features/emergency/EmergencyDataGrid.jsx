@@ -117,8 +117,8 @@ export default function EmergencyDataGrid() {
         aggregable: false,
       },
       {
-        field: "extinguishedAt",
-        headerName: t("emergency-extinguished-at"),
+        field: "resolvedAt",
+        headerName: t("emergency-resolved-at"),
         minWidth: 200,
         aggregable: false,
       },

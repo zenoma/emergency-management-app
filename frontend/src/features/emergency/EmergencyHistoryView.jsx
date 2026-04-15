@@ -75,7 +75,7 @@ export default function EmergencyHistoryView() {
   useEffect(() => {
     if (emergencyData) {
       setSelectedStartDate(dayjs(emergencyData.createdAt));
-      setSelectedEndDate(dayjs(emergencyData.extinguishedAt));
+      setSelectedEndDate(dayjs(emergencyData.resolvedAt));
     }
   }, [emergencyData]);
 
@@ -254,7 +254,7 @@ export default function EmergencyHistoryView() {
                           sx={{ color: "secondary.light" }}
                           align="right"
                         >
-                          {t("quadrant-extinguishedAt")}
+                          {t("quadrant-resolvedAt")}
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -269,7 +269,7 @@ export default function EmergencyHistoryView() {
                                 state: {
                                   quadrantId: row.quadrantInfo.id,
                                   startDate: row.linkedAt,
-                                  endDate: row.extinguishedAt,
+                                  endDate: row.resolvedAt,
                                 },
                               })
                             }
@@ -287,7 +287,7 @@ export default function EmergencyHistoryView() {
                             </TableCell>
                             <TableCell align="right">{row.linkedAt}</TableCell>
                             <TableCell align="right">
-                              {row.extinguishedAt}
+                              {row.resolvedAt}
                             </TableCell>
                           </TableRow>
                         ))}
