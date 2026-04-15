@@ -9,14 +9,12 @@ SELECT PostGIS_Extensions_Upgrade();
 
 -- Crear tablas
 
--- Tabla para tipos de emergencia (persistidos)
 CREATE TABLE IF NOT EXISTS emergency_type
 (
     id   BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
--- Tabla de emergencias
 CREATE TABLE IF NOT EXISTS emergency
 (
     id          BIGSERIAL PRIMARY KEY,
@@ -79,16 +77,7 @@ CREATE TABLE team
 (
     id              BIGINT PRIMARY KEY,
     code            VARCHAR(255) NOT NULL,
-    CONSTRAINT fk_team_resource_id FOREIGN KEY (id) REFERENCES resource (id)
-);
-
-CREATE TABLE team_quadrant_log
-(
-    id           BIGSERIAL PRIMARY KEY,
-    team_id      BIGINT,
-    quadrant_gid BIGINT,
-    deploy_at    TIMESTAMP(3) NOT NULL,
-    retract_at   TIMESTAMP(3) NOT NULL
+CONSTRAINT fk_team_resource_id FOREIGN KEY (id) REFERENCES resource (id)
 );
 
 CREATE TABLE vehicle
@@ -96,16 +85,7 @@ CREATE TABLE vehicle
     id              BIGINT PRIMARY KEY,
     vehicle_plate   VARCHAR(255) UNIQUE,
     type            VARCHAR(255),
-    CONSTRAINT fk_vehicle_resource_id FOREIGN KEY (id) REFERENCES resource (id)
-);
-
-CREATE TABLE vehicle_quadrant_log
-(
-    id           BIGSERIAL PRIMARY KEY,
-    vehicle_id   BIGINT,
-    quadrant_gid BIGINT,
-    deploy_at    TIMESTAMP(3) NOT NULL,
-    retract_at   TIMESTAMP(3) NOT NULL
+CONSTRAINT fk_vehicle_resource_id FOREIGN KEY (id) REFERENCES resource (id)
 );
 
 CREATE TABLE "user"
@@ -150,15 +130,6 @@ CREATE TABLE emergency_quadrant
     notes        VARCHAR(255)
 );
 
-CREATE TABLE emergency_quadrant_log
-(
-    id              BIGSERIAL PRIMARY KEY,
-    emergency_id    BIGINT,
-    quadrant_gid    BIGINT,
-    linked_at       TIMESTAMP(3) NOT NULL,
-    resolved_at TIMESTAMP(3) NOT NULL
-);
-
 CREATE TABLE assignment
 (
     id                    BIGSERIAL PRIMARY KEY,
@@ -173,6 +144,45 @@ CREATE TABLE assignment
     removed               BOOLEAN DEFAULT FALSE NOT NULL
 );
 
+CREATE TABLE general_log
+(
+    id           BIGSERIAL PRIMARY KEY,
+    assignment_id BIGINT,
+    emergency_id BIGINT,
+    quadrant_id  INTEGER,
+    resource_id  BIGINT,
+    event_type   VARCHAR(255) NOT NULL,
+    event_at     TIMESTAMP(3) NOT NULL,
+    details      TEXT
+);
+
+
+ALTER TABLE general_log
+    ADD CONSTRAINT fk_general_log_assignment_id
+        FOREIGN KEY (assignment_id)
+            REFERENCES assignment (id);
+
+ALTER TABLE general_log
+    ADD CONSTRAINT fk_general_log_emergency_id
+        FOREIGN KEY (emergency_id)
+            REFERENCES emergency (id);
+
+ALTER TABLE general_log
+    ADD CONSTRAINT fk_general_log_quadrant_id
+        FOREIGN KEY (quadrant_id)
+            REFERENCES quadrants (gid);
+
+ALTER TABLE general_log
+    ADD CONSTRAINT fk_general_log_resource_id
+        FOREIGN KEY (resource_id)
+            REFERENCES resource (id);
+
+CREATE INDEX idx_general_log_emergency ON general_log (emergency_id);
+CREATE INDEX idx_general_log_assignment ON general_log (assignment_id);
+
+
+
+
 -- Añadir restricciones de llave foránea
 ALTER TABLE organization
     ADD CONSTRAINT fk_organization_type_id
@@ -181,15 +191,7 @@ ALTER TABLE organization
 
 -- quadrants no longer tiene columna emergency_id; la relación se mantiene en emergency_quadrant
 
-ALTER TABLE emergency_quadrant_log
-    ADD CONSTRAINT fk_vehicle_quadrant_log_emergency_id
-        FOREIGN KEY (emergency_id)
-            REFERENCES emergency (id);
-
-ALTER TABLE emergency_quadrant_log
-    ADD CONSTRAINT fk_emergency_quadrant_log_quadrant_gid
-        FOREIGN KEY (quadrant_gid)
-            REFERENCES quadrants (gid);
+-- legacy emergency_quadrant_log foreign keys removed
 
 -- Resource-level foreign keys: organization and quadrant belong to resource base table
 ALTER TABLE resource
@@ -202,27 +204,6 @@ ALTER TABLE resource
         FOREIGN KEY (quadrant_gid)
             REFERENCES quadrants (gid);
 
-ALTER TABLE team_quadrant_log
-    ADD CONSTRAINT fk_team_quadrant_log_team_id
-        FOREIGN KEY (team_id)
-            REFERENCES team (id);
-
-ALTER TABLE team_quadrant_log
-    ADD CONSTRAINT fk_team_quadrant_log_quadrant_gid
-        FOREIGN KEY (quadrant_gid)
-            REFERENCES quadrants (gid);
-
--- organization/quadrant FKs for vehicle moved to resource (shared base table)
-
-ALTER TABLE vehicle_quadrant_log
-    ADD CONSTRAINT fk_vehicle_quadrant_log_vehicle_id
-        FOREIGN KEY (vehicle_id)
-            REFERENCES vehicle (id);
-
-ALTER TABLE vehicle_quadrant_log
-    ADD CONSTRAINT fk_vehicle_quadrant_log_quadrant_gid
-        FOREIGN KEY (quadrant_gid)
-            REFERENCES quadrants (gid);
 
 ALTER TABLE "user"
     ADD CONSTRAINT fk_team_id

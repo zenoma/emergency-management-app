@@ -5,9 +5,14 @@ meta {
 }
 
 get {
-  url: {{base_url}}/logs/fires
+  url: {{base_url}}/logs/emergencies/1?startDate=2026-02-15&endDate=2036-02-15
   body: none
   auth: inherit
+}
+
+params:query {
+  startDate: 2026-02-15
+  endDate: 2036-02-15
 }
 
 settings {

@@ -6,6 +6,8 @@ import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentStatu
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyIndex;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadrantRepository;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyRepository;
+import es.udc.emergencyproject.backend.model.entities.logs.GeneralLog;
+import es.udc.emergencyproject.backend.model.entities.logs.GeneralLogEventType;
 import es.udc.emergencyproject.backend.model.entities.resource.Resource;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceRepository;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceStatus;
@@ -16,7 +18,9 @@ import es.udc.emergencyproject.backend.model.exceptions.QuadrantNotLinkedToEmerg
 import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.ResourceBusyException;
 import es.udc.emergencyproject.backend.model.services.assignment.AssignmentService;
+import es.udc.emergencyproject.backend.model.services.logs.LogManagementService;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +35,7 @@ public class AssignmentServiceImpl implements AssignmentService {
   private final EmergencyQuadrantRepository emergencyQuadrantRepository;
   private final ResourceRepository resourceRepository;
   private final EmergencyRepository emergencyRepository;
+  private final LogManagementService logManagementService;
 
   // TODO: Hay que guardar registro de todos las operaciones de asignación
 
@@ -81,6 +86,12 @@ public class AssignmentServiceImpl implements AssignmentService {
     a.setEmergency(emergency);
 
     Assignment saved = assignmentRepository.save(a);
+
+    try {
+      logManagementService.registerAssignmentEvent(saved, GeneralLogEventType.ASSIGNMENT_CREATED,
+          "Assignment created");
+    } catch (Exception ignored) {
+    }
 
     return saved;
   }
@@ -148,12 +159,24 @@ public class AssignmentServiceImpl implements AssignmentService {
       resource.setStatus(ResourceStatus.BUSY);
       resource.setDeployAt(LocalDateTime.now());
       resourceRepository.save(resource);
+
+      try {
+        logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_ACCEPTED,
+            "Assignment accepted");
+      } catch (Exception ignored) {
+      }
     }
 
     if (status == AssignmentStatus.COMPLETED) {
       resource.setStatus(ResourceStatus.AVAILABLE);
       resource.setDeployAt(null);
       resourceRepository.save(resource);
+
+      try {
+        logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_COMPLETED,
+            "Assignment completed");
+      } catch (Exception ignored) {
+      }
     }
 
     return saved;

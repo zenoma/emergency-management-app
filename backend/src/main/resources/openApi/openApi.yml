@@ -116,14 +116,8 @@ paths:
   /assignments/{id}/status:
     $ref: './assignments/assignments_$id$_status.yml'
 
-  /logs/emergencies:
-    $ref: './logManagement/emergencies.yml'
   /logs/emergencies/{id}:
     $ref: './logManagement/emergencies_$id$.yml'
-  /logs/teams:
-    $ref: './logManagement/teams.yml'
-  /logs/vehicles:
-    $ref: './logManagement/vehicles.yml'
   /logs/statistics:
     $ref: './logManagement/statistics.yml'
 

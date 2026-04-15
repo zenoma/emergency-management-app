@@ -3,6 +3,7 @@ package es.udc.emergencyproject.backend.rest.mappers;
 import es.udc.emergencyproject.backend.model.entities.assignment.Assignment;
 import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
 import es.udc.emergencyproject.backend.model.entities.resource.vehicle.Vehicle;
+import org.hibernate.Hibernate;
 import es.udc.emergencyproject.backend.rest.dtos.AssignmentResponseDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyResponseDto;
 import es.udc.emergencyproject.backend.rest.dtos.QuadrantDto;
@@ -49,15 +50,14 @@ public class AssignmentMapper {
     if (a.getResource() != null) {
       var resource = a.getResource();
       if (resource.getResourceType() != null) {
+        Object unproxied = Hibernate.unproxy(resource);
         switch (resource.getResourceType()) {
           case TEAM:
-            TeamResponseDto teamDto = TeamMapper.toTeamDto(
-                (Team) resource);
+            TeamResponseDto teamDto = TeamMapper.toTeamDto((Team) unproxied);
             dto.setTeamInfo(teamDto);
             break;
           case VEHICLE:
-            VehicleResponseDto vehicleDto = VehicleMapper.toVehicleDto(
-                (Vehicle) resource);
+            VehicleResponseDto vehicleDto = VehicleMapper.toVehicleDto((Vehicle) unproxied);
             dto.setVehicleInfo(vehicleDto);
             break;
           default:

@@ -7,6 +7,8 @@ import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadran
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyRepository;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyTypeRepository;
+import es.udc.emergencyproject.backend.model.entities.logs.GeneralLog;
+import es.udc.emergencyproject.backend.model.entities.logs.GeneralLogEventType;
 import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.emergencyproject.backend.model.entities.quadrant.QuadrantRepository;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
@@ -108,6 +110,13 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
         eq.setQuadrant(quadrant);
         eq.setLinkedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         emergencyQuadrantRepository.save(eq);
+        // log general event
+        try {
+          var gl = new GeneralLog(null, emergency, quadrant, null,
+              GeneralLogEventType.EMERGENCY_LINKED_QUADRANT, eq.getLinkedAt(), "Linked quadrant " + quadrant.getId());
+          logManagementService.logGeneral(gl);
+        } catch (Exception ignored) {
+        }
       }
       linked.add(quadrant);
     }
@@ -136,7 +145,14 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     }
 
     emergency.setLocation(location);
-    return emergencyRepository.save(emergency);
+    Emergency saved = emergencyRepository.save(emergency);
+    try {
+      var gl = new GeneralLog(null, saved, null, null, GeneralLogEventType.EMERGENCY_LINKED_POINT,
+          LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), "Linked point");
+      logManagementService.logGeneral(gl);
+    } catch (Exception ignored) {
+    }
+    return saved;
   }
 
 
@@ -170,7 +186,14 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
 
     ConstraintValidator.validate(emergency);
 
-    return emergencyRepository.save(emergency);
+    Emergency saved = emergencyRepository.save(emergency);
+    try {
+      var gl = new GeneralLog(null, saved, null, null, GeneralLogEventType.EMERGENCY_CREATED,
+          LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), "Emergency created");
+      logManagementService.logGeneral(gl);
+    } catch (Exception ignored) {
+    }
+    return saved;
   }
 
   @Override
@@ -208,7 +231,6 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
       throw new QuadrantNotLinkedToEmergencyException(id, quadrantId);
     }
 
-    logManagementService.logEmergency(emergency, eq.orElse(null));
     //TODO: cuando se soluciona una emergencia hay que liberar los recursos de ese cuadrante
 
     emergencyQuadrantRepository.delete(eq.orElseThrow());
@@ -240,7 +262,15 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
       throw new ResolvedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
     }
 
-    return emergencyRepository.save(emergency);
+    Emergency saved = emergencyRepository.save(emergency);
+    try {
+      var gl = new GeneralLog(null, saved, null, null, GeneralLogEventType.EMERGENCY_STATE_CHANGED,
+          LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+          "Emergency state changed to " + emergency.getEmergencyIndex());
+      logManagementService.logGeneral(gl);
+    } catch (Exception ignored) {
+    }
+    return saved;
   }
 
   @Override

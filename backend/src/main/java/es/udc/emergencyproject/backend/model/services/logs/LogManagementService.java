@@ -1,46 +1,26 @@
 package es.udc.emergencyproject.backend.model.services.logs;
 
-import es.udc.emergencyproject.backend.model.entities.emergency.Emergency;
-import es.udc.emergencyproject.backend.model.entities.logs.EmergencyQuadrantLog;
-import es.udc.emergencyproject.backend.model.entities.logs.GlobalStatistics;
-import es.udc.emergencyproject.backend.model.entities.logs.TeamQuadrantLog;
-import es.udc.emergencyproject.backend.model.entities.logs.VehicleQuadrantLog;
-import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
-import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
-import es.udc.emergencyproject.backend.model.entities.resource.vehicle.Vehicle;
-import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
-import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
-import java.time.LocalDateTime;
+import es.udc.emergencyproject.backend.model.entities.assignment.Assignment;
+import es.udc.emergencyproject.backend.model.entities.logs.GeneralLog;
+import es.udc.emergencyproject.backend.model.entities.logs.GeneralLogEventType;
+import es.udc.emergencyproject.backend.rest.dtos.GlobalLogDto;
+import es.udc.emergencyproject.backend.rest.dtos.GlobalStatisticsDto;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface LogManagementService {
 
-  EmergencyQuadrantLog logEmergency(Emergency emergency,
-      es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadrant emergencyQuadrant)
-      throws InstanceNotFoundException;
 
-  TeamQuadrantLog logTeam(Team team,
-      Quadrant quadrant) throws InstanceNotFoundException;
+  List<GlobalLogDto> findAllEmergenciesLogByEmergencyIdAndDate(Long emergencyId, LocalDate startDate,
+      LocalDate endDate);
 
-  VehicleQuadrantLog logVehicle(Vehicle vehicle,
-      Quadrant quadrant) throws InstanceNotFoundException;
+  GlobalStatisticsDto getGlobalStatistics(Long emergencyId);
 
-  List<EmergencyQuadrantLog> findAllEmergencyQuadrantLogs();
 
-  List<TeamQuadrantLog> findAllTeamQuadrantLogs();
+  void logGeneral(GeneralLog gl);
 
-  List<VehicleQuadrantLog> findAllVehicleQuadrantLogs();
 
-  List<EmergencyQuadrantLog> findEmergenciesByEmergencyIdAndLinkedAt(Emergency emergency, LocalDateTime startDate,
-      LocalDateTime endDate)
-      throws InstanceNotFoundException;
+  void registerAssignmentEvent(Assignment assignment,
+      GeneralLogEventType eventType, String details);
 
-  List<TeamQuadrantLog> findTeamsByQuadrantIdAndDeployAtBetweenOrderByDeployAt(Quadrant quadrant,
-      LocalDateTime startDate, LocalDateTime endDate) throws InstanceNotFoundException;
-
-  List<VehicleQuadrantLog> findVehiclesByQuadrantIdAndDeployAtBetweenOrderByDeployAt(Quadrant quadrant,
-      LocalDateTime startDate, LocalDateTime endDate) throws InstanceNotFoundException;
-
-  GlobalStatistics getGlobalStatisticsByEmergencyId(Emergency emergency)
-      throws InstanceNotFoundException, ResolvedEmergencyException;
 }
