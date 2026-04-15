@@ -1,11 +1,14 @@
 type: object
 required:
-  - emergencyQuadrantId
+  - emergencyId
+  - quadrantId
   - resourceId
 properties:
-  emergencyQuadrantId:
+  emergencyId:
     type: integer
     format: int64
+  quadrantId:
+    type: integer
   resourceId:
     type: integer
     format: int64

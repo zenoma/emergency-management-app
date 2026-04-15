@@ -1,0 +1,22 @@
+meta {
+  name: Update asignment
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{base_url}}/assignments/23/status
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "status": "ACCEPTED"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

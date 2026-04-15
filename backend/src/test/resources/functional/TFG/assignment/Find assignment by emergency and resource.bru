@@ -1,0 +1,21 @@
+meta {
+  name: Find assignment by emergency and resource
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/assignments?quadrantId=5
+  body: none
+  auth: inherit
+}
+
+params:query {
+  quadrantId: 5
+  ~resourceId: 1
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

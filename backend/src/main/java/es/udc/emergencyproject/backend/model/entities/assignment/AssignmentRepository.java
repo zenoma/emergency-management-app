@@ -11,4 +11,6 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
   List<Assignment> findByEmergencyId(Long emergencyId);
 
+  List<Assignment> findByEmergencyQuadrantQuadrantId(Integer quadrantId);
+
 }

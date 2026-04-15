@@ -6,6 +6,7 @@ import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadran
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadrantRepository;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyRepository;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType;
+import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyTypeRepository;
 import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.emergencyproject.backend.model.entities.quadrant.QuadrantRepository;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
@@ -37,13 +38,12 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
   public static final String EMERGENCY_NOT_FOUND = "Emergency not found";
 
   private final LogManagementService logManagementService;
-
   private final EmergencyRepository emergencyRepository;
   private final QuadrantRepository quadrantRepository;
   private final EmergencyQuadrantRepository emergencyQuadrantRepository;
-  private final es.udc.emergencyproject.backend.model.entities.emergency.EmergencyTypeRepository emergencyTypeRepository;
+  private final EmergencyTypeRepository emergencyTypeRepository;
 
-  // QUADRANT SERVICES
+  // QUADRANT SERVICE
   @Override
   public List<Quadrant> findAllQuadrants() {
     return quadrantRepository.findAll();
@@ -97,8 +97,10 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
       Quadrant quadrant = quadrantRepository.findById(gid)
           .orElseThrow(() -> new InstanceNotFoundException(QUADRANT_NOT_FOUND, gid));
 
-      EmergencyQuadrant existing = emergencyQuadrantRepository.findByEmergencyIdAndQuadrantId(emergencyId, gid);
-      if (existing != null) {
+      Optional<EmergencyQuadrant> existing = emergencyQuadrantRepository.findByEmergencyIdAndQuadrantId(emergencyId,
+          gid);
+      if (existing.isPresent()) {
+
         throw new QuadrantAlreadyLinkedToEmergencyException(emergencyId, gid);
       } else {
         EmergencyQuadrant eq = new EmergencyQuadrant();
@@ -147,10 +149,8 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
   @Override
   public Emergency findEmergencyById(Long id) throws InstanceNotFoundException {
 
-    Emergency emergency = emergencyRepository.findById(id)
+    return emergencyRepository.findById(id)
         .orElseThrow(() -> new InstanceNotFoundException(EMERGENCY_NOT_FOUND, id));
-    // emergency.emergencyType is a @ManyToOne relation and will be available (fetch LAZY by default)
-    return emergency;
   }
 
   @Override
@@ -187,8 +187,6 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     emergency.setEmergencyIndex(EmergencyIndex.RESUELTO);
     emergency.setResolvedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
-    List<EmergencyQuadrant> quadrants = emergencyQuadrantRepository.findByEmergencyId(id);
-
     //TODO: cuando se soluciona una emergencia hay que limpiar todos sus cuadrantes y liberar todos sus recursos
 
     return emergencyRepository.save(emergency);
@@ -205,15 +203,15 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
       throw new ResolvedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
     }
 
-    EmergencyQuadrant eq = emergencyQuadrantRepository.findByEmergencyIdAndQuadrantId(id, quadrantId);
-    if (eq == null) {
+    Optional<EmergencyQuadrant> eq = emergencyQuadrantRepository.findByEmergencyIdAndQuadrantId(id, quadrantId);
+    if (eq.isEmpty()) {
       throw new QuadrantNotLinkedToEmergencyException(id, quadrantId);
     }
 
-    logManagementService.logEmergency(emergency, eq);
+    logManagementService.logEmergency(emergency, eq.orElse(null));
     //TODO: cuando se soluciona una emergencia hay que liberar los recursos de ese cuadrante
 
-    emergencyQuadrantRepository.delete(eq);
+    emergencyQuadrantRepository.delete(eq.orElseThrow());
     return emergencyRepository.save(emergency);
   }
 

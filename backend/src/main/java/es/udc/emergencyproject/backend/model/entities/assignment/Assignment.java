@@ -62,4 +62,7 @@ public class Assignment {
   @Column(name = "completed_at")
   private LocalDateTime completedAt;
 
+  @Column(name = "removed", nullable = false)
+  private Boolean removed = Boolean.FALSE;
+
 }

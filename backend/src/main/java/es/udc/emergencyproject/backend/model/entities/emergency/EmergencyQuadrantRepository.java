@@ -1,6 +1,7 @@
 package es.udc.emergencyproject.backend.model.entities.emergency;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EmergencyQuadrantRepository extends JpaRepository<EmergencyQuadrant, Long> {
@@ -9,6 +10,6 @@ public interface EmergencyQuadrantRepository extends JpaRepository<EmergencyQuad
 
   List<EmergencyQuadrant> findByQuadrantId(Integer quadrantId);
 
-  EmergencyQuadrant findByEmergencyIdAndQuadrantId(Long emergencyId, Integer quadrantId);
+  Optional<EmergencyQuadrant> findByEmergencyIdAndQuadrantId(Long emergencyId, Integer quadrantId);
 
 }

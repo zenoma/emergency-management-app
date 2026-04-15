@@ -19,7 +19,10 @@ import es.udc.emergencyproject.backend.model.exceptions.NoticeUpdateStatusExcept
 import es.udc.emergencyproject.backend.model.exceptions.PermissionException;
 import es.udc.emergencyproject.backend.model.exceptions.QuadrantAlreadyLinkedToEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.QuadrantNotLinkedToEmergencyException;
+import es.udc.emergencyproject.backend.model.exceptions.AssignmentAlreadyInStatusException;
+import es.udc.emergencyproject.backend.model.exceptions.InvalidAssignmentTransitionException;
 import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
+import es.udc.emergencyproject.backend.model.exceptions.ResourceBusyException;
 import es.udc.emergencyproject.backend.model.exceptions.UserWithoutTeamException;
 import es.udc.emergencyproject.backend.rest.dtos.ErrorDto;
 import es.udc.emergencyproject.backend.rest.dtos.FieldErrorDto;
@@ -58,6 +61,7 @@ public class GlobalControllerExceptionHandler {
   private static final String DATA_INTEGRITY_EXCEPTION_CODE = "project.exceptions.DataIntegrityViolationException";
   private static final String ALREADY_DISMANTLED_EXCEPTION_CODE = "project.exceptions.AlreadyDismantledException";
   private static final String ALREADY_EXIST_EXCEPTION_CODE = "project.exceptions.AlreadyExistException";
+  private static final String RESOURCE_BUSY_EXCEPTION_CODE = "project.exceptions.ResourceBusyException";
   private static final String RESOLVED_EMERGENCY_EXCEPTION_CODE = "project.exceptions.ResolvedEmergencyException";
 
   private static final String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
@@ -73,6 +77,8 @@ public class GlobalControllerExceptionHandler {
   private static final String FILE_UPLOAD_EXCEPTION_CODE = "project.exceptions.FileUploadException";
   private static final String QUADRANT_NOT_LINKED_TO_EMERGENCY_EXCEPTION_CODE = "project.exceptions.QuadrantNotLinkedToEmergencyException";
   private static final String QUADRANT_ALREADY_LINKED_TO_EMERGENCY_EXCEPTION_CODE = "project.exceptions.QuadrantAlreadyLinkedToEmergencyException";
+  private static final String ASSIGNMENT_ALREADY_IN_STATUS_EXCEPTION_CODE = "project.exceptions.AssignmentAlreadyInStatusException";
+  private static final String INVALID_ASSIGNMENT_TRANSITION_EXCEPTION_CODE = "project.exceptions.InvalidAssignmentTransitionException";
 
   private final MessageSource messageSource;
 
@@ -268,6 +274,18 @@ public class GlobalControllerExceptionHandler {
 
   }
 
+  @ExceptionHandler(ResourceBusyException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleResourceBusyException(ResourceBusyException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(RESOURCE_BUSY_EXCEPTION_CODE,
+        new Object[]{exception.getName(), exception.getId()}, RESOURCE_BUSY_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+
+  }
+
   @ExceptionHandler(ResolvedEmergencyException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
@@ -420,6 +438,30 @@ public class GlobalControllerExceptionHandler {
 
     String errorMessage = messageSource.getMessage(DOMAIN_EXCEPTION_CODE,
         new Object[]{exception.getName(), exception.getId()}, DOMAIN_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(AssignmentAlreadyInStatusException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleAssignmentAlreadyInStatusException(AssignmentAlreadyInStatusException exception,
+      Locale locale) {
+
+    String errorMessage = messageSource.getMessage(ASSIGNMENT_ALREADY_IN_STATUS_EXCEPTION_CODE,
+        new Object[]{exception.getName()}, ASSIGNMENT_ALREADY_IN_STATUS_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(InvalidAssignmentTransitionException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleInvalidAssignmentTransitionException(InvalidAssignmentTransitionException exception,
+      Locale locale) {
+
+    String errorMessage = messageSource.getMessage(INVALID_ASSIGNMENT_TRANSITION_EXCEPTION_CODE,
+        new Object[]{exception.getName(), exception.getId()}, INVALID_ASSIGNMENT_TRANSITION_EXCEPTION_CODE, locale);
 
     return new ErrorDto(errorMessage);
   }

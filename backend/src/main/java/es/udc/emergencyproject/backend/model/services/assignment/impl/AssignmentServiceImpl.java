@@ -3,10 +3,18 @@ package es.udc.emergencyproject.backend.model.services.assignment.impl;
 import es.udc.emergencyproject.backend.model.entities.assignment.Assignment;
 import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentRepository;
 import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentStatus;
+import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyIndex;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadrantRepository;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyRepository;
+import es.udc.emergencyproject.backend.model.entities.resource.Resource;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceRepository;
+import es.udc.emergencyproject.backend.model.entities.resource.ResourceStatus;
+import es.udc.emergencyproject.backend.model.exceptions.AssignmentAlreadyInStatusException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
+import es.udc.emergencyproject.backend.model.exceptions.InvalidAssignmentTransitionException;
+import es.udc.emergencyproject.backend.model.exceptions.QuadrantNotLinkedToEmergencyException;
+import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
+import es.udc.emergencyproject.backend.model.exceptions.ResourceBusyException;
 import es.udc.emergencyproject.backend.model.services.assignment.AssignmentService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,15 +35,25 @@ public class AssignmentServiceImpl implements AssignmentService {
   // TODO: Hay que guardar registro de todos las operaciones de asignación
 
   @Override
-  public Assignment createAssignment(Long emergencyId, Long emergencyQuadrantId, Long resourceId, String notes)
+  public Assignment createAssignment(Long emergencyId, Integer quadrantId, Long resourceId, String notes)
       throws InstanceNotFoundException {
 
-    var resource = resourceRepository.findById(resourceId)
+    var resource = resourceRepository.findByIdForUpdate(resourceId)
         .orElseThrow(() -> new InstanceNotFoundException("Resource not found", resourceId));
 
-    // Resolve emergency
+    if (resource.getStatus() != null && resource.getStatus() == ResourceStatus.BUSY) {
+      throw new ResourceBusyException(Resource.class.getSimpleName(), resourceId.toString());
+    }
+
     var emergency = emergencyRepository.findById(emergencyId)
         .orElseThrow(() -> new InstanceNotFoundException("Emergency not found", emergencyId));
+
+    // emergency must not be resolved
+    if (emergency.getEmergencyIndex() == EmergencyIndex.RESUELTO) {
+      throw new ResolvedEmergencyException(
+          "Emergency",
+          emergencyId.toString());
+    }
 
     Assignment a = new Assignment();
     a.setResource(resource);
@@ -43,22 +61,30 @@ public class AssignmentServiceImpl implements AssignmentService {
     a.setAssignedAt(LocalDateTime.now());
     a.setStatus(AssignmentStatus.PENDING);
 
-    if (emergencyQuadrantId != null) {
-      var eq = emergencyQuadrantRepository.findById(emergencyQuadrantId)
-          .orElseThrow(() -> new InstanceNotFoundException("EmergencyQuadrant not found", emergencyQuadrantId));
-      if (!eq.getEmergency().getId().equals(emergency.getId())) {
-        throw new InstanceNotFoundException("EmergencyQuadrant does not belong to emergency", emergencyQuadrantId);
-      }
-      a.setEmergencyQuadrant(eq);
-    } else {
-      if (emergency.getLocation() == null) {
-        throw new InstanceNotFoundException("Emergency is not point-based and no quadrant specified", emergencyId);
-      }
-      a.setEmergency(emergency);
+    boolean hasQuadrants = emergency.getEmergencyQuadrants() != null && !emergency.getEmergencyQuadrants().isEmpty();
+    boolean hasPoint = emergency.getLocation() != null;
+
+    if (!hasPoint && !hasQuadrants) {
+      throw new IllegalArgumentException("Emergency has no linked point or quadrants");
     }
 
-    return assignmentRepository.save(a);
+    if (hasQuadrants) {
+      if (quadrantId == null) {
+        throw new IllegalArgumentException("quadrantId is required when emergency has quadrants");
+      }
+
+      var eq = emergencyQuadrantRepository.findByEmergencyIdAndQuadrantId(emergencyId, quadrantId)
+          .orElseThrow(() -> new QuadrantNotLinkedToEmergencyException(emergencyId, quadrantId));
+
+      a.setEmergencyQuadrant(eq);
+    }
+    a.setEmergency(emergency);
+
+    Assignment saved = assignmentRepository.save(a);
+
+    return saved;
   }
+
 
   @Override
   public Assignment findAssignmentById(Long id) throws InstanceNotFoundException {
@@ -66,9 +92,10 @@ public class AssignmentServiceImpl implements AssignmentService {
         .orElseThrow(() -> new InstanceNotFoundException("Assignment not found", id));
   }
 
+
   @Override
-  public List<Assignment> findByEmergencyQuadrantId(Long emergencyQuadrantId) {
-    return assignmentRepository.findByEmergencyQuadrantId(emergencyQuadrantId);
+  public List<Assignment> findByEmergencyQuadrantQuadrantId(Integer quadrantId) {
+    return assignmentRepository.findByEmergencyQuadrantQuadrantId(quadrantId);
   }
 
   @Override
@@ -84,14 +111,58 @@ public class AssignmentServiceImpl implements AssignmentService {
   @Override
   public Assignment updateStatus(Long id, AssignmentStatus status) throws InstanceNotFoundException {
     Assignment a = findAssignmentById(id);
+
+    AssignmentStatus previous = a.getStatus();
+
+    if (previous == status) {
+      throw new AssignmentAlreadyInStatusException(status.name());
+    }
+
+    boolean valid = (previous == AssignmentStatus.PENDING && status == AssignmentStatus.ACCEPTED)
+        || (previous == AssignmentStatus.ACCEPTED && status == AssignmentStatus.COMPLETED);
+
+    if (!valid) {
+      throw new InvalidAssignmentTransitionException(previous.name(),
+          status.name());
+    }
+
     a.setStatus(status);
-    //TODO: cuando cambia un assignment de estado tienen que cambiar los recursos de estado
-    return assignmentRepository.save(a);
+    if (status == AssignmentStatus.ACCEPTED) {
+      a.setAcceptedAt(LocalDateTime.now());
+    }
+    if (status == AssignmentStatus.COMPLETED) {
+      a.setCompletedAt(LocalDateTime.now());
+    }
+
+    Assignment saved = assignmentRepository.save(a);
+
+    Long resourceId = a.getResource().getId();
+    var resource = resourceRepository.findByIdForUpdate(resourceId)
+        .orElseThrow(() -> new InstanceNotFoundException("Resource not found", resourceId));
+
+    if (status == AssignmentStatus.ACCEPTED) {
+      if (resource.getStatus() != null && resource.getStatus() == ResourceStatus.BUSY) {
+        throw new ResourceBusyException(Resource.class.getSimpleName(), resourceId.toString());
+      }
+
+      resource.setStatus(ResourceStatus.BUSY);
+      resource.setDeployAt(LocalDateTime.now());
+      resourceRepository.save(resource);
+    }
+
+    if (status == AssignmentStatus.COMPLETED) {
+      resource.setStatus(ResourceStatus.AVAILABLE);
+      resource.setDeployAt(null);
+      resourceRepository.save(resource);
+    }
+
+    return saved;
   }
 
   @Override
   public void deleteAssignment(Long id) throws InstanceNotFoundException {
     Assignment a = findAssignmentById(id);
-    assignmentRepository.delete(a);
+    a.setRemoved(Boolean.TRUE);
+    assignmentRepository.save(a);
   }
 }

@@ -7,12 +7,13 @@ import java.util.List;
 
 public interface AssignmentService {
 
-  Assignment createAssignment(Long emergencyId, Long emergencyQuadrantId, Long resourceId, String notes)
+
+  Assignment createAssignment(Long emergencyId, Integer quadrantId, Long resourceId, String notes)
       throws InstanceNotFoundException;
 
   Assignment findAssignmentById(Long id) throws InstanceNotFoundException;
 
-  List<Assignment> findByEmergencyQuadrantId(Long emergencyQuadrantId);
+  List<Assignment> findByEmergencyQuadrantQuadrantId(Integer quadrantId);
 
   List<Assignment> findByEmergencyId(Long emergencyId);
 
