@@ -28,3 +28,11 @@ properties:
   completedAt:
     type: string
     format: localDateTime
+  teamInfo:
+    $ref: "../../../teams/schemas/responses/TeamResponseDto.yml"
+  vehicleInfo:
+    $ref: "../../../vehicles/schemas/responses/VehicleResponseDto.yml"
+  emergencyInfo:
+    $ref: "../../../emergencies/schemas/responses/EmergencyResponseDto.yml"
+  quadrantInfo:
+    $ref: "../../../quadrants/schemas/responses/QuadrantDto.yml"

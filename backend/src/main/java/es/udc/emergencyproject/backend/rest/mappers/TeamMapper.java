@@ -36,6 +36,12 @@ public class TeamMapper {
 
     teamResponseDto.setUserList(userDtoList);
 
+    // extra info
+    teamResponseDto.setStatus(team.getStatus() != null ? team.getStatus().name() : null);
+    teamResponseDto.setResourceType(team.getResourceType() != null ? team.getResourceType().name() : null);
+    teamResponseDto.setRemoved(team.getRemoved());
+    teamResponseDto.setDismantled(team.getDismantled());
+
     return teamResponseDto;
 
   }

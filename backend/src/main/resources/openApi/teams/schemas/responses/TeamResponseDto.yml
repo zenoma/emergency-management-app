@@ -28,3 +28,11 @@ properties:
   dismantleAt:
     type: string
     format: localDateTime
+  status:
+    type: string
+  resourceType:
+    type: string
+  removed:
+    type: boolean
+  dismantled:
+    type: boolean

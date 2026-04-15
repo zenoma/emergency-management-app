@@ -17,13 +17,20 @@ public class VehicleMapper {
 
   public static VehicleResponseDto toVehicleDto(Vehicle vehicle) {
 
-    return new VehicleResponseDto(vehicle.getId(),
+    VehicleResponseDto dto = new VehicleResponseDto(vehicle.getId(),
         vehicle.getVehiclePlate(),
         vehicle.getType(),
         vehicle.getCreatedAt(),
         OrganizationMapper.toOrganizationResponseDto(vehicle.getOrganization()),
         vehicle.getDeployAt(),
         vehicle.getDismantleAt());
+
+    // extra info
+    dto.setStatus(vehicle.getStatus() != null ? vehicle.getStatus().name() : null);
+    dto.setResourceType(vehicle.getResourceType() != null ? vehicle.getResourceType().name() : null);
+    dto.setRemoved(vehicle.getRemoved());
+
+    return dto;
 
   }
 

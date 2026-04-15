@@ -88,7 +88,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
   @Override
   public Assignment findAssignmentById(Long id) throws InstanceNotFoundException {
-    return assignmentRepository.findById(id)
+    return assignmentRepository.findByIdWithRelations(id)
         .orElseThrow(() -> new InstanceNotFoundException("Assignment not found", id));
   }
 
