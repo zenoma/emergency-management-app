@@ -23,13 +23,13 @@ import {
   GridToolbarDensitySelector,
   GridToolbarFilterButton,
 } from "@mui/x-data-grid";
-import * as React from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useCreateEmergencyMutation, useGetEmergenciesQuery } from "../../api/emergencyApi";
+import { useCreateEmergencyMutation, useGetEmergenciesQuery, useGetEmergencyTypesQuery } from "../../api/emergencyApi";
+import EmergencyTypeIcon from '../../components/EmergencyTypeIcon';
 import { selectToken, selectUser } from "../user/login/LoginSlice";
 
 export default function EmergencyDataGrid() {
@@ -43,6 +43,7 @@ export default function EmergencyDataGrid() {
 
   const [description, setDescription] = useState("");
   const [emergencyType, setEmergencyType] = useState("");
+  const [emergencyTypeId, setEmergencyTypeId] = useState("");
   const emergencyIndexSelector = ["CERO", "UNO", "DOS", "TRES"];
   const [emergencyIndex, setEmergencyIndex] = useState("");
 
@@ -53,6 +54,7 @@ export default function EmergencyDataGrid() {
   const handleClose = () => {
     setDescription("");
     setEmergencyType("");
+    setEmergencyTypeId("");
     setEmergencyIndex("");
     setOpen(false);
   };
@@ -99,8 +101,17 @@ export default function EmergencyDataGrid() {
         field: "type",
         headerName: t("emergency-type"),
         groupable: false,
-        minWidth: 100,
+        minWidth: 140,
         aggregable: false,
+        // valueGetter provides the plain string used for sorting/filtering
+        valueGetter: (params) => {
+          const row = params.row || {};
+          return row.emergencyTypeName || (row.emergencyType && row.emergencyType.name) || row.type || "";
+        },
+        renderCell: (params) => {
+          const name = params.value || "";
+          return <EmergencyTypeIcon name={name} showLabel={true} />;
+        },
       },
       {
         field: "emergencyIndex",
@@ -115,12 +126,30 @@ export default function EmergencyDataGrid() {
         headerName: t("emergency-created-at"),
         minWidth: 200,
         aggregable: false,
+        valueGetter: (params) => {
+          const v = params.row ? params.row.createdAt : null;
+          if (!v) return "";
+          try {
+            return new Date(v).toLocaleString(locale);
+          } catch (e) {
+            return v;
+          }
+        },
       },
       {
         field: "resolvedAt",
         headerName: t("emergency-resolved-at"),
         minWidth: 200,
         aggregable: false,
+        valueGetter: (params) => {
+          const v = params.row ? params.row.resolvedAt : null;
+          if (!v) return "";
+          try {
+            return new Date(v).toLocaleString(locale);
+          } catch (e) {
+            return v;
+          }
+        },
       },
     ],
     rows: emergencies,
@@ -140,6 +169,8 @@ export default function EmergencyDataGrid() {
     },
   };
 
+  const { data: emergencyTypes } = useGetEmergencyTypesQuery({ token: token, locale: locale });
+
   const handleChange = (event) => {
     var id = event.target.id;
     var value = event.target.value;
@@ -152,6 +183,14 @@ export default function EmergencyDataGrid() {
     }
   };
 
+  const handleEmergencyTypeChange = (event) => {
+    const value = event.target.value;
+    const valueNum = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+    setEmergencyTypeId(valueNum);
+    const selected = emergencyTypes ? emergencyTypes.find((et) => et.id === valueNum) : null;
+    if (selected) setEmergencyType(selected.name);
+  };
+
   const handleRowClick = (row) => {
     navigate("/emergency-details", { state: { emergencyId: row.id } });
   };
@@ -161,7 +200,7 @@ export default function EmergencyDataGrid() {
   };
 
   const handleClick = () => {
-    if (!description.trim() || !emergencyType.trim() || !emergencyIndex) {
+    if (!description.trim() || (!emergencyTypeId && !emergencyType.trim()) || !emergencyIndex) {
       toast.error(t("emergency-required-fields"));
       return;
     }
@@ -170,6 +209,7 @@ export default function EmergencyDataGrid() {
       token: token,
       description: description,
       type: emergencyType,
+      emergencyTypeId: emergencyTypeId,
       emergencyIndex: emergencyIndex,
       locale: locale,
     };
@@ -311,17 +351,23 @@ export default function EmergencyDataGrid() {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    id="type"
-                    label={t("emergency-type")}
-                    type="text"
-                    autoComplete="current-type"
-                    value={emergencyType}
-                    onChange={(e) => handleChange(e)}
-                    required
-                    variant="outlined"
-                    fullWidth
-                  />
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel id="emergency-type-label">{t("emergency-type")}</InputLabel>
+                    <Select
+                      id="emergencyTypeId"
+                      labelId="emergency-type-label"
+                      label={t("emergency-type")}
+                      value={emergencyTypeId}
+                      onChange={handleEmergencyTypeChange}
+                      required
+                    >
+                      {emergencyTypes && emergencyTypes.map((et) => (
+                        <MenuItem key={et.id} value={et.id}>
+                          {et.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12}>
                   <FormControl fullWidth variant="outlined">

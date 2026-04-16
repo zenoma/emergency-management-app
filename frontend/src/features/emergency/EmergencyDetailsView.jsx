@@ -44,6 +44,7 @@ import { selectToken } from "../user/login/LoginSlice";
 import BackButton from "../utils/BackButton";
 import WeatherInfo from "../weather/WeatherInfo";
 import { untransformCoordinates } from "../../app/utils/coordinatesTransformations";
+import EmergencyTypeIcon from "../../components/EmergencyTypeIcon";
 
 const emergencyIndexSelector = ["CERO", "UNO", "DOS", "TRES"];
 
@@ -296,8 +297,8 @@ export default function EmergencyDetailsView() {
               <Typography variant="overline" sx={{ color: "secondary.light" }} display="block">
                 {t("emergency-type")}
               </Typography>
-              <Typography variant="h6" fontWeight="bold">
-                {data.type}
+              <Typography variant="h6" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <EmergencyTypeIcon name={data.type} showLabel={true} />
               </Typography>
             </Box>
             <Box>

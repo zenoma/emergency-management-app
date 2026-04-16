@@ -244,12 +244,11 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     Emergency emergency = emergencyRepository.findById(id)
         .orElseThrow(() -> new InstanceNotFoundException(EMERGENCY_NOT_FOUND, id));
 
-    if (emergencyIndex == EmergencyIndex.RESUELTO) {
-      throw new ResolvedEmergencyException(Emergency.class.getSimpleName(), emergency.getId().toString());
-    }
-
     if (emergency.getEmergencyIndex() != EmergencyIndex.RESUELTO) {
       emergency.setDescription(description);
+      if (emergencyIndex == EmergencyIndex.RESUELTO) {
+        emergency.setResolvedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+      }
       emergency.setEmergencyIndex(emergencyIndex);
       if (emergencyTypeId != null) {
         var et = emergencyTypeRepository.findById(emergencyTypeId).orElse(null);

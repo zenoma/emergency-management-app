@@ -14,6 +14,18 @@ export const emergencyApi = baseApi.injectEndpoints({
         return response;
       },
     }),
+    getEmergencyTypes: build.query({
+      query: (payload) => ({
+        url: "/emergencies/types",
+        headers: {
+          Authorization: "Bearer " + payload.token,
+          "Accept-Language": payload.locale,
+        },
+      }),
+      transformResponse: (response, meta, arg) => {
+        return response;
+      },
+    }),
     getEmergencyById: build.query({
       query: (payload) => ({
         url: "/emergencies/" + payload.emergencyId,
@@ -33,6 +45,7 @@ export const emergencyApi = baseApi.injectEndpoints({
         body: {
           description: payload.description,
           type: payload.type,
+          emergencyTypeId: payload.emergencyTypeId,
           emergencyIndex: payload.emergencyIndex,
         },
         headers: {
@@ -97,6 +110,7 @@ export const emergencyApi = baseApi.injectEndpoints({
 export const {
   useGetEmergenciesQuery,
   useGetEmergencyByIdQuery,
+  useGetEmergencyTypesQuery,
   useCreateEmergencyMutation,
   useUpdateEmergencyMutation,
   useResolveEmergencyMutation,
