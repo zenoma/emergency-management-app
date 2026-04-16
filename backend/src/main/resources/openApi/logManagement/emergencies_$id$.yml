@@ -32,4 +32,4 @@ get:
           schema:
             type: array
             items:
-              $ref: "../logManagement/schemas/responses/GlobalLogDto.yml"
+              $ref: "../logManagement/schemas/responses/AssignmentLogDto.yml"

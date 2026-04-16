@@ -6,7 +6,6 @@ import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentStatu
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyIndex;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadrantRepository;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyRepository;
-import es.udc.emergencyproject.backend.model.entities.logs.GeneralLog;
 import es.udc.emergencyproject.backend.model.entities.logs.GeneralLogEventType;
 import es.udc.emergencyproject.backend.model.entities.resource.Resource;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceRepository;
@@ -20,7 +19,6 @@ import es.udc.emergencyproject.backend.model.exceptions.ResourceBusyException;
 import es.udc.emergencyproject.backend.model.services.assignment.AssignmentService;
 import es.udc.emergencyproject.backend.model.services.logs.LogManagementService;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

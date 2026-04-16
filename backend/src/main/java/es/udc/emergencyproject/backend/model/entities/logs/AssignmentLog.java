@@ -23,13 +23,13 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "general_log", schema = "public")
+@Table(name = "assignment_log", schema = "public")
 @Getter
 @Setter
 @EqualsAndHashCode
 @ToString
 @NoArgsConstructor
-public class GeneralLog {
+public class AssignmentLog {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,7 +61,7 @@ public class GeneralLog {
   @Column(name = "details", columnDefinition = "text")
   private String details;
 
-  public GeneralLog(Assignment assignment, Emergency emergency, Quadrant quadrant, Resource resource,
+  public AssignmentLog(Assignment assignment, Emergency emergency, Quadrant quadrant, Resource resource,
       GeneralLogEventType eventType, LocalDateTime eventAt, String details) {
     this.assignment = assignment;
     this.emergency = emergency;

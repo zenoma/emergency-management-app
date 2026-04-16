@@ -144,7 +144,7 @@ CREATE TABLE assignment
     removed               BOOLEAN DEFAULT FALSE NOT NULL
 );
 
-CREATE TABLE general_log
+CREATE TABLE assignment_log
 (
     id           BIGSERIAL PRIMARY KEY,
     assignment_id BIGINT,
@@ -157,28 +157,28 @@ CREATE TABLE general_log
 );
 
 
-ALTER TABLE general_log
-    ADD CONSTRAINT fk_general_log_assignment_id
+ALTER TABLE assignment_log
+    ADD CONSTRAINT fk_assignment_log_assignment_id
         FOREIGN KEY (assignment_id)
             REFERENCES assignment (id);
 
-ALTER TABLE general_log
-    ADD CONSTRAINT fk_general_log_emergency_id
+ALTER TABLE assignment_log
+    ADD CONSTRAINT fk_assignment_log_emergency_id
         FOREIGN KEY (emergency_id)
             REFERENCES emergency (id);
 
-ALTER TABLE general_log
-    ADD CONSTRAINT fk_general_log_quadrant_id
+ALTER TABLE assignment_log
+    ADD CONSTRAINT fk_assignment_log_quadrant_id
         FOREIGN KEY (quadrant_id)
             REFERENCES quadrants (gid);
 
-ALTER TABLE general_log
-    ADD CONSTRAINT fk_general_log_resource_id
+ALTER TABLE assignment_log
+    ADD CONSTRAINT fk_assignment_log_resource_id
         FOREIGN KEY (resource_id)
             REFERENCES resource (id);
 
-CREATE INDEX idx_general_log_emergency ON general_log (emergency_id);
-CREATE INDEX idx_general_log_assignment ON general_log (assignment_id);
+CREATE INDEX idx_assignment_log_emergency ON assignment_log (emergency_id);
+CREATE INDEX idx_assignment_log_assignment ON assignment_log (assignment_id);
 
 
 

@@ -7,7 +7,7 @@ import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadran
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyRepository;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyTypeRepository;
-import es.udc.emergencyproject.backend.model.entities.logs.GeneralLog;
+import es.udc.emergencyproject.backend.model.entities.logs.AssignmentLog;
 import es.udc.emergencyproject.backend.model.entities.logs.GeneralLogEventType;
 import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.emergencyproject.backend.model.entities.quadrant.QuadrantRepository;
@@ -112,7 +112,7 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
         emergencyQuadrantRepository.save(eq);
         // log general event
         try {
-          var gl = new GeneralLog(null, emergency, quadrant, null,
+          var gl = new AssignmentLog(null, emergency, quadrant, null,
               GeneralLogEventType.EMERGENCY_LINKED_QUADRANT, eq.getLinkedAt(), "Linked quadrant " + quadrant.getId());
           logManagementService.logGeneral(gl);
         } catch (Exception ignored) {
@@ -147,7 +147,7 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     emergency.setLocation(location);
     Emergency saved = emergencyRepository.save(emergency);
     try {
-      var gl = new GeneralLog(null, saved, null, null, GeneralLogEventType.EMERGENCY_LINKED_POINT,
+      var gl = new AssignmentLog(null, saved, null, null, GeneralLogEventType.EMERGENCY_LINKED_POINT,
           LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), "Linked point");
       logManagementService.logGeneral(gl);
     } catch (Exception ignored) {
@@ -188,7 +188,7 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
 
     Emergency saved = emergencyRepository.save(emergency);
     try {
-      var gl = new GeneralLog(null, saved, null, null, GeneralLogEventType.EMERGENCY_CREATED,
+      var gl = new AssignmentLog(null, saved, null, null, GeneralLogEventType.EMERGENCY_CREATED,
           LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), "Emergency created");
       logManagementService.logGeneral(gl);
     } catch (Exception ignored) {
@@ -264,7 +264,7 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
 
     Emergency saved = emergencyRepository.save(emergency);
     try {
-      var gl = new GeneralLog(null, saved, null, null, GeneralLogEventType.EMERGENCY_STATE_CHANGED,
+      var gl = new AssignmentLog(null, saved, null, null, GeneralLogEventType.EMERGENCY_STATE_CHANGED,
           LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
           "Emergency state changed to " + emergency.getEmergencyIndex());
       logManagementService.logGeneral(gl);

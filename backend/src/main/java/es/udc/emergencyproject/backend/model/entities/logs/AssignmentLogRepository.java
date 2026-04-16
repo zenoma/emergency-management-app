@@ -3,7 +3,7 @@ package es.udc.emergencyproject.backend.model.entities.logs;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface GeneralLogRepository extends JpaRepository<GeneralLog, Long> {
+public interface AssignmentLogRepository extends JpaRepository<AssignmentLog, Long> {
 
-  List<GeneralLog> findByEmergencyId(Long emergencyId);
+  List<AssignmentLog> findByEmergencyId(Long emergencyId);
 }

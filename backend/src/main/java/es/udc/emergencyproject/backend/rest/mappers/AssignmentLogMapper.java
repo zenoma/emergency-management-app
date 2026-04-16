@@ -1,23 +1,23 @@
 package es.udc.emergencyproject.backend.rest.mappers;
 
-import es.udc.emergencyproject.backend.model.entities.logs.GeneralLog;
+import es.udc.emergencyproject.backend.model.entities.logs.AssignmentLog;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceType;
 import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
 import es.udc.emergencyproject.backend.model.entities.resource.vehicle.Vehicle;
-import es.udc.emergencyproject.backend.rest.dtos.GlobalLogDto;
+import es.udc.emergencyproject.backend.rest.dtos.AssignmentLogDto;
 import java.time.ZoneOffset;
 import org.hibernate.Hibernate;
 
-public class GeneralLogMapper {
+public class AssignmentLogMapper {
 
-  private GeneralLogMapper() {
+  private AssignmentLogMapper() {
   }
 
-  public static GlobalLogDto toGlobalLogDto(GeneralLog gl) {
+  public static AssignmentLogDto toGlobalLogDto(AssignmentLog gl) {
     if (gl == null) {
       return null;
     }
-    var dto = new GlobalLogDto();
+    var dto = new AssignmentLogDto();
 
     dto.setId(gl.getId());
     dto.setEventType(gl.getEventType() != null ? gl.getEventType().name() : null);
