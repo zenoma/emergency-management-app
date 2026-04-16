@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { useGetQuadrantsByScaleQuery } from "../../api/quadrantApi";
 import { selectToken } from "../user/login/LoginSlice";
 
-export default function QuadrantDataGrid({ childToParent }) {
+export default function QuadrantDataGrid({ childToParent, excludedQuadrantIds }) {
   const token = useSelector(selectToken);
 
   const { t } = useTranslation();
@@ -38,6 +38,14 @@ export default function QuadrantDataGrid({ childToParent }) {
       refetchOnMountOrArgChange: true,
     }
   );
+
+  // filter out quadrants that are already linked to the current emergency (by id)
+  const excludedSet = Array.isArray(excludedQuadrantIds) ? new Set(excludedQuadrantIds) : null;
+  const visibleRows = quadrants
+    ? (Array.isArray(quadrants)
+        ? (excludedSet ? quadrants.filter((q) => !excludedSet.has(q.id)) : quadrants)
+        : quadrants)
+    : quadrants;
 
   const data = {
     columns: [
@@ -64,7 +72,7 @@ export default function QuadrantDataGrid({ childToParent }) {
         width: 200,
       },
     ],
-    rows: quadrants,
+    rows: visibleRows,
     initialState: {
       columns: {
         columnVisibilityModel: {

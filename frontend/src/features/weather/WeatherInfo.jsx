@@ -34,13 +34,14 @@ const WeatherInfo = (props) => {
         );
     }
 
-    // Log coordinates used for the weather API to help debugging
-    if (shouldFetch) console.debug('WeatherInfo fetching with coords', { lat: latNum, lon: lonNum, locale });
-
+    // Ensure hook is always called in the same order to avoid hooks mismatch
     const { data, isLoading, error } = useGetWeatherQuery(
         { lat: latNum, lon: lonNum, locale: locale },
         { skip: !shouldFetch }
     );
+
+    // Log coordinates used for the weather API to help debugging
+    if (shouldFetch) console.debug('WeatherInfo fetching with coords', { lat: latNum, lon: lonNum, locale });
 
     if (!isNumber) {
         // no valid numeric coordinates provided

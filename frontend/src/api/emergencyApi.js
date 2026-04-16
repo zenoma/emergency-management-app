@@ -121,6 +121,22 @@ export const emergencyApi = baseApi.injectEndpoints({
         return response;
       },
     }),
+    linkQuadrants: build.mutation({
+      query: (payload) => ({
+        url: "/emergencies/" + payload.emergencyId + "/linkQuadrants",
+        method: "POST",
+        body: {
+          quadrantGids: payload.quadrantGids,
+        },
+        headers: {
+          Authorization: "Bearer " + payload.token,
+          "Accept-Language": payload.locale,
+        },
+      }),
+      transformResponse: (response, meta, arg) => {
+        return response;
+      },
+    }),
   }),
 });
 
@@ -133,4 +149,5 @@ export const {
   useLinkEmergencyToPointMutation,
   useResolveEmergencyMutation,
   useRemoveQuadrantByEmergencyIdMutation,
+  useLinkQuadrantsMutation,
 } = emergencyApi;
