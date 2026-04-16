@@ -20,8 +20,6 @@ properties:
     type: array
     items:
       $ref: "../../../users/schemas/responses/UserDto.yml"
-  quadrantInfo:
-    $ref: "../../../quadrants/schemas/responses/QuadrantInfoDto.yml"
   organization:
     $ref: "../../../organizations/schemas/responses/OrganizationResponseDto.yml"
   deployAt:
@@ -30,3 +28,11 @@ properties:
   dismantleAt:
     type: string
     format: localDateTime
+  status:
+    type: string
+  resourceType:
+    type: string
+  removed:
+    type: boolean
+  dismantled:
+    type: boolean

@@ -1,0 +1,22 @@
+meta {
+  name: Remove Quadrant
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/emergencies/1/removeQuadrant
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "quadrantId": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

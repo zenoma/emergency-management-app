@@ -24,6 +24,8 @@ tags:
     description: Operations related to organization types management
   - name: TeamManagement
     description: Operations related to teams management
+  - name: AssignmentManagement
+    description: Operations related to assignments management
   - name: VehicleManagement
     description: Operations related to vehicles management
   - name: LogManagement
@@ -55,17 +57,21 @@ paths:
     $ref: './quadrants/quadrants_$id$.yml'
   /quadrants/findByCoordinates:
     $ref: './quadrants/quadrants_findByCoordinates.yml'
-  /quadrants/{id}/linkEmergency:
-    $ref: './quadrants/quadrants_$id$_linkEmergency.yml'
 
   /emergencies:
     $ref: './emergencies/emergencies.yml'
   /emergencies/{id}:
     $ref: './emergencies/emergencies_$id$.yml'
-  /emergencies/{id}/extinguishQuadrant:
-    $ref: './emergencies/emergencies_$id$_extinguishQuadrant.yml'
-  /emergencies/{id}/extinguishEmergency:
-    $ref: './emergencies/emergencies_$id$_extinguishEmergency.yml'
+  /emergencies/types:
+    $ref: './emergencies/emergencies_types.yml'
+  /emergencies/{id}/removeQuadrant:
+    $ref: './emergencies/emergencies_$id$_removeQuadrant.yml'
+  /emergencies/{id}/resolveEmergency:
+    $ref: './emergencies/emergencies_$id$_resolveEmergency.yml'
+  /emergencies/{id}/linkPoint:
+    $ref: './emergencies/emergencies_$id$_linkPoint.yml'
+  /emergencies/{id}/linkQuadrants:
+    $ref: './emergencies/emergencies_$id$_linkQuadrants.yml'
 
   /organizations:
     $ref: './organizations/organizations.yml'
@@ -92,10 +98,7 @@ paths:
     $ref: './teams/teams_$id$_deleteUser.yml'
   /teams/{id}/users:
     $ref: './teams/teams_$id$_users.yml'
-  /teams/{id}/deploy:
-    $ref: './teams/teams_$id$_deploy.yml'
-  /teams/{id}/retract:
-    $ref: './teams/teams_$id$_retract.yml'
+
 
 
   /vehicles:
@@ -104,20 +107,17 @@ paths:
     $ref: './vehicles/vehicles_active.yml'
   /vehicles/{id}:
     $ref: './vehicles/vehicles_$id$.yml'
-  /vehicles/{id}/deploy:
-    $ref: './vehicles/vehicles_$id$_deploy.yml'
-  /vehicles/{id}/retract:
-    $ref: './vehicles/vehicles_$id$_retract.yml'
 
 
-  /logs/emergencies:
-    $ref: './logManagement/emergencies.yml'
+  /assignments:
+    $ref: './assignments/assignments.yml'
+  /assignments/{id}:
+    $ref: './assignments/assignments_$id$.yml'
+  /assignments/{id}/status:
+    $ref: './assignments/assignments_$id$_status.yml'
+
   /logs/emergencies/{id}:
     $ref: './logManagement/emergencies_$id$.yml'
-  /logs/teams:
-    $ref: './logManagement/teams.yml'
-  /logs/vehicles:
-    $ref: './logManagement/vehicles.yml'
   /logs/statistics:
     $ref: './logManagement/statistics.yml'
 

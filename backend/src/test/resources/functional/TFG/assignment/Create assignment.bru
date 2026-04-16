@@ -1,0 +1,25 @@
+meta {
+  name: Create assignment
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/assignments
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "emergencyId": "1",
+    "quadrantId": "3",
+    "resourceId": "2",
+    "notes": "note"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

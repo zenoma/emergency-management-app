@@ -30,4 +30,6 @@ get:
       content:
         application/json:
           schema:
-            $ref: "../logManagement/schemas/EmergencyQuadrantLogSchema.yml"
+            type: array
+            items:
+              $ref: "../logManagement/schemas/responses/AssignmentLogDto.yml"

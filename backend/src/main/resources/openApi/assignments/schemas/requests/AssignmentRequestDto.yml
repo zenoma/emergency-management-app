@@ -1,0 +1,16 @@
+type: object
+required:
+  - emergencyId
+  - quadrantId
+  - resourceId
+properties:
+  emergencyId:
+    type: integer
+    format: int64
+  quadrantId:
+    type: integer
+  resourceId:
+    type: integer
+    format: int64
+  notes:
+    type: string

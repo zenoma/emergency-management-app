@@ -14,7 +14,38 @@ const WeatherInfo = (props) => {
     const locale = i18n.language;
 
 
-    const { data, isLoading, error } = useGetWeatherQuery({ lat: props.lat, lon: props.lon, locale: locale });
+    const latNum = Number(props.lat);
+    const lonNum = Number(props.lon);
+    const isNumber = !Number.isNaN(latNum) && !Number.isNaN(lonNum);
+    const inRange = (latNum >= -90 && latNum <= 90 && lonNum >= -180 && lonNum <= 180);
+    const shouldFetch = isNumber && inRange;
+
+    // If coordinates are out of numeric range, show a friendly message instead of calling the API
+    if (isNumber && !inRange) {
+        return (
+            <Paper>
+                <CardHeader title={t("navigator-geolocation-tittle")} />
+                <CardContent>
+                    <Typography variant="body1" color="error.light" >
+                        {t("invalid-coordinates")}
+                    </Typography>
+                </CardContent>
+            </Paper>
+        );
+    }
+
+    // Log coordinates used for the weather API to help debugging
+    if (shouldFetch) console.debug('WeatherInfo fetching with coords', { lat: latNum, lon: lonNum, locale });
+
+    const { data, isLoading, error } = useGetWeatherQuery(
+        { lat: latNum, lon: lonNum, locale: locale },
+        { skip: !shouldFetch }
+    );
+
+    if (!isNumber) {
+        // no valid numeric coordinates provided
+        return null;
+    }
 
     if (isLoading) {
         return <CircularProgress />;

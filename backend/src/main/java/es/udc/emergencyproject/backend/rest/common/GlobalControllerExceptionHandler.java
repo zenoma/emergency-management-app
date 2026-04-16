@@ -5,7 +5,8 @@ import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledExcepti
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyExistException;
 import es.udc.emergencyproject.backend.model.exceptions.DomainException;
 import es.udc.emergencyproject.backend.model.exceptions.DuplicateInstanceException;
-import es.udc.emergencyproject.backend.model.exceptions.ExtinguishedEmergencyException;
+import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToPointException;
+import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToQuadrantsException;
 import es.udc.emergencyproject.backend.model.exceptions.FileUploadException;
 import es.udc.emergencyproject.backend.model.exceptions.ImageAlreadyUploadedException;
 import es.udc.emergencyproject.backend.model.exceptions.IncorrectLoginException;
@@ -16,7 +17,12 @@ import es.udc.emergencyproject.backend.model.exceptions.NoticeCheckStatusExcepti
 import es.udc.emergencyproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.emergencyproject.backend.model.exceptions.NoticeUpdateStatusException;
 import es.udc.emergencyproject.backend.model.exceptions.PermissionException;
+import es.udc.emergencyproject.backend.model.exceptions.QuadrantAlreadyLinkedToEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.QuadrantNotLinkedToEmergencyException;
+import es.udc.emergencyproject.backend.model.exceptions.AssignmentAlreadyInStatusException;
+import es.udc.emergencyproject.backend.model.exceptions.InvalidAssignmentTransitionException;
+import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
+import es.udc.emergencyproject.backend.model.exceptions.ResourceBusyException;
 import es.udc.emergencyproject.backend.model.exceptions.UserWithoutTeamException;
 import es.udc.emergencyproject.backend.rest.dtos.ErrorDto;
 import es.udc.emergencyproject.backend.rest.dtos.FieldErrorDto;
@@ -55,7 +61,8 @@ public class GlobalControllerExceptionHandler {
   private static final String DATA_INTEGRITY_EXCEPTION_CODE = "project.exceptions.DataIntegrityViolationException";
   private static final String ALREADY_DISMANTLED_EXCEPTION_CODE = "project.exceptions.AlreadyDismantledException";
   private static final String ALREADY_EXIST_EXCEPTION_CODE = "project.exceptions.AlreadyExistException";
-  private static final String EXTINGUISHED_EMERGENCY_EXCEPTION_CODE = "project.exceptions.ExtinguishedEmergencyException";
+  private static final String RESOURCE_BUSY_EXCEPTION_CODE = "project.exceptions.ResourceBusyException";
+  private static final String RESOLVED_EMERGENCY_EXCEPTION_CODE = "project.exceptions.ResolvedEmergencyException";
 
   private static final String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
   private static final String INCORRECT_PASSWORD_EXCEPTION_CODE = "project.exceptions.IncorrectPasswordException";
@@ -69,6 +76,9 @@ public class GlobalControllerExceptionHandler {
   private static final String DOMAIN_EXCEPTION_CODE = "project.exceptions.DomainException";
   private static final String FILE_UPLOAD_EXCEPTION_CODE = "project.exceptions.FileUploadException";
   private static final String QUADRANT_NOT_LINKED_TO_EMERGENCY_EXCEPTION_CODE = "project.exceptions.QuadrantNotLinkedToEmergencyException";
+  private static final String QUADRANT_ALREADY_LINKED_TO_EMERGENCY_EXCEPTION_CODE = "project.exceptions.QuadrantAlreadyLinkedToEmergencyException";
+  private static final String ASSIGNMENT_ALREADY_IN_STATUS_EXCEPTION_CODE = "project.exceptions.AssignmentAlreadyInStatusException";
+  private static final String INVALID_ASSIGNMENT_TRANSITION_EXCEPTION_CODE = "project.exceptions.InvalidAssignmentTransitionException";
 
   private final MessageSource messageSource;
 
@@ -264,13 +274,55 @@ public class GlobalControllerExceptionHandler {
 
   }
 
-  @ExceptionHandler(ExtinguishedEmergencyException.class)
+  @ExceptionHandler(ResourceBusyException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorDto handleExtinguishedEmergencyException(ExtinguishedEmergencyException exception, Locale locale) {
+  public ErrorDto handleResourceBusyException(ResourceBusyException exception, Locale locale) {
 
-    String errorMessage = messageSource.getMessage(EXTINGUISHED_EMERGENCY_EXCEPTION_CODE,
-        new Object[]{exception.getId()}, EXTINGUISHED_EMERGENCY_EXCEPTION_CODE, locale);
+    String errorMessage = messageSource.getMessage(RESOURCE_BUSY_EXCEPTION_CODE,
+        new Object[]{exception.getName(), exception.getId()}, RESOURCE_BUSY_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+
+  }
+
+  @ExceptionHandler(ResolvedEmergencyException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleResolvedEmergencyException(ResolvedEmergencyException exception, Locale locale) {
+
+    String errorMessage = messageSource.getMessage(RESOLVED_EMERGENCY_EXCEPTION_CODE,
+        new Object[]{exception.getId()}, RESOLVED_EMERGENCY_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(EmergencyAlreadyLinkedToQuadrantsException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleEmergencyAlreadyLinkedToQuadrantsException(
+      EmergencyAlreadyLinkedToQuadrantsException exception,
+      Locale locale) {
+
+    String errorMessage = messageSource.getMessage("project.exceptions.EmergencyAlreadyLinkedToQuadrantsException",
+        new Object[]{exception.getName(), exception.getId()},
+        "project.exceptions.EmergencyAlreadyLinkedToQuadrantsException",
+        locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(EmergencyAlreadyLinkedToPointException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleEmergencyAlreadyLinkedToPointException(
+      EmergencyAlreadyLinkedToPointException exception,
+      Locale locale) {
+
+    String errorMessage = messageSource.getMessage("project.exceptions.EmergencyAlreadyLinkedToPointException",
+        new Object[]{exception.getName(), exception.getId()},
+        "project.exceptions.EmergencyAlreadyLinkedToPointException",
+        locale);
 
     return new ErrorDto(errorMessage);
   }
@@ -390,6 +442,30 @@ public class GlobalControllerExceptionHandler {
     return new ErrorDto(errorMessage);
   }
 
+  @ExceptionHandler(AssignmentAlreadyInStatusException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleAssignmentAlreadyInStatusException(AssignmentAlreadyInStatusException exception,
+      Locale locale) {
+
+    String errorMessage = messageSource.getMessage(ASSIGNMENT_ALREADY_IN_STATUS_EXCEPTION_CODE,
+        new Object[]{exception.getName()}, ASSIGNMENT_ALREADY_IN_STATUS_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(InvalidAssignmentTransitionException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleInvalidAssignmentTransitionException(InvalidAssignmentTransitionException exception,
+      Locale locale) {
+
+    String errorMessage = messageSource.getMessage(INVALID_ASSIGNMENT_TRANSITION_EXCEPTION_CODE,
+        new Object[]{exception.getName(), exception.getId()}, INVALID_ASSIGNMENT_TRANSITION_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
   @ExceptionHandler(QuadrantNotLinkedToEmergencyException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
@@ -399,6 +475,20 @@ public class GlobalControllerExceptionHandler {
     String errorMessage = messageSource.getMessage(QUADRANT_NOT_LINKED_TO_EMERGENCY_EXCEPTION_CODE,
         new Object[]{exception.getQuadrantId(), exception.getEmergencyId()},
         QUADRANT_NOT_LINKED_TO_EMERGENCY_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(QuadrantAlreadyLinkedToEmergencyException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleQuadrantAlreadyLinkedToEmergencyException(
+      QuadrantAlreadyLinkedToEmergencyException exception,
+      Locale locale) {
+
+    String errorMessage = messageSource.getMessage(QUADRANT_ALREADY_LINKED_TO_EMERGENCY_EXCEPTION_CODE,
+        new Object[]{exception.getEmergencyId(), exception.getQuadrantId()},
+        QUADRANT_ALREADY_LINKED_TO_EMERGENCY_EXCEPTION_CODE, locale);
 
     return new ErrorDto(errorMessage);
   }

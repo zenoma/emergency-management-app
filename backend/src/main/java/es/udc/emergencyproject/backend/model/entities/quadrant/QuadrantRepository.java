@@ -10,9 +10,6 @@ public interface QuadrantRepository extends JpaRepository<Quadrant, Integer> {
 
   List<Quadrant> findByEscala(String escala);
 
-  List<Quadrant> findByEmergencyId(Long id);
-
-  List<Quadrant> findByEmergencyIdNotNull();
 
   @Query(value = "SELECT SUM(ST_Area(geom) / 10000) FROM quadrants WHERE gid IN (:quadrantIds)", nativeQuery = true)
   Double findHectaresByQuadrantIds(@Param("quadrantIds") List<Integer> quadrantIds);

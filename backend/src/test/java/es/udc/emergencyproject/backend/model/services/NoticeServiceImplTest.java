@@ -12,7 +12,7 @@ import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundExceptio
 import es.udc.emergencyproject.backend.model.exceptions.NoticeCheckStatusException;
 import es.udc.emergencyproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.emergencyproject.backend.model.exceptions.NoticeUpdateStatusException;
-import es.udc.emergencyproject.backend.model.services.notice.NoticeServiceImpl;
+import es.udc.emergencyproject.backend.model.services.notice.impl.NoticeServiceImpl;
 import es.udc.emergencyproject.backend.utils.NoticeOm;
 import java.io.IOException;
 import java.util.Optional;

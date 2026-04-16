@@ -10,7 +10,7 @@ import es.udc.emergencyproject.backend.model.entities.organization.OrganizationR
 import es.udc.emergencyproject.backend.model.entities.organization.OrganizationType;
 import es.udc.emergencyproject.backend.model.entities.organization.OrganizationTypeRepository;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
-import es.udc.emergencyproject.backend.model.services.personalmanagement.OrganizationServiceImpl;
+import es.udc.emergencyproject.backend.model.services.personal.impl.OrganizationServiceImpl;
 import es.udc.emergencyproject.backend.utils.OrganizationOM;
 import es.udc.emergencyproject.backend.utils.OrganizationTypeOM;
 import jakarta.validation.ConstraintViolationException;

@@ -1,13 +1,10 @@
 package es.udc.emergencyproject.backend.rest.controllers;
 
 import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
-import es.udc.emergencyproject.backend.model.services.emergencymanagement.EmergencyManagementService;
-import es.udc.emergencyproject.backend.rest.dtos.LinkEmergencyRequestDto;
+import es.udc.emergencyproject.backend.model.services.emergency.EmergencyManagementService;
 import es.udc.emergencyproject.backend.rest.dtos.QuadrantDto;
-import es.udc.emergencyproject.backend.rest.dtos.QuadrantInfoDto;
 import es.udc.emergencyproject.backend.rest.dtos.QuadrantLocationDto;
-import es.udc.emergencyproject.backend.rest.dtos.mappers.QuadrantInfoMapper;
-import es.udc.emergencyproject.backend.rest.dtos.mappers.QuadrantMapper;
+import es.udc.emergencyproject.backend.rest.mappers.QuadrantMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,35 +39,25 @@ public class QuadrantsController implements QuadrantsApi {
   }
 
   @Override
-  public ResponseEntity<QuadrantInfoDto> getQuadrantById(Integer id) {
-    final QuadrantInfoDto quadrantInfoDto = QuadrantInfoMapper.toQuadrantDto(
+  public ResponseEntity<QuadrantDto> getQuadrantById(Integer id) {
+    final QuadrantDto quadrantDto = QuadrantMapper.toQuadrantDto(
         emergencyManagementService.findQuadrantById(id));
 
-    return ResponseEntity.ok(quadrantInfoDto);
+    return ResponseEntity.ok(quadrantDto);
   }
 
 
   @Override
-  public ResponseEntity<List<QuadrantInfoDto>> getQuadrantsWithActiveEmergency() {
-    List<QuadrantInfoDto> quadrantInfoDtos = new ArrayList<>();
+  public ResponseEntity<List<QuadrantDto>> getQuadrantsWithActiveEmergency() {
+    List<QuadrantDto> quadrantDtos = new ArrayList<>();
 
     for (Quadrant quadrant : emergencyManagementService.findQuadrantsWithActiveEmergency()) {
-      quadrantInfoDtos.add(QuadrantInfoMapper.toQuadrantDto(quadrant));
+      quadrantDtos.add(QuadrantMapper.toQuadrantDto(quadrant));
     }
 
-    return ResponseEntity.ok(quadrantInfoDtos);
+    return ResponseEntity.ok(quadrantDtos);
   }
 
-  @Override
-  public ResponseEntity<QuadrantInfoDto> postQuadrantLinkEmergency(Integer id,
-      LinkEmergencyRequestDto linkEmergencyRequestDto) {
-
-    Quadrant quadrant = emergencyManagementService.linkEmergency(id, linkEmergencyRequestDto.getEmergencyId());
-
-    QuadrantInfoDto quadrantInfoDto = QuadrantInfoMapper.toQuadrantDtoWithoutTeamsAndVehicles(quadrant);
-
-    return ResponseEntity.ok(quadrantInfoDto);
-  }
 
   @Override
   public ResponseEntity<QuadrantLocationDto> getQuadrantByCoordinates(Double lon, Double lat) {

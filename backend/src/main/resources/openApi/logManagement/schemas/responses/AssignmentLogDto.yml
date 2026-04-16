@@ -1,0 +1,22 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+  eventType:
+    type: string
+  eventAt:
+    type: string
+    format: date-time
+  details:
+    type: string
+  assignment:
+    $ref: "../../../assignments/schemas/responses/AssignmentResponseDto.yml"
+  emergency:
+    $ref: "../../../emergencies/schemas/responses/EmergencyResponseDto.yml"
+  quadrant:
+    $ref: "../../../quadrants/schemas/responses/QuadrantDto.yml"
+  teamInfo:
+    $ref: "../../../teams/schemas/responses/TeamResponseDto.yml"
+  vehicleInfo:
+    $ref: "../../../vehicles/schemas/responses/VehicleResponseDto.yml"

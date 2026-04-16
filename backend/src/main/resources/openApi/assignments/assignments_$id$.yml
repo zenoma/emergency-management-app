@@ -1,0 +1,37 @@
+get:
+  summary: Obtener una asignación por id
+  operationId: getAssignmentById
+  tags:
+    - AssignmentManagement
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/AssignmentResponseDto.yml'
+
+delete:
+  summary: Eliminar una asignación por id
+  operationId: deleteAssignmentById
+  tags:
+    - AssignmentManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '204':
+      description: No Content

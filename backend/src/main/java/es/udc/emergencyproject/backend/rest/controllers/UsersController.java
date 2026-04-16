@@ -3,7 +3,7 @@ package es.udc.emergencyproject.backend.rest.controllers;
 import es.udc.emergencyproject.backend.model.entities.user.User;
 import es.udc.emergencyproject.backend.model.entities.user.UserRole;
 import es.udc.emergencyproject.backend.model.exceptions.PermissionException;
-import es.udc.emergencyproject.backend.model.services.personalmanagement.PersonaManagementFacade;
+import es.udc.emergencyproject.backend.model.services.personal.PersonalManagementFacade;
 import es.udc.emergencyproject.backend.rest.config.JwtGenerator;
 import es.udc.emergencyproject.backend.rest.config.JwtInfo;
 import es.udc.emergencyproject.backend.rest.config.JwtUtils;
@@ -14,7 +14,7 @@ import es.udc.emergencyproject.backend.rest.dtos.UserDto;
 import es.udc.emergencyproject.backend.rest.dtos.UserRoleRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.UserSignUpRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.UserUpdateRequestDto;
-import es.udc.emergencyproject.backend.rest.dtos.mappers.UserMapper;
+import es.udc.emergencyproject.backend.rest.mappers.UserMapper;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class UsersController implements UsersApi {
 
 
-  private final PersonaManagementFacade personaManagementFacade;
+  private final PersonalManagementFacade personalManagementFacade;
 
   private final JwtGenerator jwtGenerator;
 
@@ -43,7 +43,7 @@ public class UsersController implements UsersApi {
     }
 
     List<UserDto> userDtos = new ArrayList<>();
-    for (User user : personaManagementFacade.findAllUsers()) {
+    for (User user : personalManagementFacade.findAllUsers()) {
       userDtos.add(UserMapper.toUserDto(user));
     }
 
@@ -53,7 +53,7 @@ public class UsersController implements UsersApi {
   @Override
   public ResponseEntity<AuthenticatedUserDto> postUsersSignUp(UserSignUpRequestDto userSignUpRequestDto) {
 
-    final User user = personaManagementFacade.signUp(userSignUpRequestDto.getEmail(),
+    final User user = personalManagementFacade.signUp(userSignUpRequestDto.getEmail(),
         userSignUpRequestDto.getPassword(),
         userSignUpRequestDto.getFirstName(),
         userSignUpRequestDto.getLastName(),
@@ -71,7 +71,7 @@ public class UsersController implements UsersApi {
 
   @Override
   public ResponseEntity<AuthenticatedUserDto> postUsersLogin(LoginParamsDto params) {
-    User user = personaManagementFacade.login(params.getUserName(), params.getPassword());
+    User user = personalManagementFacade.login(params.getUserName(), params.getPassword());
 
     return ResponseEntity.ok(UserMapper.toAuthenticatedUserDto(generateServiceToken(user), user));
 
@@ -88,7 +88,7 @@ public class UsersController implements UsersApi {
     final Long userId = jwtInfo.get().userId();
     final String token = JwtUtils.getToken().orElse("");
 
-    User dto = personaManagementFacade.loginFromId(userId);
+    User dto = personalManagementFacade.loginFromId(userId);
     return ResponseEntity.ok(UserMapper.toAuthenticatedUserDto(token, dto));
   }
 
@@ -107,7 +107,7 @@ public class UsersController implements UsersApi {
     }
 
     return ResponseEntity.ok(UserMapper.toUserDto(
-        personaManagementFacade.updateProfile(id, userUpdateRequestDto.getFirstName(),
+        personalManagementFacade.updateProfile(id, userUpdateRequestDto.getFirstName(),
             userUpdateRequestDto.getLastName(),
             userUpdateRequestDto.getEmail(), Integer.valueOf(userUpdateRequestDto.getPhoneNumber()),
             userUpdateRequestDto.getDni())));
@@ -128,7 +128,7 @@ public class UsersController implements UsersApi {
       throw new PermissionException();
     }
 
-    personaManagementFacade.changePassword(id,
+    personalManagementFacade.changePassword(id,
         changePasswordParamsDto.getOldPassword(),
         changePasswordParamsDto.getNewPassword());
 
@@ -152,7 +152,7 @@ public class UsersController implements UsersApi {
     } catch (IllegalArgumentException ex) {
       throw new IllegalArgumentException("userRole");
     }
-    personaManagementFacade.updateRole(userId, id, userRole);
+    personalManagementFacade.updateRole(userId, id, userRole);
 
     return ResponseEntity.noContent().build();
 

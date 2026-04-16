@@ -2,30 +2,30 @@ type: object
 required:
   - id
   - description
-  - type
+  - emergencyTypeName
   - emergencyIndex
   - createdAt
-  - extinguishedAt
+  - resolvedAt
 properties:
   id:
     type: integer
     format: int64
   description:
     type: string
-  type:
+  emergencyTypeName:
     type: string
   emergencyIndex:
     type: string
-    enum: [ EXTINGUIDO, CERO, UNO, DOS, TRES ]
+    enum: [ RESUELTO, CERO, UNO, DOS, TRES ]
   createdAt:
     type: string
     format: localDateTime
-  extinguishedAt:
+  resolvedAt:
     type: string
     format: localDateTime
+  location:
+    $ref: "../../../common/schemas/CoordinatesDto.yml"
   quadrantInfo:
     type: array
     items:
-      $ref: "../../../quadrants/schemas/responses/QuadrantInfoDto.yml"
-
-
+      $ref: "../../../quadrants/schemas/responses/QuadrantDto.yml"

@@ -14,6 +14,18 @@ export const emergencyApi = baseApi.injectEndpoints({
         return response;
       },
     }),
+    getEmergencyTypes: build.query({
+      query: (payload) => ({
+        url: "/emergencies/types",
+        headers: {
+          Authorization: "Bearer " + payload.token,
+          "Accept-Language": payload.locale,
+        },
+      }),
+      transformResponse: (response, meta, arg) => {
+        return response;
+      },
+    }),
     getEmergencyById: build.query({
       query: (payload) => ({
         url: "/emergencies/" + payload.emergencyId,
@@ -33,6 +45,7 @@ export const emergencyApi = baseApi.injectEndpoints({
         body: {
           description: payload.description,
           type: payload.type,
+          emergencyTypeId: payload.emergencyTypeId,
           emergencyIndex: payload.emergencyIndex,
         },
         headers: {
@@ -62,9 +75,9 @@ export const emergencyApi = baseApi.injectEndpoints({
         return response;
       },
     }),
-    extinguishEmergency: build.mutation({
+    resolveEmergency: build.mutation({
       query: (payload) => ({
-        url: "/emergencies/" + payload.emergencyId + "/extinguishEmergency",
+        url: "/emergencies/" + payload.emergencyId + "/resolveEmergency",
         method: "POST",
         headers: {
           Authorization: "Bearer " + payload.token,
@@ -75,9 +88,26 @@ export const emergencyApi = baseApi.injectEndpoints({
         return response;
       },
     }),
-    extinguishQuadrantByEmergencyId: build.mutation({
+    linkEmergencyToPoint: build.mutation({
       query: (payload) => ({
-        url: "/emergencies/" + payload.emergencyId + "/extinguishQuadrant",
+        url: "/emergencies/" + payload.emergencyId + "/linkPoint",
+        method: "POST",
+        body: {
+          lon: payload.lon,
+          lat: payload.lat,
+        },
+        headers: {
+          Authorization: "Bearer " + payload.token,
+          "Accept-Language": payload.locale,
+        },
+      }),
+      transformResponse: (response, meta, arg) => {
+        return response;
+      },
+    }),
+    removeQuadrantByEmergencyId: build.mutation({
+      query: (payload) => ({
+        url: "/emergencies/" + payload.emergencyId + "/removeQuadrant",
         method: "POST",
         body: {
           quadrantId: payload.quadrantId,
@@ -97,8 +127,10 @@ export const emergencyApi = baseApi.injectEndpoints({
 export const {
   useGetEmergenciesQuery,
   useGetEmergencyByIdQuery,
+  useGetEmergencyTypesQuery,
   useCreateEmergencyMutation,
   useUpdateEmergencyMutation,
-  useExtinguishEmergencyMutation,
-  useExtinguishQuadrantByEmergencyIdMutation,
+  useLinkEmergencyToPointMutation,
+  useResolveEmergencyMutation,
+  useRemoveQuadrantByEmergencyIdMutation,
 } = emergencyApi;

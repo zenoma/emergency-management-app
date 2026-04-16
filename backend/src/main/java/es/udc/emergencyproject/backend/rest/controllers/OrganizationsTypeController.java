@@ -1,10 +1,10 @@
 package es.udc.emergencyproject.backend.rest.controllers;
 
 import es.udc.emergencyproject.backend.model.entities.organization.OrganizationType;
-import es.udc.emergencyproject.backend.model.services.personalmanagement.PersonaManagementFacade;
+import es.udc.emergencyproject.backend.model.services.personal.PersonalManagementFacade;
 import es.udc.emergencyproject.backend.rest.dtos.OrganizationTypeRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.OrganizationTypeResponseDto;
-import es.udc.emergencyproject.backend.rest.dtos.mappers.OrganizationTypeMapper;
+import es.udc.emergencyproject.backend.rest.mappers.OrganizationTypeMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,19 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrganizationsTypeController implements OrganizationTypesApi {
 
-  private final PersonaManagementFacade personaManagementFacade;
+  private final PersonalManagementFacade personalManagementFacade;
 
   @Override
   public ResponseEntity<List<OrganizationTypeResponseDto>> getOrganizationsType() {
 
-    List<OrganizationType> organizationTypes = personaManagementFacade.findAllOrganizationTypes();
+    List<OrganizationType> organizationTypes = personalManagementFacade.findAllOrganizationTypes();
 
     return ResponseEntity.ok(OrganizationTypeMapper.toOrganizationTypeDtoList(organizationTypes));
   }
 
   @Override
   public ResponseEntity<OrganizationTypeResponseDto> getOrganizationById(Long id) {
-    OrganizationType organizationType = personaManagementFacade.findOrganizationTypeById(id);
+    OrganizationType organizationType = personalManagementFacade.findOrganizationTypeById(id);
 
     return ResponseEntity.ok(OrganizationTypeMapper.toOrganizationTypeDto(organizationType));
   }
@@ -35,7 +35,7 @@ public class OrganizationsTypeController implements OrganizationTypesApi {
   public ResponseEntity<OrganizationTypeResponseDto> postOrganization(
       OrganizationTypeRequestDto organizationTypeRequestDto) {
 
-    OrganizationType organizationType = personaManagementFacade.createOrganizationType(
+    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
         organizationTypeRequestDto.getName());
 
     return ResponseEntity.ok(OrganizationTypeMapper.toOrganizationTypeDto(organizationType));
