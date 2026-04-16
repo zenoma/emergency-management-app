@@ -61,11 +61,12 @@ export const emergencyApi = baseApi.injectEndpoints({
       query: (payload) => ({
         url: "/emergencies/" + payload.emergencyId,
         method: "PUT",
-        body: {
-          description: payload.description,
-          type: payload.type,
-          emergencyIndex: payload.emergencyIndex,
-        },
+      body: {
+        description: payload.description,
+        type: payload.type,
+        emergencyTypeId: payload.emergencyTypeId,
+        emergencyIndex: payload.emergencyIndex,
+      },
         headers: {
           Authorization: "Bearer " + payload.token,
           "Accept-Language": payload.locale,

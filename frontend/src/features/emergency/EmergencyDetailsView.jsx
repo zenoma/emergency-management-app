@@ -52,6 +52,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import EmergencyTypeIcon from "../../components/EmergencyTypeIcon";
+import { useGetEmergencyTypesQuery } from "../../api/emergencyApi";
 
 const emergencyIndexSelector = ["CERO", "UNO", "DOS", "TRES"];
 
@@ -75,6 +76,7 @@ export default function EmergencyDetailsView() {
   const [description, setDescription] = useState();
   const [type, setType] = useState();
   const [emergencyIndex, setEmergencyIndex] = useState();
+  const [emergencyTypeId, setEmergencyTypeId] = useState();
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openQuadrantResolve, setOpenQuadrantResolve] = useState(false);
@@ -163,7 +165,6 @@ export default function EmergencyDetailsView() {
           if (coord) {
             const geo = untransformCoordinates(coord.x, coord.y);
             setCoordinates({ lon: geo.longitude, lat: geo.latitude });
-            console.debug('EmergencyDetailsView set computed coords (from quadrant)', { lon: geo.longitude, lat: geo.latitude });
           }
         } catch (e) {
           console.error('Failed to compute coords from quadrant', e);
@@ -174,10 +175,8 @@ export default function EmergencyDetailsView() {
           // location stored in DB may be in projected coordinates (easting/northing)
           const rawX = data.location.lon; // easting in DB projection
           const rawY = data.location.lat; // northing in DB projection
-          console.debug('EmergencyDetailsView raw location (projected)', { x: rawX, y: rawY });
           const geo = untransformCoordinates(rawX, rawY);
           setCoordinates({ lon: geo.longitude, lat: geo.latitude });
-          console.debug('EmergencyDetailsView set computed coords (from location)', { lon: geo.longitude, lat: geo.latitude });
           // keep projected string values for display
           setPointLon(String(rawX));
           setPointLat(String(rawY));
@@ -270,19 +269,52 @@ export default function EmergencyDetailsView() {
     setDescription(data.description);
     setType(data.type);
     setEmergencyIndex(data.emergencyIndex);
+    // try to set emergencyTypeId from several possible fields
+    if (data.emergencyTypeId) setEmergencyTypeId(Number(data.emergencyTypeId));
+    else if (data.emergencyType && data.emergencyType.id) setEmergencyTypeId(Number(data.emergencyType.id));
+    else {
+      // attempt to resolve by name if emergencyTypes already loaded
+      const nameToMatch = data.emergencyTypeName || data.type || data.name || '';
+      if (nameToMatch && emergencyTypes && emergencyTypes.length > 0) {
+        const matched = emergencyTypes.find((et) => (et.name || '').toLowerCase() === nameToMatch.toLowerCase());
+        if (matched) {
+          setEmergencyTypeId(Number(matched.id));
+        } else {
+          setEmergencyTypeId(undefined);
+        }
+      } else {
+        setEmergencyTypeId(undefined);
+      }
+    }
     setOpenEdit(true);
   };
 
   const [updateEmergency] = useUpdateEmergencyMutation();
+  const { data: emergencyTypes } = useGetEmergencyTypesQuery({ token: token, locale: locale });
 
   const handleEditClick = () => {
+    // ensure we have an emergencyTypeId; try to derive from type name if missing
+    let resolvedEmergencyTypeId = emergencyTypeId;
+    if (!resolvedEmergencyTypeId && type && emergencyTypes && emergencyTypes.length > 0) {
+      const matched = emergencyTypes.find((et) => (et.name || '').toLowerCase() === (type || '').toLowerCase());
+      if (matched) resolvedEmergencyTypeId = Number(matched.id);
+    }
+
+    if (!resolvedEmergencyTypeId) {
+      // do not submit invalid payload
+      toast.error(t('Please select an emergency type'));
+      console.error('Cannot update emergency: emergencyTypeId is missing', { emergencyTypeId, type });
+      return;
+    }
+
     const payload = {
       emergencyId: emergencyId,
       token: token,
       description: description,
       type: type,
+      emergencyTypeId: resolvedEmergencyTypeId,
       emergencyIndex: emergencyIndex,
-      locale: locale
+      locale: locale,
     };
 
     updateEmergency(payload)
@@ -313,6 +345,14 @@ export default function EmergencyDetailsView() {
     }
   };
 
+  const handleEmergencyTypeChange = (event) => {
+    const value = event.target.value;
+    const valueNum = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+    setEmergencyTypeId(valueNum);
+    const selected = emergencyTypes ? emergencyTypes.find((et) => et.id === valueNum) : null;
+    if (selected) setType(selected.name);
+  };
+
 
   const handleResolveQuadrantOpenClick = (quadrantId) => {
     setQuadrantId(quadrantId);
@@ -321,6 +361,11 @@ export default function EmergencyDetailsView() {
 
   const handleResolveQuadrantClose = () => {
     setOpenQuadrantResolve(false);
+  };
+
+  // legacy/alternate name used in the template for the 'resolve' button
+  const handleExtinguishOpenClick = () => {
+    setOpenResolve(true);
   };
 
   const handleResolveQuadrantClick = () => {
@@ -407,7 +452,10 @@ export default function EmergencyDetailsView() {
                 {t("emergency-type")}
               </Typography>
               <Typography variant="h6" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <EmergencyTypeIcon name={data.type} showLabel={true} />
+                <EmergencyTypeIcon
+                  name={data.emergencyTypeName || (data.emergencyType && data.emergencyType.name) || data.type}
+                  showLabel={true}
+                />
               </Typography>
             </Box>
             <Box>
@@ -436,7 +484,19 @@ export default function EmergencyDetailsView() {
             variant="outlined"
           >
             <Typography variant="h6">{t("quadrant-map")}</Typography>
-            {data && <Box sx={{ height: 450 }}><LandingMap quadrants={data.quadrantInfo || []} /></Box>}
+            {data && <Box sx={{ height: 450 }}>
+              <LandingMap
+                quadrants={data.quadrantInfo || []}
+                emergencies={data.location ? [{
+                  id: data.id,
+                  description: data.description,
+                  location: { lon: data.location.lon, lat: data.location.lat },
+                  // include type fields so LandingMap can select the correct icon
+                  type: data.type,
+                  emergencyTypeName: data.emergencyTypeName || data.type,
+                }] : []}
+              />
+            </Box>}
           </Paper>
         </Grid>
         <Grid item xs={4} sm={8} md={3}>
@@ -602,7 +662,7 @@ export default function EmergencyDetailsView() {
                   margin: "5px",
                   ":hover": { backgroundColor: "error.dark" },
                 }}
-                onClick={() => handleExtinguishOpenClick()}
+                onClick={() => handleResolveOpenClick()}
               >
                 {t("emergency-resolve")}
               </Button>
@@ -661,7 +721,6 @@ export default function EmergencyDetailsView() {
 
           {(() => {
             if (coordinates && coordinates.lat != null && coordinates.lon != null) {
-              console.debug('Rendering WeatherInfo (computed) with', coordinates);
               return <WeatherErrorBoundary><WeatherInfo sx={{ padding: 2 }} lat={coordinates.lat} lon={coordinates.lon} /></WeatherErrorBoundary>;
             }
             return null;
@@ -673,13 +732,13 @@ export default function EmergencyDetailsView() {
 
 
       <Dialog open={open} fullWidth maxWidth="md">
-          <DialogTitle sx={{ color: "primary.light" }}>{t("quadrant-add-title")} </DialogTitle>
-          <DialogContent>
-            <QuadrantDataGrid
-              childToParent={childToParent}
-              excludedQuadrantIds={data?.quadrantInfo ? data.quadrantInfo.map((q) => q.id) : []}
-            />
-          </DialogContent>
+        <DialogTitle sx={{ color: "primary.light" }}>{t("quadrant-add-title")} </DialogTitle>
+        <DialogContent>
+          <QuadrantDataGrid
+            childToParent={childToParent}
+            excludedQuadrantIds={data?.quadrantInfo ? data.quadrantInfo.map((q) => q.id) : []}
+          />
+        </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>{t("cancel")}</Button>
           <Button autoFocus variant="contained" onClick={() => handleClick()}>
@@ -705,7 +764,6 @@ export default function EmergencyDetailsView() {
               try {
                 const geo = untransformCoordinates(projX, projY);
                 setCoordinates({ lon: geo.longitude, lat: geo.latitude });
-                console.debug('EmergencyDetailsView set coords from pointpicker', { projX, projY, lon: geo.longitude, lat: geo.latitude });
               } catch (e) {
                 console.error('Failed to compute coords from point picker', e);
               }
@@ -735,7 +793,6 @@ export default function EmergencyDetailsView() {
             const projX = pendingProjPoint.x;
             const projY = pendingProjPoint.y;
             const payloadPoint = { token: token, emergencyId: emergencyId, lon: projX, lat: projY, locale: locale };
-            console.debug('linkEmergencyToPoint payload (from confirmation)', payloadPoint);
             linkEmergencyToPoint(payloadPoint)
               .unwrap()
               .then(() => {
@@ -773,18 +830,23 @@ export default function EmergencyDetailsView() {
                 />
               </Grid>
               <Grid item xs={6}>
-                <TextField
-                  id="type"
-                  label={t("emergency-type")}
-                  type="text"
-                  autoComplete="current-code"
-                  margin="normal"
-                  value={type}
-                  onChange={(e) => handleChange(e)}
-                  variant="standard"
-                  required
-                  sx={{ display: "flex" }}
-                />
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel id="emergency-type-label">{t("emergency-type")}</InputLabel>
+                  <Select
+                    id="emergencyTypeId"
+                    labelId="emergency-type-label"
+                    label={t("emergency-type")}
+                    value={emergencyTypeId || ''}
+                    onChange={handleEmergencyTypeChange}
+                    required
+                  >
+                    {emergencyTypes && emergencyTypes.map((et) => (
+                      <MenuItem key={et.id} value={et.id}>
+                        {et.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={6}>
                 <FormControl fullWidth >

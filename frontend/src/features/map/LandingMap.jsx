@@ -1,14 +1,33 @@
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect, useMemo } from "react";
+import ReactDOMServer from 'react-dom/server';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import WaterIcon from '@mui/icons-material/Water';
+import TerrainIcon from '@mui/icons-material/Terrain';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import ScienceIcon from '@mui/icons-material/Science';
+import FactoryIcon from '@mui/icons-material/Factory';
+import StormIcon from '@mui/icons-material/Storm';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 import { useSelector } from "react-redux"
-import Map, { Layer, NavigationControl, Source } from "react-map-gl/maplibre";
+import Map, { Layer, NavigationControl, Source, Marker } from "react-map-gl/maplibre";
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useLocation, useNavigate } from "react-router-dom";
 import { untransformCoordinates } from "../../app/utils/coordinatesTransformations";
 import { selectToken } from "../user/login/LoginSlice";
 import teamIconSvg from "../../assets/images/team-icon.svg";
 import vehicleIconSvg from "../../assets/images/vehicle-icon.svg";
+import incendioSvg from "../../assets/images/emergency-icon/incendio.svg";
+import tormentaSvg from "../../assets/images/emergency-icon/tormenta.svg";
+import montanaSvg from "../../assets/images/emergency-icon/montana.svg";
+import inundacionSvg from "../../assets/images/emergency-icon/inundacion.svg";
+import cocheSvg from "../../assets/images/emergency-icon/coche.svg";
+import medicaSvg from "../../assets/images/emergency-icon/emergencia-medica.svg";
+import quimicalSvg from "../../assets/images/emergency-icon/quimical hazard.svg";
+import industrialSvg from "../../assets/images/emergency-icon/riesgo-industrial.svg";
+import otrosSvg from "../../assets/images/emergency-icon/otros.svg";
 
 export default function LandingMap(props) {
 
@@ -40,10 +59,36 @@ export default function LandingMap(props) {
 
   const onMapLoad = useCallback((event) => {
     const map = event.target;
-    Promise.all([
+
+    const makeSvgDataUrl = (IconComp, color = '#d32f2f', size = 48) => {
+      const svgString = ReactDOMServer.renderToStaticMarkup(
+        React.createElement(IconComp, { style: { color: color, width: size, height: size } })
+      );
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+    };
+
+    const emergencyIconsToLoad = [
+      { id: 'emergency-fire', uri: makeSvgDataUrl(LocalFireDepartmentIcon, '#d32f2f', 48) },
+      { id: 'emergency-water', uri: makeSvgDataUrl(WaterIcon, '#2196f3', 48) },
+      { id: 'emergency-terrain', uri: makeSvgDataUrl(TerrainIcon, '#6d4c41', 48) },
+      { id: 'emergency-car', uri: makeSvgDataUrl(DirectionsCarIcon, '#9e9e9e', 48) },
+      { id: 'emergency-medical', uri: makeSvgDataUrl(MedicalServicesIcon, '#4caf50', 48) },
+      { id: 'emergency-science', uri: makeSvgDataUrl(ScienceIcon, '#9c27b0', 48) },
+      { id: 'emergency-factory', uri: makeSvgDataUrl(FactoryIcon, '#ff9800', 48) },
+      { id: 'emergency-storm', uri: makeSvgDataUrl(StormIcon, '#607d8b', 48) },
+      { id: 'emergency-default', uri: makeSvgDataUrl(HelpOutlineIcon, '#607d8b', 48) },
+    ];
+
+    const loads = [
       loadImage(map, teamIconSvg, "team-icon", 64),
       loadImage(map, vehicleIconSvg, "vehicle-icon", 64),
-    ]).then(() => {
+      ...emergencyIconsToLoad.map(item => loadImage(map, item.uri, item.id, 64))
+    ];
+
+    Promise.all(loads).then(() => {
+      setIconsLoaded(true);
+    }).catch((e) => {
+      console.error('Failed to load map icons', e);
       setIconsLoaded(true);
     });
   }, []);
@@ -71,17 +116,85 @@ export default function LandingMap(props) {
   const location = useLocation();
   const isEmergencyDetails = location.pathname === "/emergency-details";
 
-  const handleClick = (event) => {
-    const feature = event.features && event.features[0];
-    if (isEmergencyDetails && feature && token) {
-      navigate("/quadrant", {
-        state: {
-          quadrantId: feature.layer.id,
-          quadrantName: feature.layer.name,
-        },
-      });
+
+  const emergencyFeatures = useMemo(() => {
+    if (!props.emergencies || !Array.isArray(props.emergencies)) return [];
+    const feats = props.emergencies.map((e) => {
+      if (!e || !e.location) return null;
+      const lx = Number(e.location.lon);
+      const ly = Number(e.location.lat);
+      if (Number.isNaN(lx) || Number.isNaN(ly)) return null;
+      let lon = null;
+      let lat = null;
+      try {
+        // Heuristic: if values are large (>> 1e6) they are projected coordinates
+        if (Math.abs(lx) > 1000000 || Math.abs(ly) > 1000000) {
+          const geo = untransformCoordinates(lx, ly);
+          lon = geo.longitude;
+          lat = geo.latitude;
+        } else {
+          // assume already geographic
+          lon = lx;
+          lat = ly;
+        }
+      } catch (err) {
+        console.error('Failed to compute emergency geo coordinates', err, e);
+        return null;
+      }
+      // validate range
+      if (Math.abs(lon) > 180 || Math.abs(lat) > 90) {
+        console.warn('Emergency coords out of geographic range', { lon, lat, raw: e.location });
+        return null;
+      }
+      const rawTypeKey = (e.emergencyTypeName || (e.emergencyType && e.emergencyType.name) || e.type || e.name || '');
+      return {
+        type: "Feature",
+        properties: { id: e.id, title: e.description, typeKey: rawTypeKey },
+        geometry: { type: "Point", coordinates: [lon, lat] },
+      };
+    }).filter(Boolean);
+    return feats;
+  }, [props.emergencies]);
+
+  const iconDataUrlMap = useMemo(() => {
+    const map = {};
+    const iconEntries = {
+      'emergency-fire': LocalFireDepartmentIcon,
+      'emergency-water': WaterIcon,
+      'emergency-terrain': TerrainIcon,
+      'emergency-car': DirectionsCarIcon,
+      'emergency-medical': MedicalServicesIcon,
+      'emergency-science': ScienceIcon,
+      'emergency-factory': FactoryIcon,
+      'emergency-storm': StormIcon,
+      'emergency-default': HelpOutlineIcon,
+    };
+    Object.entries(iconEntries).forEach(([key, Comp]) => {
+      try {
+        const svgString = ReactDOMServer.renderToStaticMarkup(
+          React.createElement(Comp, { style: { color: '#d32f2f', width: 28, height: 28 } })
+        );
+        map[key] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+      } catch (e) {
+        console.error('Failed to render icon to SVG for', key, e);
+        map[key] = null;
+      }
+    });
+    return map;
+  }, []);
+
+  useEffect(() => {
+    const ids = [];
+    if (quadrants && Array.isArray(quadrants)) {
+      quadrants.forEach((q) => ids.push(q.id.toString()));
     }
-  };
+    if (emergencyFeatures && emergencyFeatures.length > 0) {
+      ids.push('emergency-symbols');
+    }
+    // dedupe
+    const uniq = Array.from(new Set(ids));
+    setInteractiveLayerIds(uniq);
+  }, [quadrants, emergencyFeatures]);
 
   return (
     <Map
@@ -92,7 +205,6 @@ export default function LandingMap(props) {
       initialViewState={INITIAL_VIEW_STATE}
       mapStyle={MAP_STYLE}
       onLoad={onMapLoad}
-      onClick={(e) => handleClick(e)}
       cursor={cursor}
       maxBounds={bounds}
       interactiveLayerIds={interactiveLayerIds}
@@ -103,12 +215,6 @@ export default function LandingMap(props) {
 
       {quadrants &&
         quadrants.map((item) => {
-          if (!interactiveLayerIds.includes(item.id.toString())) {
-            setInteractiveLayerIds([
-              ...interactiveLayerIds,
-              item.id.toString(),
-            ]);
-          }
           const coord = item.coordinates.map((item) => {
             return [
               untransformCoordinates(item.x, item.y).longitude,
@@ -240,10 +346,51 @@ export default function LandingMap(props) {
             </Source>
           );
         })}
+      {emergencyFeatures && emergencyFeatures.length > 0 && iconsLoaded && (
+        <Source id="emergencies" type="geojson" data={{ type: 'FeatureCollection', features: emergencyFeatures }}>
+        </Source>
+      )}
+
+      {emergencyFeatures && emergencyFeatures.length > 0 && (
+        emergencyFeatures.map((f) => {
+          const [lon, lat] = f.geometry.coordinates;
+          const typeKey = f.properties.typeKey || '';
+
+          const chooseAsset = (tk) => {
+            const n = (tk || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+            if (n.includes('incend') || n.includes('fire')) return incendioSvg;
+            // inundación -> inundacionSvg
+            if (n.includes('inund') || n.includes('flood') || n.includes('water') || n.includes('inundacion')) return inundacionSvg;
+            // temporal / meteorológico -> tormentaSvg
+            if (n.includes('torment') || n.includes('temporal') || n.includes('storm') || n.includes('meteor') || n.includes('evento')) return tormentaSvg;
+            if (n.includes('derrum') || n.includes('desprend') || n.includes('land') || n.includes('mont')) return montanaSvg;
+            if (n.includes('accident') || n.includes('vial') || n.includes('car')) return cocheSvg;
+            if (n.includes('sanit') || n.includes('salud') || n.includes('medical')) return medicaSvg;
+            if (n.includes('quim') || n.includes('chemical')) return quimicalSvg;
+            if (n.includes('industrial') || n.includes('factory') || n.includes('industr')) return industrialSvg;
+            return otrosSvg;
+          };
+
+          const asset = chooseAsset(typeKey);
+          return (
+            <Marker key={`em-${f.properties.id}`} longitude={lon} latitude={lat} anchor="center">
+              <div style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'auto' }}>
+                <img src={asset} alt="em" style={{ width: 24, height: 24 }} />
+              </div>
+            </Marker>
+          );
+        })
+      )}
+      {props.showDebug && emergencyFeatures && emergencyFeatures.length > 0 && (
+        <Source id="emergencies-debug" type="geojson" data={{ type: 'FeatureCollection', features: emergencyFeatures }}>
+          <Layer id="emergency-debug-circles" type="circle" paint={{ 'circle-radius': 8, 'circle-color': '#ff0000' }} />
+        </Source>
+      )}
     </Map>
   );
 }
 
 LandingMap.propTypes = {
   quadrants: PropTypes.array.isRequired,
+  showDebug: PropTypes.bool,
 };

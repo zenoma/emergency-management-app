@@ -40,9 +40,6 @@ const WeatherInfo = (props) => {
         { skip: !shouldFetch }
     );
 
-    // Log coordinates used for the weather API to help debugging
-    if (shouldFetch) console.debug('WeatherInfo fetching with coords', { lat: latNum, lon: lonNum, locale });
-
     if (!isNumber) {
         // no valid numeric coordinates provided
         return null;

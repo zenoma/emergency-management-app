@@ -122,7 +122,7 @@
   "emergency-created-successfully": "Emergencia creada satisfactoriamente",
   "emergency-created-error": "Ha ocurrido un error al crear la emergencia",
   "emergency-options": "Opciones",
-  "emergency-resolve": "Gestionar",
+  "emergency-resolve": "Resolver",
   "emergency-resolve-dialog": "¿Está seguro de cerrar esta emergencia?",
   "emergency-resolve-text": "Se desvincularán los cuadrantes afectados, se liberarán los equipos y los vehículos de dichos cuadrantes y se marcará la emergencia como resuelta.",
   "emergency-resolved-successfully": "Emergencia resuelta correctamente",
