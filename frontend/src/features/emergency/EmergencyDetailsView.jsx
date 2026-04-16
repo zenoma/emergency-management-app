@@ -36,6 +36,7 @@ import {
   useRemoveQuadrantByEmergencyIdMutation,
   useGetEmergencyByIdQuery,
   useUpdateEmergencyMutation,
+  useLinkEmergencyToPointMutation,
 } from "../../api/emergencyApi";
 import { useLinkEmergencyMutation } from "../../api/quadrantApi";
 import LandingMap from "../map/LandingMap";
@@ -44,6 +45,10 @@ import { selectToken } from "../user/login/LoginSlice";
 import BackButton from "../utils/BackButton";
 import WeatherInfo from "../weather/WeatherInfo";
 import { untransformCoordinates } from "../../app/utils/coordinatesTransformations";
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
 import EmergencyTypeIcon from "../../components/EmergencyTypeIcon";
 
 const emergencyIndexSelector = ["CERO", "UNO", "DOS", "TRES"];
@@ -72,9 +77,12 @@ export default function EmergencyDetailsView() {
   const [openEdit, setOpenEdit] = useState(false);
   const [openQuadrantResolve, setOpenQuadrantResolve] = useState(false);
   const [openResolve, setOpenResolve] = useState(false);
+  const [linkMode, setLinkMode] = useState(''); // '' means not preselected; can be 'QUADRANT' or 'POINT'
+  const [pointLon, setPointLon] = useState('');
+  const [pointLat, setPointLat] = useState('');
 
 
-  const [coordinates, setCoordinates] = useState("");
+  const [coordinates, setCoordinates] = useState(null);
 
   const payload = { token: token, emergencyId: emergencyId, locale: locale };
 
@@ -83,20 +91,60 @@ export default function EmergencyDetailsView() {
   const [linkEmergency] = useLinkEmergencyMutation ? useLinkEmergencyMutation() : [null];
   const [resolveEmergency] = useResolveEmergencyMutation();
   const [removeQuadrantByEmergencyId] = useRemoveQuadrantByEmergencyIdMutation();
+  const [linkEmergencyToPoint] = useLinkEmergencyToPointMutation();
 
   useEffect(() => {
     refetch();
 
-    if (data && data.quadrants && data.quadrants.length > 0) {
-      setCoordinates(
-        {
-          lon: untransformCoordinates(data.quadrants[0].coordinates[0].x, data.quadrants[0].coordinates[0].y).longitude,
-          lat: untransformCoordinates(data.quadrants[0].coordinates[0].x, data.quadrants[0].coordinates[0].y).latitude,
+    if (data) {
+      const hasQuadrants = data.quadrantInfo && data.quadrantInfo.length > 0;
+      const hasLocation = data.location != null;
+
+
+      // If emergency already has quadrants or location, lock the mode to that value. Otherwise allow user to choose.
+      if (hasQuadrants) setLinkMode('QUADRANT');
+      else if (hasLocation) setLinkMode('POINT');
+      else setLinkMode('');
+
+      // compute coordinates for WeatherInfo: prefer quadrant centroid, otherwise emergency.location
+            if (hasQuadrants) {
+              try {
+                const q = data.quadrantInfo[0];
+                // quadrant coordinates array contains objects with x/y in DB projection
+                const coord = q.coordinates && q.coordinates[0];
+                if (coord) {
+                  const geo = untransformCoordinates(coord.x, coord.y);
+            	    setCoordinates({ lon: geo.longitude, lat: geo.latitude });
+            	    console.debug('EmergencyDetailsView set computed coords (from quadrant)', { lon: geo.longitude, lat: geo.latitude });
+                }
+              } catch (e) {
+                console.error('Failed to compute coords from quadrant', e);
+          	  	setCoordinates(null);
+              }
+            } else if (hasLocation) {
+        try {
+          // location stored in DB may be in projected coordinates (easting/northing)
+          const rawX = data.location.lon; // easting in DB projection
+          const rawY = data.location.lat; // northing in DB projection
+          console.debug('EmergencyDetailsView raw location (projected)', { x: rawX, y: rawY });
+          const geo = untransformCoordinates(rawX, rawY);
+          setCoordinates({ lon: geo.longitude, lat: geo.latitude });
+          console.debug('EmergencyDetailsView set computed coords (from location)', { lon: geo.longitude, lat: geo.latitude });
+        } catch (e) {
+          console.error('Failed to compute coords from location', e);
+          setCoordinates(null);
         }
-      )
+            } else {
+        	  setCoordinates(null);
+            }
+
     }
   }
     , [refetch, data]);
+
+  useEffect(() => {
+    console.debug('EmergencyDetailsView raw data', data);
+  }, [data]);
 
   const childToParent = (childdata) => {
     setSelectedId(childdata);
@@ -253,6 +301,7 @@ export default function EmergencyDetailsView() {
 
   return (
     <Box sx={{ padding: 3 }}>
+      {/* determine if emergency already has quadrants or a linked point (computed inline where needed) */}
       <BackButton />
       <Typography
         variant="h4"
@@ -339,82 +388,163 @@ export default function EmergencyDetailsView() {
               }}
               variant="outlined"
             >
-              <Typography variant="h6">{t("quadrant-list")}</Typography>
-              <TableContainer
-                component={Paper}
-                elevation={3}
-                sx={{ maxHeight: 420 }}
-              >
-                <Table stickyHeader aria-label="sticky table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ color: "secondary.light" }}>
-                        {t("quadrant-id")}
-                      </TableCell>
-                      <TableCell
-                        sx={{ color: "secondary.light" }}
-                        align="right"
-                      >
-                        {t("quadrant-name")}
-                      </TableCell>
-                      <TableCell
-                        sx={{ color: "secondary.light" }}
-                        align="right"
-                      >
-                        {t("options")}
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.quadrantInfo && data.quadrantInfo.length > 0 ? (
-                      data.quadrantInfo.map((row) => (
-                        <TableRow
-                          key={row.id}
-                          hover
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                          onClick={() =>
-                            navigate("/quadrant", {
-                              state: { quadrantId: row.id },
-                            })}
-                        >
-                          <TableCell component="th" scope="row">
-                            {row.id}
+              <Typography variant="h6">{t("quadrant-link")}</Typography>
+              <Box sx={{ mt: 1, mb: 2 }}>
+                <FormLabel component="legend">{t('link-mode-label') || 'Link mode'}</FormLabel>
+                {(() => {
+                  const hasQuadrants = data && data.quadrantInfo && data.quadrantInfo.length > 0;
+                  const hasLocation = data && data.location != null;
+                  return (
+                    <RadioGroup
+                      row
+                      value={linkMode}
+                      onChange={(e) => setLinkMode(e.target.value)}
+                    >
+                      <FormControlLabel
+                        value="QUADRANT"
+                        control={<Radio />}
+                        label={t('link-mode-quadrant') || 'Quadrant'}
+                        disabled={hasLocation}
+                      />
+                      <FormControlLabel
+                        value="POINT"
+                        control={<Radio />}
+                        label={t('link-mode-point') || 'Point'}
+                        disabled={hasQuadrants}
+                      />
+                    </RadioGroup>
+                  );
+                })()}
+              </Box>
+
+              {linkMode === 'QUADRANT' ? (
+                <>
+                  <Typography variant="subtitle1">{t("quadrant-list")}</Typography>
+                  <TableContainer
+                    component={Paper}
+                    elevation={3}
+                    sx={{ maxHeight: 320 }}
+                  >
+                    <Table stickyHeader aria-label="sticky table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ color: "secondary.light" }}>
+                            {t("quadrant-id")}
                           </TableCell>
-                          <TableCell align="right">{row.nombre}</TableCell>
-                          <TableCell>
-                            <Button
-                              sx={{ color: "red" }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleResolveQuadrantOpenClick(row.id);
-                              }}
-                            >
-                              <FireExtinguisherIcon />
-                            </Button>
+                          <TableCell
+                            sx={{ color: "secondary.light" }}
+                            align="right"
+                          >
+                            {t("quadrant-name")}
+                          </TableCell>
+                          <TableCell
+                            sx={{ color: "secondary.light" }}
+                            align="right"
+                          >
+                            {t("options")}
                           </TableCell>
                         </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={3} align="center">
-                          {t("quadrants-empty-list")}
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box m={1}>
-                <Fab
-                  color="primary"
-                  aria-label="add"
-                  onClick={() => handleOpenClick()}
-                >
-                  <AddIcon />
-                </Fab>
-              </Box>
+                      </TableHead>
+                      <TableBody>
+                        {data.quadrantInfo && data.quadrantInfo.length > 0 ? (
+                          data.quadrantInfo.map((row) => (
+                            <TableRow
+                              key={row.id}
+                              hover
+                              sx={{
+                                "&:last-child td, &:last-child th": { border: 0 },
+                              }}
+                              onClick={() =>
+                                navigate("/quadrant", {
+                                  state: { quadrantId: row.id },
+                                })}
+                            >
+                              <TableCell component="th" scope="row">
+                                {row.id}
+                              </TableCell>
+                              <TableCell align="right">{row.nombre}</TableCell>
+                              <TableCell>
+                                <Button
+                                  sx={{ color: "red" }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleResolveQuadrantOpenClick(row.id);
+                                  }}
+                                >
+                                  <FireExtinguisherIcon />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={3} align="center">
+                              {t("quadrants-empty-list")}
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <Box m={1}>
+                    <Fab
+                      color="primary"
+                      aria-label="add"
+                      onClick={() => handleOpenClick()}
+                    >
+                      <AddIcon />
+                    </Fab>
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Typography variant="subtitle1">{t('point-link-title') || 'Link to point'}</Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
+                    <TextField
+                      label={t('longitude') || 'Longitude'}
+                      value={pointLon}
+                      onChange={(e) => setPointLon(e.target.value)}
+                      variant="outlined"
+                    />
+                    <TextField
+                      label={t('latitude') || 'Latitude'}
+                      value={pointLat}
+                      onChange={(e) => setPointLat(e.target.value)}
+                      variant="outlined"
+                    />
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      {(() => {
+                        const hasLocation = data && data.location != null;
+                        return (
+                          <>
+                            <Button variant="contained" disabled={hasLocation} onClick={() => {
+                              // call link point
+                              const lonNum = Number(pointLon);
+                              const latNum = Number(pointLat);
+                              if (Number.isNaN(lonNum) || Number.isNaN(latNum)) {
+                                toast.error(t('invalid-coordinates') || 'Invalid coordinates');
+                                return;
+                              }
+                              const payloadPoint = { token: token, emergencyId: emergencyId, lon: lonNum, lat: latNum, locale: locale };
+                              // Log payload to help debugging what is sent to backend
+                              console.debug('linkEmergencyToPoint payload', { emergencyId: emergencyId, lon: lonNum, lat: latNum, locale });
+                              linkEmergencyToPoint(payloadPoint)
+                                .unwrap()
+                                .then(() => {
+                                  toast.success(t('quadrant-linked-successfully'));
+                                  refetch();
+                                })
+                                .catch(() => toast.error(t('quadrant-linked-error')));
+                            }}>{t('link-point') || 'Link Point'}</Button>
+                            <Button onClick={() => { setPointLon(''); setPointLat(''); }}>{t('clear') || 'Clear'}</Button>
+                            {hasLocation && <Typography variant="body2" sx={{ alignSelf: 'center', color: 'text.secondary' }}>{t('point-already-linked') || 'Point already linked'}</Typography>}
+                          </>
+                        );
+                      })()}
+                    </Box>
+                  </Box>
+                </>
+              )}
             </Paper>
           )}
         </Grid>
@@ -448,59 +578,74 @@ export default function EmergencyDetailsView() {
               >
                 {t("emergency-resolve")}
               </Button>
-                <Dialog
-                  open={openQuadrantResolve}
-                  onClose={handleResolveQuadrantClose}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description"
-                >
-                  <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
-                    {t("quadrant-resolve-dialog")}
-                  </DialogTitle>
-                  <DialogContent>
-                    <Typography variant="body2">
-                      {t("quadrant-resolve-text")}
-                    </Typography>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleResolveQuadrantClose}>{t("cancel")}</Button>
-                    <Button
-                      onClick={handleResolveQuadrantClick}
-                      color="error"
-                      autoFocus
-                    >
-                      {t("quadrant-resolve")}
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-                <Dialog
-                  open={openResolve}
-                  onClose={handleResolveClose}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description"
-                >
-                  <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
-                    {t("emergency-resolve-dialog")}
-                  </DialogTitle>
-                  <DialogContent>
-                    <Typography variant="body2">
-                      {t("emergency-resolve-text")}
-                    </Typography>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleResolveClose}>{t("cancel")}</Button>
-                    <Button
-                      onClick={handleResolveClick}
-                      color="error"
-                      autoFocus
-                    >
-                      {t("emergency-resolve")}
-                    </Button>
-                  </DialogActions>
-                </Dialog>
+              <Dialog
+                open={openQuadrantResolve}
+                onClose={handleResolveQuadrantClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
+                  {t("quadrant-resolve-dialog")}
+                </DialogTitle>
+                <DialogContent>
+                  <Typography variant="body2">
+                    {t("quadrant-resolve-text")}
+                  </Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleResolveQuadrantClose}>{t("cancel")}</Button>
+                  <Button
+                    onClick={handleResolveQuadrantClick}
+                    color="error"
+                    autoFocus
+                  >
+                    {t("quadrant-resolve")}
+                  </Button>
+                </DialogActions>
+              </Dialog>
+              <Dialog
+                open={openResolve}
+                onClose={handleResolveClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
+                  {t("emergency-resolve-dialog")}
+                </DialogTitle>
+                <DialogContent>
+                  <Typography variant="body2">
+                    {t("emergency-resolve-text")}
+                  </Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleResolveClose}>{t("cancel")}</Button>
+                  <Button
+                    onClick={handleResolveClick}
+                    color="error"
+                    autoFocus
+                  >
+                    {t("emergency-resolve")}
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Paper>
           )}
-          {coordinates && <WeatherInfo sx={{ padding: 2 }} lat={coordinates.lat} lon={coordinates.lon} />}
+
+          {/* Weather info: show for POINT mode if coords valid, otherwise use computed coordinates from quadrant/location */}
+          {(() => {
+            const latFromPoint = pointLat !== '' ? Number(pointLat) : NaN;
+            const lonFromPoint = pointLon !== '' ? Number(pointLon) : NaN;
+            const usePoint = linkMode === 'POINT' && !Number.isNaN(latFromPoint) && !Number.isNaN(lonFromPoint);
+            if (usePoint) {
+              console.debug('Rendering WeatherInfo (POINT) with', { lat: latFromPoint, lon: lonFromPoint });
+              return <WeatherInfo sx={{ padding: 2 }} lat={latFromPoint} lon={lonFromPoint} />;
+            }
+            if (coordinates && coordinates.lat != null && coordinates.lon != null) {
+              console.debug('Rendering WeatherInfo (computed) with', coordinates);
+              return <WeatherInfo sx={{ padding: 2 }} lat={coordinates.lat} lon={coordinates.lon} />;
+            }
+            return null;
+          })()}
 
         </Grid>
       </Grid>
