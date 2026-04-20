@@ -70,6 +70,11 @@ const pages = [
     icon: <ArticleIcon />,
     role: ["COORDINATOR"],
   },
+  {
+    name: "assignment-management",
+    icon: <ArticleIcon />,
+    role: ["COORDINATOR"],
+  },
 ];
 
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -123,7 +128,7 @@ export default function PersistentDrawerLeft() {
   };
 
   const handleClickItemList = (e, text) => {
-    switch (text) {
+      switch (text) {
       case "my-team":
         navigate("/my-team");
         break;
@@ -141,6 +146,9 @@ export default function PersistentDrawerLeft() {
         break;
       case "notice-management":
         navigate("/notice-management");
+        break;
+      case "assignment-management":
+        navigate("/assignments");
         break;
       default:
         navigate("/");
@@ -175,6 +183,8 @@ export default function PersistentDrawerLeft() {
         return pathname.startsWith("/user-management");
       case "notice-management":
         return pathname.startsWith("/notice-management");
+      case "assignment-management":
+        return pathname.startsWith("/assignments");
       default:
         return false;
     }
@@ -186,6 +196,7 @@ export default function PersistentDrawerLeft() {
     "emergency-management",
     "user-management",
     "notice-management",
+    "assignment-management",
   ];
 
   const availablePages = pages.filter((item) => item.role.includes(userRole));

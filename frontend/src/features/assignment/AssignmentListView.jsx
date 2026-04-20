@@ -1,0 +1,171 @@
+import React, { useMemo, useState } from 'react';
+import { Box, Typography, Paper, Button } from '@mui/material';
+import { DataGrid, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarDensitySelector, GridToolbarFilterButton, esES } from '@mui/x-data-grid';
+import { useGetEmergenciesQuery } from '../../api/emergencyApi';
+import { useGetAssignmentsQuery } from '../../api/assignmentApi';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectToken } from '../user/login/LoginSlice';
+
+export default function AssignmentListView() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const token = useSelector(selectToken);
+  const { i18n } = useTranslation();
+  const locale = i18n?.language || 'es';
+
+  const { data: emergencies = [] } = useGetEmergenciesQuery({ token, locale });
+  const { data: assignments = [], isLoading, refetch } = useGetAssignmentsQuery({ token, locale }, { refetchOnMountOrArgChange: true });
+
+  const [pageSize, setPageSize] = useState(10);
+
+  function CustomToolbar() {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarColumnsButton />
+        <GridToolbarFilterButton />
+        <GridToolbarDensitySelector />
+      </GridToolbarContainer>
+    );
+  }
+
+  const columns = [
+    { field: 'id', headerName: t('id', 'ID'), width: 90 },
+    {
+      field: 'emergencyName',
+      headerName: t('emergency-name', 'Emergency name'),
+      flex: 1,
+      valueGetter: (params) => {
+        const a = params.row || {};
+        const emInfo = a.emergencyInfo || a.emergency;
+        return emInfo ? (emInfo.description || '') : '-';
+      },
+    },
+    {
+      field: 'emergencyId',
+      headerName: t('emergency-id', 'Emergency ID'),
+      width: 120,
+      valueGetter: (params) => {
+        const a = params.row || {};
+        const emInfo = a.emergencyInfo || a.emergency;
+        return emInfo ? `#${emInfo.id}` : (a.emergencyId ? `#${a.emergencyId}` : '-');
+      },
+    },
+    {
+      field: 'quadrantName',
+      headerName: t('quadrant-name', 'Quadrant name'),
+      width: 220,
+      valueGetter: (params) => {
+        const a = params.row || {};
+        const qInfo = a.quadrantInfo || (a.emergencyInfo && Array.isArray(a.emergencyInfo.quadrantInfo) && a.emergencyInfo.quadrantInfo.length ? a.emergencyInfo.quadrantInfo[0] : null);
+        return qInfo ? (qInfo.nombre || qInfo.name || '') : (a.emergencyQuadrantId ? `#${a.emergencyQuadrantId}` : '-');
+      },
+    },
+    {
+      field: 'quadrantId',
+      headerName: t('quadrant-id', 'Quadrant ID'),
+      width: 120,
+      valueGetter: (params) => {
+        const a = params.row || {};
+        const qInfo = a.quadrantInfo || (a.emergencyInfo && Array.isArray(a.emergencyInfo.quadrantInfo) && a.emergencyInfo.quadrantInfo.length ? a.emergencyInfo.quadrantInfo[0] : null);
+        return qInfo ? `#${qInfo.id}` : (a.emergencyQuadrantId ? `#${a.emergencyQuadrantId}` : '-');
+      },
+    },
+    {
+      field: 'resourceName',
+      headerName: t('resource-name', 'Resource name'),
+      width: 220,
+      valueGetter: (params) => {
+        const a = params.row || {};
+        const team = a.teamInfo;
+        const vehicle = a.vehicleInfo;
+        const resource = team || vehicle || null;
+        return resource ? (resource.name || resource.code || resource.plate || '') : '-';
+      },
+    },
+    {
+      field: 'resourceId',
+      headerName: t('resource-id', 'Resource ID'),
+      width: 120,
+      valueGetter: (params) => {
+        const a = params.row || {};
+        const team = a.teamInfo;
+        const vehicle = a.vehicleInfo;
+        const resource = team || vehicle || null;
+        return resource ? `#${resource.id}` : (a.resourceId ? `#${a.resourceId}` : '-');
+      },
+    },
+    {
+      field: 'resourceType',
+      headerName: t('type', 'Type'),
+      width: 140,
+      valueGetter: (params) => {
+        const a = params.row || {};
+        const team = a.teamInfo;
+        const vehicle = a.vehicleInfo;
+        const raw = a.resourceType || (team ? 'TEAM' : vehicle ? 'VEHICLE' : null);
+        return raw ? t(String(raw).toLowerCase(), raw) : '-';
+      },
+    },
+    {
+      field: 'assignedAt',
+      headerName: t('assigned-at', 'Assigned at'),
+      width: 200,
+      valueGetter: (params) => {
+        const v = params.row ? params.row.assignedAt : null;
+        if (!v) return '-';
+        try { return new Date(v).toLocaleString(); } catch (e) { return v; }
+      },
+    },
+    {
+      field: 'status',
+      headerName: t('status', 'Status'),
+      width: 160,
+      renderCell: (params) => {
+        const s = params.value;
+        if (!s) return '-';
+        if (s === 'ACCEPTED') {
+          return <span style={{ color: 'green', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+        }
+        return <span>{t(String(s).toLowerCase(), s)}</span>;
+      },
+    },
+  ];
+
+  const localeText = locale === 'es' ? esES.components.MuiDataGrid.defaultProps.localeText : undefined;
+
+  return (
+    <Box p={2}>
+      <Typography variant="h4" margin={1} sx={{ fontWeight: 'bold', color: 'primary.light' }}>{t('assignment-list', 'Assignments')}</Typography>
+
+      <Box sx={{ height: 490, width: '100%', '& .accepted': { backgroundColor: '#e8f5e9', '&:hover': { backgroundColor: '#c8e6c9' } }, '& .pending': { backgroundColor: '#fff8e1' }, '& .completed': { backgroundColor: '#eceff1' } }}>
+        <DataGrid
+          rows={assignments || []}
+          columns={columns}
+          loading={isLoading}
+          pageSize={pageSize}
+          onPageSizeChange={(newSize) => setPageSize(newSize)}
+          rowsPerPageOptions={[10, 25, 50]}
+          pagination
+          components={{ Toolbar: CustomToolbar }}
+          componentsProps={{ pagination: { labelRowsPerPage: t('rows-per-page') } }}
+          localeText={localeText}
+          getRowId={(row) => row.id}
+          getRowClassName={(params) => {
+            const status = params.row ? params.row.status : null;
+            if (!status) return '';
+            if (status === 'ACCEPTED') return 'accepted';
+            if (status === 'PENDING' || status === 'CREATED') return 'pending';
+            if (status === 'COMPLETED') return 'completed';
+            return '';
+          }}
+        />
+        <Box sx={{ mt: 2 }}>
+          <Button variant="contained" color="secondary" sx={{ ml: 'auto' }} onClick={() => navigate('/assignment-management')}>{t('create-assignment', 'Create assignment')}</Button>
+        </Box>
+      </Box>
+
+    </Box>
+  );
+}

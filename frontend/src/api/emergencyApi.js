@@ -13,6 +13,13 @@ export const emergencyApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => {
         return response;
       },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map((e) => ({ type: 'Emergency', id: e.id })),
+              { type: 'Emergency', id: 'LIST' },
+            ]
+          : [{ type: 'Emergency', id: 'LIST' }],
     }),
     getEmergencyTypes: build.query({
       query: (payload) => ({
@@ -56,6 +63,7 @@ export const emergencyApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => {
         return response;
       },
+      invalidatesTags: [{ type: 'Emergency', id: 'LIST' }],
     }),
     updateEmergency: build.mutation({
       query: (payload) => ({

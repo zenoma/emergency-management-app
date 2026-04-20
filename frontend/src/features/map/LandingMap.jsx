@@ -186,7 +186,10 @@ export default function LandingMap(props) {
   useEffect(() => {
     const ids = [];
     if (quadrants && Array.isArray(quadrants)) {
-      quadrants.forEach((q) => ids.push(q.id.toString()));
+      quadrants.forEach((q) => {
+        const id = q && q.id != null ? q.id : (q && q.quadrant && q.quadrant.id != null ? q.quadrant.id : null);
+        if (id != null) ids.push(id.toString());
+      });
     }
     if (emergencyFeatures && emergencyFeatures.length > 0) {
       ids.push('emergency-symbols');
@@ -214,21 +217,23 @@ export default function LandingMap(props) {
       </div>
 
       {quadrants &&
-        quadrants.map((item) => {
-          const coord = item.coordinates.map((item) => {
+      quadrants.map((item) => {
+          // support two shapes: item can be a quadrant object or { quadrant, linkedAt, resolvedAt }
+          const quad = item && item.quadrant ? item.quadrant : item;
+          if (!quad || !quad.coordinates) return null;
+
+          const coord = quad.coordinates.map((c) => {
             return [
-              untransformCoordinates(item.x, item.y).longitude,
-              untransformCoordinates(item.x, item.y).latitude,
+              untransformCoordinates(c.x, c.y).longitude,
+              untransformCoordinates(c.x, c.y).latitude,
             ];
           });
 
-          const teamSize = item.teamList ? item.teamList.length : -1;
-          const vehicleSize = item.vehicleList
-            ? item.vehicleList.length
-            : -1;
+          const teamSize = quad.teamList ? quad.teamList.length : -1;
+          const vehicleSize = quad.vehicleList ? quad.vehicleList.length : -1;
 
           const quadrantLabelStyle = {
-            id: item.id.toString() + "-label",
+            id: quad.id.toString() + "-label",
             minzoom: 11.5,
             type: "symbol",
             source: "label",
@@ -247,7 +252,7 @@ export default function LandingMap(props) {
           };
 
           const teamLabelStyle = {
-            id: item.id.toString() + "-team-label",
+            id: quad.id.toString() + "-team-label",
             minzoom: 11.5,
             type: "symbol",
             source: "label",
@@ -271,7 +276,7 @@ export default function LandingMap(props) {
           };
 
           const vehiclesLabelStyle = {
-            id: item.id.toString() + "-vehicle-label",
+            id: quad.id.toString() + "-vehicle-label",
             minzoom: 11.5,
             type: "symbol",
             source: "label",
@@ -295,7 +300,7 @@ export default function LandingMap(props) {
           };
 
           const quadrantLayerStyle = {
-            id: item.id.toString(),
+            id: quad.id.toString(),
             type: "fill",
             layout: {},
             paint: {
@@ -306,7 +311,7 @@ export default function LandingMap(props) {
           };
 
           const quadrantBorderStyle = {
-            id: item.id.toString() + "-border",
+            id: quad.id.toString() + "-border",
             type: "line",
             layout: {},
             paint: {
@@ -321,9 +326,9 @@ export default function LandingMap(props) {
             features: [
               {
                 type: "Feature",
-                properties: Object.assign({}, item, {
-                  "place-name": item.nombre,
-                  "place-id": item.id,
+                properties: Object.assign({}, quad, {
+                  "place-name": quad.nombre,
+                  "place-id": quad.id,
                   "team-size": teamSize,
                   "vehicle-size": vehicleSize,
                 }),
@@ -335,7 +340,7 @@ export default function LandingMap(props) {
             ],
           };
           return (
-            <Source key={item.id.toString()} type="geojson" data={geoJson}>
+            <Source key={quad.id.toString()} type="geojson" data={geoJson}>
               <Layer {...quadrantBorderStyle} />
               <Layer {...quadrantLayerStyle} />
               {teamSize === -1 ? undefined : <Layer {...teamLabelStyle} />}
