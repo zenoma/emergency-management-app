@@ -17,6 +17,7 @@ import {
   ListItemText,
   Divider,
 } from "@mui/material";
+import Button from "@mui/material/Button";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -304,6 +305,8 @@ export default function EmergencyHistoryView() {
                         const rawY = emergencyData.location.lat;
                         const geo = untransformCoordinates(rawX, rawY);
                         const quadrantName = quadrantByCoordinates?.nombre || quadrantByCoordinates?.name || t('quadrant-name-unknown');
+                        // try to obtain an id for the quadrant from possible response shapes
+                        const quadrantIdFromCoords = quadrantByCoordinates?.id || quadrantByCoordinates?.gid || (quadrantByCoordinates?.data && (quadrantByCoordinates.data.id || quadrantByCoordinates.data.gid));
                         return (
                           <List dense disablePadding>
                             <ListItem>
@@ -316,7 +319,32 @@ export default function EmergencyHistoryView() {
                               <ListItemIcon>
                                 <MapIcon color="primary" />
                               </ListItemIcon>
-                              <ListItemText primary={t('quadrant-name') || 'Quadrant'} secondary={quadrantName} />
+                              <ListItemText
+                                primary={t('quadrant-name') || 'Quadrant'}
+                                secondary={
+                                  quadrantIdFromCoords ? (
+                                    // navigate to quadrant-history with the currently selected date range and emergency id
+                                    <Button
+                                      variant="text"
+                                      onClick={() =>
+                                        navigate("/quadrant-history", {
+                                            state: {
+                                              quadrantId: quadrantIdFromCoords,
+                                              startDate: selectedStartDate ? selectedStartDate.format("YYYY-MM-DD") : (emergencyData && emergencyData.createdAt ? dayjs(emergencyData.createdAt).format("YYYY-MM-DD") : dayjs().subtract(1, 'year').format("YYYY-MM-DD")),
+                                              endDate: selectedEndDate ? selectedEndDate.format("YYYY-MM-DD") : (emergencyData && emergencyData.resolvedAt ? dayjs(emergencyData.resolvedAt).format("YYYY-MM-DD") : dayjs().add(10, 'year').format("YYYY-MM-DD")),
+                                              emergencyId: emergencyData && emergencyData.id ? emergencyData.id : emergencyId,
+                                            },
+                                        })
+                                      }
+                                      sx={{ textTransform: "none" }}
+                                    >
+                                      {quadrantName}
+                                    </Button>
+                                  ) : (
+                                    quadrantName
+                                  )
+                                }
+                              />
                             </ListItem>
                           </List>
                         );
@@ -365,17 +393,6 @@ export default function EmergencyHistoryView() {
                             <TableRow
                               key={(item.quadrant && item.quadrant.id ? item.quadrant.id : index) + "-" + index}
                               hover
-                              onClick={() =>
-                                navigate("/quadrant-history", {
-                                  state: {
-                                    quadrantId: item.quadrant.id,
-                                    startDate: item.linkedAt,
-                                    endDate: item.resolvedAt,
-                                    // ensure we pass a valid emergencyId: prefer fetched emergencyData.id if available
-                                    emergencyId: emergencyData && emergencyData.id ? emergencyData.id : emergencyId,
-                                  },
-                                })
-                              }
                               sx={{
                                 "&:last-child td, &:last-child th": {
                                   border: 0,
@@ -386,7 +403,23 @@ export default function EmergencyHistoryView() {
                                 {item.quadrant.id}
                               </TableCell>
                               <TableCell align="right">
-                                {item.quadrant.nombre}
+                                <Button
+                                  onClick={() =>
+                                    navigate("/quadrant-history", {
+                                        state: {
+                                          quadrantId: item.quadrant.id,
+                                          // use selected date range from the picker so quadrant-history shows the same time window
+                                          startDate: selectedStartDate ? selectedStartDate.format("YYYY-MM-DD") : (emergencyData && emergencyData.createdAt ? dayjs(emergencyData.createdAt).format("YYYY-MM-DD") : (item.linkedAt ? dayjs(item.linkedAt).format("YYYY-MM-DD") : dayjs().subtract(1, 'year').format("YYYY-MM-DD"))),
+                                          endDate: selectedEndDate ? selectedEndDate.format("YYYY-MM-DD") : (emergencyData && emergencyData.resolvedAt ? dayjs(emergencyData.resolvedAt).format("YYYY-MM-DD") : (item.resolvedAt ? dayjs(item.resolvedAt).format("YYYY-MM-DD") : dayjs().add(10, 'year').format("YYYY-MM-DD"))),
+                                          emergencyId: emergencyData && emergencyData.id ? emergencyData.id : emergencyId,
+                                        },
+                                    })
+                                  }
+                                  variant="text"
+                                  sx={{ textTransform: "none" }}
+                                >
+                                  {item.quadrant.nombre}
+                                </Button>
                               </TableCell>
                               <TableCell align="right">{item.linkedAt ? formatDate(item.linkedAt, locale) : '-'}</TableCell>
                               <TableCell align="right">

@@ -58,22 +58,45 @@ export default function QuadrantHistoryView() {
     for (const entry of emergencyLogs) {
       try {
         const a = entry.assignment;
-        if (!a) continue;
-        // Only consider assignments that reached COMPLETED status
-        if (!a.status || String(a.status).toUpperCase() !== 'COMPLETED') continue;
+        // allow logs where the assignment object is present OR the eventType explicitly marks completion
+        if (!a && !(entry.eventType && String(entry.eventType).toUpperCase().includes('ASSIGNMENT_COMPLETED'))) continue;
+        // Determine whether this entry represents a completed assignment. Some log shapes mark completion
+        // via assignment.status === 'COMPLETED', others via entry.eventType === 'ASSIGNMENT_COMPLETED'. Accept both.
+        const entryEventType = entry.eventType ? String(entry.eventType).toUpperCase() : null;
+        const assignmentStatus = a && a.status ? String(a.status).toUpperCase() : null;
+        const isCompleted = (assignmentStatus === 'COMPLETED') || (entryEventType && entryEventType.includes('ASSIGNMENT_COMPLETED'));
+        if (!isCompleted) continue;
         // determine the quadrant id for the assignment: prefer embedded quadrant id
-        const aqid = a.quadrantInfo && a.quadrantInfo.id ? a.quadrantInfo.id : (entry.quadrant && entry.quadrant.id ? entry.quadrant.id : (a.emergencyQuadrantId || null));
-        if (!aqid) continue;
-        if (Number(aqid) !== Number(quadrantId)) continue;
+        const aqid = a && a.quadrantInfo && a.quadrantInfo.id ? a.quadrantInfo.id : (entry.quadrant && entry.quadrant.id ? entry.quadrant.id : (a && a.emergencyQuadrantId ? a.emergencyQuadrantId : null));
 
-        const resourceDeploy = a.acceptedAt || a.assignedAt || (a.teamInfo && a.teamInfo.deployAt) || (a.vehicleInfo && a.vehicleInfo.deployAt) || null;
-        const resourceRetract = a.completedAt || null;
+        // Determine whether this entry belongs to the requested quadrant.
+        // Accept cases where the assignment/quadrant explicitly references the quadrant (aqid),
+        // or when the navigation included an emergencyId and the assignment references that emergency
+        // (this covers point-linked emergencies where assignments may not carry quadrant info).
+        const payloadEmergencyId = location.state && location.state.emergencyId ? location.state.emergencyId : undefined;
+        let matchesQuadrant = false;
+        if (aqid) {
+          matchesQuadrant = (Number(aqid) === Number(quadrantId));
+        } else if (payloadEmergencyId) {
+          const aEmergencyId = a && a.emergencyInfo && a.emergencyInfo.id ? a.emergencyInfo.id : (entry.emergency && entry.emergency.id ? entry.emergency.id : (entry.emergencyId || null));
+          if (aEmergencyId && Number(aEmergencyId) === Number(payloadEmergencyId)) {
+            matchesQuadrant = true;
+          }
+        }
+        if (!matchesQuadrant) continue;
 
-        if (a.teamInfo) {
-          const id = a.teamInfo.id;
+        // normalize resource info: prefer assignment.* fields, fall back to top-level entry.* fields
+        const teamInfo = (a && a.teamInfo) ? a.teamInfo : (entry.teamInfo ? entry.teamInfo : null);
+        const vehicleInfo = (a && a.vehicleInfo) ? a.vehicleInfo : (entry.vehicleInfo ? entry.vehicleInfo : null);
+
+        const resourceDeploy = (a && (a.acceptedAt || a.assignedAt)) || (teamInfo && teamInfo.deployAt) || (vehicleInfo && vehicleInfo.deployAt) || entry.assignedAt || entry.acceptedAt || null;
+        const resourceRetract = (a && a.completedAt) || entry.completedAt || entry.eventAt || null;
+
+        if (teamInfo) {
+          const id = teamInfo.id;
           const existing = tMap.get(id);
           if (!existing) {
-            tMap.set(id, { teamInfo: a.teamInfo, deployAt: resourceDeploy, retractAt: resourceRetract });
+            tMap.set(id, { teamInfo: teamInfo, deployAt: resourceDeploy, retractAt: resourceRetract });
           } else {
             // update times: keep earliest deployAt and latest retractAt
             const dCandidates = [existing.deployAt, resourceDeploy].filter(Boolean).map((s) => new Date(s));
@@ -86,11 +109,11 @@ export default function QuadrantHistoryView() {
           }
         }
 
-        if (a.vehicleInfo) {
-          const id = a.vehicleInfo.id;
+        if (vehicleInfo) {
+          const id = vehicleInfo.id;
           const existing = vMap.get(id);
           if (!existing) {
-            vMap.set(id, { vehicleInfo: a.vehicleInfo, deployAt: resourceDeploy, retractAt: resourceRetract });
+            vMap.set(id, { vehicleInfo: vehicleInfo, deployAt: resourceDeploy, retractAt: resourceRetract });
           } else {
             const dCandidates = [existing.deployAt, resourceDeploy].filter(Boolean).map((s) => new Date(s));
             const rCandidates = [existing.retractAt, resourceRetract].filter(Boolean).map((s) => new Date(s));
