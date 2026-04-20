@@ -39,6 +39,7 @@ import TeamView from "./features/team/TeamView";
 import UserManagementView from "./features/user/management/UserManagementView";
 import AssignmentManagementView from "./features/assignment/AssignmentManagementView";
 import AssignmentListView from "./features/assignment/AssignmentListView";
+import AssignmentDetailsView from "./features/assignment/AssignmentDetailsView";
 
 function App({ t }) {
 
@@ -133,6 +134,7 @@ function App({ t }) {
             <Route path="/notice-management" element={userRole === 'COORDINATOR' ? <CoordinatorNoticesView /> : <Navigate to="/" />} />
             <Route path="/assignment-management" element={userRole === 'COORDINATOR' ? <AssignmentManagementView /> : <Navigate to="/" />} />
             <Route path="/assignments" element={userRole === 'COORDINATOR' ? <AssignmentListView /> : <Navigate to="/" />} />
+            <Route path="/assignments/:id" element={userRole === 'COORDINATOR' ? <AssignmentDetailsView /> : <Navigate to="/" />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>

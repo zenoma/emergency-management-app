@@ -12,6 +12,18 @@ export const rtkQueryErrorLogger = (api) => (next) => (action) => {
     if (status === 500) {
       console.error(action);
       toast.error("500: Internal Server Error");
+    } else if (status === 404) {
+      // Suppress noisy toasts for missing assignment after deletion.
+      // The backend returns 404 for GET /assignments/{id} when the assignment
+      // was just deleted; showing a toast in that expected flow is confusing.
+      const msg = data && data.errorMessage ? data.errorMessage : '';
+      if (msg.includes('Assignment not found') || msg.includes('No existe Assignment')) {
+        if (import.meta.env.VITE_REACT_APP_MODE === "development") {
+          console.debug('Ignored 404:', msg);
+        }
+      } else {
+        toast.error('404: Not found');
+      }
     } else if (data) {
       if (data.fieldErrors && data.fieldErrors.length > 0) {
         data.fieldErrors.forEach((fieldError) => {

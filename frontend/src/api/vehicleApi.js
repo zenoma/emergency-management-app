@@ -26,6 +26,13 @@ export const vehicleApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => {
         return response;
       },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map((r) => ({ type: 'Vehicle', id: r.id })),
+              { type: 'Vehicle', id: 'LIST' },
+            ]
+          : [{ type: 'Vehicle', id: 'LIST' }],
     }),
     getActiveVehiclesByOrganizationId: build.query({
       query: (payload) => ({

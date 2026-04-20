@@ -16,6 +16,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { selectToken, selectUser } from "../user/login/LoginSlice";
@@ -31,6 +32,7 @@ export default function AssignmentManagementView() {
   const { t, i18n } = useTranslation();
   const token = useSelector(selectToken);
   const user = useSelector(selectUser);
+  const navigate = useNavigate();
 
   const locale = i18n?.language || "es";
 
@@ -101,11 +103,17 @@ export default function AssignmentManagementView() {
       .then((response) => {
         console.log('createAssignment response', response);
         toast.success(t('assignment-created', 'Assignment created successfully'));
-        setSelectedEmergency('');
-        setSelectedQuadrant('');
-        setSelectedTeamObj(null);
-        setSelectedVehicleObj(null);
-        setNotes('');
+        // navigate to newly created assignment details
+        if (response && response.id) {
+          navigate(`/assignments/${response.id}`);
+        } else {
+          // fallback: reset form
+          setSelectedEmergency('');
+          setSelectedQuadrant('');
+          setSelectedTeamObj(null);
+          setSelectedVehicleObj(null);
+          setNotes('');
+        }
       })
       .catch((e) => {
         console.error('createAssignment error', e);

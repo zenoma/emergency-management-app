@@ -213,7 +213,19 @@ public class AssignmentServiceImpl implements AssignmentService {
   @Override
   public void deleteAssignment(Long id) throws InstanceNotFoundException {
     Assignment a = findAssignmentById(id);
+    // Only allow deletion when assignment is in PENDING status
+    if (a.getStatus() != AssignmentStatus.PENDING) {
+      throw new InvalidAssignmentTransitionException(a.getStatus() == null ? "null" : a.getStatus().name(),
+          AssignmentStatus.PENDING.name());
+    }
+
     a.setRemoved(Boolean.TRUE);
     assignmentRepository.save(a);
+
+    try {
+      logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_DELETED,
+          "Assignment deleted");
+    } catch (Exception ignored) {
+    }
   }
 }

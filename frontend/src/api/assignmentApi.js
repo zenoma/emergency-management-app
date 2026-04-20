@@ -57,7 +57,42 @@ export const assignmentApi = baseApi.injectEndpoints({
       },
       transformResponse: (response) => response || [],
     }),
+    getAssignment: build.query({
+      query: ({ id, token, locale }) => ({
+        url: `/assignments/${id}`,
+        method: 'GET',
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+          'Accept-Language': locale || undefined,
+        },
+      }),
+      transformResponse: (response) => response || null,
+      providesTags: (result, error, arg) => result ? [{ type: 'Assignment', id: result.id }] : [{ type: 'Assignment', id: 'LIST' }],
+    }),
+    deleteAssignment: build.mutation({
+      query: ({ id, token, locale }) => ({
+        url: `/assignments/${id}`,
+        method: 'DELETE',
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+          'Accept-Language': locale || undefined,
+        },
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Assignment', id: 'LIST' }, { type: 'Assignment', id: arg.id }],
+    }),
+    updateAssignmentStatus: build.mutation({
+      query: ({ id, status, token, locale }) => ({
+        url: `/assignments/${id}/status`,
+        method: 'PUT',
+        body: { status },
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+          'Accept-Language': locale || undefined,
+        },
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Assignment', id: arg.id }, { type: 'Assignment', id: 'LIST' }],
+    }),
   }),
 });
 
-export const { useCreateAssignmentMutation, useGetAssignmentsQuery } = assignmentApi;
+export const { useCreateAssignmentMutation, useGetAssignmentsQuery, useGetAssignmentQuery, useDeleteAssignmentMutation, useUpdateAssignmentStatusMutation } = assignmentApi;
