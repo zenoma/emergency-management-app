@@ -1,5 +1,11 @@
 package es.udc.emergencyapp.ui.map
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,11 +17,17 @@ import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
+import org.maplibre.android.style.expressions.Expression
 import org.maplibre.android.style.layers.FillLayer
 import org.maplibre.android.style.layers.PropertyFactory.fillColor
 import org.maplibre.android.style.layers.PropertyFactory.fillOpacity
+import org.maplibre.android.style.layers.PropertyFactory.iconAllowOverlap
+import org.maplibre.android.style.layers.PropertyFactory.iconIgnorePlacement
+import org.maplibre.android.style.layers.PropertyFactory.iconImage
+import org.maplibre.android.style.layers.PropertyFactory.iconSize
 import org.maplibre.android.style.layers.PropertyFactory.lineColor
 import org.maplibre.android.style.layers.PropertyFactory.lineWidth
+import org.maplibre.android.style.layers.SymbolLayer
 import org.maplibre.android.style.sources.GeoJsonSource
 
 class MapFragment : Fragment() {
@@ -53,6 +65,7 @@ class MapFragment : Fragment() {
                     )
 
                     val quadrantsJson = fetchQuadrantsJson(hostsToTry)
+                    val emergenciesJson = fetchEmergenciesJson(hostsToTry)
                     val jsonToUse = transformToWGS84GeoJson(quadrantsJson)
 
                     requireActivity().runOnUiThread {
@@ -67,6 +80,17 @@ class MapFragment : Fragment() {
                                 android.util.Log.d(
                                     "MapFragment",
                                     "No quadrants to display (fetch returned null)"
+                                )
+                            }
+                            try {
+                                if (!emergenciesJson.isNullOrBlank()) {
+                                    addOrUpdateEmergencyMarkers(map, emergenciesJson)
+                                }
+                            } catch (e: Exception) {
+                                android.util.Log.w(
+                                    "MapFragment",
+                                    "Failed to add emergency markers",
+                                    e
                                 )
                             }
                         } catch (e: Exception) {
@@ -124,7 +148,8 @@ class MapFragment : Fragment() {
                     readTimeout = 8000
                 }
                 val code = conn.responseCode
-                val body = if (code == 200) conn.inputStream.bufferedReader().use { it.readText() } else null
+                val body = if (code == 200) conn.inputStream.bufferedReader()
+                    .use { it.readText() } else null
                 conn.disconnect()
                 if (body != null) return body
             } catch (e: Exception) {
@@ -132,6 +157,305 @@ class MapFragment : Fragment() {
             }
         }
         return null
+    }
+
+    private fun fetchEmergenciesJson(hosts: List<String>): String? {
+        for (host in hosts) {
+            try {
+                val url = java.net.URL("$host/emergencies")
+                val conn = (url.openConnection() as java.net.HttpURLConnection).apply {
+                    requestMethod = "GET"
+                    connectTimeout = 8000
+                    readTimeout = 8000
+                }
+                val code = conn.responseCode
+                val body = if (code == 200) conn.inputStream.bufferedReader()
+                    .use { it.readText() } else null
+                conn.disconnect()
+                if (body != null) return body
+            } catch (e: Exception) {
+                android.util.Log.w("MapFragment", "Failed to fetch emergencies from $host", e)
+            }
+        }
+        return null
+    }
+
+    private fun chooseEmergencyIconName(typeKey: String?): String {
+        val lowered = (typeKey ?: "").lowercase()
+        val n = try {
+            java.text.Normalizer.normalize(lowered, java.text.Normalizer.Form.NFD)
+                .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
+        } catch (e: Exception) {
+            lowered
+        }
+        return when {
+            n.contains("incend") || n.contains("fire") -> "emergency-fire"
+            n.contains("inund") || n.contains("flood") || n.contains("water") || n.contains("inundacion") -> "emergency-water"
+            n.contains("torment") || n.contains("temporal") || n.contains("storm") || n.contains("meteor") || n.contains(
+                "evento"
+            ) -> "emergency-storm"
+
+            n.contains("derrum") || n.contains("desprend") || n.contains("land") || n.contains("mont") -> "emergency-montana"
+            n.contains("accident") || n.contains("vial") || n.contains("car") -> "emergency-car"
+            n.contains("sanit") || n.contains("salud") || n.contains("medical") -> "emergency-medical"
+            n.contains("quim") || n.contains("chemical") -> "emergency-chemical"
+            n.contains("industrial") || n.contains("factory") || n.contains("industr") -> "emergency-industrial"
+            else -> "emergency-default"
+        }
+    }
+
+    private fun addOrUpdateEmergencyMarkers(
+        map: org.maplibre.android.maps.MapLibreMap,
+        emergenciesJson: String
+    ) {
+        try {
+            val style = map.style
+            if (style != null) {
+                addOrUpdateEmergencySource(style, emergenciesJson)
+            } else {
+                map.getStyle { s -> addOrUpdateEmergencySource(s, emergenciesJson) }
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("MapFragment", "Failed to add/update emergency markers", e)
+        }
+    }
+
+    private fun drawableToBitmap(resId: Int): Bitmap {
+        val drawable = androidx.core.content.ContextCompat.getDrawable(requireContext(), resId)
+            ?: return Bitmap.createBitmap(
+                1,
+                1,
+                Bitmap.Config.ARGB_8888
+            )
+        return if (drawable is android.graphics.drawable.BitmapDrawable) {
+            drawable.bitmap
+        } else {
+            val minSize = 64
+            val width = if (drawable.intrinsicWidth > 0) kotlin.math.max(
+                drawable.intrinsicWidth,
+                minSize
+            ) else minSize
+            val height = if (drawable.intrinsicHeight > 0) kotlin.math.max(
+                drawable.intrinsicHeight,
+                minSize
+            ) else minSize
+            val bitmap = Bitmap.createBitmap(
+                width,
+                height,
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            bitmap
+        }
+    }
+
+    private fun bitmapFromDrawable(resId: Int, sizePx: Int): Bitmap {
+        val drawable = androidx.core.content.ContextCompat.getDrawable(requireContext(), resId)
+            ?: return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
+    }
+
+    private fun tintBitmapToColor(src: Bitmap, color: Int): Bitmap {
+        val result = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(result)
+        val paint = Paint()
+        paint.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(src, 0f, 0f, paint)
+        return result
+    }
+
+    private fun ensureEmergencyImagesAndLayer(style: Style) {
+        try {
+            fun norm(name: String): String = name.replace(" ", "_").replace("-", "_").lowercase()
+
+            fun findDrawableId(vararg candidates: String): Int {
+                for (c in candidates) {
+                    val id =
+                        resources.getIdentifier(norm(c), "drawable", requireContext().packageName)
+                    if (id != 0) return id
+                }
+                return 0
+            }
+
+            val mapping = mapOf(
+                "emergency-fire" to arrayOf("incendio", "incendio_png", "incendio"),
+                "emergency-water" to arrayOf("inundacion", "inundacion_png", "inundacion"),
+                "emergency-default" to arrayOf("otros", "emergencia_otros"),
+                "emergency-medical" to arrayOf(
+                    "emergencia_medica",
+                    "emergencia-medica",
+                    "emergencia_medica"
+                ),
+                "emergency-industrial" to arrayOf(
+                    "riesgo_industrial",
+                    "riesgo-industrial",
+                    "riesgo_industrial"
+                ),
+                "emergency-montana" to arrayOf("montana"),
+                "emergency-chemical" to arrayOf(
+                    "quimical_hazard",
+                    "quimical hazard",
+                    "quimical_hazard"
+                ),
+                "emergency-storm" to arrayOf("tormenta"),
+                "emergency-terrain" to arrayOf("montana"),
+                "emergency-factory" to arrayOf("riesgo_industrial"),
+                "emergency-science" to arrayOf("quimical_hazard"),
+                "emergency-car" to arrayOf("coche"),
+                "team-icon" to arrayOf("team_icon", "team-icon", "teamicon"),
+                "vehicle-icon" to arrayOf("vehicle_icon", "vehicle-icon", "vehicleicon", "coche")
+            )
+
+            val markerPx = 32
+            for ((key, candidates) in mapping) {
+                try {
+                    val id = findDrawableId(*candidates)
+                    if (id != 0) {
+                        val bmp = bitmapFromDrawable(id, markerPx)
+                        val redBmp = try {
+                            tintBitmapToColor(bmp, Color.RED)
+                        } catch (t: Throwable) {
+                            android.util.Log.w("MapFragment", "Failed to tint bitmap for $key", t)
+                            bmp
+                        }
+                        style.addImage(key, redBmp)
+                    } else {
+                        android.util.Log.w(
+                            "MapFragment",
+                            "No drawable found for map icon '$key' (candidates=${candidates.joinToString()})"
+                        )
+                    }
+                } catch (ex: Exception) {
+                    android.util.Log.w("MapFragment", "Could not add image for $key", ex)
+                }
+            }
+
+            try {
+                val existing = style.getLayer("emergencies-layer")
+                if (existing == null) {
+                    val symbolLayer =
+                        SymbolLayer("emergencies-layer", "emergencies").withProperties(
+                            iconImage(Expression.get("icon")),
+                            iconAllowOverlap(true),
+                            iconIgnorePlacement(true),
+                            iconSize(1.5f)
+                        )
+                    style.addLayer(symbolLayer)
+                }
+            } catch (ex: Exception) {
+                android.util.Log.w("MapFragment", "Could not add emergencies symbol layer", ex)
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("MapFragment", "Failed to add emergency images/layer", e)
+        }
+    }
+
+    private fun addOrUpdateEmergencySource(style: Style, emergenciesRaw: String) {
+        try {
+            ensureEmergencyImagesAndLayer(style)
+
+            val arr = org.json.JSONArray(emergenciesRaw)
+            val features = org.json.JSONArray()
+            for (i in 0 until arr.length()) {
+                try {
+                    val e = arr.getJSONObject(i)
+                    val loc = when {
+                        e.has("location") -> e.getJSONObject("location")
+                        e.has("point") -> e.getJSONObject("point")
+                        else -> null
+                    }
+                    if (loc == null) continue
+                    val lon = if (loc.has("lon")) loc.optDouble(
+                        "lon",
+                        Double.NaN
+                    ) else if (loc.has("x")) loc.optDouble("x", Double.NaN) else Double.NaN
+                    val lat = if (loc.has("lat")) loc.optDouble(
+                        "lat",
+                        Double.NaN
+                    ) else if (loc.has("y")) loc.optDouble("y", Double.NaN) else Double.NaN
+                    if (lon.isNaN() || lat.isNaN()) continue
+
+                    val (finalLon, finalLat) = if (kotlin.math.abs(lon) > 1000000 || kotlin.math.abs(
+                            lat
+                        ) > 1000000
+                    ) {
+                        val geo = transformProjectedToGeographic(lon, lat)
+                        Pair(geo.first, geo.second)
+                    } else Pair(lon, lat)
+
+                    val typeKey =
+                        if (e.has("emergencyTypeName")) e.optString("emergencyTypeName") else if (e.has(
+                                "type"
+                            )
+                        ) e.optString("type") else ""
+                    val iconName = chooseEmergencyIconName(typeKey)
+
+                    val feature = org.json.JSONObject()
+                    feature.put("type", "Feature")
+                    val props = org.json.JSONObject()
+                    props.put("id", e.optInt("id", -1))
+                    props.put("title", e.optString("description", ""))
+                    props.put("icon", iconName)
+                    feature.put("properties", props)
+                    val geom = org.json.JSONObject()
+                    geom.put("type", "Point")
+                    val coords = org.json.JSONArray()
+                    coords.put(finalLon)
+                    coords.put(finalLat)
+                    geom.put("coordinates", coords)
+                    feature.put("geometry", geom)
+                    features.put(feature)
+                } catch (ee: Exception) {
+                    android.util.Log.w("MapFragment", "Skipping malformed emergency entry", ee)
+                }
+            }
+            val fc = org.json.JSONObject()
+            fc.put("type", "FeatureCollection")
+            fc.put("features", features)
+
+            val existing = style.getSourceAs<GeoJsonSource>("emergencies")
+            if (existing != null) {
+                try {
+                    existing.setGeoJson(fc.toString())
+                } catch (e: Exception) {
+                    android.util.Log.w(
+                        "MapFragment",
+                        "Failed to set emergencies geojson on existing source",
+                        e
+                    )
+                }
+            } else {
+                style.addSource(GeoJsonSource("emergencies", fc.toString()))
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("MapFragment", "Failed to build emergency source", e)
+        }
+    }
+
+    private fun transformProjectedToGeographic(x: Double, y: Double): Pair<Double, Double> {
+        return try {
+            val ctFactory = org.locationtech.proj4j.CoordinateTransformFactory()
+            val crsFactory = org.locationtech.proj4j.CRSFactory()
+            val srcCRS = crsFactory.createFromParameters(
+                null,
+                "+proj=utm +zone=29 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+            )
+            val tgtCRS = crsFactory.createFromName("EPSG:4326")
+            val transform = ctFactory.createTransform(srcCRS, tgtCRS)
+            val src = org.locationtech.proj4j.ProjCoordinate(x, y)
+            val dst = org.locationtech.proj4j.ProjCoordinate()
+            transform.transform(src, dst)
+            Pair(dst.x, dst.y)
+        } catch (e: Exception) {
+            android.util.Log.w("MapFragment", "Failed to transform projected emergency coords", e)
+            Pair(x, y)
+        }
     }
 
     private fun transformToWGS84GeoJson(raw: String?): String? {
@@ -222,10 +546,11 @@ class MapFragment : Fragment() {
             )
             try {
                 style.addLayer(
-                    org.maplibre.android.style.layers.LineLayer("quadrants-border", "quadrants").withProperties(
-                        lineColor("#8B0000"),
-                        lineWidth(2f)
-                    )
+                    org.maplibre.android.style.layers.LineLayer("quadrants-border", "quadrants")
+                        .withProperties(
+                            lineColor("#8B0000"),
+                            lineWidth(2f)
+                        )
                 )
             } catch (e: Exception) {
                 android.util.Log.w("MapFragment", "Could not add border layer", e)

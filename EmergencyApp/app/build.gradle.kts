@@ -38,7 +38,7 @@ android {
     }
 }
 
-    dependencies {
+dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -56,6 +56,9 @@ android {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.android.sdk)
     implementation("org.locationtech.proj4j:proj4j:1.1.0")
+    // SVG rendering for runtime conversion of svg assets to bitmaps (removed - using build-time rasterization)
+    // Dependency for SVG rasterization at build time (used by the svg->png task)
+    // Batik rasterizer artifacts will be placed in a dedicated configuration below
     // Image loader and JSON parser used by notices UI
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation("com.google.code.gson:gson:2.10.1")
@@ -64,3 +67,5 @@ android {
     androidTestImplementation(libs.androidx.espresso.core)
 
 }
+
+// No build-time SVG rasterization task: project uses PNGs already present in res/drawable
