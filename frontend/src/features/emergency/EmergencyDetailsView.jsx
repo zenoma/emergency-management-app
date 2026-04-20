@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   Button,
+  IconButton,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -557,12 +558,7 @@ export default function EmergencyDetailsView() {
                           >
                             {t("quadrant-name")}
                           </TableCell>
-                          <TableCell
-                            sx={{ color: "secondary.light" }}
-                            align="right"
-                          >
-                            {t("options")}
-                          </TableCell>
+                          {/* options column removed - delete action moved into the name cell */}
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -582,17 +578,19 @@ export default function EmergencyDetailsView() {
                               <TableCell component="th" scope="row">
                                 {row.id}
                               </TableCell>
-                              <TableCell align="right">{row.nombre}</TableCell>
-                              <TableCell>
-                                <Button
-                                  sx={{ color: "red" }}
+                              <TableCell align="right" sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1 }}>
+                                <Box sx={{ flex: 1, textAlign: 'right' }}>{row.nombre}</Box>
+                                <IconButton
+                                  aria-label={t('remove-quadrant') || 'Remove quadrant'}
+                                  size="small"
+                                  color="error"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleResolveQuadrantOpenClick(row.id);
                                   }}
                                 >
-                                  <DeleteIcon />
-                                </Button>
+                                  <DeleteIcon fontSize="small" />
+                                </IconButton>
                               </TableCell>
                             </TableRow>
                           ))

@@ -139,7 +139,12 @@ export default function QuadrantTeamsTable(props) {
                 <TableRow role="checkbox" tabIndex={-1} key={row.assignmentId || row.resourceId}>
                   {columns.map((column) => {
                     const value = row[column.id];
-                    let content = column.id === 'assignedAt' && value ? formatDate(value, locale) : (column.format && typeof value === "number" ? column.format(value) : value);
+                    let content;
+                    if ((column.id === 'assignedAt' || column.id === 'resourceDeployAt') && value) {
+                      content = formatDate(value, locale);
+                    } else {
+                      content = (column.format && typeof value === "number") ? column.format(value) : value;
+                    }
                     // render colored status for assignmentStatus
                     if (column.id === 'assignmentStatus') {
                       const s = value;

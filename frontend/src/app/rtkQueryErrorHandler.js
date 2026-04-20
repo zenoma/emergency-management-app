@@ -23,6 +23,7 @@ export const rtkQueryErrorLogger = (api) => (next) => (action) => {
 
   if (isRejected(action) && action.payload && action.error && action.error.message) {
     const { status, data } = action.payload;
+    const endpointName = action.meta && action.meta.arg && action.meta.arg.endpointName ? action.meta.arg.endpointName : null;
 
     if (import.meta.env.VITE_REACT_APP_MODE === "development") {
       console.error(`Request ${action.meta.requestId} rejected with payload:`, action.payload);
@@ -32,13 +33,20 @@ export const rtkQueryErrorLogger = (api) => (next) => (action) => {
       console.error(action);
       toast.error("500: Internal Server Error");
     } else if (status === 404) {
-      // Suppress noisy toasts for missing assignment after deletion.
-      // The backend returns 404 for GET /assignments/{id} when the assignment
-      // was just deleted; showing a toast in that expected flow is confusing.
+      // Suppress noisy toasts for expected 404s in some flows.
+      // - GET /assignments/{id} after deletion returns 404 -> ignore
+      // - GET /quadrants/findByCoordinates may return 404 if no quadrant contains the point -> ignore
       const msg = data && data.errorMessage ? data.errorMessage : '';
-      if (msg.includes('Assignment not found') || msg.includes('No existe Assignment')) {
+      const isAssignmentNotFound = msg.includes('Assignment not found') || msg.includes('No existe Assignment');
+      const isQuadrantByCoordinates = endpointName === 'getQuadrantByCoordinates';
+
+      if (isAssignmentNotFound) {
         if (import.meta.env.VITE_REACT_APP_MODE === "development") {
-          console.debug('Ignored 404:', msg);
+          console.debug('Ignored 404 (assignment):', msg);
+        }
+      } else if (isQuadrantByCoordinates) {
+        if (import.meta.env.VITE_REACT_APP_MODE === "development") {
+          console.debug('Ignored 404 (quadrant by coordinates)');
         }
       } else {
         toast.error('404: Not found');

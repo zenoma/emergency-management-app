@@ -92,7 +92,8 @@ export default function QuadrantVehiclesView(props) {
               assignmentStatus: a.status || null,
               organizationCode: a.vehicleInfo.organization ? a.vehicleInfo.organization.code : '',
               resourceStatus: a.vehicleInfo.status || null,
-              resourceDeployAt: a.vehicleInfo.deployAt || a.assignedAt || null,
+              // Show the actual deployAt from the nested vehicleInfo when present
+              resourceDeployAt: a.vehicleInfo.deployAt || null,
             }))}
             quadrantId={quadrantId}
           />

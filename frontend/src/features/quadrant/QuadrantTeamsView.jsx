@@ -86,7 +86,7 @@ export default function QuadrantTeamsView(props) {
         ) : (
           <QuadrantTeamsTable
             reloadData={reloadData}
-            teams={(assignments || []).filter(a => a.teamInfo).map(a => ({
+              teams={(assignments || []).filter(a => a.teamInfo).map(a => ({
               assignmentId: a.id,
               resourceId: a.teamInfo.id,
               code: a.teamInfo.code || a.teamInfo.name || '',
@@ -94,7 +94,8 @@ export default function QuadrantTeamsView(props) {
               assignmentStatus: a.status || null,
               organizationCode: a.teamInfo.organization ? a.teamInfo.organization.code : '',
               resourceStatus: a.teamInfo.status || null,
-              resourceDeployAt: a.teamInfo.deployAt || a.assignedAt || null,
+              // Show the actual deployAt from the nested teamInfo when present
+              resourceDeployAt: a.teamInfo.deployAt || null,
             }))}
             quadrantId={quadrantId}
           />

@@ -145,7 +145,12 @@ export default function QuadrantVehicleTable(props) {
                 >
                   {columns.map((column) => {
                     const value = row[column.id];
-                    let content = column.id === 'assignedAt' && value ? formatDate(value, locale) : (column.format && typeof value === "number" ? column.format(value) : value);
+                    let content;
+                    if ((column.id === 'assignedAt' || column.id === 'resourceDeployAt') && value) {
+                      content = formatDate(value, locale);
+                    } else {
+                      content = (column.format && typeof value === "number") ? column.format(value) : value;
+                    }
                     if (column.id === 'assignmentStatus') {
                       const s = value;
                       if (s === 'ACCEPTED') content = <span style={{ color: 'green', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;

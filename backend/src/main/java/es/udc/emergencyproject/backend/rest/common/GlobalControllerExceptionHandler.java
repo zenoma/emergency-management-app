@@ -243,6 +243,22 @@ public class GlobalControllerExceptionHandler {
   @ResponseBody
   public ErrorDto handleDataIntegrityViolationException(DataIntegrityViolationException exception, Locale locale) {
 
+    // Attempt to provide a more specific message when the DB reports a foreign-key constraint
+    // violation due to assignments referencing an emergency_quadrant entry.
+    Throwable root = exception.getMostSpecificCause();
+    String detail = root != null && root.getMessage() != null ? root.getMessage().toLowerCase() : "";
+
+    if (detail.contains("fk_assignment_emergency_quadrant_id") ||
+        (detail.contains("assignment") && detail.contains("emergency_quadrant"))) {
+      String specificMsg = messageSource.getMessage(
+          "project.exceptions.QuadrantHasAssignedResources",
+          null,
+          "Cannot delete quadrant because it has assigned resources.",
+          locale
+      );
+      return new ErrorDto(specificMsg);
+    }
+
     String errorMessage = messageSource.getMessage(DATA_INTEGRITY_EXCEPTION_CODE, null,
         DATA_INTEGRITY_EXCEPTION_CODE, locale);
 
