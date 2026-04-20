@@ -108,6 +108,11 @@ public class AssignmentServiceImpl implements AssignmentService {
   }
 
   @Override
+  public List<Assignment> findAll() {
+    return assignmentRepository.findAllWithRelations();
+  }
+
+  @Override
   public List<Assignment> findByResourceId(Long resourceId) {
     return assignmentRepository.findByResourceId(resourceId);
   }

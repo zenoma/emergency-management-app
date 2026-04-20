@@ -67,6 +67,16 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.PUT, "/notices/{id}/status").hasAnyRole(COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/notices/{id}/images").permitAll()
             .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+            // Allow access to OpenAPI / Swagger UI (public)
+            .requestMatchers(
+                "/v3/api-docs",
+                "/v3/api-docs/**",
+                "/swagger-ui.html",
+                "/swagger-ui/**",
+                "/swagger-ui/index.html",
+                "/swagger-ui/swagger-config",
+                "/webjars/**"
+            ).permitAll()
 
             .requestMatchers(HttpMethod.GET, "/organizations").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.GET, "/organizations/{id}")
