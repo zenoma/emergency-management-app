@@ -74,6 +74,13 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     List<EmergencyQuadrant> eqs = emergencyQuadrantRepository.findAll();
     List<Quadrant> result = new ArrayList<>();
     for (EmergencyQuadrant eq : eqs) {
+      try {
+        if (eq.getEmergency() != null && eq.getEmergency().getEmergencyIndex() != null
+            && eq.getEmergency().getEmergencyIndex() == EmergencyIndex.RESUELTO) {
+          continue;
+        }
+      } catch (Exception ignored) {
+      }
       if (eq.getQuadrant() != null && !result.contains(eq.getQuadrant())) {
         result.add(eq.getQuadrant());
       }
