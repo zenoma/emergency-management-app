@@ -107,10 +107,8 @@ export default function OrganizationCreateDialog(props) {
 
   return (
     <div>
-      <Box m={1}>
-        <Fab color="primary" aria-label="add" onClick={handleClickOpen}>
-          <AddIcon />
-        </Fab>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', m: 1 }}>
+        <Button variant="contained" color="secondary" onClick={handleClickOpen}>{t('create-organization', 'Create organization')}</Button>
       </Box>
       <Dialog
         fullWidth={true}

@@ -11,6 +11,9 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { useTranslation } from "react-i18next";
 import { useGetQuadrantWithActiveEmergenciesQuery, useGetQuadrantByCoordinatesQuery } from "../../api/quadrantApi";
+import { useGetEmergenciesQuery } from "../../api/emergencyApi";
+import { useSelector } from "react-redux";
+import { selectToken } from "../user/login/LoginSlice";
 import { transformCoordinates } from "../../app/utils/coordinatesTransformations";
 import WeatherInfo from "../weather/WeatherInfo";
 
@@ -18,6 +21,18 @@ export default function Dashboard() {
   const { t } = useTranslation();
 
   const { data: quadrants, isError } = useGetQuadrantWithActiveEmergenciesQuery();
+
+  const token = useSelector(selectToken);
+  const locale = 'es';
+  const { data: allEmergencies } = useGetEmergenciesQuery({ token: token, locale: locale });
+
+  // filter emergencies: not RESUELTO and that have quadrants or a location
+  const activeLinkedEmergencies = (allEmergencies || []).filter((e) => {
+    const isResolved = e.emergencyIndex === 'RESUELTO' || e.emergencyIndex === 'EXTINGUIDO';
+    const hasQuadrants = e.quadrantInfo && e.quadrantInfo.length > 0;
+    const hasLocation = e.location != null;
+    return !isResolved && (hasQuadrants || hasLocation);
+  });
 
   const [coordinates, setCoordinates] = useState({
     "lat": 0,
@@ -65,10 +80,10 @@ export default function Dashboard() {
           />
           <CardMedia sx={{ flex: 1, minHeight: 0 }}>
             <Box sx={{ height: "100%" }}>
-              {isError ? (
+                {isError ? (
                 <Alert severity="error">{t("generic-error")}</Alert>
               ) : quadrants ? (
-                <LandingMap quadrants={quadrants} />
+                <LandingMap quadrants={quadrants} emergencies={activeLinkedEmergencies} />
               ) : (
                 <Typography variant="body1">{t("loading")}</Typography>
               )}

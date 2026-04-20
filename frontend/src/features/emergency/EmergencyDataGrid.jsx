@@ -28,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Snackbar, Alert } from '@mui/material';
 import { useCreateEmergencyMutation, useGetEmergenciesQuery, useGetEmergencyTypesQuery } from "../../api/emergencyApi";
 import EmergencyTypeIcon from '../../components/EmergencyTypeIcon';
 import { selectToken, selectUser } from "../user/login/LoginSlice";
@@ -39,6 +40,9 @@ export default function EmergencyDataGrid() {
   const { t } = useTranslation();
   const { i18n } = useTranslation("home");
   const [open, setOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [pageSize, setPageSize] = useState(10);
 
   const [description, setDescription] = useState("");
@@ -214,14 +218,28 @@ export default function EmergencyDataGrid() {
       locale: locale,
     };
 
+    console.log('EmergencyDataGrid: creating emergency with payload', payload);
     createEmergency(payload)
       .unwrap()
-      .then(() => {
+      .then((res) => {
+        console.log('EmergencyDataGrid: createEmergency success', res);
+        // keep toast for global notifications
         toast.success(t("emergency-created-successfully"));
+        // also show local Snackbar to ensure visibility in this view
+        setSnackbarMsg(t("emergency-created-successfully"));
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
         refetch();
         handleClose();
       })
-      .catch((error) => toast.error(t("emergency-created-error")));
+      .catch((error) => {
+        console.error('EmergencyDataGrid: createEmergency error', error);
+        const errMsg = error?.data?.errorMessage || error?.data || error?.message || t('emergency-created-error');
+        toast.error(typeof errMsg === 'string' ? errMsg : t('emergency-created-error'));
+        setSnackbarMsg(typeof errMsg === 'string' ? errMsg : t('emergency-created-error'));
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      });
   };
 
   function CustomToolbar() {
@@ -310,7 +328,7 @@ export default function EmergencyDataGrid() {
             filterModel={filterModel}
             onFilterModelChange={handleFilterModelChange}
             getRowClassName={(params) => {
-              if (params.row.emergencyIndex === "EXTINGUIDO") {
+              if (params.row.emergencyIndex === "EXTINGUIDO" || params.row.emergencyIndex === "RESUELTO") {
                 return "extinguido";
               } else if (params.row.emergencyIndex === "CERO") {
                 return "cero";
@@ -323,16 +341,16 @@ export default function EmergencyDataGrid() {
               }
             }}
             onRowClick={(e) =>
-              e.row.emergencyIndex === "EXTINGUIDO"
+              (e.row.emergencyIndex === "EXTINGUIDO" || e.row.emergencyIndex === "RESUELTO")
                 ? handleDisabledRowClick(e.row)
                 : handleRowClick(e.row)
             }
           />
-          {userRole === "COORDINATOR" && <Box m={1}>
-            <Fab color="primary" aria-label="add" onClick={handleClickOpen}>
-              <AddIcon />
-            </Fab>
-          </Box>}
+          {userRole === "COORDINATOR" && (
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', m: 1 }}>
+              <Button variant="contained" color="secondary" onClick={handleClickOpen}>{t('create-emergency','Create emergency')}</Button>
+            </Box>
+          )}
           <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
             <DialogTitle sx={{ color: "primary.light" }}>{t("emergency-create-title")} </DialogTitle>
             <DialogContent>
@@ -392,17 +410,22 @@ export default function EmergencyDataGrid() {
                 </Grid>
               </Grid>
             </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>{t("cancel")}</Button>
-              <Button
-                autoFocus
-                variant="contained"
-                onClick={() => handleClick()}
-              >
-                {t("create")}
-              </Button>
-            </DialogActions>
-          </Dialog>
+          <DialogActions>
+            <Button onClick={handleClose}>{t("cancel")}</Button>
+            <Button
+              autoFocus
+              variant="contained"
+              onClick={() => handleClick()}
+            >
+              {t("create")}
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={() => setSnackbarOpen(false)} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+          <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+            {snackbarMsg}
+          </Alert>
+        </Snackbar>
         </Box>
       ) : null}
     </Box>

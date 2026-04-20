@@ -25,7 +25,7 @@ import {
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
-import FireExtinguisherIcon from '@mui/icons-material/FireExtinguisher';
+import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -38,8 +38,10 @@ import {
   useUpdateEmergencyMutation,
   useLinkEmergencyToPointMutation,
 } from "../../api/emergencyApi";
-import { useLinkEmergencyMutation } from "../../api/quadrantApi";
+import { useGetQuadrantByCoordinatesQuery } from "../../api/quadrantApi";
+import { useLinkQuadrantsMutation } from "../../api/emergencyApi";
 import LandingMap from "../map/LandingMap";
+import CoordinatesMap from "../map/CoordinatesMap";
 import QuadrantDataGrid from "../quadrant/QuadrantDataGrid";
 import { selectToken } from "../user/login/LoginSlice";
 import BackButton from "../utils/BackButton";
@@ -50,6 +52,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import EmergencyTypeIcon from "../../components/EmergencyTypeIcon";
+import { useGetEmergencyTypesQuery } from "../../api/emergencyApi";
 
 const emergencyIndexSelector = ["CERO", "UNO", "DOS", "TRES"];
 
@@ -73,6 +76,7 @@ export default function EmergencyDetailsView() {
   const [description, setDescription] = useState();
   const [type, setType] = useState();
   const [emergencyIndex, setEmergencyIndex] = useState();
+  const [emergencyTypeId, setEmergencyTypeId] = useState();
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openQuadrantResolve, setOpenQuadrantResolve] = useState(false);
@@ -80,6 +84,9 @@ export default function EmergencyDetailsView() {
   const [linkMode, setLinkMode] = useState(''); // '' means not preselected; can be 'QUADRANT' or 'POINT'
   const [pointLon, setPointLon] = useState('');
   const [pointLat, setPointLat] = useState('');
+  const [openPointPicker, setOpenPointPicker] = useState(false);
+  const [openPointConfirm, setOpenPointConfirm] = useState(false);
+  const [pendingProjPoint, setPendingProjPoint] = useState(null); // { x, y }
 
 
   const [coordinates, setCoordinates] = useState(null);
@@ -88,10 +95,53 @@ export default function EmergencyDetailsView() {
 
   const { data, refetch, isLoading, isError } = useGetEmergencyByIdQuery(payload);
 
-  const [linkEmergency] = useLinkEmergencyMutation ? useLinkEmergencyMutation() : [null];
+  // Local error boundary to catch unexpected render errors from child components
+  class WeatherErrorBoundary extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { hasError: false };
+    }
+    static getDerivedStateFromError() {
+      return { hasError: true };
+    }
+    componentDidCatch(error, info) {
+      console.error('WeatherErrorBoundary caught error', error, info);
+      toast.error(t('generic-error'));
+    }
+    render() {
+      if (this.state.hasError) {
+        return null;
+      }
+      return this.props.children;
+    }
+  }
+
+  const [linkQuadrants] = useLinkQuadrantsMutation ? useLinkQuadrantsMutation() : [null];
   const [resolveEmergency] = useResolveEmergencyMutation();
   const [removeQuadrantByEmergencyId] = useRemoveQuadrantByEmergencyIdMutation();
   const [linkEmergencyToPoint] = useLinkEmergencyToPointMutation();
+  // fetch quadrant by projected coordinates (backend expects projected coords)
+  // Prefer using data.location (already in projected coords) when available to avoid roundtrip transforms
+  let quadCoordsForQuery = null;
+  if (data && data.location) {
+    // data.location has lon/lat in projected coordinates
+    quadCoordsForQuery = { lon: data.location.lon, lat: data.location.lat };
+  } else if (coordinates) {
+    try {
+      const proj = transformCoordinates(coordinates.lon, coordinates.lat);
+      quadCoordsForQuery = { lon: proj.longitude, lat: proj.latitude };
+    } catch (e) {
+      console.error('Failed to transform geographic to projected for quadrant query', e);
+    }
+  }
+
+  const { data: quadrantByCoordinates } = useGetQuadrantByCoordinatesQuery(
+    quadCoordsForQuery ? quadCoordsForQuery : undefined,
+    { skip: !quadCoordsForQuery }
+  );
+
+  const quadrantName = quadrantByCoordinates?.nombre || quadrantByCoordinates?.name || quadrantByCoordinates?.data?.nombre || quadrantByCoordinates?.data?.name || t('quadrant-name-unknown');
+
 
   useEffect(() => {
     refetch();
@@ -107,36 +157,36 @@ export default function EmergencyDetailsView() {
       else setLinkMode('');
 
       // compute coordinates for WeatherInfo: prefer quadrant centroid, otherwise emergency.location
-            if (hasQuadrants) {
-              try {
-                const q = data.quadrantInfo[0];
-                // quadrant coordinates array contains objects with x/y in DB projection
-                const coord = q.coordinates && q.coordinates[0];
-                if (coord) {
-                  const geo = untransformCoordinates(coord.x, coord.y);
-            	    setCoordinates({ lon: geo.longitude, lat: geo.latitude });
-            	    console.debug('EmergencyDetailsView set computed coords (from quadrant)', { lon: geo.longitude, lat: geo.latitude });
-                }
-              } catch (e) {
-                console.error('Failed to compute coords from quadrant', e);
-          	  	setCoordinates(null);
-              }
-            } else if (hasLocation) {
+      if (hasQuadrants) {
+        try {
+          const q = data.quadrantInfo[0];
+          // quadrant coordinates array contains objects with x/y in DB projection
+          const coord = q.coordinates && q.coordinates[0];
+          if (coord) {
+            const geo = untransformCoordinates(coord.x, coord.y);
+            setCoordinates({ lon: geo.longitude, lat: geo.latitude });
+          }
+        } catch (e) {
+          console.error('Failed to compute coords from quadrant', e);
+          setCoordinates(null);
+        }
+      } else if (hasLocation) {
         try {
           // location stored in DB may be in projected coordinates (easting/northing)
           const rawX = data.location.lon; // easting in DB projection
           const rawY = data.location.lat; // northing in DB projection
-          console.debug('EmergencyDetailsView raw location (projected)', { x: rawX, y: rawY });
           const geo = untransformCoordinates(rawX, rawY);
           setCoordinates({ lon: geo.longitude, lat: geo.latitude });
-          console.debug('EmergencyDetailsView set computed coords (from location)', { lon: geo.longitude, lat: geo.latitude });
+          // keep projected string values for display
+          setPointLon(String(rawX));
+          setPointLat(String(rawY));
         } catch (e) {
           console.error('Failed to compute coords from location', e);
           setCoordinates(null);
         }
-            } else {
-        	  setCoordinates(null);
-            }
+      } else {
+        setCoordinates(null);
+      }
 
     }
   }
@@ -162,18 +212,27 @@ export default function EmergencyDetailsView() {
     const payload = {
       token: token,
       emergencyId: emergencyId,
-      quadrantId: selectedId,
-      locale: locale
+      quadrantGids: Array.isArray(selectedId) ? selectedId : [selectedId],
+      locale: locale,
     };
 
-    linkEmergency(payload)
+
+    if (!linkQuadrants) {
+      console.error('linkQuadrants mutation not available');
+      return;
+    }
+
+    linkQuadrants(payload)
       .unwrap()
       .then(() => {
         toast.success(t("quadrant-linked-successfully"));
         refetch();
         handleClose();
       })
-      .catch((error) => toast.error(t("quadrant-linked-error")));
+      .catch((error) => {
+        console.error('Failed to link quadrants', error);
+        toast.error(t("quadrant-linked-error"));
+      });
   };
 
   const handleResolveOpenClick = () => {
@@ -210,19 +269,52 @@ export default function EmergencyDetailsView() {
     setDescription(data.description);
     setType(data.type);
     setEmergencyIndex(data.emergencyIndex);
+    // try to set emergencyTypeId from several possible fields
+    if (data.emergencyTypeId) setEmergencyTypeId(Number(data.emergencyTypeId));
+    else if (data.emergencyType && data.emergencyType.id) setEmergencyTypeId(Number(data.emergencyType.id));
+    else {
+      // attempt to resolve by name if emergencyTypes already loaded
+      const nameToMatch = data.emergencyTypeName || data.type || data.name || '';
+      if (nameToMatch && emergencyTypes && emergencyTypes.length > 0) {
+        const matched = emergencyTypes.find((et) => (et.name || '').toLowerCase() === nameToMatch.toLowerCase());
+        if (matched) {
+          setEmergencyTypeId(Number(matched.id));
+        } else {
+          setEmergencyTypeId(undefined);
+        }
+      } else {
+        setEmergencyTypeId(undefined);
+      }
+    }
     setOpenEdit(true);
   };
 
   const [updateEmergency] = useUpdateEmergencyMutation();
+  const { data: emergencyTypes } = useGetEmergencyTypesQuery({ token: token, locale: locale });
 
   const handleEditClick = () => {
+    // ensure we have an emergencyTypeId; try to derive from type name if missing
+    let resolvedEmergencyTypeId = emergencyTypeId;
+    if (!resolvedEmergencyTypeId && type && emergencyTypes && emergencyTypes.length > 0) {
+      const matched = emergencyTypes.find((et) => (et.name || '').toLowerCase() === (type || '').toLowerCase());
+      if (matched) resolvedEmergencyTypeId = Number(matched.id);
+    }
+
+    if (!resolvedEmergencyTypeId) {
+      // do not submit invalid payload
+      toast.error(t('Please select an emergency type'));
+      console.error('Cannot update emergency: emergencyTypeId is missing', { emergencyTypeId, type });
+      return;
+    }
+
     const payload = {
       emergencyId: emergencyId,
       token: token,
       description: description,
       type: type,
+      emergencyTypeId: resolvedEmergencyTypeId,
       emergencyIndex: emergencyIndex,
-      locale: locale
+      locale: locale,
     };
 
     updateEmergency(payload)
@@ -253,6 +345,14 @@ export default function EmergencyDetailsView() {
     }
   };
 
+  const handleEmergencyTypeChange = (event) => {
+    const value = event.target.value;
+    const valueNum = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+    setEmergencyTypeId(valueNum);
+    const selected = emergencyTypes ? emergencyTypes.find((et) => et.id === valueNum) : null;
+    if (selected) setType(selected.name);
+  };
+
 
   const handleResolveQuadrantOpenClick = (quadrantId) => {
     setQuadrantId(quadrantId);
@@ -261,6 +361,11 @@ export default function EmergencyDetailsView() {
 
   const handleResolveQuadrantClose = () => {
     setOpenQuadrantResolve(false);
+  };
+
+  // legacy/alternate name used in the template for the 'resolve' button
+  const handleExtinguishOpenClick = () => {
+    setOpenResolve(true);
   };
 
   const handleResolveQuadrantClick = () => {
@@ -347,7 +452,10 @@ export default function EmergencyDetailsView() {
                 {t("emergency-type")}
               </Typography>
               <Typography variant="h6" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <EmergencyTypeIcon name={data.type} showLabel={true} />
+                <EmergencyTypeIcon
+                  name={data.emergencyTypeName || (data.emergencyType && data.emergencyType.name) || data.type}
+                  showLabel={true}
+                />
               </Typography>
             </Box>
             <Box>
@@ -376,7 +484,19 @@ export default function EmergencyDetailsView() {
             variant="outlined"
           >
             <Typography variant="h6">{t("quadrant-map")}</Typography>
-            {data && <Box sx={{ height: 450 }}><LandingMap quadrants={data.quadrantInfo || []} /></Box>}
+            {data && <Box sx={{ height: 450 }}>
+              <LandingMap
+                quadrants={data.quadrantInfo || []}
+                emergencies={data.location ? [{
+                  id: data.id,
+                  description: data.description,
+                  location: { lon: data.location.lon, lat: data.location.lat },
+                  // include type fields so LandingMap can select the correct icon
+                  type: data.type,
+                  emergencyTypeName: data.emergencyTypeName || data.type,
+                }] : []}
+              />
+            </Box>}
           </Paper>
         </Grid>
         <Grid item xs={4} sm={8} md={3}>
@@ -471,7 +591,7 @@ export default function EmergencyDetailsView() {
                                     handleResolveQuadrantOpenClick(row.id);
                                   }}
                                 >
-                                  <FireExtinguisherIcon />
+                                  <DeleteIcon />
                                 </Button>
                               </TableCell>
                             </TableRow>
@@ -500,48 +620,16 @@ export default function EmergencyDetailsView() {
                 <>
                   <Typography variant="subtitle1">{t('point-link-title') || 'Link to point'}</Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
-                    <TextField
-                      label={t('longitude') || 'Longitude'}
-                      value={pointLon}
-                      onChange={(e) => setPointLon(e.target.value)}
-                      variant="outlined"
-                    />
-                    <TextField
-                      label={t('latitude') || 'Latitude'}
-                      value={pointLat}
-                      onChange={(e) => setPointLat(e.target.value)}
-                      variant="outlined"
-                    />
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      {(() => {
-                        const hasLocation = data && data.location != null;
-                        return (
-                          <>
-                            <Button variant="contained" disabled={hasLocation} onClick={() => {
-                              // call link point
-                              const lonNum = Number(pointLon);
-                              const latNum = Number(pointLat);
-                              if (Number.isNaN(lonNum) || Number.isNaN(latNum)) {
-                                toast.error(t('invalid-coordinates') || 'Invalid coordinates');
-                                return;
-                              }
-                              const payloadPoint = { token: token, emergencyId: emergencyId, lon: lonNum, lat: latNum, locale: locale };
-                              // Log payload to help debugging what is sent to backend
-                              console.debug('linkEmergencyToPoint payload', { emergencyId: emergencyId, lon: lonNum, lat: latNum, locale });
-                              linkEmergencyToPoint(payloadPoint)
-                                .unwrap()
-                                .then(() => {
-                                  toast.success(t('quadrant-linked-successfully'));
-                                  refetch();
-                                })
-                                .catch(() => toast.error(t('quadrant-linked-error')));
-                            }}>{t('link-point') || 'Link Point'}</Button>
-                            <Button onClick={() => { setPointLon(''); setPointLat(''); }}>{t('clear') || 'Clear'}</Button>
-                            {hasLocation && <Typography variant="body2" sx={{ alignSelf: 'center', color: 'text.secondary' }}>{t('point-already-linked') || 'Point already linked'}</Typography>}
-                          </>
-                        );
-                      })()}
-                    </Box>
+                    {data && data.location == null ? (
+                      <>
+                        <Button variant="contained" onClick={() => setOpenPointPicker(true)}>{t('select-point-on-map') || 'Select point on map'}</Button>
+                      </>
+                    ) : (
+                      <Box>
+                        <Typography variant="body2">{quadrantByCoordinates?.name || quadrantByCoordinates?.nombre || t('quadrant-name-unknown') || '-'}</Typography>
+                      </Box>
+                    )}
+
                   </Box>
                 </>
               )}
@@ -574,7 +662,7 @@ export default function EmergencyDetailsView() {
                   margin: "5px",
                   ":hover": { backgroundColor: "error.dark" },
                 }}
-                onClick={() => handleExtinguishOpenClick()}
+                onClick={() => handleResolveOpenClick()}
               >
                 {t("emergency-resolve")}
               </Button>
@@ -631,18 +719,9 @@ export default function EmergencyDetailsView() {
             </Paper>
           )}
 
-          {/* Weather info: show for POINT mode if coords valid, otherwise use computed coordinates from quadrant/location */}
           {(() => {
-            const latFromPoint = pointLat !== '' ? Number(pointLat) : NaN;
-            const lonFromPoint = pointLon !== '' ? Number(pointLon) : NaN;
-            const usePoint = linkMode === 'POINT' && !Number.isNaN(latFromPoint) && !Number.isNaN(lonFromPoint);
-            if (usePoint) {
-              console.debug('Rendering WeatherInfo (POINT) with', { lat: latFromPoint, lon: lonFromPoint });
-              return <WeatherInfo sx={{ padding: 2 }} lat={latFromPoint} lon={lonFromPoint} />;
-            }
             if (coordinates && coordinates.lat != null && coordinates.lon != null) {
-              console.debug('Rendering WeatherInfo (computed) with', coordinates);
-              return <WeatherInfo sx={{ padding: 2 }} lat={coordinates.lat} lon={coordinates.lon} />;
+              return <WeatherErrorBoundary><WeatherInfo sx={{ padding: 2 }} lat={coordinates.lat} lon={coordinates.lon} /></WeatherErrorBoundary>;
             }
             return null;
           })()}
@@ -655,13 +734,79 @@ export default function EmergencyDetailsView() {
       <Dialog open={open} fullWidth maxWidth="md">
         <DialogTitle sx={{ color: "primary.light" }}>{t("quadrant-add-title")} </DialogTitle>
         <DialogContent>
-          <QuadrantDataGrid childToParent={childToParent} />
+          <QuadrantDataGrid
+            childToParent={childToParent}
+            excludedQuadrantIds={data?.quadrantInfo ? data.quadrantInfo.map((q) => q.id) : []}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>{t("cancel")}</Button>
           <Button autoFocus variant="contained" onClick={() => handleClick()}>
             {t("add")}
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Point picker dialog (reuse CoordinatesMap) */}
+      <Dialog fullWidth={true} maxWidth={"md"} open={openPointPicker} onClose={() => setOpenPointPicker(false)}>
+        <DialogTitle sx={{ color: "primary.light" }}>{t('select-point-on-map') || 'Select point on map'}</DialogTitle>
+        <DialogContent sx={{ height: '60vh', width: '100%' }}>
+          <Box sx={{ height: '100%', width: '100%' }}>
+            <CoordinatesMap childToParent={(childdata) => {
+              // childdata is [projectedX, projectedY]
+              const projX = childdata[0];
+              const projY = childdata[1];
+              // store projected values as strings (same as existing textfields)
+              setPointLon(String(projX));
+              setPointLat(String(projY));
+
+              // compute geographic coords for WeatherInfo
+              try {
+                const geo = untransformCoordinates(projX, projY);
+                setCoordinates({ lon: geo.longitude, lat: geo.latitude });
+              } catch (e) {
+                console.error('Failed to compute coords from point picker', e);
+              }
+
+              // open confirmation dialog before linking
+              setPendingProjPoint({ x: projX, y: projY });
+              setOpenPointPicker(false);
+              setOpenPointConfirm(true);
+            }} />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenPointPicker(false)}>{t('cancel') || 'Cancel'}</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirmation dialog before linking the selected point */}
+      <Dialog open={openPointConfirm} onClose={() => { setOpenPointConfirm(false); setPendingProjPoint(null); }}>
+        <DialogTitle>{t('confirm-link-point-title') || 'Confirm link point'}</DialogTitle>
+        <DialogContent>
+          <Typography>{t('confirm-link-point-text') || 'Do you want to link the emergency to the selected point?'}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => { setOpenPointConfirm(false); setPendingProjPoint(null); }}>{t('cancel') || 'Cancel'}</Button>
+          <Button variant="contained" onClick={() => {
+            if (!pendingProjPoint) return;
+            const projX = pendingProjPoint.x;
+            const projY = pendingProjPoint.y;
+            const payloadPoint = { token: token, emergencyId: emergencyId, lon: projX, lat: projY, locale: locale };
+            linkEmergencyToPoint(payloadPoint)
+              .unwrap()
+              .then(() => {
+                toast.success(t('quadrant-linked-successfully'));
+                refetch();
+              })
+              .catch(() => {
+                toast.error(t('quadrant-linked-error'));
+              })
+              .finally(() => {
+                setOpenPointConfirm(false);
+                setPendingProjPoint(null);
+              });
+          }}>{t('confirm') || 'Confirm'}</Button>
         </DialogActions>
       </Dialog>
 
@@ -685,18 +830,23 @@ export default function EmergencyDetailsView() {
                 />
               </Grid>
               <Grid item xs={6}>
-                <TextField
-                  id="type"
-                  label={t("emergency-type")}
-                  type="text"
-                  autoComplete="current-code"
-                  margin="normal"
-                  value={type}
-                  onChange={(e) => handleChange(e)}
-                  variant="standard"
-                  required
-                  sx={{ display: "flex" }}
-                />
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel id="emergency-type-label">{t("emergency-type")}</InputLabel>
+                  <Select
+                    id="emergencyTypeId"
+                    labelId="emergency-type-label"
+                    label={t("emergency-type")}
+                    value={emergencyTypeId || ''}
+                    onChange={handleEmergencyTypeChange}
+                    required
+                  >
+                    {emergencyTypes && emergencyTypes.map((et) => (
+                      <MenuItem key={et.id} value={et.id}>
+                        {et.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={6}>
                 <FormControl fullWidth >

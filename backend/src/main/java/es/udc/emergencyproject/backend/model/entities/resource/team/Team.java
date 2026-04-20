@@ -1,6 +1,7 @@
 package es.udc.emergencyproject.backend.model.entities.resource.team;
 
 import es.udc.emergencyproject.backend.model.entities.organization.Organization;
+import es.udc.emergencyproject.backend.model.entities.resource.ResourceStatus;
 import es.udc.emergencyproject.backend.model.entities.resource.Resource;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceType;
 import es.udc.emergencyproject.backend.model.entities.user.User;
@@ -42,6 +43,7 @@ public class Team extends Resource {
   public Team(String code) {
     this.code = code;
     this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    this.status = ResourceStatus.AVAILABLE;
   }
 
   public Team(String code, Organization organization) {
@@ -49,6 +51,7 @@ public class Team extends Resource {
     this.organization = organization;
     this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     this.resourceType = ResourceType.TEAM;
+    this.status = ResourceStatus.AVAILABLE;
   }
 
 }

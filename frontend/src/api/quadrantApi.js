@@ -37,7 +37,8 @@ export const quadrantApi = baseApi.injectEndpoints({
 
     getQuadrantByCoordinates: build.query({
       query: (payload) => ({
-        url: "/quadrants/findByCoordinates?lon=" + payload.lon + "&lat=" + payload.lat,
+        // Backend expects query as lat=...&lon=... (use lat first to match examples)
+        url: "/quadrants/findByCoordinates?lat=" + payload.lat + "&lon=" + payload.lon,
       }),
       transformResponse: (response, meta, arg) => {
         return response;

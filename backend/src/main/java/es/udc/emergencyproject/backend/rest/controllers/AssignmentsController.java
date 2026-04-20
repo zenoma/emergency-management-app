@@ -36,12 +36,12 @@ public class AssignmentsController implements AssignmentsApi {
     List<Assignment> assignments;
 
     if (emergencyQuadrantId != null) {
-      // parameter is quadrantId (gid), find assignments for EmergencyQuadrants that reference this quadrant
       assignments = assignmentService.findByEmergencyQuadrantQuadrantId(emergencyQuadrantId.intValue());
     } else if (resourceId != null) {
       assignments = assignmentService.findByResourceId(resourceId);
     } else {
-      assignments = java.util.List.of();
+      // return all assignments when no filter is provided
+      assignments = assignmentService.findAll();
     }
 
     List<AssignmentResponseDto> dtos = assignments.stream().map(AssignmentMapper::toAssignmentResponseDto).toList();

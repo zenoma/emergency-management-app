@@ -13,6 +13,13 @@ export const emergencyApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => {
         return response;
       },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map((e) => ({ type: 'Emergency', id: e.id })),
+              { type: 'Emergency', id: 'LIST' },
+            ]
+          : [{ type: 'Emergency', id: 'LIST' }],
     }),
     getEmergencyTypes: build.query({
       query: (payload) => ({
@@ -56,16 +63,18 @@ export const emergencyApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => {
         return response;
       },
+      invalidatesTags: [{ type: 'Emergency', id: 'LIST' }],
     }),
     updateEmergency: build.mutation({
       query: (payload) => ({
         url: "/emergencies/" + payload.emergencyId,
         method: "PUT",
-        body: {
-          description: payload.description,
-          type: payload.type,
-          emergencyIndex: payload.emergencyIndex,
-        },
+      body: {
+        description: payload.description,
+        type: payload.type,
+        emergencyTypeId: payload.emergencyTypeId,
+        emergencyIndex: payload.emergencyIndex,
+      },
         headers: {
           Authorization: "Bearer " + payload.token,
           "Accept-Language": payload.locale,
@@ -121,6 +130,22 @@ export const emergencyApi = baseApi.injectEndpoints({
         return response;
       },
     }),
+    linkQuadrants: build.mutation({
+      query: (payload) => ({
+        url: "/emergencies/" + payload.emergencyId + "/linkQuadrants",
+        method: "POST",
+        body: {
+          quadrantGids: payload.quadrantGids,
+        },
+        headers: {
+          Authorization: "Bearer " + payload.token,
+          "Accept-Language": payload.locale,
+        },
+      }),
+      transformResponse: (response, meta, arg) => {
+        return response;
+      },
+    }),
   }),
 });
 
@@ -133,4 +158,5 @@ export const {
   useLinkEmergencyToPointMutation,
   useResolveEmergencyMutation,
   useRemoveQuadrantByEmergencyIdMutation,
+  useLinkQuadrantsMutation,
 } = emergencyApi;

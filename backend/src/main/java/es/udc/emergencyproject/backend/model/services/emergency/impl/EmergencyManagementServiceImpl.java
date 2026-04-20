@@ -234,6 +234,13 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     //TODO: cuando se soluciona una emergencia hay que liberar los recursos de ese cuadrante
 
     emergencyQuadrantRepository.delete(eq.orElseThrow());
+    try {
+      var quadrant = quadrantRepository.findById(quadrantId).orElse(null);
+      var gl = new AssignmentLog(null, emergency, quadrant, null, GeneralLogEventType.EMERGENCY_UNLINKED_QUADRANT,
+          java.time.LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), "Unlinked quadrant " + quadrantId);
+      logManagementService.logGeneral(gl);
+    } catch (Exception ignored) {
+    }
     return emergencyRepository.save(emergency);
   }
 

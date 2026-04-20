@@ -24,4 +24,11 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
       + "where a.id = :id")
   Optional<Assignment> findByIdWithRelations(@Param("id") Long id);
 
+  @Query("select a from Assignment a "
+      + "left join fetch a.resource r "
+      + "left join fetch a.emergency e "
+      + "left join fetch a.emergencyQuadrant eq "
+      + "left join fetch eq.quadrant q ")
+  List<Assignment> findAllWithRelations();
+
 }

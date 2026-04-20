@@ -10,6 +10,7 @@ import es.udc.emergencyproject.backend.model.entities.logs.GeneralLogEventType;
 import es.udc.emergencyproject.backend.model.entities.resource.Resource;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceRepository;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceStatus;
+import es.udc.emergencyproject.backend.model.entities.resource.ResourceType;
 import es.udc.emergencyproject.backend.model.exceptions.AssignmentAlreadyInStatusException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.emergencyproject.backend.model.exceptions.InvalidAssignmentTransitionException;
@@ -91,6 +92,30 @@ public class AssignmentServiceImpl implements AssignmentService {
     } catch (Exception ignored) {
     }
 
+    try {
+      if (resource.getResourceType() == ResourceType.VEHICLE) {
+        saved.setStatus(AssignmentStatus.ACCEPTED);
+        saved.setAcceptedAt(LocalDateTime.now());
+        saved = assignmentRepository.save(saved);
+
+        if (resource.getStatus() != null && resource.getStatus() == ResourceStatus.BUSY) {
+          throw new ResourceBusyException(Resource.class.getSimpleName(), resource.getId().toString());
+        }
+        resource.setStatus(ResourceStatus.BUSY);
+        resource.setDeployAt(LocalDateTime.now());
+        resourceRepository.save(resource);
+
+        try {
+          logManagementService.registerAssignmentEvent(saved, GeneralLogEventType.ASSIGNMENT_ACCEPTED,
+              "Assignment auto-accepted for vehicle");
+        } catch (Exception ignored) {
+        }
+      }
+    } catch (ResourceBusyException rbe) {
+      assignmentRepository.delete(saved);
+      throw rbe;
+    }
+
     return saved;
   }
 
@@ -105,6 +130,11 @@ public class AssignmentServiceImpl implements AssignmentService {
   @Override
   public List<Assignment> findByEmergencyQuadrantQuadrantId(Integer quadrantId) {
     return assignmentRepository.findByEmergencyQuadrantQuadrantId(quadrantId);
+  }
+
+  @Override
+  public List<Assignment> findAll() {
+    return assignmentRepository.findAllWithRelations();
   }
 
   @Override

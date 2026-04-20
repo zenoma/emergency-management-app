@@ -19,6 +19,8 @@ public interface AssignmentService {
 
   List<Assignment> findByResourceId(Long resourceId);
 
+  List<Assignment> findAll();
+
   Assignment updateStatus(Long id, AssignmentStatus status) throws InstanceNotFoundException;
 
   void deleteAssignment(Long id) throws InstanceNotFoundException;

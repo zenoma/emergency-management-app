@@ -37,6 +37,8 @@ import OrganizationTeamsVehiclesView from "./features/organization/OrganizationT
 import QuadrantView from "./features/quadrant/QuadrantView";
 import TeamView from "./features/team/TeamView";
 import UserManagementView from "./features/user/management/UserManagementView";
+import AssignmentManagementView from "./features/assignment/AssignmentManagementView";
+import AssignmentListView from "./features/assignment/AssignmentListView";
 
 function App({ t }) {
 
@@ -129,6 +131,8 @@ function App({ t }) {
 
             <Route path="/user-management" element={userRole === 'COORDINATOR' ? <UserManagementView /> : <Navigate to="/" />} />
             <Route path="/notice-management" element={userRole === 'COORDINATOR' ? <CoordinatorNoticesView /> : <Navigate to="/" />} />
+            <Route path="/assignment-management" element={userRole === 'COORDINATOR' ? <AssignmentManagementView /> : <Navigate to="/" />} />
+            <Route path="/assignments" element={userRole === 'COORDINATOR' ? <AssignmentListView /> : <Navigate to="/" />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>

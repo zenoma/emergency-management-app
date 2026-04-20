@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
   <diagram name="Página-1" id="xJJ2Meys9xe6HNev-DmG">
-    <mxGraphModel dx="-1501" dy="1500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="-415" dy="1209" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -171,7 +171,7 @@
         <mxCell id="qOtgFvEbZrj930sybyTv-218" parent="qOtgFvEbZrj930sybyTv-212" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" value="+ LocalDateTime createdAt" vertex="1">
           <mxGeometry height="25.40379379165953" width="310.82686158063046" y="128.26088032464287" as="geometry" />
         </mxCell>
-        <mxCell id="53vbjuShwa3aogKJikRP-6" parent="qOtgFvEbZrj930sybyTv-212" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" value="+ LocalDateTime extinguishedAt" vertex="1">
+        <mxCell id="53vbjuShwa3aogKJikRP-6" parent="qOtgFvEbZrj930sybyTv-212" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" value="+ LocalDateTime resolvedAt" vertex="1">
           <mxGeometry height="25.40379379165953" width="310.82686158063046" y="153.6646741163024" as="geometry" />
         </mxCell>
         <mxCell id="qOtgFvEbZrj930sybyTv-361" parent="qOtgFvEbZrj930sybyTv-212" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" value="+ Point location" vertex="1">

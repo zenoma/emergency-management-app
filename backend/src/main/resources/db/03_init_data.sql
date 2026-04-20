@@ -19,3 +19,4 @@ VALUES ('Centro Coordinación'),
        ('Mecánicos'),
        ('Vehículos'),
        ('Entidades Locales');
+
