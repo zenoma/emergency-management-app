@@ -1,5 +1,8 @@
 package es.udc.emergencyproject.backend.model.services.emergency.impl;
 
+import es.udc.emergencyproject.backend.model.entities.assignment.Assignment;
+import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentRepository;
+import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentStatus;
 import es.udc.emergencyproject.backend.model.entities.emergency.Emergency;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyIndex;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadrant;
@@ -9,11 +12,10 @@ import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyTypeRepository;
 import es.udc.emergencyproject.backend.model.entities.logs.AssignmentLog;
 import es.udc.emergencyproject.backend.model.entities.logs.GeneralLogEventType;
-import es.udc.emergencyproject.backend.model.entities.assignment.Assignment;
-import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentRepository;
-import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentStatus;
 import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.emergencyproject.backend.model.entities.quadrant.QuadrantRepository;
+import es.udc.emergencyproject.backend.model.entities.resource.ResourceRepository;
+import es.udc.emergencyproject.backend.model.entities.resource.ResourceStatus;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToPointException;
 import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToQuadrantsException;
@@ -23,8 +25,6 @@ import es.udc.emergencyproject.backend.model.exceptions.QuadrantNotLinkedToEmerg
 import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.services.emergency.EmergencyManagementService;
 import es.udc.emergencyproject.backend.model.services.logs.LogManagementService;
-import es.udc.emergencyproject.backend.model.entities.resource.ResourceRepository;
-import es.udc.emergencyproject.backend.model.entities.resource.ResourceStatus;
 import es.udc.emergencyproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -217,35 +217,42 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     emergency.setEmergencyIndex(EmergencyIndex.RESUELTO);
     emergency.setResolvedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
-    // When an emergency is resolved we must:
-    // - mark related assignments as COMPLETED
-    // - release any deployed resources (set AVAILABLE and clear deployAt)
-    // - register log events for resource retraction
     List<Assignment> assignments = assignmentRepository.findByEmergencyId(emergency.getId());
     for (Assignment a : assignments) {
       try {
         if (a.getStatus() != null && a.getStatus() != AssignmentStatus.COMPLETED) {
-          a.setStatus(AssignmentStatus.COMPLETED);
-          a.setCompletedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
-          assignmentRepository.save(a);
-          try {
-            logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_COMPLETED,
-                "Assignment auto-completed due to emergency resolved");
-          } catch (Exception ignored) {
-          }
-        }
-
-        if (a.getResource() != null) {
-          Long resourceId = a.getResource().getId();
-          var resource = resourceRepository.findByIdForUpdate(resourceId).orElse(null);
-          if (resource != null) {
-            resource.setStatus(ResourceStatus.AVAILABLE);
-            resource.setDeployAt(null);
-            resourceRepository.save(resource);
-
+          if (a.getStatus() == AssignmentStatus.ACCEPTED) {
+            a.setStatus(AssignmentStatus.COMPLETED);
+            a.setCompletedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+            assignmentRepository.save(a);
             try {
-              logManagementService.registerAssignmentEvent(a, GeneralLogEventType.RESOURCE_RETRACTED,
-                  "Resource retracted due to emergency resolved");
+              logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_COMPLETED,
+                  "Assignment auto-completed due to emergency resolved");
+            } catch (Exception ignored) {
+            }
+
+            if (a.getResource() != null) {
+              Long resourceId = a.getResource().getId();
+              var resource = resourceRepository.findByIdForUpdate(resourceId).orElse(null);
+              if (resource != null) {
+                resource.setStatus(ResourceStatus.AVAILABLE);
+                resource.setDeployAt(null);
+                resourceRepository.save(resource);
+
+                try {
+                  logManagementService.registerAssignmentEvent(a, GeneralLogEventType.RESOURCE_RETRACTED,
+                      "Resource retracted due to emergency resolved");
+                } catch (Exception ignored) {
+                }
+              }
+            }
+          } else {
+            // For assignments that were not accepted (e.g. PENDING), perform a soft delete
+            a.setRemoved(Boolean.TRUE);
+            assignmentRepository.save(a);
+            try {
+              logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_DELETED,
+                  "Assignment auto-deleted due to emergency resolved");
             } catch (Exception ignored) {
             }
           }

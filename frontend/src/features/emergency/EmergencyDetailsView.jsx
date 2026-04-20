@@ -624,7 +624,11 @@ export default function EmergencyDetailsView() {
                       </>
                     ) : (
                       <Box>
-                        <Typography variant="body2">{quadrantByCoordinates?.name || quadrantByCoordinates?.nombre || t('quadrant-name-unknown') || '-'}</Typography>
+                        <Button variant="text" onClick={() => {
+                          navigate('/emergency-point', { state: { emergencyId: emergencyId } });
+                        }}>
+                          {quadrantByCoordinates?.name || quadrantByCoordinates?.nombre || t('quadrant-name-unknown') || '-'}
+                        </Button>
                       </Box>
                     )}
 

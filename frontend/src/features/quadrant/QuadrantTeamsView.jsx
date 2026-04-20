@@ -25,11 +25,7 @@ export default function QuadrantTeamsView(props) {
   // allowed to pass emergencyId from parent (EmergencyDetailsView) to scope assignments to that emergency
   const emergencyIdProp = props.emergencyId || null;
 
-  const payload = {
-    token: token,
-    quadrantId: quadrantId,
-    locale: locale,
-  };
+  const payload = quadrantId ? { token: token, quadrantId: quadrantId, locale: locale } : null;
 
   const {
     data: quadrantInfo,
@@ -37,6 +33,7 @@ export default function QuadrantTeamsView(props) {
     isError: isErrorQuadrant,
     refetch,
   } = useGetQuadrantByIdQuery(payload, {
+    skip: !payload,
     refetchOnMountOrArgChange: true,
   });
 
@@ -106,5 +103,5 @@ export default function QuadrantTeamsView(props) {
 }
 
 QuadrantTeamsView.propTypes = {
-  quadrantId: PropTypes.number.isRequired,
+  quadrantId: PropTypes.number,
 };

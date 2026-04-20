@@ -24,11 +24,7 @@ export default function QuadrantVehiclesView(props) {
   const quadrantId = props.quadrantId;
   const emergencyIdProp = props.emergencyId || null;
 
-  const payload = {
-    token: token,
-    quadrantId: quadrantId,
-    locale: locale,
-  };
+  const payload = quadrantId ? { token: token, quadrantId: quadrantId, locale: locale } : null;
 
   const {
     data: quadrantInfo,
@@ -36,6 +32,7 @@ export default function QuadrantVehiclesView(props) {
     isError: isErrorQuadrant,
     refetch,
   } = useGetQuadrantByIdQuery(payload, {
+    skip: !payload,
     refetchOnMountOrArgChange: true,
   });
 
@@ -104,5 +101,5 @@ export default function QuadrantVehiclesView(props) {
 }
 
 QuadrantVehiclesView.propTypes = {
-  quadrantId: PropTypes.number.isRequired,
+  quadrantId: PropTypes.number,
 };

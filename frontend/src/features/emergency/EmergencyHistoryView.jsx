@@ -41,6 +41,7 @@ import { untransformCoordinates } from "../../app/utils/coordinatesTransformatio
 import { useGetQuadrantByCoordinatesQuery } from "../../api/quadrantApi";
 import { selectToken } from "../user/login/LoginSlice";
 import BackButton from "../utils/BackButton";
+import formatDate from "../../utils/formatDate";
 
 export default function EmergencyHistoryView() {
   const token = useSelector(selectToken);
@@ -138,6 +139,21 @@ export default function EmergencyHistoryView() {
 
       for (let i = 0; i < emergencyLogs.length; i++) {
         const entry = emergencyLogs[i];
+
+        // Filter logs so we only consider entries related to the current emergency.
+        // Different log shapes may include the emergency reference in several places.
+        // If we detect a different emergency id, skip the entry.
+        try {
+          if (entry) {
+            if (entry.emergency && entry.emergency.id != null && entry.emergency.id !== emergencyId) continue;
+            if (entry.emergencyId && entry.emergencyId !== emergencyId) continue;
+            if (entry.assignment && entry.assignment.emergencyInfo && entry.assignment.emergencyInfo.id != null && entry.assignment.emergencyInfo.id !== emergencyId) continue;
+            if (entry.assignment && entry.assignment.emergency && entry.assignment.emergency.id != null && entry.assignment.emergency.id !== emergencyId) continue;
+          }
+        } catch (e) {
+          // ignore malformed entries and continue
+        }
+
         const extracted = extractFromEntry(entry);
         if (!extracted) continue;
 
@@ -344,42 +360,19 @@ export default function EmergencyHistoryView() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {emergencyLogs && (() => {
-                          const rows = [];
-                          for (let i = 0; i < emergencyLogs.length; i++) {
-                            const entry = emergencyLogs[i];
-                            let q = entry.quadrantInfo || entry.quadrant || (entry.assignment && entry.assignment.quadrantInfo) || null;
-                            let linkedAt = entry.linkedAt || (entry.assignment && entry.assignment.assignedAt) || entry.eventAt || null;
-                            let resolvedAt = entry.resolvedAt || (entry.assignment && entry.assignment.acceptedAt) || entry.resolvedAt || null;
-
-                            if (entry.assignment && entry.assignment.emergencyInfo && Array.isArray(entry.assignment.emergencyInfo.quadrantInfo)) {
-                              const arr = entry.assignment.emergencyInfo.quadrantInfo;
-                              for (let j = 0; j < arr.length; j++) {
-                                const qItem = arr[j];
-                                rows.push({ quadrantInfo: qItem, linkedAt: linkedAt, resolvedAt: resolvedAt });
-                              }
-                              continue;
-                            }
-
-                            if (!q) continue;
-
-                            if (Array.isArray(q)) {
-                              q.forEach((qItem) => rows.push({ quadrantInfo: qItem, linkedAt: linkedAt, resolvedAt: resolvedAt }));
-                            } else {
-                              rows.push({ quadrantInfo: q, linkedAt: linkedAt, resolvedAt: resolvedAt });
-                            }
-                          }
-
-                          return rows.map((row, index) => (
+                        {quadrants && quadrants.length > 0 ? (
+                          quadrants.map((item, index) => (
                             <TableRow
-                              key={(row.quadrantInfo && row.quadrantInfo.id ? row.quadrantInfo.id : index) + index}
+                              key={(item.quadrant && item.quadrant.id ? item.quadrant.id : index) + "-" + index}
                               hover
                               onClick={() =>
                                 navigate("/quadrant-history", {
                                   state: {
-                                    quadrantId: row.quadrantInfo.id,
-                                    startDate: row.linkedAt,
-                                    endDate: row.resolvedAt,
+                                    quadrantId: item.quadrant.id,
+                                    startDate: item.linkedAt,
+                                    endDate: item.resolvedAt,
+                                    // ensure we pass a valid emergencyId: prefer fetched emergencyData.id if available
+                                    emergencyId: emergencyData && emergencyData.id ? emergencyData.id : emergencyId,
                                   },
                                 })
                               }
@@ -390,18 +383,21 @@ export default function EmergencyHistoryView() {
                               }}
                             >
                               <TableCell component="th" scope="row">
-                                {row.quadrantInfo.id}
+                                {item.quadrant.id}
                               </TableCell>
                               <TableCell align="right">
-                                {row.quadrantInfo.nombre}
+                                {item.quadrant.nombre}
                               </TableCell>
-                              <TableCell align="right">{row.linkedAt}</TableCell>
+                              <TableCell align="right">{item.linkedAt ? formatDate(item.linkedAt, locale) : '-'}</TableCell>
                               <TableCell align="right">
-                                {row.resolvedAt}
+                                {item.resolvedAt ? formatDate(item.resolvedAt, locale) : '-'}
                               </TableCell>
                             </TableRow>
-                          ));
-                        })()}
+                          ))
+                        ) : (
+                          // No quadrants affected for this emergency in the selected date range
+                          null
+                        )}
                       </TableBody>
                     </Table>
                   </TableContainer>)}

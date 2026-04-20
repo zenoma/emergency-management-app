@@ -30,6 +30,7 @@ import { CircularProgress } from "@mui/material";
 import { useTranslation, withTranslation } from "react-i18next";
 import EmergencyDetailsView from "./features/emergency/EmergencyDetailsView";
 import EmergencyHistoryView from "./features/emergency/EmergencyHistoryView";
+import EmergencyPointView from "./features/point/EmergencyPointView";
 import EmergencyManagementView from "./features/emergency/EmergencyManagementView";
 import QuadrantHistoryView from "./features/history/QuadrantHistoryView";
 import CoordinatorNoticesView from "./features/notice/CoordinatorNoticesView";
@@ -127,6 +128,7 @@ function App({ t }) {
             <Route path="/emergency-management" element={userRole !== 'USER' ? <EmergencyManagementView /> : <Navigate to="/" />} />
             <Route path="/emergency-details/" element={userRole !== 'USER' ? <EmergencyDetailsView /> : <Navigate to="/" />} />
             <Route path="/emergency-history" element={userRole !== 'USER' ? <EmergencyHistoryView /> : <Navigate to="/" />} />
+            <Route path="/emergency-point" element={userRole !== 'USER' ? <EmergencyPointView /> : <Navigate to="/" />} />
             <Route path="/quadrant" element={userRole !== 'USER' ? <QuadrantView /> : <Navigate to="/" />} />
             <Route path="/quadrant-history" element={userRole !== 'USER' ? <QuadrantHistoryView /> : <Navigate to="/" />} />
 
