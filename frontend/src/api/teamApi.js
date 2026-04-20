@@ -25,6 +25,13 @@ export const teamApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => {
         return response;
       },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map((r) => ({ type: 'Team', id: r.id })),
+              { type: 'Team', id: 'LIST' },
+            ]
+          : [{ type: 'Team', id: 'LIST' }],
     }),
     getActiveTeamsByOrganizationId: build.query({
       query: (payload) => ({

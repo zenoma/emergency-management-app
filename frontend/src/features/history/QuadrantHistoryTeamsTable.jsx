@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 
 import React from "react";
 import { useTranslation } from "react-i18next";
+import formatDate from "../../utils/formatDate";
 
 const columns = [
   { id: "code", label: "team-code", minWidth: 100 },
@@ -83,13 +84,17 @@ export default function QuadrantHistoryTeamsTable(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {teams
+      {teams
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((item) => {
                 return (
                   <TableRow role="checkbox" tabIndex={-1} key={item.code}>
                     {columns.map((column) => {
                       const value = item[column.id];
+                      // format date columns
+                      if ((column.id === 'deployAt' || column.id === 'retractAt') && value) {
+                        return <TableCell key={column.id} align={column.align}>{formatDate(value)}</TableCell>;
+                      }
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {column.format && typeof value === "number"

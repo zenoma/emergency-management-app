@@ -1,5 +1,8 @@
 package es.udc.emergencyproject.backend.model.services.emergency.impl;
 
+import es.udc.emergencyproject.backend.model.entities.assignment.Assignment;
+import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentRepository;
+import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentStatus;
 import es.udc.emergencyproject.backend.model.entities.emergency.Emergency;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyIndex;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyQuadrant;
@@ -11,6 +14,8 @@ import es.udc.emergencyproject.backend.model.entities.logs.AssignmentLog;
 import es.udc.emergencyproject.backend.model.entities.logs.GeneralLogEventType;
 import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.emergencyproject.backend.model.entities.quadrant.QuadrantRepository;
+import es.udc.emergencyproject.backend.model.entities.resource.ResourceRepository;
+import es.udc.emergencyproject.backend.model.entities.resource.ResourceStatus;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToPointException;
 import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToQuadrantsException;
@@ -44,6 +49,8 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
   private final QuadrantRepository quadrantRepository;
   private final EmergencyQuadrantRepository emergencyQuadrantRepository;
   private final EmergencyTypeRepository emergencyTypeRepository;
+  private final AssignmentRepository assignmentRepository;
+  private final ResourceRepository resourceRepository;
 
   // QUADRANT SERVICE
   @Override
@@ -67,6 +74,13 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     List<EmergencyQuadrant> eqs = emergencyQuadrantRepository.findAll();
     List<Quadrant> result = new ArrayList<>();
     for (EmergencyQuadrant eq : eqs) {
+      try {
+        if (eq.getEmergency() != null && eq.getEmergency().getEmergencyIndex() != null
+            && eq.getEmergency().getEmergencyIndex() == EmergencyIndex.RESUELTO) {
+          continue;
+        }
+      } catch (Exception ignored) {
+      }
       if (eq.getQuadrant() != null && !result.contains(eq.getQuadrant())) {
         result.add(eq.getQuadrant());
       }
@@ -210,7 +224,49 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     emergency.setEmergencyIndex(EmergencyIndex.RESUELTO);
     emergency.setResolvedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
-    //TODO: cuando se soluciona una emergencia hay que limpiar todos sus cuadrantes y liberar todos sus recursos
+    List<Assignment> assignments = assignmentRepository.findByEmergencyId(emergency.getId());
+    for (Assignment a : assignments) {
+      try {
+        if (a.getStatus() != null && a.getStatus() != AssignmentStatus.COMPLETED) {
+          if (a.getStatus() == AssignmentStatus.ACCEPTED) {
+            a.setStatus(AssignmentStatus.COMPLETED);
+            a.setCompletedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+            assignmentRepository.save(a);
+            try {
+              logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_COMPLETED,
+                  "Assignment auto-completed due to emergency resolved");
+            } catch (Exception ignored) {
+            }
+
+            if (a.getResource() != null) {
+              Long resourceId = a.getResource().getId();
+              var resource = resourceRepository.findByIdForUpdate(resourceId).orElse(null);
+              if (resource != null) {
+                resource.setStatus(ResourceStatus.AVAILABLE);
+                resource.setDeployAt(null);
+                resourceRepository.save(resource);
+
+                try {
+                  logManagementService.registerAssignmentEvent(a, GeneralLogEventType.RESOURCE_RETRACTED,
+                      "Resource retracted due to emergency resolved");
+                } catch (Exception ignored) {
+                }
+              }
+            }
+          } else {
+            // For assignments that were not accepted (e.g. PENDING), perform a soft delete
+            a.setRemoved(Boolean.TRUE);
+            assignmentRepository.save(a);
+            try {
+              logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_DELETED,
+                  "Assignment auto-deleted due to emergency resolved");
+            } catch (Exception ignored) {
+            }
+          }
+        }
+      } catch (Exception ignored) {
+      }
+    }
 
     return emergencyRepository.save(emergency);
   }

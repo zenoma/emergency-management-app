@@ -28,7 +28,8 @@ export const logApi = baseApi.injectEndpoints({
           "&startDate=" +
           payload.startDate +
           "&endDate=" +
-          payload.endDate,
+          payload.endDate +
+          (payload.emergencyId ? "&emergencyId=" + payload.emergencyId : ""),
         headers: {
           Authorization: "Bearer " + payload.token,
           "Accept-Language": payload.locale,
@@ -46,7 +47,8 @@ export const logApi = baseApi.injectEndpoints({
           "&startDate=" +
           payload.startDate +
           "&endDate=" +
-          payload.endDate,
+          payload.endDate +
+          (payload.emergencyId ? "&emergencyId=" + payload.emergencyId : ""),
         headers: {
           Authorization: "Bearer " + payload.token,
           "Accept-Language": payload.locale,

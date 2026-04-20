@@ -17,6 +17,7 @@ import {
   ListItemText,
   Divider,
 } from "@mui/material";
+import Button from "@mui/material/Button";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -41,6 +42,7 @@ import { untransformCoordinates } from "../../app/utils/coordinatesTransformatio
 import { useGetQuadrantByCoordinatesQuery } from "../../api/quadrantApi";
 import { selectToken } from "../user/login/LoginSlice";
 import BackButton from "../utils/BackButton";
+import formatDate from "../../utils/formatDate";
 
 export default function EmergencyHistoryView() {
   const token = useSelector(selectToken);
@@ -138,6 +140,21 @@ export default function EmergencyHistoryView() {
 
       for (let i = 0; i < emergencyLogs.length; i++) {
         const entry = emergencyLogs[i];
+
+        // Filter logs so we only consider entries related to the current emergency.
+        // Different log shapes may include the emergency reference in several places.
+        // If we detect a different emergency id, skip the entry.
+        try {
+          if (entry) {
+            if (entry.emergency && entry.emergency.id != null && entry.emergency.id !== emergencyId) continue;
+            if (entry.emergencyId && entry.emergencyId !== emergencyId) continue;
+            if (entry.assignment && entry.assignment.emergencyInfo && entry.assignment.emergencyInfo.id != null && entry.assignment.emergencyInfo.id !== emergencyId) continue;
+            if (entry.assignment && entry.assignment.emergency && entry.assignment.emergency.id != null && entry.assignment.emergency.id !== emergencyId) continue;
+          }
+        } catch (e) {
+          // ignore malformed entries and continue
+        }
+
         const extracted = extractFromEntry(entry);
         if (!extracted) continue;
 
@@ -288,6 +305,8 @@ export default function EmergencyHistoryView() {
                         const rawY = emergencyData.location.lat;
                         const geo = untransformCoordinates(rawX, rawY);
                         const quadrantName = quadrantByCoordinates?.nombre || quadrantByCoordinates?.name || t('quadrant-name-unknown');
+                        // try to obtain an id for the quadrant from possible response shapes
+                        const quadrantIdFromCoords = quadrantByCoordinates?.id || quadrantByCoordinates?.gid || (quadrantByCoordinates?.data && (quadrantByCoordinates.data.id || quadrantByCoordinates.data.gid));
                         return (
                           <List dense disablePadding>
                             <ListItem>
@@ -300,7 +319,32 @@ export default function EmergencyHistoryView() {
                               <ListItemIcon>
                                 <MapIcon color="primary" />
                               </ListItemIcon>
-                              <ListItemText primary={t('quadrant-name') || 'Quadrant'} secondary={quadrantName} />
+                              <ListItemText
+                                primary={t('quadrant-name') || 'Quadrant'}
+                                secondary={
+                                  quadrantIdFromCoords ? (
+                                    // navigate to quadrant-history with the currently selected date range and emergency id
+                                    <Button
+                                      variant="text"
+                                      onClick={() =>
+                                        navigate("/quadrant-history", {
+                                            state: {
+                                              quadrantId: quadrantIdFromCoords,
+                                              startDate: selectedStartDate ? selectedStartDate.format("YYYY-MM-DD") : (emergencyData && emergencyData.createdAt ? dayjs(emergencyData.createdAt).format("YYYY-MM-DD") : dayjs().subtract(1, 'year').format("YYYY-MM-DD")),
+                                              endDate: selectedEndDate ? selectedEndDate.format("YYYY-MM-DD") : (emergencyData && emergencyData.resolvedAt ? dayjs(emergencyData.resolvedAt).format("YYYY-MM-DD") : dayjs().add(10, 'year').format("YYYY-MM-DD")),
+                                              emergencyId: emergencyData && emergencyData.id ? emergencyData.id : emergencyId,
+                                            },
+                                        })
+                                      }
+                                      sx={{ textTransform: "none" }}
+                                    >
+                                      {quadrantName}
+                                    </Button>
+                                  ) : (
+                                    quadrantName
+                                  )
+                                }
+                              />
                             </ListItem>
                           </List>
                         );
@@ -344,45 +388,11 @@ export default function EmergencyHistoryView() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {emergencyLogs && (() => {
-                          const rows = [];
-                          for (let i = 0; i < emergencyLogs.length; i++) {
-                            const entry = emergencyLogs[i];
-                            let q = entry.quadrantInfo || entry.quadrant || (entry.assignment && entry.assignment.quadrantInfo) || null;
-                            let linkedAt = entry.linkedAt || (entry.assignment && entry.assignment.assignedAt) || entry.eventAt || null;
-                            let resolvedAt = entry.resolvedAt || (entry.assignment && entry.assignment.acceptedAt) || entry.resolvedAt || null;
-
-                            if (entry.assignment && entry.assignment.emergencyInfo && Array.isArray(entry.assignment.emergencyInfo.quadrantInfo)) {
-                              const arr = entry.assignment.emergencyInfo.quadrantInfo;
-                              for (let j = 0; j < arr.length; j++) {
-                                const qItem = arr[j];
-                                rows.push({ quadrantInfo: qItem, linkedAt: linkedAt, resolvedAt: resolvedAt });
-                              }
-                              continue;
-                            }
-
-                            if (!q) continue;
-
-                            if (Array.isArray(q)) {
-                              q.forEach((qItem) => rows.push({ quadrantInfo: qItem, linkedAt: linkedAt, resolvedAt: resolvedAt }));
-                            } else {
-                              rows.push({ quadrantInfo: q, linkedAt: linkedAt, resolvedAt: resolvedAt });
-                            }
-                          }
-
-                          return rows.map((row, index) => (
+                        {quadrants && quadrants.length > 0 ? (
+                          quadrants.map((item, index) => (
                             <TableRow
-                              key={(row.quadrantInfo && row.quadrantInfo.id ? row.quadrantInfo.id : index) + index}
+                              key={(item.quadrant && item.quadrant.id ? item.quadrant.id : index) + "-" + index}
                               hover
-                              onClick={() =>
-                                navigate("/quadrant-history", {
-                                  state: {
-                                    quadrantId: row.quadrantInfo.id,
-                                    startDate: row.linkedAt,
-                                    endDate: row.resolvedAt,
-                                  },
-                                })
-                              }
                               sx={{
                                 "&:last-child td, &:last-child th": {
                                   border: 0,
@@ -390,18 +400,37 @@ export default function EmergencyHistoryView() {
                               }}
                             >
                               <TableCell component="th" scope="row">
-                                {row.quadrantInfo.id}
+                                {item.quadrant.id}
                               </TableCell>
                               <TableCell align="right">
-                                {row.quadrantInfo.nombre}
+                                <Button
+                                  onClick={() =>
+                                    navigate("/quadrant-history", {
+                                        state: {
+                                          quadrantId: item.quadrant.id,
+                                          // use selected date range from the picker so quadrant-history shows the same time window
+                                          startDate: selectedStartDate ? selectedStartDate.format("YYYY-MM-DD") : (emergencyData && emergencyData.createdAt ? dayjs(emergencyData.createdAt).format("YYYY-MM-DD") : (item.linkedAt ? dayjs(item.linkedAt).format("YYYY-MM-DD") : dayjs().subtract(1, 'year').format("YYYY-MM-DD"))),
+                                          endDate: selectedEndDate ? selectedEndDate.format("YYYY-MM-DD") : (emergencyData && emergencyData.resolvedAt ? dayjs(emergencyData.resolvedAt).format("YYYY-MM-DD") : (item.resolvedAt ? dayjs(item.resolvedAt).format("YYYY-MM-DD") : dayjs().add(10, 'year').format("YYYY-MM-DD"))),
+                                          emergencyId: emergencyData && emergencyData.id ? emergencyData.id : emergencyId,
+                                        },
+                                    })
+                                  }
+                                  variant="text"
+                                  sx={{ textTransform: "none" }}
+                                >
+                                  {item.quadrant.nombre}
+                                </Button>
                               </TableCell>
-                              <TableCell align="right">{row.linkedAt}</TableCell>
+                              <TableCell align="right">{item.linkedAt ? formatDate(item.linkedAt, locale) : '-'}</TableCell>
                               <TableCell align="right">
-                                {row.resolvedAt}
+                                {item.resolvedAt ? formatDate(item.resolvedAt, locale) : '-'}
                               </TableCell>
                             </TableRow>
-                          ));
-                        })()}
+                          ))
+                        ) : (
+                          // No quadrants affected for this emergency in the selected date range
+                          null
+                        )}
                       </TableBody>
                     </Table>
                   </TableContainer>)}

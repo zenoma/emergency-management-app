@@ -1,33 +1,16 @@
-import AddIcon from "@mui/icons-material/Add";
+// Quadrant teams view: show teams assigned to the quadrant via assignments endpoint
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Fab,
-} from "@mui/material";
-
+import { Alert, Box, CircularProgress } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
 import { useGetQuadrantByIdQuery } from "../../api/quadrantApi";
-import { useDeployTeamMutation } from "../../api/teamApi";
-import TeamDataGrid from "../team/TeamDataGrid";
+import { useGetAssignmentsQuery } from '../../api/assignmentApi';
 import { selectToken } from "../user/login/LoginSlice";
 import QuadrantTeamsTable from "./QuadrantTeamsTable";
-
-
-import teamImage from "../../assets/images/team-banner.jpg"
+import teamImage from "../../assets/images/team-banner.jpg";
 
 export default function QuadrantTeamsView(props) {
   const token = useSelector(selectToken);
@@ -36,66 +19,37 @@ export default function QuadrantTeamsView(props) {
   const { i18n } = useTranslation("home");
   const locale = i18n.language;
 
-  const [open, setOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(-1);
+  const [unusedState] = useState(0);
 
   const quadrantId = props.quadrantId;
+  // allowed to pass emergencyId from parent (EmergencyDetailsView) to scope assignments to that emergency
+  const emergencyIdProp = props.emergencyId || null;
 
-  const [deployTeam] = useDeployTeamMutation();
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleClick = () => {
-    const payload = {
-      teamId: selectedId,
-      token: token,
-      quadrantId: quadrantId,
-      locale: locale,
-    };
-
-    if (selectedId === -1) {
-      toast.error(t("team-deployed-no-selected"));
-    } else {
-      deployTeam(payload)
-        .unwrap()
-        .then(() => {
-          toast.success(t("team-deployed-successfully"));
-          reloadData();
-          handleClose();
-        })
-        .catch((error) => toast.error(t("team-deployed-error")));
-    }
-  };
-
-  const childToParent = (childdata) => {
-    setSelectedId(childdata.id);
-  };
-
-  const payload = {
-    vehicleId: selectedId,
-    token: token,
-    quadrantId: quadrantId,
-    locale: locale
-  };
+  const payload = quadrantId ? { token: token, quadrantId: quadrantId, locale: locale } : null;
 
   const {
     data: quadrantInfo,
-    isFetching,
-    isError,
+    isFetching: isFetchingQuadrant,
+    isError: isErrorQuadrant,
     refetch,
   } = useGetQuadrantByIdQuery(payload, {
+    skip: !payload,
     refetchOnMountOrArgChange: true,
   });
 
+  // prefer prop emergency id, otherwise explicit emergency id from quadrantInfo if present
+  const emergencyId = emergencyIdProp || quadrantInfo?.emergencyId || quadrantInfo?.emergency?.id || null;
+
+  const {
+    data: assignments = [],
+    isFetching: isFetchingAssignments,
+    isError: isErrorAssignments,
+    refetch: refetchAssignments,
+  } = useGetAssignmentsQuery({ token, locale, quadrantId, emergencyId }, { refetchOnMountOrArgChange: true });
+
   const reloadData = () => {
-    setSelectedId(-1);
     refetch();
+    refetchAssignments();
   };
 
   return (
@@ -122,39 +76,32 @@ export default function QuadrantTeamsView(props) {
         >
           {t("quadrant-teams-deployed")}
         </Typography>
-        {isFetching ? (
+        {(isFetchingQuadrant || isFetchingAssignments) ? (
           <CircularProgress />
-        ) : isError ? (
+        ) : (isErrorQuadrant || isErrorAssignments) ? (
           <Alert severity="error">{t("generic-error")}</Alert>
-        ) : quadrantInfo ? (
+        ) : (
           <QuadrantTeamsTable
             reloadData={reloadData}
-            teams={quadrantInfo.teamList}
+              teams={(assignments || []).filter(a => a.teamInfo).map(a => ({
+              assignmentId: a.id,
+              resourceId: a.teamInfo.id,
+              code: a.teamInfo.code || a.teamInfo.name || '',
+              assignedAt: a.assignedAt || null,
+              assignmentStatus: a.status || null,
+              organizationCode: a.teamInfo.organization ? a.teamInfo.organization.code : '',
+              resourceStatus: a.teamInfo.status || null,
+              // Show the actual deployAt from the nested teamInfo when present
+              resourceDeployAt: a.teamInfo.deployAt || null,
+            }))}
             quadrantId={quadrantId}
           />
-        ) : null}
-        <Box m={1}>
-          <Fab color="primary" aria-label="add" onClick={handleClickOpen}>
-            <AddIcon />
-          </Fab>
-        </Box>
-        <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
-          <DialogTitle sx={{ color: "primary.light" }}>{t("team-deploy-title")} </DialogTitle>
-          <DialogContent>
-            <TeamDataGrid childToParent={childToParent} />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>{t("cancel")}</Button>
-            <Button autoFocus variant="contained" onClick={() => handleClick()}>
-              {t("deploy")}
-            </Button>
-          </DialogActions>
-        </Dialog>
+        )}
       </Paper>
     </Box>
   );
 }
 
 QuadrantTeamsView.propTypes = {
-  quadrantId: PropTypes.number.isRequired,
+  quadrantId: PropTypes.number,
 };

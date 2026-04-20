@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Box, Typography, Paper, Button } from '@mui/material';
 import { DataGrid, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarDensitySelector, GridToolbarFilterButton, esES } from '@mui/x-data-grid';
+import formatDate from '../../utils/formatDate';
 import { useGetEmergenciesQuery } from '../../api/emergencyApi';
 import { useGetAssignmentsQuery } from '../../api/assignmentApi';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +17,7 @@ export default function AssignmentListView() {
   const locale = i18n?.language || 'es';
 
   const { data: emergencies = [] } = useGetEmergenciesQuery({ token, locale });
+  const [pendingOnly, setPendingOnly] = useState(false);
   const { data: assignments = [], isLoading, refetch } = useGetAssignmentsQuery({ token, locale }, { refetchOnMountOrArgChange: true });
 
   const [pageSize, setPageSize] = useState(10);
@@ -23,6 +25,15 @@ export default function AssignmentListView() {
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
+        <Button
+          size="small"
+          variant={pendingOnly ? 'contained' : 'outlined'}
+          color={pendingOnly ? 'success' : 'primary'}
+          sx={{ mr: 1 }}
+          onClick={() => setPendingOnly((v) => !v)}
+        >
+          {pendingOnly ? t('filter-pending-on', 'Status: PENDING') : t('filter-pending-off', 'Show only PENDING')}
+        </Button>
         <GridToolbarColumnsButton />
         <GridToolbarFilterButton />
         <GridToolbarDensitySelector />
@@ -115,7 +126,7 @@ export default function AssignmentListView() {
       valueGetter: (params) => {
         const v = params.row ? params.row.assignedAt : null;
         if (!v) return '-';
-        try { return new Date(v).toLocaleString(); } catch (e) { return v; }
+      try { return formatDate(v, locale); } catch (e) { return v; }
       },
     },
     {
@@ -141,7 +152,7 @@ export default function AssignmentListView() {
 
       <Box sx={{ height: 490, width: '100%', '& .accepted': { backgroundColor: '#e8f5e9', '&:hover': { backgroundColor: '#c8e6c9' } }, '& .pending': { backgroundColor: '#fff8e1' }, '& .completed': { backgroundColor: '#eceff1' } }}>
         <DataGrid
-          rows={assignments || []}
+          rows={(pendingOnly ? (assignments || []).filter(a => a.status === 'PENDING') : (assignments || []))}
           columns={columns}
           loading={isLoading}
           pageSize={pageSize}
@@ -152,6 +163,7 @@ export default function AssignmentListView() {
           componentsProps={{ pagination: { labelRowsPerPage: t('rows-per-page') } }}
           localeText={localeText}
           getRowId={(row) => row.id}
+          onRowClick={(params) => navigate(`/assignments/${params.id}`)}
           getRowClassName={(params) => {
             const status = params.row ? params.row.status : null;
             if (!status) return '';

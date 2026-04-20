@@ -41,7 +41,7 @@ export default function EmergencySelector({ open, onClose, emergencies = [], typ
       if (e.resolvedAt) return false;
       if (typeFilter && String(e.emergencyTypeId || e.emergencyType) !== String(typeFilter)) return false;
       if (ql) {
-        const created = e.createdAt ? new Date(e.createdAt).toLocaleString() : "";
+        const created = e.createdAt ? formatDate(e.createdAt, locale) : "";
         const inText = (e.description || "").toLowerCase().includes(ql) || (e.emergencyTypeName || "").toLowerCase().includes(ql) || String(e.emergencyIndex || "").toLowerCase().includes(ql) || created.toLowerCase().includes(ql) || String(e.id).includes(ql);
         if (!inText) return false;
       }
@@ -103,7 +103,7 @@ export default function EmergencySelector({ open, onClose, emergencies = [], typ
                     <Typography sx={{ fontWeight: 600 }}>{e.description}</Typography>
                     <Typography variant="caption" color="text.secondary">{e.location ? `${t('linked-point', 'Linked point')}` : e.quadrantInfo && e.quadrantInfo.length ? `${t('linked-quadrants', 'Linked quadrants')}: ${e.quadrantInfo.length}` : ''}</Typography>
                   </TableCell>
-                  <TableCell>{e.createdAt ? new Date(e.createdAt).toLocaleString() : '-'}</TableCell>
+                  <TableCell>{e.createdAt ? formatDate(e.createdAt, locale) : '-'}</TableCell>
                   <TableCell>{e.emergencyTypeName || '-'}</TableCell>
                   <TableCell>{e.emergencyIndex || '-'}</TableCell>
                   <TableCell>

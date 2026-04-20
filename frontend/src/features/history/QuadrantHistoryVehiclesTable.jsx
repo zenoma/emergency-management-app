@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 
 import React from "react";
 import { useTranslation } from "react-i18next";
+import formatDate from "../../utils/formatDate";
 
 const columns = [
   { id: "vehiclePlate", label: "vehicle-plate", minWidth: 50 },
@@ -104,6 +105,9 @@ export default function QuadrantHistoryVehiclesTable(props) {
                   >
                     {columns.map((column) => {
                       const value = item[column.id];
+                      if ((column.id === 'deployAt' || column.id === 'retractAt') && value) {
+                        return <TableCell key={column.id} align={column.align}>{formatDate(value)}</TableCell>;
+                      }
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {column.format && typeof value === "number"

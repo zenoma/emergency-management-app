@@ -13,13 +13,17 @@ public interface AssignmentService {
 
   Assignment findAssignmentById(Long id) throws InstanceNotFoundException;
 
+
+  List<Assignment> findByFilters(Integer quadrantId, Long emergencyId, Long resourceId);
+
   List<Assignment> findByEmergencyQuadrantQuadrantId(Integer quadrantId);
+
+  List<Assignment> findByQuadrantGid(Integer quadrantGid);
 
   List<Assignment> findByEmergencyId(Long emergencyId);
 
   List<Assignment> findByResourceId(Long resourceId);
 
-  List<Assignment> findAll();
 
   Assignment updateStatus(Long id, AssignmentStatus status) throws InstanceNotFoundException;
 

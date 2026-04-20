@@ -13,6 +13,8 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -57,4 +59,15 @@ public abstract class Resource {
   @Enumerated(EnumType.STRING)
   @Column(name = "resource_type")
   protected ResourceType resourceType;
+
+  // Ensure deployAt is cleared whenever the resource is or becomes AVAILABLE.
+  // This centralizes the behaviour so callers don't need to remember to clear deployAt
+  // after setting the status to AVAILABLE.
+  @PrePersist
+  @PreUpdate
+  private void clearDeployAtIfAvailable() {
+    if (this.status != null && this.status == ResourceStatus.AVAILABLE) {
+      this.deployAt = null;
+    }
+  }
 }

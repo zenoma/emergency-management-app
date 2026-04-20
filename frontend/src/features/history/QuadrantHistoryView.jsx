@@ -4,10 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import {
-  useGetTeamLogsByQuadrantIdQuery,
-  useGetVehicleLogsByQuadrantIdQuery,
-} from "../../api/logApi";
+import { useGetEmergencyLogsByEmergencyIdQuery } from "../../api/logApi";
 import { selectToken } from "../user/login/LoginSlice";
 import BackButton from "../utils/BackButton";
 import QuadrantHistoryTeamsTable from "./QuadrantHistoryTeamsTable";
@@ -33,16 +30,108 @@ export default function QuadrantHistoryView() {
 
   const payload = {
     token: token,
-    quadrantId: quadrantId,
+    emergencyId: location.state && location.state.emergencyId ? location.state.emergencyId : undefined,
     startDate: dayjs(startDate).format("YYYY-MM-DD"),
     endDate: dayjs(endDate).format("YYYY-MM-DD"),
-    locale: locale
+    locale: locale,
   };
 
+  const { data: emergencyLogs, isError: isLogsError, isLoading: isLogsLoading } = useGetEmergencyLogsByEmergencyIdQuery(payload, { refetchOnMountOrArgChange: true });
+  const { data: quadrantInfo, isLoading, isError: isQuadrantError } = useGetQuadrantByIdQuery({ token, quadrantId, locale });
 
-  const { data: teamLogs, isError: isTeamLogsError } = useGetTeamLogsByQuadrantIdQuery(payload);
-  const { data: quadrantInfo, isLoading, isError: isQuadrantError } = useGetQuadrantByIdQuery(payload);
-  const { data: vehicleLogs, isError: isVehicleLogsError } = useGetVehicleLogsByQuadrantIdQuery(payload);
+  // local derived logs for the selected quadrant
+  const [teamLogs, setTeamLogs] = React.useState([]);
+  const [vehicleLogs, setVehicleLogs] = React.useState([]);
+
+  React.useEffect(() => {
+    console.debug('QuadrantHistoryView logs payload', emergencyLogs);
+    if (!emergencyLogs || !Array.isArray(emergencyLogs)) {
+      setTeamLogs([]);
+      setVehicleLogs([]);
+      return;
+    }
+
+    // Use maps to deduplicate resources (assignments may appear multiple times: created/accepted/completed)
+    const tMap = new Map();
+    const vMap = new Map();
+
+    for (const entry of emergencyLogs) {
+      try {
+        const a = entry.assignment;
+        // allow logs where the assignment object is present OR the eventType explicitly marks completion
+        if (!a && !(entry.eventType && String(entry.eventType).toUpperCase().includes('ASSIGNMENT_COMPLETED'))) continue;
+        // Determine whether this entry represents a completed assignment. Some log shapes mark completion
+        // via assignment.status === 'COMPLETED', others via entry.eventType === 'ASSIGNMENT_COMPLETED'. Accept both.
+        const entryEventType = entry.eventType ? String(entry.eventType).toUpperCase() : null;
+        const assignmentStatus = a && a.status ? String(a.status).toUpperCase() : null;
+        const isCompleted = (assignmentStatus === 'COMPLETED') || (entryEventType && entryEventType.includes('ASSIGNMENT_COMPLETED'));
+        if (!isCompleted) continue;
+        // determine the quadrant id for the assignment: prefer embedded quadrant id
+        const aqid = a && a.quadrantInfo && a.quadrantInfo.id ? a.quadrantInfo.id : (entry.quadrant && entry.quadrant.id ? entry.quadrant.id : (a && a.emergencyQuadrantId ? a.emergencyQuadrantId : null));
+
+        // Determine whether this entry belongs to the requested quadrant.
+        // Accept cases where the assignment/quadrant explicitly references the quadrant (aqid),
+        // or when the navigation included an emergencyId and the assignment references that emergency
+        // (this covers point-linked emergencies where assignments may not carry quadrant info).
+        const payloadEmergencyId = location.state && location.state.emergencyId ? location.state.emergencyId : undefined;
+        let matchesQuadrant = false;
+        if (aqid) {
+          matchesQuadrant = (Number(aqid) === Number(quadrantId));
+        } else if (payloadEmergencyId) {
+          const aEmergencyId = a && a.emergencyInfo && a.emergencyInfo.id ? a.emergencyInfo.id : (entry.emergency && entry.emergency.id ? entry.emergency.id : (entry.emergencyId || null));
+          if (aEmergencyId && Number(aEmergencyId) === Number(payloadEmergencyId)) {
+            matchesQuadrant = true;
+          }
+        }
+        if (!matchesQuadrant) continue;
+
+        // normalize resource info: prefer assignment.* fields, fall back to top-level entry.* fields
+        const teamInfo = (a && a.teamInfo) ? a.teamInfo : (entry.teamInfo ? entry.teamInfo : null);
+        const vehicleInfo = (a && a.vehicleInfo) ? a.vehicleInfo : (entry.vehicleInfo ? entry.vehicleInfo : null);
+
+        const resourceDeploy = (a && (a.acceptedAt || a.assignedAt)) || (teamInfo && teamInfo.deployAt) || (vehicleInfo && vehicleInfo.deployAt) || entry.assignedAt || entry.acceptedAt || null;
+        const resourceRetract = (a && a.completedAt) || entry.completedAt || entry.eventAt || null;
+
+        if (teamInfo) {
+          const id = teamInfo.id;
+          const existing = tMap.get(id);
+          if (!existing) {
+            tMap.set(id, { teamInfo: teamInfo, deployAt: resourceDeploy, retractAt: resourceRetract });
+          } else {
+            // update times: keep earliest deployAt and latest retractAt
+            const dCandidates = [existing.deployAt, resourceDeploy].filter(Boolean).map((s) => new Date(s));
+            const rCandidates = [existing.retractAt, resourceRetract].filter(Boolean).map((s) => new Date(s));
+            const earliestD = dCandidates.length ? new Date(Math.min(...dCandidates)) : null;
+            const latestR = rCandidates.length ? new Date(Math.max(...rCandidates)) : null;
+            existing.deployAt = earliestD ? earliestD.toISOString() : existing.deployAt;
+            existing.retractAt = latestR ? latestR.toISOString() : existing.retractAt;
+            tMap.set(id, existing);
+          }
+        }
+
+        if (vehicleInfo) {
+          const id = vehicleInfo.id;
+          const existing = vMap.get(id);
+          if (!existing) {
+            vMap.set(id, { vehicleInfo: vehicleInfo, deployAt: resourceDeploy, retractAt: resourceRetract });
+          } else {
+            const dCandidates = [existing.deployAt, resourceDeploy].filter(Boolean).map((s) => new Date(s));
+            const rCandidates = [existing.retractAt, resourceRetract].filter(Boolean).map((s) => new Date(s));
+            const earliestD = dCandidates.length ? new Date(Math.min(...dCandidates)) : null;
+            const latestR = rCandidates.length ? new Date(Math.max(...rCandidates)) : null;
+            existing.deployAt = earliestD ? earliestD.toISOString() : existing.deployAt;
+            existing.retractAt = latestR ? latestR.toISOString() : existing.retractAt;
+            vMap.set(id, existing);
+          }
+        }
+      } catch (e) {
+        // ignore malformed entries
+      }
+    }
+
+    setTeamLogs(Array.from(tMap.values()));
+    setVehicleLogs(Array.from(vMap.values()));
+  }, [emergencyLogs, quadrantId]);
 
   if (isLoading) {
     return (
@@ -118,9 +207,9 @@ export default function QuadrantHistoryView() {
             >
               {t("quadrant-teams-deployed")}
             </Typography>
-            {isTeamLogsError ? (
+            {isLogsError ? (
               <Alert severity="error">{t("generic-error")}</Alert>
-            ) : teamLogs && <QuadrantHistoryTeamsTable teamLogs={teamLogs} />}
+            ) : (isLogsLoading ? <CircularProgress /> : <QuadrantHistoryTeamsTable teamLogs={teamLogs} />)}
           </Box>
         </Grid>
         <Grid item xs={4} sm={8} md={6}>
@@ -142,11 +231,9 @@ export default function QuadrantHistoryView() {
             >
               {t("quadrant-vehicles-deployed")}
             </Typography>
-            {isVehicleLogsError ? (
+            {isLogsError ? (
               <Alert severity="error">{t("generic-error")}</Alert>
-            ) : vehicleLogs && (
-              <QuadrantHistoryVehiclesTable vehicleLogs={vehicleLogs} />
-            )}
+            ) : (isLogsLoading ? <CircularProgress /> : <QuadrantHistoryVehiclesTable vehicleLogs={vehicleLogs} />)}
           </Box>
         </Grid>
       </Grid>
