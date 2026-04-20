@@ -10,6 +10,11 @@ get:
         type: integer
         format: int64
     - in: query
+      name: emergencyId
+      schema:
+        type: integer
+        format: int64
+    - in: query
       name: resourceId
       schema:
         type: integer

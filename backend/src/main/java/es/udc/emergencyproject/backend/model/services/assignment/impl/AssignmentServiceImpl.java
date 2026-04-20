@@ -36,7 +36,6 @@ public class AssignmentServiceImpl implements AssignmentService {
   private final EmergencyRepository emergencyRepository;
   private final LogManagementService logManagementService;
 
-  // TODO: Hay que guardar registro de todos las operaciones de asignación
 
   @Override
   public Assignment createAssignment(Long emergencyId, Integer quadrantId, Long resourceId, String notes)
@@ -52,7 +51,6 @@ public class AssignmentServiceImpl implements AssignmentService {
     var emergency = emergencyRepository.findById(emergencyId)
         .orElseThrow(() -> new InstanceNotFoundException("Emergency not found", emergencyId));
 
-    // emergency must not be resolved
     if (emergency.getEmergencyIndex() == EmergencyIndex.RESUELTO) {
       throw new ResolvedEmergencyException(
           "Emergency",
@@ -128,23 +126,28 @@ public class AssignmentServiceImpl implements AssignmentService {
 
 
   @Override
-  public List<Assignment> findByEmergencyQuadrantQuadrantId(Integer quadrantId) {
-    return assignmentRepository.findByEmergencyQuadrantQuadrantId(quadrantId);
-  }
+  public List<Assignment> findByFilters(Integer quadrantId, Long emergencyId, Long resourceId) {
+    boolean hasQuadrant = quadrantId != null;
+    boolean hasEmergency = emergencyId != null;
+    boolean hasResource = resourceId != null;
 
-  @Override
-  public List<Assignment> findAll() {
-    return assignmentRepository.findAllWithRelations();
-  }
+    if (hasResource && !hasEmergency && !hasQuadrant) {
+      return assignmentRepository.findByResourceId(resourceId);
+    }
 
-  @Override
-  public List<Assignment> findByResourceId(Long resourceId) {
-    return assignmentRepository.findByResourceId(resourceId);
-  }
+    if (hasEmergency && !hasResource && !hasQuadrant) {
+      return assignmentRepository.findByEmergencyId(emergencyId);
+    }
 
-  @Override
-  public List<Assignment> findByEmergencyId(Long emergencyId) {
-    return assignmentRepository.findByEmergencyId(emergencyId);
+    if (hasQuadrant && !hasEmergency && !hasResource) {
+      return assignmentRepository.findByEmergencyQuadrantQuadrantId(quadrantId);
+    }
+
+    if (!hasQuadrant && !hasEmergency && !hasResource) {
+      return assignmentRepository.findAll();
+    }
+
+    return assignmentRepository.findByFilters(quadrantId, emergencyId, resourceId);
   }
 
   @Override
@@ -211,9 +214,28 @@ public class AssignmentServiceImpl implements AssignmentService {
   }
 
   @Override
+  public List<Assignment> findByEmergencyQuadrantQuadrantId(Integer quadrantId) {
+    return assignmentRepository.findByEmergencyQuadrantQuadrantId(quadrantId);
+  }
+
+  @Override
+  public List<Assignment> findByEmergencyId(Long emergencyId) {
+    return assignmentRepository.findByEmergencyId(emergencyId);
+  }
+
+  @Override
+  public List<Assignment> findByResourceId(Long resourceId) {
+    return assignmentRepository.findByResourceId(resourceId);
+  }
+
+  @Override
+  public List<Assignment> findByQuadrantGid(Integer quadrantGid) {
+    return assignmentRepository.findByQuadrantGid(quadrantGid);
+  }
+
+  @Override
   public void deleteAssignment(Long id) throws InstanceNotFoundException {
     Assignment a = findAssignmentById(id);
-    // Only allow deletion when assignment is in PENDING status
     if (a.getStatus() != AssignmentStatus.PENDING) {
       throw new InvalidAssignmentTransitionException(a.getStatus() == null ? "null" : a.getStatus().name(),
           AssignmentStatus.PENDING.name());
