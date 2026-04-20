@@ -110,7 +110,8 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
       }
     } catch (ResourceBusyException rbe) {
-      assignmentRepository.delete(saved);
+      saved.setRemoved(Boolean.TRUE);
+      assignmentRepository.save(saved);
       throw rbe;
     }
 
@@ -144,7 +145,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     if (!hasQuadrant && !hasEmergency && !hasResource) {
-      return assignmentRepository.findAll();
+      return assignmentRepository.findByFilters(null, null, null);
     }
 
     return assignmentRepository.findByFilters(quadrantId, emergencyId, resourceId);

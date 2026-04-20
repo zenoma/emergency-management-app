@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Box, Typography, Paper, Button } from '@mui/material';
 import { DataGrid, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarDensitySelector, GridToolbarFilterButton, esES } from '@mui/x-data-grid';
+import formatDate from '../../utils/formatDate';
 import { useGetEmergenciesQuery } from '../../api/emergencyApi';
 import { useGetAssignmentsQuery } from '../../api/assignmentApi';
 import { useTranslation } from 'react-i18next';
@@ -125,7 +126,7 @@ export default function AssignmentListView() {
       valueGetter: (params) => {
         const v = params.row ? params.row.assignedAt : null;
         if (!v) return '-';
-        try { return new Date(v).toLocaleString(); } catch (e) { return v; }
+      try { return formatDate(v, locale); } catch (e) { return v; }
       },
     },
     {

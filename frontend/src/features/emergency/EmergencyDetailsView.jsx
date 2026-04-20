@@ -576,7 +576,7 @@ export default function EmergencyDetailsView() {
                               }}
                               onClick={() =>
                                 navigate("/quadrant", {
-                                  state: { quadrantId: row.id },
+                                  state: { quadrantId: row.id, emergencyId: emergencyId },
                                 })}
                             >
                               <TableCell component="th" scope="row">

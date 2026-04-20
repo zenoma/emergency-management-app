@@ -27,6 +27,7 @@ import EmergencyInline from "./EmergencyInline";
 import TeamInline from "./TeamInline";
 import VehicleInline from "./VehicleInline";
 import './assignmentView.css';
+import formatDate from '../../utils/formatDate';
 
 export default function AssignmentManagementView() {
   const { t, i18n } = useTranslation();
@@ -193,7 +194,7 @@ export default function AssignmentManagementView() {
                 return (
                   <Grid container spacing={1}>
                     <Grid item xs={12}><Typography variant="body2"><strong>{t('emergency-name', 'Name')}:</strong> {em.description}</Typography></Grid>
-                    <Grid item xs={6}><Typography variant="body2"><strong>{t('emergency-date', 'Created at')}:</strong> {em.createdAt ? new Date(em.createdAt).toLocaleString() : '-'}</Typography></Grid>
+                    <Grid item xs={6}><Typography variant="body2"><strong>{t('emergency-date', 'Created at')}:</strong> {em.createdAt ? formatDate(em.createdAt, locale) : '-'}</Typography></Grid>
                     <Grid item xs={6}><Typography variant="body2"><strong>{t('emergency-type', 'Type')}:</strong> {em.emergencyTypeName || '-'}</Typography></Grid>
                     <Grid item xs={6}><Typography variant="body2"><strong>{t('emergency-index', 'Index')}:</strong> {em.emergencyIndex || '-'}</Typography></Grid>
                     <Grid item xs={6}><Typography variant="body2"><strong>{t('emergency-location', 'Location')}:</strong> {em.location ? `${em.location.coordinates || JSON.stringify(em.location)}` : '-'}</Typography></Grid>
@@ -213,7 +214,7 @@ export default function AssignmentManagementView() {
                   <Grid item xs={12}><Typography variant="body2"><strong>{t('name', 'Name')}:</strong> {selectedTeamObj.name || selectedTeamObj.code}</Typography></Grid>
                   <Grid item xs={12}><Typography variant="body2"><strong>{t('status', 'Status')}:</strong> {selectedTeamObj.status || '-'}</Typography></Grid>
                   <Grid item xs={12}><Typography variant="body2"><strong>{t('organization', 'Organization')}:</strong> {(selectedTeamObj.organization && selectedTeamObj.organization.name) || selectedTeamObj.organizationName || '-'}</Typography></Grid>
-                  <Grid item xs={12}><Typography variant="body2"><strong>{t('deployAt', 'Deployed at')}:</strong> {selectedTeamObj.deployAt ? new Date(selectedTeamObj.deployAt).toLocaleString() : '-'}</Typography></Grid>
+                  <Grid item xs={12}><Typography variant="body2"><strong>{t('deployAt', 'Deployed at')}:</strong> {selectedTeamObj.deployAt ? formatDate(selectedTeamObj.deployAt, locale) : '-'}</Typography></Grid>
                   <Grid item xs={12}><Typography variant="body2"><strong>{t('description', 'Description')}:</strong> {selectedTeamObj.description || '-'}</Typography></Grid>
                 </Grid>
               )}
@@ -223,7 +224,7 @@ export default function AssignmentManagementView() {
                   <Grid item xs={12}><Typography variant="body2"><strong>{t('plate', 'Plate')}:</strong> {selectedVehicleObj.vehiclePlate || selectedVehicleObj.plate || '-'}</Typography></Grid>
                   <Grid item xs={12}><Typography variant="body2"><strong>{t('status', 'Status')}:</strong> {selectedVehicleObj.status || '-'}</Typography></Grid>
                   <Grid item xs={12}><Typography variant="body2"><strong>{t('organization', 'Organization')}:</strong> {(selectedVehicleObj.organization && selectedVehicleObj.organization.name) || selectedVehicleObj.organizationName || '-'}</Typography></Grid>
-                  <Grid item xs={12}><Typography variant="body2"><strong>{t('deployAt', 'Deployed at')}:</strong> {selectedVehicleObj.deployAt ? new Date(selectedVehicleObj.deployAt).toLocaleString() : '-'}</Typography></Grid>
+                  <Grid item xs={12}><Typography variant="body2"><strong>{t('deployAt', 'Deployed at')}:</strong> {selectedVehicleObj.deployAt ? formatDate(selectedVehicleObj.deployAt, locale) : '-'}</Typography></Grid>
                   <Grid item xs={12}><Typography variant="body2"><strong>{t('description', 'Description')}:</strong> {selectedVehicleObj.description || '-'}</Typography></Grid>
                 </Grid>
               )}

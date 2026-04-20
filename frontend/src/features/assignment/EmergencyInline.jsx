@@ -17,9 +17,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
+import formatDate from '../../utils/formatDate';
 
 export default function EmergencyInline({ emergencies = [], onSelect, externalSelectedId = null }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [q, setQ] = useState("");
   const [dateFrom, setDateFrom] = useState(null);
   const [dateTo, setDateTo] = useState(null);
@@ -29,12 +30,14 @@ export default function EmergencyInline({ emergencies = [], onSelect, externalSe
     if (!externalSelectedId) setSelected(null);
   }, [externalSelectedId]);
 
+  const locale = (i18n || {}).language || 'es';
+
   const filtered = useMemo(() => {
     const ql = (q || "").toLowerCase();
     return (emergencies || []).filter((e) => {
       if (e.resolvedAt) return false;
       if (ql) {
-        const created = e.createdAt ? new Date(e.createdAt).toLocaleString() : "";
+        const created = e.createdAt ? formatDate(e.createdAt, locale) : "";
         const inText = (e.description || "").toLowerCase().includes(ql) || (e.emergencyTypeName || "").toLowerCase().includes(ql) || String(e.emergencyIndex || "").toLowerCase().includes(ql) || created.toLowerCase().includes(ql) || String(e.id).includes(ql);
         if (!inText) return false;
       }
@@ -91,7 +94,7 @@ export default function EmergencyInline({ emergencies = [], onSelect, externalSe
                   <Paper variant="outlined" sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <Typography sx={{ fontWeight: 700 }}>{selected.description} (#{selected.id})</Typography>
-                      <Typography variant="caption" color="text.secondary">{selected.emergencyTypeName || '-'} — {selected.createdAt ? new Date(selected.createdAt).toLocaleString() : '-'}</Typography>
+                      <Typography variant="caption" color="text.secondary">{selected.emergencyTypeName || '-'} — {selected.createdAt ? formatDate(selected.createdAt, locale) : '-'}</Typography>
                     </div>
                     <div>
                       <Button variant="contained" color="primary" sx={{ mr: 1 }} onClick={() => { onSelect(selected); }}>{t('apply-selection', 'Apply')}</Button>

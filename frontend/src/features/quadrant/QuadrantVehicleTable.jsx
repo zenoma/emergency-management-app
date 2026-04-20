@@ -22,18 +22,22 @@ import { toast } from "react-toastify";
 
 import React from "react";
 import { useTranslation } from "react-i18next";
+import formatDate from "../../utils/formatDate";
 import { useRetractVehicleMutation } from "../../api/vehicleApi";
 
 const columns = [
-  { id: "vehiclePlate", label: "vehicle-plate", minWidth: 100 },
-  { id: "type", label: "type", minWidth: 150 },
-  { id: "organizationCode", label: "team-organization-belong", minWidth: 150 },
-  { id: "deployAt", label: "deploy-at", minWidth: 50 },
-  { id: "options", label: "options", minWidth: 50 },
+  { id: "assignmentId", label: "assignment-id", minWidth: 100 },
+  { id: "resourceId", label: "resource-id", minWidth: 100 },
+  { id: "vehiclePlate", label: "vehicle-plate", minWidth: 150 },
+  { id: "assignedAt", label: "assigned-at", minWidth: 160 },
+  { id: "assignmentStatus", label: "assignment-status", minWidth: 120 },
+  { id: "organizationCode", label: "organization-code", minWidth: 140 },
+  { id: "resourceStatus", label: "resource-status", minWidth: 120 },
+  { id: "resourceDeployAt", label: "deploy-at", minWidth: 160 },
 ];
 
-function createData(id, vehiclePlate, type, organizationCode, deployAt) {
-  return { id, vehiclePlate, type, organizationCode, deployAt };
+function createData(assignmentId, resourceId, vehiclePlate, assignedAt, assignmentStatus, organizationCode, resourceStatus, resourceDeployAt) {
+  return { assignmentId, resourceId, vehiclePlate, assignedAt, assignmentStatus, organizationCode, resourceStatus, resourceDeployAt };
 }
 
 export default function QuadrantVehicleTable(props) {
@@ -95,18 +99,16 @@ export default function QuadrantVehicleTable(props) {
 
   var rows = [];
   if (vehicles) {
-    rows = [];
-    vehicles.forEach((item, index) => {
-      rows.push(
-        createData(
-          item.id,
-          item.vehiclePlate,
-          item.type,
-          item.organization.code,
-          item.deployAt
-        )
-      );
-    });
+    rows = vehicles.map((item) => createData(
+      item.assignmentId,
+      item.resourceId,
+      item.vehiclePlate,
+      item.assignedAt,
+      item.assignmentStatus,
+      item.organizationCode,
+      item.resourceStatus,
+      item.resourceDeployAt
+    ));
   }
 
   return (
@@ -131,43 +133,40 @@ export default function QuadrantVehicleTable(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={row.vehiclePlate}
-                  >
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align} sx={{
-                          padding: "8px"
-                        }}>
-                          {column.format && typeof value === "number"
-                            ? column.format(value)
-                            : value}
-                          {column.id === "options" ? (
-                            <Box>
-                              <Button
-                                color="primary"
-                                aria-label="add"
-                                size="small"
-                                onClick={(e) => handleClickOpenDelete(row.id)}
-                              >
-                                <DeleteIcon />
-                              </Button>
-                            </Box>
-                          ) : null}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
+          {rows
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((row) => {
+              return (
+                <TableRow
+                  hover
+                  role="checkbox"
+                  tabIndex={-1}
+                  key={row.assignmentId || row.resourceId}
+                >
+                  {columns.map((column) => {
+                    const value = row[column.id];
+                    let content = column.id === 'assignedAt' && value ? formatDate(value, locale) : (column.format && typeof value === "number" ? column.format(value) : value);
+                    if (column.id === 'assignmentStatus') {
+                      const s = value;
+                      if (s === 'ACCEPTED') content = <span style={{ color: 'green', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                      else if (s === 'PENDING' || s === 'CREATED') content = <span style={{ color: '#ff9800', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                      else content = <span>{t(String(s).toLowerCase(), s)}</span>;
+                    }
+                    if (column.id === 'resourceStatus') {
+                      const s = value;
+                      if (s === 'BUSY') content = <span style={{ color: 'red', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                      else if (s === 'AVAILABLE') content = <span style={{ color: 'green', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                    }
+
+                    return (
+                      <TableCell key={column.id} align={column.align} sx={{ padding: "8px" }}>
+                        {content}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>

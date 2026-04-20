@@ -134,7 +134,7 @@ export default function EmergencyDataGrid() {
           const v = params.row ? params.row.createdAt : null;
           if (!v) return "";
           try {
-            return new Date(v).toLocaleString(locale);
+            return formatDate(v, locale);
           } catch (e) {
             return v;
           }
@@ -149,7 +149,7 @@ export default function EmergencyDataGrid() {
           const v = params.row ? params.row.resolvedAt : null;
           if (!v) return "";
           try {
-            return new Date(v).toLocaleString(locale);
+            return formatDate(v, locale);
           } catch (e) {
             return v;
           }

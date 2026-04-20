@@ -13,6 +13,7 @@ export default function QuadrantView() {
   const location = useLocation();
   const token = useSelector(selectToken);
   const quadrantId = location.state.quadrantId;
+  const emergencyIdFromState = location.state.emergencyId || null;
 
   const { t } = useTranslation();
   const { i18n } = useTranslation("home");
@@ -64,14 +65,14 @@ export default function QuadrantView() {
             </Typography>
           )}
         </Grid>
-        <Grid item xs={4} sm={8} md={6}>
+        <Grid item xs={4} sm={8} md={12}>
           <Box>
-            <QuadrantTeamsView quadrantId={quadrantId} />
+            <QuadrantTeamsView quadrantId={quadrantId} emergencyId={emergencyIdFromState} />
           </Box>
         </Grid>
-        <Grid item xs={4} sm={8} md={6}>
-          <Box>
-            <QuadrantVehiclesView quadrantId={quadrantId} />
+        <Grid item xs={4} sm={8} md={12}>
+            <Box sx={{ mt: 2 }}>
+            <QuadrantVehiclesView quadrantId={quadrantId} emergencyId={emergencyIdFromState} />
           </Box>
         </Grid>
       </Grid>

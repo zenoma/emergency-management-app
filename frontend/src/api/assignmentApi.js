@@ -40,6 +40,7 @@ export const assignmentApi = baseApi.injectEndpoints({
         const locale = filters?.locale;
         if (filters) {
           if (filters.emergencyId) params.append('emergencyId', filters.emergencyId);
+          if (filters.quadrantId) params.append('quadrantId', filters.quadrantId);
           if (filters.resourceId) params.append('resourceId', filters.resourceId);
           if (filters.status) params.append('status', filters.status);
           if (filters.from) params.append('from', filters.from);

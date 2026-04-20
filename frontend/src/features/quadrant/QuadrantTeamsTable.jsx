@@ -22,17 +22,22 @@ import { toast } from "react-toastify";
 
 import React from "react";
 import { useTranslation } from "react-i18next";
+import formatDate from "../../utils/formatDate";
 import { useRetractTeamMutation } from "../../api/teamApi";
 
 const columns = [
+  { id: "assignmentId", label: "assignment-id", minWidth: 100 },
+  { id: "resourceId", label: "resource-id", minWidth: 100 },
   { id: "code", label: "team-code", minWidth: 150 },
-  { id: "organizationCode", label: "team-organization-belong", minWidth: 150 },
-  { id: "deployAt", label: "deploy-at", minWidth: 50 },
-  { id: "options", label: "options", minWidth: 50 },
+  { id: "assignedAt", label: "assigned-at", minWidth: 160 },
+  { id: "assignmentStatus", label: "assignment-status", minWidth: 120 },
+  { id: "organizationCode", label: "organization-code", minWidth: 140 },
+  { id: "resourceStatus", label: "resource-status", minWidth: 120 },
+  { id: "resourceDeployAt", label: "deploy-at", minWidth: 160 },
 ];
 
-function createData(id, code, organizationCode, deployAt) {
-  return { id, code, organizationCode, deployAt };
+function createData(assignmentId, resourceId, code, assignedAt, assignmentStatus, organizationCode, resourceStatus, resourceDeployAt) {
+  return { assignmentId, resourceId, code, assignedAt, assignmentStatus, organizationCode, resourceStatus, resourceDeployAt };
 }
 
 export default function QuadrantTeamsTable(props) {
@@ -93,12 +98,16 @@ export default function QuadrantTeamsTable(props) {
 
   var rows = [];
   if (teams) {
-    rows = [];
-    teams.forEach((item) => {
-      rows.push(
-        createData(item.id, item.code, item.organization.code, item.deployAt)
-      );
-    });
+    rows = teams.map((item) => createData(
+      item.assignmentId,
+      item.resourceId,
+      item.code,
+      item.assignedAt,
+      item.assignmentStatus,
+      item.organizationCode,
+      item.resourceStatus,
+      item.resourceDeployAt
+    ));
   }
 
   return (
@@ -107,54 +116,52 @@ export default function QuadrantTeamsTable(props) {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                  sx={{
-                    color: "secondary.light",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {t(column.label)}
-                </TableCell>
-              ))}
+          {columns.map((column) => (
+            <TableCell
+              key={column.id}
+              align={column.align}
+              style={{ minWidth: column.minWidth }}
+              sx={{
+                color: "secondary.light",
+                fontWeight: "bold",
+              }}
+            >
+              {t(column.label)}
+            </TableCell>
+          ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align} sx={{
-                          padding: "8px"
-                        }}>
-                          {column.format && typeof value === "number"
-                            ? column.format(value)
-                            : value}
-                          {column.id === "options" ? (
-                            <Box>
-                              <Button
-                                color="primary"
-                                aria-label="add"
-                                size="small"
-                                onClick={(e) => handleClickOpenDelete(row.id)}
-                              >
-                                <DeleteIcon />
-                              </Button>
-                            </Box>
-                          ) : null}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
+          {rows
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((row) => {
+              return (
+                <TableRow role="checkbox" tabIndex={-1} key={row.assignmentId || row.resourceId}>
+                  {columns.map((column) => {
+                    const value = row[column.id];
+                    let content = column.id === 'assignedAt' && value ? formatDate(value, locale) : (column.format && typeof value === "number" ? column.format(value) : value);
+                    // render colored status for assignmentStatus
+                    if (column.id === 'assignmentStatus') {
+                      const s = value;
+                      if (s === 'ACCEPTED') content = <span style={{ color: 'green', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                      else if (s === 'PENDING' || s === 'CREATED') content = <span style={{ color: '#ff9800', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                      else content = <span>{t(String(s).toLowerCase(), s)}</span>;
+                    }
+                    if (column.id === 'resourceStatus') {
+                      const s = value;
+                      if (s === 'BUSY') content = <span style={{ color: 'red', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                      else if (s === 'AVAILABLE') content = <span style={{ color: 'green', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                    }
+
+                    return (
+                      <TableCell key={column.id} align={column.align} sx={{ padding: "8px" }}>
+                        {content}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>

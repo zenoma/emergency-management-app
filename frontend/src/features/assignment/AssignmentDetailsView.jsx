@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { selectToken } from '../user/login/LoginSlice';
 import { useTranslation } from 'react-i18next';
 import ReplayIcon from '@mui/icons-material/Replay';
+import formatDate from '../../utils/formatDate';
 
 export default function AssignmentDetailsView() {
   const { id } = useParams();
@@ -78,7 +79,7 @@ export default function AssignmentDetailsView() {
             <Typography variant="subtitle1" gutterBottom>{t('emergency', 'Emergency')}</Typography>
             <Typography variant="body2"><strong>{t('name', 'Name')}:</strong> {emergency ? emergency.description : '-'}</Typography>
             <Typography variant="body2"><strong>{t('id', 'ID')}:</strong> {emergency ? `#${emergency.id}` : '-'}</Typography>
-            <Typography variant="body2"><strong>{t('created-at', 'Created at')}:</strong> {emergency && emergency.createdAt ? new Date(emergency.createdAt).toLocaleString() : '-'}</Typography>
+            <Typography variant="body2"><strong>{t('created-at', 'Created at')}:</strong> {emergency && emergency.createdAt ? formatDate(emergency.createdAt, locale) : '-'}</Typography>
           </Paper>
         </Grid>
 
@@ -87,7 +88,7 @@ export default function AssignmentDetailsView() {
             <Typography variant="subtitle1" gutterBottom>{t('resource', 'Resource')}</Typography>
             <Typography variant="body2"><strong>{t('resource-name', 'Resource name')}:</strong> {resource ? (resource.name || resource.code || resource.plate) : '-'}</Typography>
             <Typography variant="body2"><strong>{t('resource-id', 'Resource ID')}:</strong> {resource ? `#${resource.id}` : '-'}</Typography>
-            <Typography variant="body2"><strong>{t('deployed-at', 'Deployed at')}:</strong> {resource && resource.deployAt ? new Date(resource.deployAt).toLocaleString() : '-'}</Typography>
+            <Typography variant="body2"><strong>{t('deployed-at', 'Deployed at')}:</strong> {resource && resource.deployAt ? formatDate(resource.deployAt, locale) : '-'}</Typography>
           </Paper>
         </Grid>
 
@@ -104,9 +105,9 @@ export default function AssignmentDetailsView() {
             <Typography variant="subtitle1">{t('assignment-info', 'Assignment info')}</Typography>
             <Divider sx={{ my: 1 }} />
             <Grid container spacing={1}>
-              <Grid item xs={12} md={4}><Typography variant="body2"><strong>{t('assigned-at', 'Assigned at')}:</strong> {assignment.assignedAt ? new Date(assignment.assignedAt).toLocaleString() : '-'}</Typography></Grid>
-              <Grid item xs={12} md={4}><Typography variant="body2"><strong>{t('accepted-at', 'Accepted at')}:</strong> {assignment.acceptedAt ? new Date(assignment.acceptedAt).toLocaleString() : '-'}</Typography></Grid>
-              <Grid item xs={12} md={4}><Typography variant="body2"><strong>{t('completed-at', 'Completed at')}:</strong> {assignment.completedAt ? new Date(assignment.completedAt).toLocaleString() : '-'}</Typography></Grid>
+              <Grid item xs={12} md={4}><Typography variant="body2"><strong>{t('assigned-at', 'Assigned at')}:</strong> {assignment.assignedAt ? formatDate(assignment.assignedAt, locale) : '-'}</Typography></Grid>
+              <Grid item xs={12} md={4}><Typography variant="body2"><strong>{t('accepted-at', 'Accepted at')}:</strong> {assignment.acceptedAt ? formatDate(assignment.acceptedAt, locale) : '-'}</Typography></Grid>
+              <Grid item xs={12} md={4}><Typography variant="body2"><strong>{t('completed-at', 'Completed at')}:</strong> {assignment.completedAt ? formatDate(assignment.completedAt, locale) : '-'}</Typography></Grid>
               <Grid item xs={12}><Typography variant="body2"><strong>{t('notes', 'Notes')}:</strong> {assignment.notes || '-'}</Typography></Grid>
             </Grid>
             <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
