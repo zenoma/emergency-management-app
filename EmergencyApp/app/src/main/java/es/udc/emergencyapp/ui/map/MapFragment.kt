@@ -220,36 +220,6 @@ class MapFragment : Fragment() {
         }
     }
 
-    private fun drawableToBitmap(resId: Int): Bitmap {
-        val drawable = androidx.core.content.ContextCompat.getDrawable(requireContext(), resId)
-            ?: return Bitmap.createBitmap(
-                1,
-                1,
-                Bitmap.Config.ARGB_8888
-            )
-        return if (drawable is android.graphics.drawable.BitmapDrawable) {
-            drawable.bitmap
-        } else {
-            val minSize = 64
-            val width = if (drawable.intrinsicWidth > 0) kotlin.math.max(
-                drawable.intrinsicWidth,
-                minSize
-            ) else minSize
-            val height = if (drawable.intrinsicHeight > 0) kotlin.math.max(
-                drawable.intrinsicHeight,
-                minSize
-            ) else minSize
-            val bitmap = Bitmap.createBitmap(
-                width,
-                height,
-                Bitmap.Config.ARGB_8888
-            )
-            val canvas = Canvas(bitmap)
-            drawable.setBounds(0, 0, canvas.width, canvas.height)
-            drawable.draw(canvas)
-            bitmap
-        }
-    }
 
     private fun bitmapFromDrawable(resId: Int, sizePx: Int): Bitmap {
         val drawable = androidx.core.content.ContextCompat.getDrawable(requireContext(), resId)
