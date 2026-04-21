@@ -335,6 +335,13 @@ class MapFragment : Fragment() {
             for (i in 0 until arr.length()) {
                 try {
                     val e = arr.getJSONObject(i)
+                    // Skip emergencies that are already resolved. The backend sets resolvedAt when an
+                    // emergency is resolved; some payloads may also include a "status" field.
+                    if ((e.has("resolvedAt") && !e.isNull("resolvedAt")) ||
+                        e.optString("status", "").equals("resolved", ignoreCase = true)
+                    ) {
+                        continue
+                    }
                     val loc = when {
                         e.has("location") -> e.getJSONObject("location")
                         e.has("point") -> e.getJSONObject("point")
