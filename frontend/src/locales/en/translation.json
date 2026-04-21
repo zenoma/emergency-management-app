@@ -220,7 +220,7 @@
   "teams-mobilized": "Teams Mobilized",
   "vehicles-mobilized": "Vehicles Mobilized",
   "affected-quadrants": "Affected Quadrants",
-  "max-burned-hectares": "Max Burned Hectares",
+  "max-burned-hectares": "Max Affected Hectares",
   "navigator-geolocation-tittle": "Location unavailable",
   "navigator-geolocation-error": "Could not retrieve current location, please grant necessary permissions in your browser.",
   "weather-info-tittle": "Información meteorológica en ",

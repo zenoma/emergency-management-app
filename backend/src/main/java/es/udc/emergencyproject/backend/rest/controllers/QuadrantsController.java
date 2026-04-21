@@ -65,8 +65,23 @@ public class QuadrantsController implements QuadrantsApi {
     GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 25829);
     Coordinate coordinate = new Coordinate(lon, lat);
 
-    Optional<Quadrant> quadrant = emergencyManagementService.findQuadrantByLocation(
-        geometryFactory.createPoint(coordinate));
+    // Try primary point
+    var point = geometryFactory.createPoint(coordinate);
+    Optional<Quadrant> quadrant = emergencyManagementService.findQuadrantByLocation(point);
+
+    // Fallback 1: if not found, try swapping lon/lat in case the caller inverted them
+    if (quadrant.isEmpty()) {
+      try {
+        Coordinate swapped = new Coordinate(lat, lon);
+        var swappedPoint = geometryFactory.createPoint(swapped);
+        quadrant = emergencyManagementService.findQuadrantByLocation(swappedPoint);
+        if (quadrant.isPresent()) {
+          // swap successful - log for debugging
+          System.out.println("QuadrantsController: found quadrant after swapping lon/lat. Original lon=" + lon + " lat=" + lat);
+        }
+      } catch (Exception ignored) {
+      }
+    }
 
     if (quadrant.isPresent()) {
       QuadrantLocationDto dto = new QuadrantLocationDto();
@@ -74,6 +89,7 @@ public class QuadrantsController implements QuadrantsApi {
       dto.setNombre(quadrant.get().getNombre());
       return ResponseEntity.ok(dto);
     } else {
+      // Not found
       return ResponseEntity.notFound().build();
     }
   }

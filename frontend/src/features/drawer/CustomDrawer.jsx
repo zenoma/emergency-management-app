@@ -61,17 +61,17 @@ const pages = [
     role: ["COORDINATOR", "MANAGER"],
   },
   {
+    name: "assignment-management",
+    icon: <ArticleIcon />,
+    role: ["COORDINATOR"],
+  },
+  {
     name: "user-management",
     icon: <People />,
     role: ["COORDINATOR"],
   },
   {
     name: "notice-management",
-    icon: <ArticleIcon />,
-    role: ["COORDINATOR"],
-  },
-  {
-    name: "assignment-management",
     icon: <ArticleIcon />,
     role: ["COORDINATOR"],
   },
@@ -128,7 +128,7 @@ export default function PersistentDrawerLeft() {
   };
 
   const handleClickItemList = (e, text) => {
-      switch (text) {
+    switch (text) {
       case "my-team":
         navigate("/my-team");
         break;
@@ -179,12 +179,12 @@ export default function PersistentDrawerLeft() {
         return pathname.startsWith("/my-notices");
       case "emergency-management":
         return pathname.startsWith("/emergency-management");
+      case "assignment-management":
+        return pathname.startsWith("/assignments");
       case "user-management":
         return pathname.startsWith("/user-management");
       case "notice-management":
         return pathname.startsWith("/notice-management");
-      case "assignment-management":
-        return pathname.startsWith("/assignments");
       default:
         return false;
     }
