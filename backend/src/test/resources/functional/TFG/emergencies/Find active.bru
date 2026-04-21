@@ -1,11 +1,11 @@
 meta {
-  name: Find emergency types
+  name: Find active
   type: http
-  seq: 10
+  seq: 3
 }
 
 get {
-  url: {{base_url}}/emergencies/types
+  url: {{base_url}}/emergencies/active
   body: none
   auth: inherit
 }
