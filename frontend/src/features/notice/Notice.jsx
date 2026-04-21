@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { Button, TextField, Box, Typography, Chip } from "@mui/material";
@@ -65,8 +65,22 @@ export default function Notice({ lat, lon, quadrantName }) {
 
   const hasCoordinates = lat !== 0 || lon !== 0;
 
-  // fetch quadrant name from coordinates so we can show a human-friendly name
-  const { data: quadrantData } = useGetQuadrantByCoordinatesQuery({ lon, lat }, { skip: !hasCoordinates });
+  // compute projected coordinates once and use them for quadrant lookup
+  const projectedCoords = useMemo(() => {
+    if (!hasCoordinates) return null;
+    try {
+      return transformCoordinates(lon, lat);
+    } catch (e) {
+      console.error('Failed to transform coordinates for quadrant query', e);
+      return null;
+    }
+  }, [lon, lat, hasCoordinates]);
+
+  // fetch quadrant name from projected coordinates so we can show a human-friendly name
+  const { data: quadrantData } = useGetQuadrantByCoordinatesQuery(
+    projectedCoords ? { lon: projectedCoords.longitude, lat: projectedCoords.latitude } : undefined,
+    { skip: !projectedCoords }
+  );
 
   return (
     <Box>
