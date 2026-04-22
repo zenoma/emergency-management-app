@@ -1,10 +1,5 @@
 package es.udc.emergencyapp.ui.profile
 
-import android.content.Intent
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -27,70 +21,19 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material.icons.filled.Badge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.Fragment
-import es.udc.emergencyapp.AppTheme
-import es.udc.emergencyapp.LocaleHelper
-import es.udc.emergencyapp.MainActivity
 import es.udc.emergencyapp.R
-
-
-class ProfileFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val prefs =
-            requireContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
-        val name = prefs.getString("user_name", null) ?: ""
-        val email = prefs.getString("user_email", null) ?: ""
-        val dni = prefs.getString("user_dni", null) ?: ""
-        val phone = prefs.getString("user_phone", null) ?: ""
-        val role = prefs.getString("user_role", null) ?: ""
-        val currentLang = LocaleHelper.getPersistedLanguage(requireContext())
-
-        val composeView = ComposeView(requireContext()).apply {
-            setContent {
-                AppTheme {
-                    ProfileScreen(
-                        name = name,
-                        email = email,
-                        dni = dni,
-                        phone = phone,
-                        role = role,
-                        currentLang = currentLang,
-                        onLogout = {
-                            prefs.edit().clear().apply()
-                            val intent = Intent(requireContext(), MainActivity::class.java)
-                            intent.flags =
-                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                        },
-                        onChangeLanguage = { lang ->
-                            LocaleHelper.persistLanguage(requireContext(), lang)
-                            LocaleHelper.setLocale(requireContext(), lang)
-                            requireActivity().recreate()
-                        }
-                    )
-                }
-            }
-        }
-
-        return composeView
-    }
-}
-
 
 @Composable
 fun ProfileScreen(
@@ -111,9 +54,10 @@ fun ProfileScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Card(shape = RoundedCornerShape(10.dp), elevation = 6.dp) {
+            Card(elevation = 6.dp) {
                 Column(
-                    modifier = Modifier.padding(20.dp),
+                    modifier = Modifier
+                        .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
@@ -132,17 +76,19 @@ fun ProfileScreen(
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(6.dp))
-                    if (role.isNotBlank()) Text(
-                        text = context.getString(
-                            R.string.profile_role_format,
-                            role
-                        )
-                    )
+                    if (role.isNotBlank()) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(imageVector = Icons.Filled.VerifiedUser, contentDescription = null)
+                            Spacer(modifier = Modifier.size(6.dp))
+                            Text(text = context.getString(R.string.profile_role_format, role))
+                        }
+                    }
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Info rows
+                    // Info rows (centered)
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
@@ -158,6 +104,7 @@ fun ProfileScreen(
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
@@ -171,7 +118,15 @@ fun ProfileScreen(
 
                     if (dni.isNotBlank()) {
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = context.getString(R.string.profile_dni_format, dni))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(imageVector = Icons.Filled.Badge, contentDescription = null)
+                            Spacer(modifier = Modifier.size(6.dp))
+                            Text(text = context.getString(R.string.profile_dni_format, dni))
+                        }
                     }
                 }
             }

@@ -44,8 +44,8 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -408,7 +408,7 @@ private fun ProfileScreenCompose() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             context.startActivity(intent)
         },
-        onChangeLanguage = { lang ->
+        onChangeLanguage = { lang: String ->
             LocaleHelper.persistLanguage(context, lang)
             LocaleHelper.setLocale(context, lang)
             (context as? AppCompatActivity)?.recreate()
