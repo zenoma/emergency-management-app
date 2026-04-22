@@ -111,6 +111,7 @@ fun TeamScreenComposable(
     members: List<TeamUserItem>,
     loading: Boolean = false,
     error: String? = null
+    , notAssigned: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -124,15 +125,16 @@ fun TeamScreenComposable(
             color = Color(0xFF0B3A66)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Card(
-            backgroundColor = Color(0xFF0B3450),
-            modifier = Modifier.fillMaxWidth(),
-            elevation = 8.dp
-        ) {
-            Row(
-                modifier = Modifier.padding(18.dp),
-                verticalAlignment = Alignment.CenterVertically
+        if (!notAssigned) {
+            Card(
+                backgroundColor = Color(0xFF0B3450),
+                modifier = Modifier.fillMaxWidth(),
+                elevation = 8.dp
             ) {
+                Row(
+                    modifier = Modifier.padding(18.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                 Icon(
                     Icons.Default.Person,
                     contentDescription = null,
@@ -175,34 +177,60 @@ fun TeamScreenComposable(
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = "AVAILABLE", color = statusColor, fontWeight = FontWeight.Bold)
                 }
+                }
             }
-        }
+            Text(
+                text = "Members",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF0B3A66),
+                modifier = Modifier.padding(top = 16.dp)
+            )
 
-        Text(
-            text = "Members",
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF0B3A66),
-            modifier = Modifier.padding(top = 16.dp)
-        )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        if (loading) {
+            if (loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (!error.isNullOrBlank()) {
+                Text(text = error, color = Color.Red)
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    items(members) { u ->
+                        TeamUserRow(u)
+                    }
+                }
+            }
+        } else {
+            // Show an empty-state when the user has no assigned team (HTTP 404)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
+                    .padding(top = 24.dp),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
-            }
-        } else if (!error.isNullOrBlank()) {
-            Text(text = error, color = Color.Red)
-        } else {
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(members) { u ->
-                    TeamUserRow(u)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        Icons.Default.Person,
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "You are not assigned to any team",
+                        fontSize = 18.sp,
+                        color = Color.Gray
+                    )
+                    if (!loading && !error.isNullOrBlank()) {
+                        Text(text = error ?: "", color = Color.Red)
+                    }
                 }
             }
         }
@@ -227,6 +255,7 @@ class MyTeamComposeFragment : Fragment() {
             LaunchedEffect(Unit) {
                 loading = true
                 error = null
+                var notAssignedLocal = false
                 try {
                     val prefs = requireContext().getSharedPreferences("app_prefs", 0)
                     val token = prefs.getString("jwt_token", null)
@@ -272,6 +301,9 @@ class MyTeamComposeFragment : Fragment() {
                                 }
                             } else if (code == 401) {
                                 error = "Unauthorized"
+                            } else if (code == 404) {
+                                // user has no team assigned
+                                notAssignedLocal = true
                             } else {
                                 error = "Failed to fetch team: HTTP $code"
                             }
@@ -283,6 +315,10 @@ class MyTeamComposeFragment : Fragment() {
                     error = e.message ?: "Unknown error"
                 } finally {
                     loading = false
+                    // propagate notAssigned
+                    if (notAssignedLocal) {
+                        // set a visible marker by setting teamCode empty and error null but notAssigned true via a side-effect
+                    }
                 }
             }
 
@@ -292,7 +328,8 @@ class MyTeamComposeFragment : Fragment() {
                     orgName = orgName,
                     members = members,
                     loading = loading,
-                    error = error
+                    error = error,
+                    notAssigned = (error.isNullOrBlank() && teamCode.isBlank() && members.isEmpty())
                 )
             }
         }
@@ -313,6 +350,7 @@ fun MyTeamScreen() {
     LaunchedEffect(Unit) {
         loading = true
         error = null
+        var notAssignedLocal = false
         try {
             val prefs = context.getSharedPreferences("app_prefs", 0)
             val token = prefs.getString("jwt_token", null)
@@ -355,6 +393,8 @@ fun MyTeamScreen() {
                         }
                     } else if (code == 401) {
                         error = "Unauthorized"
+                    } else if (code == 404) {
+                        notAssignedLocal = true
                     } else {
                         error = "Failed to fetch team: HTTP $code"
                     }
@@ -366,6 +406,10 @@ fun MyTeamScreen() {
             error = e.message ?: "Unknown error"
         } finally {
             loading = false
+            if (notAssignedLocal) {
+                // leave teamCode/orgName/members empty and clear error so composable shows notAssigned state
+                error = null
+            }
         }
     }
 
@@ -375,7 +419,8 @@ fun MyTeamScreen() {
             orgName = orgName,
             members = members,
             loading = loading,
-            error = error
+            error = error,
+            notAssigned = (error.isNullOrBlank() && teamCode.isBlank() && members.isEmpty())
         )
     }
 }
