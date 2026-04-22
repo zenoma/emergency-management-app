@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("org.jetbrains.kotlin.plugin.compose")
 }
+
 
 android {
     namespace = "es.udc.emergencyapp"
@@ -36,36 +38,40 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.3"
+    }
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.navigation.compose.v272)
+    implementation(libs.androidx.material)
+    implementation(libs.material.icons.extended)
+    implementation(libs.ui.tooling.preview)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.constraintlayout)
-    // CardView for item cards
-    implementation("androidx.cardview:cardview:1.0.0")
-    // ViewPager2 for image gallery
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
-    // Pull-to-refresh layout
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.android.sdk)
-    implementation("org.locationtech.proj4j:proj4j:1.1.0")
-    // SVG rendering for runtime conversion of svg assets to bitmaps (removed - using build-time rasterization)
-    // Dependency for SVG rasterization at build time (used by the svg->png task)
-    // Batik rasterizer artifacts will be placed in a dedicated configuration below
-    // Image loader and JSON parser used by notices UI
-    implementation("com.github.bumptech.glide:glide:4.15.1")
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.proj4j)
+    implementation(libs.glide)
+    implementation(libs.gson)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
 }
-
-// No build-time SVG rasterization task: project uses PNGs already present in res/drawable

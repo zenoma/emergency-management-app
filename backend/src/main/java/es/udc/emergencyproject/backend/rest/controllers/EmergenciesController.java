@@ -91,6 +91,17 @@ public class EmergenciesController implements EmergenciesApi {
     return ResponseEntity.ok(emergencyResponseDto);
   }
 
+  @Override
+  public ResponseEntity<List<EmergencyResponseDto>> getActiveEmergencys() {
+
+    List<EmergencyResponseDto> emergencyResponseDtos = new ArrayList<>();
+
+    for (Emergency emergency : emergencyManagementService.findActiveEmergencies()) {
+      emergencyResponseDtos.add(EmergencyMapper.toEmergencyDto(emergency));
+    }
+    return ResponseEntity.ok(emergencyResponseDtos);
+  }
+
 
   @Override
   public ResponseEntity<EmergencyResponseDto> postLinkEmergencyToPoint(Long id, CoordinatesDto coordinatesDto) {

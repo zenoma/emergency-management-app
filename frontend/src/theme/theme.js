@@ -50,6 +50,15 @@ const darkTheme = createTheme({
       primary: "#FFFFFF",
       secondary: "rgba(255,255,255,0.8)",
     },
+    // Status colors for chips / labels used across the app
+    status: {
+      accepted: { main: '#2e7d32', light: '#e8f5e9', dark: '#1b5e20', contrastText: '#FFFFFF' },
+      pending: { main: '#ff9800', light: '#fff8e1', dark: '#ff6a00', contrastText: '#0f1115' },
+      busy: { main: '#d32f2f', light: '#ffcdd2', dark: '#b71c1c', contrastText: '#FFFFFF' },
+      available: { main: '#4caf50', light: '#e8f5e9', dark: '#2e7d32', contrastText: '#FFFFFF' },
+      completed: { main: '#607d8b', light: '#eceff1', dark: '#455a64', contrastText: '#FFFFFF' },
+      default: { main: '#9e9e9e', light: '#f5f5f5', dark: '#616161', contrastText: '#0f1115' },
+    },
   },
 });
 
@@ -67,6 +76,15 @@ const lightTheme = createTheme({
     text: {
       primary: "#0F1115",
       secondary: "rgba(15,17,21,0.7)",
+    },
+    // Same status palette for light theme (keeps colors consistent)
+    status: {
+      accepted: { main: '#2e7d32', light: '#e8f5e9', dark: '#1b5e20', contrastText: '#FFFFFF' },
+      pending: { main: '#ff9800', light: '#fff8e1', dark: '#ff6a00', contrastText: '#0f1115' },
+      busy: { main: '#d32f2f', light: '#ffcdd2', dark: '#b71c1c', contrastText: '#FFFFFF' },
+      available: { main: '#4caf50', light: '#e8f5e9', dark: '#2e7d32', contrastText: '#FFFFFF' },
+      completed: { main: '#607d8b', light: '#eceff1', dark: '#455a64', contrastText: '#FFFFFF' },
+      default: { main: '#9e9e9e', light: '#f5f5f5', dark: '#616161', contrastText: '#0f1115' },
     },
   },
 });

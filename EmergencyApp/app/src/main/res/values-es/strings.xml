@@ -22,6 +22,15 @@
     <string name="profile_phone_format">Teléfono: %1$s</string>
     <string name="profile_role_format">Rol: %1$s</string>
     <string name="fill_credentials">Por favor introduce email y contraseña</string>
+    <string name="email">Email</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="signup">Registrar</string>
+    <string name="first_name">Nombre</string>
+    <string name="last_name">Apellidos</string>
+    <string name="dni">DNI</string>
+    <string name="phone">Teléfono</string>
+    <string name="logout">Cerrar sesión</string>
     <string name="login_success">Login exitoso</string>
     <string name="login_failed">Login fallido: compruebe credenciales</string>
     <string name="nav_header_login_title">Por favor haz log in</string>

@@ -1,0 +1,14 @@
+get:
+  summary: Lista de emergencias activas
+  operationId: getActiveEmergencys
+  tags:
+    - EmergencyManagement
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/EmergencyResponseDto.yml'

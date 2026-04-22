@@ -33,6 +33,8 @@ public interface EmergencyManagementService {
   // EMERGENCY SERVICES
   List<Emergency> findAllEmergencies();
 
+  List<Emergency> findActiveEmergencies();
+
   Emergency findEmergencyById(Long id) throws InstanceNotFoundException;
 
   Emergency createEmergency(String description, Long emergencyTypeId, EmergencyIndex emergencyIndex);
@@ -46,7 +48,7 @@ public interface EmergencyManagementService {
   Emergency updateEmergency(Long id, String description, Long emergencyTypeId, EmergencyIndex emergencyIndex)
       throws InstanceNotFoundException, ResolvedEmergencyException;
 
-  java.util.List<es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType> findAllEmergencyTypes();
+  List<es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType> findAllEmergencyTypes();
 
 
 }

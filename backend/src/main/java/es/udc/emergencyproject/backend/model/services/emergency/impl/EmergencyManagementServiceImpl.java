@@ -177,6 +177,22 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
   }
 
   @Override
+  public List<Emergency> findActiveEmergencies() {
+    List<Emergency> all = emergencyRepository.findAllByOrderByResolvedAtDescIdAsc();
+    List<Emergency> result = new ArrayList<>();
+    for (Emergency e : all) {
+      try {
+        if (e.getEmergencyIndex() != null && e.getEmergencyIndex() == EmergencyIndex.RESUELTO) {
+          continue;
+        }
+      } catch (Exception ignored) {
+      }
+      result.add(e);
+    }
+    return result;
+  }
+
+  @Override
   public Emergency findEmergencyById(Long id) throws InstanceNotFoundException {
 
     return emergencyRepository.findById(id)

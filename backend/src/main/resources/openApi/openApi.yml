@@ -72,6 +72,8 @@ paths:
     $ref: './emergencies/emergencies_$id$_linkPoint.yml'
   /emergencies/{id}/linkQuadrants:
     $ref: './emergencies/emergencies_$id$_linkQuadrants.yml'
+  /emergencies/active:
+    $ref: './emergencies/emergencies_active.yml'
 
   /organizations:
     $ref: './organizations/organizations.yml'

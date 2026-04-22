@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectToken } from '../user/login/LoginSlice';
+import { useTheme } from '@mui/material/styles';
 
 export default function AssignmentListView() {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ export default function AssignmentListView() {
   const token = useSelector(selectToken);
   const { i18n } = useTranslation();
   const locale = i18n?.language || 'es';
+  const theme = useTheme();
 
   const { data: emergencies = [] } = useGetEmergenciesQuery({ token, locale });
   const [pendingOnly, setPendingOnly] = useState(false);
@@ -137,7 +139,7 @@ export default function AssignmentListView() {
         const s = params.value;
         if (!s) return '-';
         if (s === 'ACCEPTED') {
-          return <span style={{ color: 'green', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+          return <span style={{ color: theme.palette.status.accepted.main, fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
         }
         return <span>{t(String(s).toLowerCase(), s)}</span>;
       },
