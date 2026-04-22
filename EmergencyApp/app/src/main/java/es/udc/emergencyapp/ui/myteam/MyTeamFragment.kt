@@ -19,6 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -70,15 +74,33 @@ fun TeamUserRow(user: TeamUserItem) {
                     text = listOfNotNull(user.firstName, user.lastName).joinToString(" "),
                     fontWeight = FontWeight.Bold
                 )
+                // show email and phone/dni as subtitle
                 Text(text = user.email ?: "", color = Color.Gray)
+                if (!user.phoneNumber.isNullOrBlank() || !user.dni.isNullOrBlank()) {
+                    Text(
+                        text = listOfNotNull(user.phoneNumber, user.dni).joinToString(" • "),
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
+                }
             }
-            Text(
-                text = user.role ?: "",
-                color = onRole,
-                modifier = Modifier
-                    .background(roleBg)
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            )
+            // role badge with icon
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Default.VerifiedUser,
+                    contentDescription = null,
+                    tint = onRole,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.size(6.dp))
+                Text(
+                    text = user.role ?: "",
+                    color = onRole,
+                    modifier = Modifier
+                        .background(roleBg)
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
         }
     }
 }
@@ -106,7 +128,7 @@ fun TeamScreenComposable(
         Card(
             backgroundColor = Color(0xFF0B3450),
             modifier = Modifier.fillMaxWidth(),
-            elevation = 6.dp
+            elevation = 8.dp
         ) {
             Row(
                 modifier = Modifier.padding(18.dp),
@@ -115,8 +137,8 @@ fun TeamScreenComposable(
                 Icon(
                     Icons.Default.Person,
                     contentDescription = null,
-                    tint = Color.LightGray,
-                    modifier = Modifier.size(72.dp)
+                    tint = Color(0xFFFFE0B2),
+                    modifier = Modifier.size(64.dp)
                 )
                 Column(
                     modifier = Modifier
@@ -126,21 +148,27 @@ fun TeamScreenComposable(
                     Text(
                         text = teamCode.ifBlank { "-" },
                         color = Color.White,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
                     )
                     Text(
                         text = orgName,
-                        color = Color.White,
-                        modifier = Modifier.padding(top = 8.dp)
+                        color = Color.White.copy(alpha = 0.9f),
+                        modifier = Modifier.padding(top = 6.dp)
                     )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Badge, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.size(6.dp))
+                        Text(text = "${members.size} members", color = Color.White)
+                    }
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = members.size.toString(),
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(text = "members", color = Color.White)
+                // status / resource type column
+                Column(horizontalAlignment = Alignment.End) {
+                    val statusColor = if ("AVAILABLE" == "AVAILABLE") Color(0xFF4CAF50) else Color(0xFFF44336)
+                    Text(text = "TEAM", color = Color.White, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = "AVAILABLE", color = statusColor, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -220,6 +248,8 @@ class MyTeamComposeFragment : Fragment() {
                                     orgName = org?.optString("name", "") ?: ""
                                     val users = team.optJSONArray("userList")
                                     val list = mutableListOf<TeamUserItem>()
+                                    var teamStatus = team.optString("status", "")
+                                    var resourceType = team.optString("resourceType", "")
                                     if (users != null) {
                                         for (i in 0 until users.length()) {
                                             val u = users.getJSONObject(i)
@@ -228,12 +258,16 @@ class MyTeamComposeFragment : Fragment() {
                                                     u.optString("firstName", null),
                                                     u.optString("lastName", null),
                                                     u.optString("email", null),
-                                                    u.optString("userRole", null)
+                                                    u.optString("userRole", null),
+                                                    u.optString("phoneNumber", null),
+                                                    u.optString("dni", null)
                                                 )
                                             )
                                         }
                                     }
                                     members = list
+                                    // update local vars if needed (we'll set via mutableState above)
+                                    // teamStatus and resourceType are not stored in state currently; could be shown in card
                                 }
                             } else if (code == 401) {
                                 error = "Unauthorized"

@@ -4,13 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +58,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.commit
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -66,6 +70,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import es.udc.emergencyapp.ui.map.MapScreen
 import es.udc.emergencyapp.ui.notices.MyNoticesScreen
 import es.udc.emergencyapp.ui.profile.ProfileScreen
+import es.udc.emergencyapp.ui.sendnotice.SendNoticeFragment
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -116,7 +121,9 @@ private fun MainScreenSimple() {
     }
 
     Scaffold(
-        modifier = Modifier.statusBarsPadding().navigationBarsPadding(),
+        modifier = Modifier
+            .statusBarsPadding()
+            .navigationBarsPadding(),
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
         topBar = {
@@ -125,7 +132,10 @@ private fun MainScreenSimple() {
                 title = { Text(text = "EmergencyApp") },
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
-                        Icon(painter = painterResource(id = R.drawable.ic_gallery_black_24dp), contentDescription = null)
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_gallery_black_24dp),
+                            contentDescription = null
+                        )
                     }
                 }
             )
@@ -135,10 +145,32 @@ private fun MainScreenSimple() {
             val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
             val jwtLocal = prefs.getString("jwt_token", null)
 
-            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.primary.copy(alpha = 0.06f))) {
-                Column(modifier = Modifier.statusBarsPadding().navigationBarsPadding().padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Surface(modifier = Modifier.fillMaxWidth().padding(4.dp), color = MaterialTheme.colors.primary, contentColor = contentColorFor(MaterialTheme.colors.primary), shape = RoundedCornerShape(8.dp)) {
-                        Column(modifier = Modifier.fillMaxWidth().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.primary.copy(alpha = 0.06f))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .navigationBarsPadding()
+                        .padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        color = MaterialTheme.colors.primary,
+                        contentColor = contentColorFor(MaterialTheme.colors.primary),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Spacer(modifier = Modifier.height(4.dp))
                             if (jwtLocal.isNullOrBlank()) {
                                 IconButton(onClick = {
@@ -150,64 +182,111 @@ private fun MainScreenSimple() {
                                         Log.w("MainActivity", "Failed to open Login", e)
                                     }
                                 }) {
-                                    Icon(imageVector = Icons.Filled.Login, contentDescription = "Login", modifier = Modifier.size(64.dp))
+                                    Icon(
+                                        imageVector = Icons.Filled.Login,
+                                        contentDescription = "Login",
+                                        modifier = Modifier.size(64.dp)
+                                    )
                                 }
                             } else {
-                                AndroidView(factory = { ctx ->
-                                    val iv = AppCompatImageView(ctx)
-                                    val size = (64 * ctx.resources.displayMetrics.density).toInt()
-                                    iv.layoutParams = ViewGroup.LayoutParams(size, size)
-                                    iv.scaleType = ImageView.ScaleType.CENTER_CROP
-                                    try {
-                                        val avatarUrl = prefs.getString("avatar_url", null)
-                                        val model = if (!avatarUrl.isNullOrBlank()) {
-                                            val headers = LazyHeaders.Builder().addHeader("Authorization", "Bearer ${jwtLocal}").build()
-                                            GlideUrl(avatarUrl, headers)
-                                        } else R.drawable.avatar_1
-                                        Glide.with(ctx).load(model).circleCrop().into(iv)
-                                    } catch (e: Exception) {
-                                        Log.w("MainActivity", "Failed to load avatar", e)
-                                    }
-                                    iv
-                                }, modifier = Modifier.size(64.dp).clip(CircleShape).clickable {
-                                    try {
-                                        navController.navigate("profile") { launchSingleTop = true }
-                                        scope.launch { scaffoldState.drawerState.close() }
-                                    } catch (e: Exception) {
-                                        Log.w("MainActivity", "Failed to navigate to profile", e)
-                                    }
-                                })
+                                AndroidView(
+                                    factory = { ctx ->
+                                        val iv = AppCompatImageView(ctx)
+                                        val size =
+                                            (64 * ctx.resources.displayMetrics.density).toInt()
+                                        iv.layoutParams = ViewGroup.LayoutParams(size, size)
+                                        iv.scaleType = ImageView.ScaleType.CENTER_CROP
+                                        try {
+                                            val avatarUrl = prefs.getString("avatar_url", null)
+                                            val model = if (!avatarUrl.isNullOrBlank()) {
+                                                val headers = LazyHeaders.Builder()
+                                                    .addHeader(
+                                                        "Authorization",
+                                                        "Bearer ${jwtLocal}"
+                                                    )
+                                                    .build()
+                                                GlideUrl(avatarUrl, headers)
+                                            } else R.drawable.avatar_1
+                                            Glide.with(ctx).load(model).circleCrop().into(iv)
+                                        } catch (e: Exception) {
+                                            Log.w("MainActivity", "Failed to load avatar", e)
+                                        }
+                                        iv
+                                    }, modifier = Modifier
+                                        .size(64.dp)
+                                        .clip(CircleShape)
+                                        .clickable {
+                                            try {
+                                                navController.navigate("profile") {
+                                                    launchSingleTop = true
+                                                }
+                                                scope.launch { scaffoldState.drawerState.close() }
+                                            } catch (e: Exception) {
+                                                Log.w(
+                                                    "MainActivity",
+                                                    "Failed to navigate to profile",
+                                                    e
+                                                )
+                                            }
+                                        })
 
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = prefs.getString("user_name", "User") ?: "User", modifier = Modifier.padding(4.dp))
-                                Text(text = "Logout", modifier = Modifier.padding(6.dp).clickable {
-                                    try {
-                                        prefs.edit().clear().apply()
-                                        val i = Intent(context, MainActivity::class.java)
-                                        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        context.startActivity(i)
-                                    } catch (e: Exception) {
-                                        Log.w("MainActivity", "Logout failed", e)
-                                    }
-                                })
+                                Text(
+                                    text = prefs.getString("user_name", "User") ?: "User",
+                                    modifier = Modifier.padding(4.dp)
+                                )
+                                Text(
+                                    text = "Logout", modifier = Modifier
+                                        .padding(6.dp)
+                                        .clickable {
+                                            try {
+                                                prefs.edit().clear().apply()
+                                                val i = Intent(context, MainActivity::class.java)
+                                                i.flags =
+                                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                                context.startActivity(i)
+                                            } catch (e: Exception) {
+                                                Log.w("MainActivity", "Logout failed", e)
+                                            }
+                                        })
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                         }
                     }
 
                     // Logical blocks
-                    val block1 = listOf(Triple("map", "Map", Icons.Filled.Map), Triple("myteam", "My Team", Icons.Filled.Group), Triple("organizations", "Organizations", Icons.Filled.Business))
-                    val block2 = listOf(Triple("send_notice", "Send Notice", Icons.Filled.Send), Triple("notices", "My Notices", Icons.Filled.Description))
+                    val block1 = listOf(
+                        Triple("map", "Map", Icons.Filled.Map),
+                        Triple("myteam", "My Team", Icons.Filled.Group),
+                        Triple("organizations", "Organizations", Icons.Filled.Business)
+                    )
+                    val block2 = listOf(
+                        Triple("send_notice", "Send Notice", Icons.Filled.Send),
+                        Triple("notices", "My Notices", Icons.Filled.Description)
+                    )
 
                     @Composable
                     fun renderBlock(itemsBlock: List<Triple<String, String, ImageVector>>) {
-                        Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                        ) {
                             itemsBlock.forEach { (route, title, icon) ->
-                                Row(modifier = Modifier.fillMaxWidth().clickable {
-                                    navController.navigate(route) { launchSingleTop = true }
-                                    scope.launch { scaffoldState.drawerState.close() }
-                                }.padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(imageVector = icon, contentDescription = null, modifier = Modifier.padding(end = 12.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            navController.navigate(route) { launchSingleTop = true }
+                                            scope.launch { scaffoldState.drawerState.close() }
+                                        }
+                                        .padding(10.dp),
+                                    verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = null,
+                                        modifier = Modifier.padding(end = 12.dp)
+                                    )
                                     Text(text = title, style = MaterialTheme.typography.body1)
                                 }
                             }
@@ -215,7 +294,11 @@ private fun MainScreenSimple() {
                     }
 
                     renderBlock(block1)
-                    Divider(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp))
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                    )
                     renderBlock(block2)
                     Spacer(modifier = Modifier.weight(1f))
                 }
@@ -229,29 +312,78 @@ private fun MainScreenSimple() {
             BottomAppBar(elevation = 8.dp, modifier = Modifier.navigationBarsPadding()) {
                 BottomNavigation(modifier = Modifier.fillMaxWidth()) {
                     val current = navBackStackEntry?.destination?.route
-                    BottomNavigationItem(selected = current == "map", onClick = { navController.navigate("map") { launchSingleTop = true } }, icon = { Icon(imageVector = Icons.Filled.Map, contentDescription = null) }, label = { Text(text = "Map") })
-                    BottomNavigationItem(selected = current == "send_notice", onClick = { navController.navigate("send_notice") { launchSingleTop = true } }, icon = { Icon(imageVector = Icons.Filled.Send, contentDescription = null) }, label = { Text(text = "Send") })
+                    BottomNavigationItem(
+                        selected = current == "map",
+                        onClick = { navController.navigate("map") { launchSingleTop = true } },
+                        icon = { Icon(imageVector = Icons.Filled.Map, contentDescription = null) },
+                        label = { Text(text = "Map") })
+                    BottomNavigationItem(
+                        selected = current == "send_notice",
+                        onClick = {
+                            navController.navigate("send_notice") {
+                                launchSingleTop = true
+                            }
+                        },
+                        icon = { Icon(imageVector = Icons.Filled.Send, contentDescription = null) },
+                        label = { Text(text = "Send") })
                     if (!jwtBb.isNullOrBlank()) {
-                        BottomNavigationItem(selected = current == "myteam", onClick = { navController.navigate("myteam") { launchSingleTop = true } }, icon = { Icon(imageVector = Icons.Filled.Group, contentDescription = null) }, label = { Text(text = "My Team") })
+                        BottomNavigationItem(
+                            selected = current == "myteam",
+                            onClick = {
+                                navController.navigate("myteam") {
+                                    launchSingleTop = true
+                                }
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Group,
+                                    contentDescription = null
+                                )
+                            },
+                            label = { Text(text = "My Team") })
                     }
                 }
             }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
             NavHost(navController = navController, startDestination = "map") {
                 composable("map") { MapScreen() }
                 composable("notices") { MyNoticesScreen() }
                 composable("organizations") { FeaturePlaceholder("Organizations") }
                 composable("myteam") { FeaturePlaceholder("My Team") }
                 composable("profile") { ProfileScreenCompose() }
-                composable("send_notice") { FeaturePlaceholder("Send Notice") }
+                composable("send_notice") { SendNoticeHost() }
                 composable("fire_management") { FeaturePlaceholder("Fire Management") }
                 composable("user_management") { FeaturePlaceholder("User Management") }
                 composable("notice_management") { FeaturePlaceholder("Notice Management") }
             }
         }
     }
+}
+
+@Composable
+fun SendNoticeHost() {
+    val activity = LocalContext.current as? AppCompatActivity
+    val containerId = remember { View.generateViewId() }
+    AndroidView(factory = { ctx ->
+        val fc = FragmentContainerView(ctx).apply {
+            id = containerId
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+        // attach fragment
+        activity?.supportFragmentManager?.commit {
+            replace(containerId, SendNoticeFragment())
+        }
+        fc
+    }, modifier = Modifier.fillMaxSize())
 }
 
 @Composable
