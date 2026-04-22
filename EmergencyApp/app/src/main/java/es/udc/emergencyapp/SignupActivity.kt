@@ -25,6 +25,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,10 +36,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import es.udc.emergencyapp.net.HttpClient
 import es.udc.emergencyapp.ui.setContentWithSystemBars
 import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
 
 class SignupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,14 +68,6 @@ class SignupActivity : AppCompatActivity() {
 
         Thread {
             try {
-                val url = URL("http://10.0.2.2:8080/users/signUp")
-                val conn = (url.openConnection() as HttpURLConnection).apply {
-                    requestMethod = "POST"
-                    setRequestProperty("Content-Type", "application/json; charset=utf-8")
-                    doOutput = true
-                    connectTimeout = 15000
-                    readTimeout = 15000
-                }
                 val payload = JSONObject().apply {
                     put("firstName", firstName)
                     put("lastName", lastName)
@@ -88,20 +80,15 @@ class SignupActivity : AppCompatActivity() {
                         put("phoneNumber", phone)
                     }
                 }.toString()
+
                 android.util.Log.d("SignupActivityNet", "Signup payload=$payload")
-                conn.outputStream.bufferedWriter().use { it.write(payload) }
 
-                val code = conn.responseCode
-                val resp = try {
-                    if (code in 200..299) conn.inputStream.bufferedReader().use { it.readText() }
-                    else conn.errorStream?.bufferedReader()?.use { it.readText() } ?: ""
-                } catch (e: Exception) {
-                    android.util.Log.w("SignupActivityNet", "Failed reading response stream", e)
-                    ""
-                }
-                android.util.Log.d("SignupActivityNet", "Signup response code=$code body=$resp")
+                val pair = HttpClient.postToHosts("/users/signUp", this@SignupActivity, payload)
+                val resp = pair.first
 
-                if (code == 200 || code == 201) {
+                android.util.Log.d("SignupActivityNet", "Signup response body=$resp")
+
+                if (!resp.isNullOrEmpty()) {
                     val obj = try {
                         JSONObject(resp)
                     } catch (_: Exception) {
@@ -137,23 +124,16 @@ class SignupActivity : AppCompatActivity() {
                         startActivity(intent)
                     }
                 } else {
-                    android.util.Log.w(
-                        "SignupActivityNet",
-                        "Signup failed code=$code body=$resp"
-                    )
+                    android.util.Log.w("SignupActivityNet", "Signup failed or empty response")
                     runOnUiThread {
                         Toast.makeText(this, "Signup failed", Toast.LENGTH_LONG).show()
                     }
                 }
-                conn.disconnect()
             } catch (e: Exception) {
                 android.util.Log.w("SignupActivityNet", "Exception during signup", e)
                 runOnUiThread {
-                    Toast.makeText(
-                        this,
-                        "Signup failed: ${e.localizedMessage}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(this, "Signup failed: ${e.localizedMessage}", Toast.LENGTH_LONG)
+                        .show()
                 }
             }
         }.start()
@@ -166,9 +146,8 @@ class SignupActivity : AppCompatActivity() {
     }
 }
 
-// AppTheme is provided by ui.theme.AppTheme.kt
 
-@androidx.compose.runtime.Composable
+@Composable
 private fun SignupScreen(onSignup: (String, String, String, String, String, String) -> Unit) {
     val context = LocalContext.current
     var firstName by remember { mutableStateOf("") }
@@ -282,7 +261,7 @@ private fun SignupScreen(onSignup: (String, String, String, String, String, Stri
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                TextButton(onClick = { /* maybe navigate back to login */ }) {
+                TextButton(onClick = {}) {
                     Text(text = context.getString(R.string.login))
                 }
             }

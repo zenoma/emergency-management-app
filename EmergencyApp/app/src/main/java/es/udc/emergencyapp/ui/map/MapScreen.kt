@@ -103,13 +103,9 @@ fun MapScreen(modifier: Modifier = Modifier) {
                             "http://192.168.1.100:8000"
                         )
 
-                        val prefs = ctx.getSharedPreferences(
-                            "app_prefs",
-                            Context.MODE_PRIVATE
-                        )
-                        val jwt = prefs.getString("jwt_token", null)
-                        val quadrantsJson = es.udc.emergencyapp.net.HttpClient.getFromHosts("/quadrants/active", jwt, hostsToTry).first
-                        val emergenciesJson = es.udc.emergencyapp.net.HttpClient.getFromHosts("/emergencies", jwt, hostsToTry).first
+                        // Use HttpClient convenience overload that reads jwt from SharedPreferences
+                        val quadrantsJson = es.udc.emergencyapp.net.HttpClient.getFromHosts("/quadrants/active", ctx).first
+                        val emergenciesJson = es.udc.emergencyapp.net.HttpClient.getFromHosts("/emergencies", ctx).first
                         val jsonToUse = transformToWGS84GeoJson(quadrantsJson)
 
                         (ctx as? android.app.Activity)?.runOnUiThread {
@@ -336,7 +332,7 @@ private fun addOrUpdateEmergencySource(
                 val feature = org.json.JSONObject()
                 feature.put("type", "Feature")
                 val props = org.json.JSONObject()
-                props.put("id", e.optInt("id", -1))
+                    props.put("id", e.optInt("id", -1))
                 props.put("title", e.optString("description", ""))
                 props.put("icon", iconName)
                 feature.put("properties", props)

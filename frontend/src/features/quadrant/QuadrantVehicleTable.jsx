@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useTheme } from '@mui/material/styles';
 import formatDate from "../../utils/formatDate";
 import { useRetractVehicleMutation } from "../../api/vehicleApi";
 
@@ -46,6 +47,7 @@ export default function QuadrantVehicleTable(props) {
   const { t } = useTranslation();
   const { i18n } = useTranslation("home");
   const locale = i18n.language;
+  const theme = useTheme();
 
 
   const [page, setPage] = useState(0);
@@ -153,14 +155,14 @@ export default function QuadrantVehicleTable(props) {
                     }
                     if (column.id === 'assignmentStatus') {
                       const s = value;
-                      if (s === 'ACCEPTED') content = <span style={{ color: 'green', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
-                      else if (s === 'PENDING' || s === 'CREATED') content = <span style={{ color: '#ff9800', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                      if (s === 'ACCEPTED') content = <span style={{ color: theme.palette.status.accepted.main, fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                       else if (s === 'PENDING' || s === 'CREATED') content = <span style={{ color: theme.palette.status.pending.main, fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
                       else content = <span>{t(String(s).toLowerCase(), s)}</span>;
                     }
                     if (column.id === 'resourceStatus') {
                       const s = value;
-                      if (s === 'BUSY') content = <span style={{ color: 'red', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
-                      else if (s === 'AVAILABLE') content = <span style={{ color: 'green', fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                      if (s === 'BUSY') content = <span style={{ color: theme.palette.status.busy.main, fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
+                       else if (s === 'AVAILABLE') content = <span style={{ color: theme.palette.status.available.main, fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
                     }
 
                     return (

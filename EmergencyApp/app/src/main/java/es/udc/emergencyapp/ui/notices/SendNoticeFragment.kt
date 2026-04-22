@@ -244,7 +244,7 @@ class SendNoticeFragment : Fragment() {
         try {
             rawLon = lastLocation!!.longitude
             rawLat = lastLocation!!.latitude
-            v1 = transformWgs84ToUtm29(rawLon, rawLat)
+            v1 = es.udc.emergencyapp.util.transformWgs84ToUtm29(rawLon, rawLat)
         } catch (e: Exception) {
             Log.w("SendNotice", "Debug transform failed", e)
         }
@@ -477,7 +477,9 @@ class SendNoticeFragment : Fragment() {
         onSend: (String) -> Unit,
         onRemovePhoto: () -> Unit,
         photoUri: Uri?,
-        locationText: String
+        locationText: String,
+        lon: Double?,
+        lat: Double?
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -486,9 +488,13 @@ class SendNoticeFragment : Fragment() {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(imageVector = Icons.Default.LocationOn, contentDescription = null)
-                    Spacer(modifier = Modifier.size(6.dp))
-                    Text(text = locationText)
+                    if (lon != null && lat != null) {
+                        es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip(lon = lon, lat = lat)
+                    } else {
+                        Icon(imageVector = Icons.Default.LocationOn, contentDescription = null)
+                        Spacer(modifier = Modifier.size(6.dp))
+                        Text(text = locationText)
+                    }
                 }
                 IconButton(onClick = { onTakePhoto() }) {
                     Icon(imageVector = Icons.Default.CameraAlt, contentDescription = "Take photo")
@@ -645,7 +651,9 @@ class SendNoticeFragment : Fragment() {
                     photoUri = photoUri,
                     locationText = locationTextOverride
                         ?: lastLocation?.let { "Location: ${it.latitude}, ${it.longitude}" }
-                        ?: "Location: unavailable"
+                        ?: "Location: unavailable",
+                    lon = lastLocation?.longitude,
+                    lat = lastLocation?.latitude
                 )
             }
         }

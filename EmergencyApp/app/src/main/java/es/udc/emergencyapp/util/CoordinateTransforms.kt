@@ -24,3 +24,24 @@ fun transformProjectedToGeographic(x: Double, y: Double): Pair<Double, Double> {
         Pair(x, y)
     }
 }
+
+/**
+ * Transform geographic WGS84 (lon, lat) to projected UTM29 (meters) used by the backend (EPSG:25829).
+ * Returns the input pair if transform fails.
+ */
+fun transformWgs84ToUtm29(lon: Double, lat: Double): Pair<Double, Double> {
+    return try {
+        val ctFactory = CoordinateTransformFactory()
+        val crsFactory = CRSFactory()
+        val srcCRS = crsFactory.createFromName("EPSG:4326")
+        val tgtCRS = crsFactory.createFromParameters(null, "+proj=utm +zone=29 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
+        val transform = ctFactory.createTransform(srcCRS, tgtCRS)
+        val src = ProjCoordinate(lon, lat)
+        val dst = ProjCoordinate()
+        transform.transform(src, dst)
+        Pair(dst.x, dst.y)
+    } catch (e: Exception) {
+        android.util.Log.w("CoordinateTransforms", "Failed to transform WGS84 to projected coords", e)
+        Pair(lon, lat)
+    }
+}

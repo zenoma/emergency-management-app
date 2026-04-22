@@ -201,7 +201,7 @@ fun MyTeamScreen() {
             val prefs = context.getSharedPreferences("app_prefs", 0)
             val token = prefs.getString("jwt_token", null)
             withContext(Dispatchers.IO) {
-                val pair = es.udc.emergencyapp.net.HttpClient.getFromHosts("/teams/myTeam", token)
+                val pair = es.udc.emergencyapp.net.HttpClient.getFromHosts("/teams/myTeam", context)
                 val body = pair.first
                 if (body != null) {
                     val arr = JSONArray(body)

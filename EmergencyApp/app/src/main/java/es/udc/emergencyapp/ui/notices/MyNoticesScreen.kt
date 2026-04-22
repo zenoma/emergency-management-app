@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.gson.Gson
 import es.udc.emergencyapp.data.dto.NoticeDto
+import es.udc.emergencyapp.ui.common.StatusChip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -60,14 +62,14 @@ fun MyNoticesScreen() {
                 "http://192.168.1.100:8000"
             )
             val prefs = ctx.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
-            val jwt = prefs.getString("jwt_token", null)
+            prefs.getString("jwt_token", null)
 
             val userId = prefs.getLong("user_id", -1L)
             var resp: String? = null
             var successfulHost: String? = null
             withContext(Dispatchers.IO) {
                 val path = if (userId > 0) "/notices?userId=$userId" else "/notices/me"
-                val pair = es.udc.emergencyapp.net.HttpClient.getFromHosts(path, jwt, hostsToTry)
+                val pair = es.udc.emergencyapp.net.HttpClient.getFromHosts(path, ctx)
                 resp = pair.first
                 successfulHost = pair.second
             }
@@ -91,13 +93,25 @@ fun MyNoticesScreen() {
                                     "quadrantId"
                                 ) else null
 
-                             val coords = if (o.has("coordinates") && !o.isNull("coordinates")) {
+                            val coords = if (o.has("coordinates") && !o.isNull("coordinates")) {
                                 val c = o.getJSONObject("coordinates")
-                                val lonRaw = if (c.has("lon")) c.optDouble("lon") else if (c.has("x")) c.optDouble("x") else Double.NaN
-                                val latRaw = if (c.has("lat")) c.optDouble("lat") else if (c.has("y")) c.optDouble("y") else Double.NaN
+                                val lonRaw =
+                                    if (c.has("lon")) c.optDouble("lon") else if (c.has("x")) c.optDouble(
+                                        "x"
+                                    ) else Double.NaN
+                                val latRaw =
+                                    if (c.has("lat")) c.optDouble("lat") else if (c.has("y")) c.optDouble(
+                                        "y"
+                                    ) else Double.NaN
                                 if (!lonRaw.isNaN() && !latRaw.isNaN()) {
-                                    val (finalLon, finalLat) = if (kotlin.math.abs(lonRaw) > 1000000 || kotlin.math.abs(latRaw) > 1000000) {
-                                        es.udc.emergencyapp.util.transformProjectedToGeographic(lonRaw, latRaw)
+                                    val (finalLon, finalLat) = if (kotlin.math.abs(lonRaw) > 1000000 || kotlin.math.abs(
+                                            latRaw
+                                        ) > 1000000
+                                    ) {
+                                        es.udc.emergencyapp.util.transformProjectedToGeographic(
+                                            lonRaw,
+                                            latRaw
+                                        )
                                     } else Pair(lonRaw, latRaw)
                                     es.udc.emergencyapp.data.dto.CoordinatesDto(finalLon, finalLat)
                                 } else null
@@ -356,11 +370,15 @@ fun MyNoticesScreen() {
                                         overflow = TextOverflow.Ellipsis,
                                         style = MaterialTheme.typography.h6
                                     )
-                                    Text(
-                                        text = "Status: ${n.status ?: ""} • ${n.createdAt}",
-                                        color = Color.White,
-                                        style = MaterialTheme.typography.body2
-                                    )
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        StatusChip(status = n.status)
+                                        Spacer(modifier = Modifier.size(8.dp))
+                                        Text(
+                                            text = n.createdAt,
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.body2
+                                        )
+                                    }
                                 }
                             }
                         }

@@ -1,26 +1,21 @@
 package es.udc.emergencyapp.net
 
+import android.content.Context
+
 object HttpClient {
-    // Default hosts tried by other screens; keep in one place
     val defaultHosts = listOf(
-        "http://localhost:8080",
         "http://10.0.2.2:8080",
-        "http://10.0.2.2:8000",
-        "http://10.0.3.2:8000",
-        "http://127.0.0.1:8000",
-        "http://192.168.1.100:8000"
+        "http://10.0.3.2:8080",
     )
 
 
-    fun getFromHosts(
+    private fun getFromHosts(
         path: String,
         jwt: String?,
-        hosts: List<String>? = null,
         connectTimeout: Int = 8000,
         readTimeout: Int = 8000
     ): Pair<String?, String?> {
-        val hostsToTry = hosts ?: defaultHosts
-        for (host in hostsToTry) {
+        for (host in defaultHosts) {
             try {
                 val full = if (path.startsWith("/")) "$host$path" else "$host/$path"
                 val url = java.net.URL(full)
@@ -42,18 +37,34 @@ object HttpClient {
         return Pair(null, null)
     }
 
+    /**
+     * Convenience overload: read jwt from SharedPreferences if context provided and use default hosts.
+     */
+    fun getFromHosts(
+        path: String,
+        context: Context?,
+        connectTimeout: Int = 8000,
+        readTimeout: Int = 8000
+    ): Pair<String?, String?> {
+        val jwt = try {
+            context?.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                ?.getString("jwt_token", null)
+        } catch (e: Exception) {
+            null
+        }
+        return getFromHosts(path, jwt, connectTimeout, readTimeout)
+    }
 
-    fun postToHosts(
+
+    private fun postToHosts(
         path: String,
         jwt: String?,
         bodyPayload: String,
-        hosts: List<String>? = null,
         contentType: String = "application/json",
         connectTimeout: Int = 8000,
         readTimeout: Int = 8000
     ): Pair<String?, String?> {
-        val hostsToTry = hosts ?: defaultHosts
-        for (host in hostsToTry) {
+        for (host in defaultHosts) {
             try {
                 val full = if (path.startsWith("/")) "$host$path" else "$host/$path"
                 val url = java.net.URL(full)
@@ -76,5 +87,23 @@ object HttpClient {
             }
         }
         return Pair(null, null)
+    }
+
+
+    fun postToHosts(
+        path: String,
+        context: Context?,
+        bodyPayload: String,
+        contentType: String = "application/json",
+        connectTimeout: Int = 8000,
+        readTimeout: Int = 8000
+    ): Pair<String?, String?> {
+        val jwt = try {
+            context?.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                ?.getString("jwt_token", null)
+        } catch (e: Exception) {
+            null
+        }
+        return postToHosts(path, jwt, bodyPayload, contentType, connectTimeout, readTimeout)
     }
 }

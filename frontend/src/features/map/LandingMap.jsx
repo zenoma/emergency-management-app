@@ -12,6 +12,7 @@ import StormIcon from '@mui/icons-material/Storm';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 import { useSelector } from "react-redux"
+import { useTheme } from '@mui/material/styles';
 import Map, { Layer, NavigationControl, Source, Marker } from "react-map-gl/maplibre";
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useLocation, useNavigate } from "react-router-dom";
@@ -33,6 +34,7 @@ export default function LandingMap(props) {
 
   const token = useSelector(selectToken);
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const quadrants = props.quadrants;
   const [interactiveLayerIds, setInteractiveLayerIds] = useState([]);
@@ -60,7 +62,7 @@ export default function LandingMap(props) {
   const onMapLoad = useCallback((event) => {
     const map = event.target;
 
-    const makeSvgDataUrl = (IconComp, color = '#d32f2f', size = 48) => {
+    const makeSvgDataUrl = (IconComp, color = theme.palette.status.busy.main, size = 48) => {
       const svgString = ReactDOMServer.renderToStaticMarkup(
         React.createElement(IconComp, { style: { color: color, width: size, height: size } })
       );
@@ -68,7 +70,7 @@ export default function LandingMap(props) {
     };
 
     const emergencyIconsToLoad = [
-      { id: 'emergency-fire', uri: makeSvgDataUrl(LocalFireDepartmentIcon, '#d32f2f', 48) },
+      { id: 'emergency-fire', uri: makeSvgDataUrl(LocalFireDepartmentIcon, theme.palette.status.busy.main, 48) },
       { id: 'emergency-water', uri: makeSvgDataUrl(WaterIcon, '#2196f3', 48) },
       { id: 'emergency-terrain', uri: makeSvgDataUrl(TerrainIcon, '#6d4c41', 48) },
       { id: 'emergency-car', uri: makeSvgDataUrl(DirectionsCarIcon, '#9e9e9e', 48) },
@@ -172,7 +174,7 @@ export default function LandingMap(props) {
     Object.entries(iconEntries).forEach(([key, Comp]) => {
       try {
         const svgString = ReactDOMServer.renderToStaticMarkup(
-          React.createElement(Comp, { style: { color: '#d32f2f', width: 28, height: 28 } })
+          React.createElement(Comp, { style: { color: theme.palette.status.busy.main, width: 28, height: 28 } })
         );
         map[key] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
       } catch (e) {
@@ -181,7 +183,7 @@ export default function LandingMap(props) {
       }
     });
     return map;
-  }, []);
+  }, [theme]);
 
   useEffect(() => {
     const ids = [];
@@ -268,11 +270,11 @@ export default function LandingMap(props) {
               "icon-allow-overlap": true,
               "text-allow-overlap": true,
             },
-            paint: {
-              "text-color": "white",
-              "text-halo-color": "green",
-              "text-halo-width": 1,
-            },
+              paint: {
+               "text-color": "white",
+               "text-halo-color": theme.palette.status.available.main,
+               "text-halo-width": 1,
+             },
           };
 
           const vehiclesLabelStyle = {
@@ -292,11 +294,11 @@ export default function LandingMap(props) {
               "icon-allow-overlap": true,
               "text-allow-overlap": true,
             },
-            paint: {
-              "text-color": "white",
-              "text-halo-color": "green",
-              "text-halo-width": 1,
-            },
+              paint: {
+               "text-color": "white",
+               "text-halo-color": theme.palette.status.available.main,
+               "text-halo-width": 1,
+             },
           };
 
           const quadrantLayerStyle = {
@@ -304,8 +306,8 @@ export default function LandingMap(props) {
             type: "fill",
             layout: {},
             paint: {
-              // more red and slightly less transparent
-              "fill-color": "#D62B2B",
+              // use status busy colors for quadrant highlight
+              "fill-color": theme.palette.status.busy.main,
               "fill-opacity": 0.5,
             },
           };
@@ -315,8 +317,8 @@ export default function LandingMap(props) {
             type: "line",
             layout: {},
             paint: {
-              // darker red border
-              "line-color": "#8B0000",
+              // darker busy border
+              "line-color": theme.palette.status.busy.dark,
               "line-width": 2,
             },
           };
@@ -388,7 +390,7 @@ export default function LandingMap(props) {
       )}
       {props.showDebug && emergencyFeatures && emergencyFeatures.length > 0 && (
         <Source id="emergencies-debug" type="geojson" data={{ type: 'FeatureCollection', features: emergencyFeatures }}>
-          <Layer id="emergency-debug-circles" type="circle" paint={{ 'circle-radius': 8, 'circle-color': '#ff0000' }} />
+          <Layer id="emergency-debug-circles" type="circle" paint={{ 'circle-radius': 8, 'circle-color': theme.palette.status.busy.main }} />
         </Source>
       )}
     </Map>

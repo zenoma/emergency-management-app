@@ -2,6 +2,7 @@ package es.udc.emergencyapp
 
 import android.content.Context
 import android.content.res.Configuration
+import androidx.core.content.edit
 import java.util.Locale
 
 object LocaleHelper {
@@ -19,12 +20,13 @@ object LocaleHelper {
 
     fun persistLanguage(context: Context, language: String) {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        prefs.edit().putString(KEY_LANG, language).apply()
+        prefs.edit { putString(KEY_LANG, language) }
     }
 
     fun getPersistedLanguage(context: Context): String {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        return prefs.getString(KEY_LANG, Locale.getDefault().language) ?: Locale.getDefault().language
+        return prefs.getString(KEY_LANG, Locale.getDefault().language)
+            ?: Locale.getDefault().language
     }
 
     fun onAttach(context: Context): Context {

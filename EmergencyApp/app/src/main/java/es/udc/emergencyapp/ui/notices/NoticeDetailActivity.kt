@@ -42,6 +42,8 @@ import es.udc.emergencyapp.ui.setContentWithSystemBars
 import es.udc.emergencyapp.util.DateUtils
 import es.udc.emergencyapp.util.transformProjectedToGeographic
 import androidx.compose.ui.graphics.Color as UiColor
+import androidx.compose.ui.res.colorResource
+import es.udc.emergencyapp.R
 
 class NoticeDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,39 +158,26 @@ fun NoticeDetailScreen(notice: NoticeDto) {
                         )
                     }
                     val rawStatus = notice.status ?: ""
-                    val (_, badgeLabel) = when (rawStatus) {
-                        "ACCEPTED" -> Pair(UiColor(0xFF4CAF50.toInt()), "Accepted")
-                        "REJECTED" -> Pair(UiColor(0xFFF44336.toInt()), "Rejected")
-                        "COMPLETED" -> Pair(UiColor(0xFF2196F3.toInt()), "Completed")
-                        else -> Pair(UiColor(0xFF9E9E9E.toInt()), rawStatus.ifBlank { "New" })
-                    }
-                    Button(onClick = {}, modifier = Modifier.height(36.dp)) {
-                        Icon(
-                            painter = painterResource(android.R.drawable.ic_menu_info_details),
-                            contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.size(6.dp))
-                        Text(text = badgeLabel)
-                    }
+                    // Use common StatusChip composable for consistent status UI
+                    es.udc.emergencyapp.ui.common.StatusChip(status = rawStatus)
                 }
 
                 Spacer(modifier = Modifier.size(8.dp))
                 Divider()
                 Spacer(modifier = Modifier.size(8.dp))
 
+                // Show coordinates as a small chip with quadrant name fetched from backend
                 notice.coordinates?.let { c ->
                     val lonRaw = c.lon ?: Double.NaN
                     val latRaw = c.lat ?: Double.NaN
                     val (lon, lat) = if (kotlin.math.abs(lonRaw) > 1000000 || kotlin.math.abs(latRaw) > 1000000) {
                         transformProjectedToGeographic(lonRaw, latRaw)
                     } else Pair(lonRaw, latRaw)
-                    Text(text = "Coordinates:")
+
                     val lonText = if (lon.isNaN()) "-" else "${"%.6f".format(lon)}"
                     val latText = if (lat.isNaN()) "-" else "${"%.6f".format(lat)}"
-                    Text(
-                        text = "Longitude: $lonText  Latitude: $latText",
-                        style = MaterialTheme.typography.body2
-                    )
+
+                    es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip(lon = lon, lat = lat)
                 } ?: run {
                     Text(text = "Coordinates: (not provided)")
                 }
@@ -199,3 +188,5 @@ fun NoticeDetailScreen(notice: NoticeDto) {
         }
     }
 }
+
+// Using shared CoordinateChip in ui.common

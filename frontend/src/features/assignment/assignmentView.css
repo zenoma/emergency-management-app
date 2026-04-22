@@ -43,14 +43,14 @@
 
 /* required field styling: add red asterisk to InputLabel inside required FormControl */
 .parent .MuiFormControl-root[required] .MuiInputLabel-asterisk {
-  color: red;
+  color: #d32f2f;
 }
 
 .MuiFormControl-root[error] .MuiInputLabel-root,
 .MuiFormControl-root[error] .MuiFormLabel-root {
-  color: red !important;
+  color: #d32f2f !important;
 }
 
 .MuiFormControl-root[error] .MuiOutlinedInput-notchedOutline {
-  border-color: red !important;
+  border-color: #d32f2f !important;
 }
