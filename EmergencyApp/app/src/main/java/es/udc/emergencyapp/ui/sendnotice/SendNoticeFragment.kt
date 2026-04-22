@@ -14,27 +14,42 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import es.udc.emergencyapp.MainActivity
@@ -52,6 +67,7 @@ class SendNoticeFragment : Fragment() {
     private var photoUri: Uri? = null
     private var lastLocation: Location? = null
     private var composeViewRef: ComposeView? = null
+
     // When permission is denied we show a specific text in the Compose UI.
     private var locationTextOverride: String? = null
 
@@ -59,6 +75,9 @@ class SendNoticeFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (!success || photoUri == null) {
                 Toast.makeText(requireContext(), "Failed to take photo", Toast.LENGTH_SHORT).show()
+            } else {
+                // re-render to show preview
+                renderSendNotice()
             }
         }
 
@@ -119,6 +138,7 @@ class SendNoticeFragment : Fragment() {
                 put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             }
             photoUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            Log.d("SendNotice", "Created photoUri=$photoUri")
             takePictureLauncher.launch(photoUri)
         } catch (e: Exception) {
             Log.w("SendNotice", "Failed to start camera capture", e)
@@ -195,7 +215,7 @@ class SendNoticeFragment : Fragment() {
     }
 
     private fun onSendClicked(body: String) {
-        val trimmedBody = body.trim()
+        body.trim()
         if (body.isEmpty()) {
             Toast.makeText(requireContext(), "Enter a description", Toast.LENGTH_SHORT)
                 .show(); return
@@ -375,11 +395,11 @@ class SendNoticeFragment : Fragment() {
                                         dialogInterface?.dismiss()
                                     } catch (e: Exception) { /* ignore */
                                     }
-                                        try {
-                                            (requireActivity() as? MainActivity)?.navigateToRoute("notices")
-                                        } catch (e: Exception) {
-                                            Log.w("SendNotice", "Navigation to My Notices failed", e)
-                                        }
+                                    try {
+                                        (requireActivity() as? MainActivity)?.navigateToRoute("notices")
+                                    } catch (e: Exception) {
+                                        Log.w("SendNotice", "Navigation to My Notices failed", e)
+                                    }
                                 }
                                 .setOnCancelListener { _ ->
                                     try {
@@ -454,18 +474,133 @@ class SendNoticeFragment : Fragment() {
     fun SendNoticeScreen(
         onTakePhoto: () -> Unit,
         onSend: (String) -> Unit,
+        onRemovePhoto: () -> Unit,
         photoUri: Uri?,
         locationText: String
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = locationText)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(imageVector = Icons.Default.LocationOn, contentDescription = null)
+                    Spacer(modifier = Modifier.size(6.dp))
+                    Text(text = locationText)
+                }
+                IconButton(onClick = { onTakePhoto() }) {
+                    Icon(imageVector = Icons.Default.CameraAlt, contentDescription = "Take photo")
+                }
+            }
             Spacer(modifier = Modifier.height(8.dp))
             val bodyState = remember { mutableStateOf("") }
-            OutlinedTextField(value = bodyState.value, onValueChange = { bodyState.value = it }, label = { Text("Description") })
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { onTakePhoto() }) { Text(text = "Take Photo") }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { onSend(bodyState.value) }) { Text(text = "Send") }
+            OutlinedTextField(
+                value = bodyState.value,
+                onValueChange = { bodyState.value = it },
+                label = { Text("Description") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Image preview area
+            if (photoUri != null) {
+                Card(
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = 6.dp,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(modifier = Modifier.height(220.dp)) {
+                        AndroidView(
+                            factory = { ctx ->
+                                val iv = androidx.appcompat.widget.AppCompatImageView(ctx)
+                                iv.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+                                try {
+                                    val prefsLocal =
+                                        ctx.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                                    val jwtLocal = prefsLocal.getString("jwt_token", null)
+                                    try {
+                                        // Use direct Uri for content/file schemes; only wrap as GlideUrl for http(s)
+                                        val scheme = photoUri?.scheme ?: ""
+                                        val model: Any = if (scheme.startsWith("http") || scheme.startsWith("https")) {
+                                            if (!jwtLocal.isNullOrEmpty()) {
+                                                val headers = com.bumptech.glide.load.model.LazyHeaders.Builder()
+                                                    .addHeader("Authorization", "Bearer $jwtLocal")
+                                                    .build()
+                                                com.bumptech.glide.load.model.GlideUrl(photoUri.toString(), headers)
+                                            } else photoUri.toString()
+                                        } else {
+                                            photoUri
+                                        }
+                                        com.bumptech.glide.Glide.with(ctx).load(model).centerCrop().into(iv)
+                                    } catch (e: Exception) {
+                                        Log.w(
+                                            "SendNotice",
+                                            "Glide preview load failed, falling back",
+                                            e
+                                        )
+                                        try {
+                                            val `is` =
+                                                ctx.contentResolver.openInputStream(photoUri!!)
+                                            val bytes = `is`?.readBytes()
+                                            `is`?.close()
+                                            Log.d("SendNotice", "Preview bytes size=${'$'}{bytes?.size}")
+                                            if (bytes != null && bytes.isNotEmpty()) {
+                                                val bmp = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                                                if (bmp != null) iv.setImageBitmap(bmp)
+                                            }
+                                        } catch (fe: Exception) {
+                                            Log.w("SendNotice", "Fallback preview failed", fe)
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    Log.w("SendNotice", "Glide preview failed", e)
+                                }
+                                iv
+                            }, modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp)
+                        )
+                        IconButton(
+                            onClick = { onRemovePhoto() },
+                            modifier = Modifier.align(Alignment.TopEnd)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Remove photo"
+                            )
+                        }
+                    }
+                }
+            } else {
+                // placeholder box
+                Card(
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = 3.dp,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(modifier = Modifier.height(220.dp), contentAlignment = Alignment.Center) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.Default.Photo,
+                                contentDescription = null,
+                                modifier = Modifier.size(48.dp)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(text = "No photo selected", color = Color.Gray)
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { onSend(bodyState.value) }) {
+                    Icon(imageVector = Icons.Default.Send, contentDescription = null)
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(text = "Send")
+                }
+            }
         }
     }
 
@@ -475,8 +610,14 @@ class SendNoticeFragment : Fragment() {
                 SendNoticeScreen(
                     onTakePhoto = { onTakePhotoClicked() },
                     onSend = { onSendClicked(it) },
+                    onRemovePhoto = {
+                        photoUri = null
+                        renderSendNotice()
+                    },
                     photoUri = photoUri,
-                    locationText = locationTextOverride ?: lastLocation?.let { "Location: ${it.latitude}, ${it.longitude}" } ?: "Location: unavailable"
+                    locationText = locationTextOverride
+                        ?: lastLocation?.let { "Location: ${it.latitude}, ${it.longitude}" }
+                        ?: "Location: unavailable"
                 )
             }
         }
