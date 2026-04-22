@@ -1,35 +1,58 @@
 package es.udc.emergencyapp.util
 
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Locale
-import java.util.TimeZone
 
 object DateUtils {
-    // Formato que devuelve el backend: "yyyy-MM-dd'T'HH:mm:ss" (sin zona)
-    private val serverFormats = listOf(
-        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()),
-        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
-    )
+    // Public function to parse various server date representations and return a
+    // localized, human-friendly string. Returns "-" when input is null or blank.
+    fun formatForDisplay(dateStr: String?): String {
+        if (dateStr.isNullOrBlank()) return "-"
 
-    private val outputFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+        val outPattern = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm", Locale.getDefault())
 
-    init {
-        // Tratar las fechas del servidor como en UTC para evitar desfases si vienen sin zona.
-        serverFormats.forEach { it.timeZone = TimeZone.getTimeZone("UTC") }
-        outputFormat.timeZone = TimeZone.getDefault()
-    }
+        // 1) Offset date-time with zone offset
+        try {
+            val odt = OffsetDateTime.parse(dateStr)
+            return odt.format(outPattern)
+        } catch (_: DateTimeParseException) {
+        }
 
-    fun formatServerDate(dateStr: String?): String {
-        if (dateStr.isNullOrBlank()) return ""
-        for (fmt in serverFormats) {
+        // 2) Instant (Z)
+        try {
+            val instant = Instant.parse(dateStr)
+            val zdt = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault())
+            return zdt.format(outPattern)
+        } catch (_: DateTimeParseException) {
+        }
+
+        // 3) LocalDateTime
+        try {
+            val ldt = LocalDateTime.parse(dateStr)
+            val zdt = ldt.atZone(ZoneId.systemDefault())
+            return zdt.format(outPattern)
+        } catch (_: DateTimeParseException) {
+        }
+
+        // 4) Common server patterns without zone
+        val patterns = listOf("yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss.SSS")
+        for (p in patterns) {
             try {
-                val d: Date = fmt.parse(dateStr)
-                return outputFormat.format(d)
-            } catch (ignored: Exception) {
+                val fmt = DateTimeFormatter.ofPattern(p)
+                val ldt = LocalDateTime.parse(dateStr, fmt)
+                val zdt = ldt.atZone(ZoneId.systemDefault())
+                return zdt.format(outPattern)
+            } catch (_: Exception) {
             }
         }
-        // fallback: return original if parsing fails
+
+        // Fallback: return original string
         return dateStr
     }
 }

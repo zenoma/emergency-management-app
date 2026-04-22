@@ -16,61 +16,92 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import es.udc.emergencyapp.data.dto.EmergencyDto
 import es.udc.emergencyapp.ui.common.CompactChip
+import es.udc.emergencyapp.indexColor
 import es.udc.emergencyapp.ui.common.CoordinateChip
+import es.udc.emergencyapp.util.emergencyTypeIcon
 
 
 @Composable
 fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null) {
-    // Track expanded quadrant ids (remember must be called from a @Composable scope)
-    val expanded = remember { mutableStateListOf<Long>() }
+    val ctx = LocalContext.current
 
     LazyColumn(modifier = Modifier.padding(12.dp)) {
         item {
             Card(
                 shape = RoundedCornerShape(12.dp),
-                elevation = 6.dp,
+                elevation = 8.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    if (onClose != null) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End
-                        ) {
-                            androidx.compose.material.TextButton(onClick = { onClose() }) {
-                                Text(
-                                    "Cerrar"
-                                )
-                            }
+                Column(modifier = Modifier.padding(16.dp)) {
+                    // Top row: icon for type + title
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        val typeIcon = iconForEmergencyType(emergency.emergencyTypeName)
+                        Icon(
+                            imageVector = typeIcon,
+                            contentDescription = emergency.emergencyTypeName
+                        )
+                        Spacer(modifier = Modifier.size(12.dp))
+                        Column {
+                            Text(
+                                text = "#${emergency.id}",
+                                style = MaterialTheme.typography.subtitle2
+                            )
+                            Text(
+                                text = emergency.emergencyTypeName ?: "-",
+                                style = MaterialTheme.typography.h6
+                            )
                         }
                     }
-                    Text(
-                        text = "#${emergency.id} - ${emergency.emergencyTypeName ?: ""}",
-                        style = MaterialTheme.typography.h6
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = emergency.description ?: "(no description)")
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Index: ${emergency.emergencyIndex ?: ""}")
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "Created: ${emergency.createdAt ?: ""}")
-                    Spacer(modifier = Modifier.height(8.dp))
-                    if (emergency.location != null) {
-                        CoordinateChip(
-                            lonText = "${emergency.location.lon}",
-                            latText = "${emergency.location.lat}",
-                            quadrantName = null,
-                            showCoordinates = true
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Description
+                    if (!emergency.description.isNullOrBlank()) {
+                        Text(
+                            text = emergency.description ?: "(no description)",
+                            style = MaterialTheme.typography.body1
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    // Index and CreatedAt row
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        val idx = emergency.emergencyIndex ?: "-"
+                        CompactChip(label = idx, bgColor = indexColor(idx))
+                        Spacer(modifier = Modifier.size(12.dp))
+                        Icon(imageVector = Icons.Default.DateRange, contentDescription = "Created")
+                        Spacer(modifier = Modifier.size(6.dp))
+                        Text(text = es.udc.emergencyapp.util.DateUtils.formatForDisplay(emergency.createdAt))
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Coordinates or quadrant count
+                    if (emergency.location != null) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Location"
+                            )
+                            Spacer(modifier = Modifier.size(8.dp))
+                            CoordinateChip(
+                                lonText = "${emergency.location.lon}",
+                                latText = "${emergency.location.lat}",
+                                quadrantName = null,
+                                showCoordinates = true
+                            )
+                        }
                     } else {
                         val qCount = emergency.quadrantInfo?.size ?: 0
                         if (qCount > 0) CompactChip(label = "Cuadrantes $qCount")
@@ -89,35 +120,44 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
                 )
             }
             items(emergency.quadrantInfo) { q ->
-                Column {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .clickable {
-                                if (expanded.contains(q.id)) expanded.remove(q.id) else expanded.add(
-                                    q.id
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                        .clickable {
+                            try {
+                                val intent = android.content.Intent(
+                                    ctx,
+                                    QuadrantResourcesActivity::class.java
                                 )
-                            }, shape = RoundedCornerShape(8.dp), elevation = 2.dp
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(imageVector = Icons.Default.Place, contentDescription = null)
-                            Spacer(modifier = Modifier.size(8.dp))
-                            Column {
-                                Text(text = q.nombre ?: "-", style = MaterialTheme.typography.body1)
-                                Text(
-                                    text = "Escala: ${q.escala ?: "-"}",
-                                    style = MaterialTheme.typography.caption
-                                )
+                                intent.putExtra("emergencyId", emergency.id)
+                                intent.putExtra("quadrantId", q.id)
+                                val activity = ctx as? android.app.Activity
+                                if (activity != null) activity.startActivity(intent) else {
+                                    intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    ctx.startActivity(intent)
+                                }
+                            } catch (_: Exception) {
                             }
+                        }, shape = RoundedCornerShape(10.dp), elevation = 4.dp
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(imageVector = Icons.Default.LocationOn, contentDescription = null)
+                        Spacer(modifier = Modifier.size(10.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(text = q.nombre ?: "-", style = MaterialTheme.typography.body1)
+                            Text(
+                                text = "Escala: ${q.escala ?: "-"}",
+                                style = MaterialTheme.typography.caption
+                            )
                         }
-                    }
-
-                    if (expanded.contains(q.id)) {
-                        QuadrantResourcesScreen(emergencyId = emergency.id, quadrantId = q.id)
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowRight,
+                            contentDescription = null
+                        )
                     }
                 }
             }
@@ -176,3 +216,10 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
         }
     }
 }
+
+// Deprecated local icon matcher. Use util.emergencyTypeIcon instead.
+@Deprecated("Use es.udc.emergencyapp.util.emergencyTypeIcon")
+private fun iconForEmergencyType(type: String?): ImageVector =
+    emergencyTypeIcon(type)
+
+// use DateUtils.formatForDisplay instead of local formatter

@@ -1,16 +1,22 @@
 package es.udc.emergencyapp.ui.emergencies
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons.Default
+import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import es.udc.emergencyapp.net.HttpClient
+import es.udc.emergencyapp.ui.common.StatusChip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -29,7 +36,12 @@ import org.json.JSONObject
 
 
 @Composable
-fun QuadrantResourcesScreen(emergencyId: Long, quadrantId: Long, onClose: (() -> Unit)? = null) {
+fun QuadrantResourcesScreen(
+    emergencyId: Long,
+    quadrantId: Long,
+    onClose: (() -> Unit)? = null,
+    externalRefreshCounter: Int = 0
+) {
     val loading = remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
     var assignments by remember { mutableStateOf<List<JSONObject>>(emptyList()) }
@@ -37,9 +49,21 @@ fun QuadrantResourcesScreen(emergencyId: Long, quadrantId: Long, onClose: (() ->
     val ctx = LocalContext.current
     val lastHostAttempt = remember { mutableStateOf<String?>(null) }
     val retryTrigger = remember { mutableStateOf(0) }
-    LaunchedEffect(emergencyId, quadrantId, retryTrigger.value) {
+    val cacheKey = Pair(emergencyId, quadrantId)
+
+    @Suppress("StaticDeclarationInLocalScope")
+    val assignmentsCache = remember { Companion.assignmentsCache }
+    LaunchedEffect(emergencyId, quadrantId, retryTrigger.value, externalRefreshCounter) {
         loading.value = true
         error = null
+        if (retryTrigger.value == 0) {
+            val cached = assignmentsCache[cacheKey]
+            if (cached != null) {
+                assignments = cached
+                loading.value = false
+                return@LaunchedEffect
+            }
+        }
         try {
             val path = "/assignments?quadrantId=${quadrantId}&emergencyId=${emergencyId}"
             val pair =
@@ -57,6 +81,11 @@ fun QuadrantResourcesScreen(emergencyId: Long, quadrantId: Long, onClose: (() ->
                     }
                 }
                 assignments = aList
+                // store in cache
+                try {
+                    assignmentsCache[cacheKey] = aList
+                } catch (_: Exception) {
+                }
             } else {
                 error = "No response"
             }
@@ -83,8 +112,15 @@ fun QuadrantResourcesScreen(emergencyId: Long, quadrantId: Long, onClose: (() ->
 
         if (error != null) {
             Text(text = "Error: $error", color = MaterialTheme.colors.error)
-            lastHostAttempt.value?.let { Text(text = "Host intentado: $it", style = MaterialTheme.typography.caption) }
-            androidx.compose.material.TextButton(onClick = { retryTrigger.value = retryTrigger.value + 1 }) {
+            lastHostAttempt.value?.let {
+                Text(
+                    text = "Host intentado: $it",
+                    style = MaterialTheme.typography.caption
+                )
+            }
+            androidx.compose.material.TextButton(onClick = {
+                retryTrigger.value = retryTrigger.value + 1
+            }) {
                 Text("Reintentar")
             }
             return@Column
@@ -95,14 +131,20 @@ fun QuadrantResourcesScreen(emergencyId: Long, quadrantId: Long, onClose: (() ->
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
         )
+
         if (assignments.isEmpty()) {
             Text(text = "No hay asignaciones")
         } else {
-            Column {
-                assignments.forEach { a -> AssignmentRow(a) }
+            LazyColumn {
+                items(assignments) { a -> ModernAssignmentRow(a) }
             }
         }
     }
+}
+
+// Companion object-style cache stored at file-level so it's shared across recompositions/activities
+private object Companion {
+    val assignmentsCache: MutableMap<Pair<Long, Long>, List<JSONObject>> = mutableMapOf()
 }
 
 @Composable
@@ -188,6 +230,84 @@ private fun AssignmentRow(assignment: JSONObject) {
                 val org = v.optJSONObject("organization")
                 if (org != null) {
                     Text(text = "  org: ${org.optString("code")} - ${org.optString("name")}")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ModernAssignmentRow(assignment: JSONObject) {
+    val status = assignment.optString("status")
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "#${assignment.optLong("id", 0)}",
+                    style = MaterialTheme.typography.subtitle1
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                StatusChip(status = status)
+            }
+
+            Column(modifier = Modifier.weight(2f)) {
+                val assignedAt = assignment.optString("assignedAt")
+                val acceptedAt = assignment.optString("acceptedAt")
+                val completedAt = assignment.optString("completedAt")
+                if (assignedAt.isNotBlank()) Text(
+                    text = "Asignado: $assignedAt",
+                    style = MaterialTheme.typography.body2
+                )
+                if (acceptedAt.isNotBlank()) Text(
+                    text = "Aceptado: $acceptedAt",
+                    style = MaterialTheme.typography.body2
+                )
+                if (completedAt.isNotBlank()) Text(
+                    text = "Completado: $completedAt",
+                    style = MaterialTheme.typography.body2
+                )
+
+                val teamJson =
+                    if (assignment.has("teamInfo") && !assignment.isNull("teamInfo")) assignment.optJSONObject(
+                        "teamInfo"
+                    ) else null
+                val vehicleJson =
+                    if (assignment.has("vehicleInfo") && !assignment.isNull("vehicleInfo")) assignment.optJSONObject(
+                        "vehicleInfo"
+                    ) else null
+                Spacer(modifier = Modifier.height(6.dp))
+                teamJson?.let { t ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Default.Group,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.size(6.dp))
+                        Text(
+                            text = t.optString("code"),
+                            style = MaterialTheme.typography.body1
+                        )
+                    }
+                }
+                vehicleJson?.let { v ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Default.DirectionsCar,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.size(6.dp))
+                        Text(
+                            text = v.optString("vehiclePlate"),
+                            style = MaterialTheme.typography.body1
+                        )
+                    }
                 }
             }
         }

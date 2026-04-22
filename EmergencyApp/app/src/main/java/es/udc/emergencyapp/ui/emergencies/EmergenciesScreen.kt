@@ -1,6 +1,7 @@
 package es.udc.emergencyapp.ui.emergencies
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,16 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalFireDepartment
-import androidx.compose.material.icons.filled.LocalHospital
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -42,9 +37,9 @@ import es.udc.emergencyapp.data.dto.EmergencyDto
 import es.udc.emergencyapp.data.dto.QuadrantInfoDto
 import es.udc.emergencyapp.indexColor
 import es.udc.emergencyapp.net.HttpClient
+import es.udc.emergencyapp.ui.common.CompactChip
 import es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip
 import es.udc.emergencyapp.ui.notices.NoticeDetailActivity
-import android.widget.Toast
 import es.udc.emergencyapp.util.transformProjectedToGeographic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -160,7 +155,11 @@ fun EmergenciesScreen() {
                     } catch (ex: android.content.ActivityNotFoundException) {
                         // Fallback: if the new EmergencyDetailActivity isn't available (manifest/build issue),
                         // fallback to the legacy NoticeDetailActivity (which is present in the manifest)
-                        android.util.Log.w("Emergencies", "EmergencyDetailActivity not found, falling back to NoticeDetailActivity", ex)
+                        android.util.Log.w(
+                            "Emergencies",
+                            "EmergencyDetailActivity not found, falling back to NoticeDetailActivity",
+                            ex
+                        )
                         try {
                             val fallback = Intent(ctx, NoticeDetailActivity::class.java)
                             fallback.putExtra("notice", Gson().toJson(e))
@@ -173,11 +172,19 @@ fun EmergenciesScreen() {
                             }
                         } catch (ex2: Exception) {
                             android.util.Log.w("Emergencies", "Fallback also failed", ex2)
-                            Toast.makeText(ctx, "No se pudo abrir detalle: ${ex2.localizedMessage}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                ctx,
+                                "No se pudo abrir detalle: ${ex2.localizedMessage}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     } catch (ex: Exception) {
                         android.util.Log.w("Emergencies", "Failed to open detail", ex)
-                        Toast.makeText(ctx, "No se pudo abrir detalle: ${ex.localizedMessage}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            ctx,
+                            "No se pudo abrir detalle: ${ex.localizedMessage}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
@@ -185,7 +192,7 @@ fun EmergenciesScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 6.dp)
-                            .clickable { openDetails() },
+                        .clickable { openDetails() },
                     shape = RoundedCornerShape(8.dp),
                     elevation = 3.dp
                 ) {
@@ -196,9 +203,9 @@ fun EmergenciesScreen() {
                             .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
                     ) {
 
-                        val icon = chooseIconForType(e.emergencyTypeName)
+                        val icon = es.udc.emergencyapp.util.emergencyTypeIcon(e.emergencyTypeName)
                         val idxColor = indexColor(e.emergencyIndex)
-                        Surface(
+                        androidx.compose.material.Surface(
                             modifier = Modifier
                                 .size(44.dp)
                                 .clip(RoundedCornerShape(8.dp)),
@@ -209,9 +216,9 @@ fun EmergenciesScreen() {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
                             ) {
-                                Icon(
+                                androidx.compose.material.Icon(
                                     imageVector = icon,
-                                    contentDescription = null,
+                                    contentDescription = e.emergencyTypeName,
                                     tint = Color.White,
                                     modifier = Modifier.size(20.dp)
                                 )
@@ -247,7 +254,7 @@ fun EmergenciesScreen() {
                             Spacer(modifier = Modifier.height(6.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = e.createdAt?.replace("T", " ")?.take(16) ?: "",
+                                    text = es.udc.emergencyapp.util.DateUtils.formatForDisplay(e.createdAt),
                                     style = MaterialTheme.typography.caption
                                 )
                                 Spacer(modifier = Modifier.padding(8.dp))
@@ -262,7 +269,7 @@ fun EmergenciesScreen() {
                                     // If no location provided, show number of affected quadrants if available
                                     val qCount = e.quadrantInfo?.size ?: 0
                                     if (qCount > 0) {
-                                        es.udc.emergencyapp.ui.common.CompactChip(label = "Cuadrantes $qCount")
+                                        CompactChip(label = "Cuadrantes $qCount")
                                     } else {
                                         Text(
                                             text = "-",
@@ -275,17 +282,7 @@ fun EmergenciesScreen() {
                         }
 
                         Column(horizontalAlignment = Alignment.End) {
-                            Card(
-                                shape = RoundedCornerShape(12.dp),
-                                backgroundColor = idxColor,
-                                elevation = 0.dp
-                            ) {
-                                Text(
-                                    text = e.emergencyIndex ?: "",
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    color = Color.White
-                                )
-                            }
+                            CompactChip(label = e.emergencyIndex ?: "", bgColor = idxColor)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
@@ -365,18 +362,4 @@ private fun parseEmergenciesJson(resp: String): List<EmergencyDto> {
         }
     }
     return parsed
-}
-
-private fun chooseIconForType(typeName: String?): androidx.compose.ui.graphics.vector.ImageVector {
-    val n = typeName?.lowercase() ?: ""
-    return when {
-        n.contains("sanit") || n.contains("salud") || n.contains("medical") -> Icons.Filled.LocalHospital
-        n.contains("incend") || n.contains("fire") -> try {
-            Icons.Filled.LocalFireDepartment
-        } catch (_: Exception) {
-            Icons.Filled.Warning
-        }
-
-        else -> Icons.Filled.Warning
-    }
 }

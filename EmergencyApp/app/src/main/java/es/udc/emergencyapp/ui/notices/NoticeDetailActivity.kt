@@ -147,7 +147,7 @@ fun NoticeDetailScreen(notice: NoticeDto) {
                         )
                         Spacer(modifier = Modifier.size(6.dp))
                         Text(
-                            text = "Date: ${DateUtils.formatServerDate(notice.createdAt)}",
+                            text = "Date: ${es.udc.emergencyapp.util.DateUtils.formatForDisplay(notice.createdAt)}",
                             style = MaterialTheme.typography.body2,
                             fontSize = 12.sp
                         )

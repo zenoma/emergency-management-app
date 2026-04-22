@@ -374,7 +374,7 @@ fun MyNoticesScreen() {
                                         StatusChip(status = n.status)
                                         Spacer(modifier = Modifier.size(8.dp))
                                         Text(
-                                            text = n.createdAt,
+                                            text = es.udc.emergencyapp.util.DateUtils.formatForDisplay(n.createdAt),
                                             color = Color.White,
                                             style = MaterialTheme.typography.body2
                                         )
@@ -388,4 +388,3 @@ fun MyNoticesScreen() {
         }
     }
 }
-

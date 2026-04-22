@@ -146,29 +146,7 @@ fun MapScreen(modifier: Modifier = Modifier) {
 
 // Network functions centralized in es.udc.emergencyapp.net.HttpClient
 
-private fun chooseEmergencyIconName(typeKey: String?): String {
-    val lowered = (typeKey ?: "").lowercase()
-    val n = try {
-        java.text.Normalizer.normalize(lowered, java.text.Normalizer.Form.NFD)
-            .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
-    } catch (e: Exception) {
-        lowered
-    }
-    return when {
-        n.contains("incend") || n.contains("fire") -> "emergency-fire"
-        n.contains("inund") || n.contains("flood") || n.contains("water") || n.contains("inundacion") -> "emergency-water"
-        n.contains("torment") || n.contains("temporal") || n.contains("storm") || n.contains("meteor") || n.contains(
-            "evento"
-        ) -> "emergency-storm"
-
-        n.contains("derrum") || n.contains("desprend") || n.contains("land") || n.contains("mont") -> "emergency-montana"
-        n.contains("accident") || n.contains("vial") || n.contains("car") -> "emergency-car"
-        n.contains("sanit") || n.contains("salud") || n.contains("medical") -> "emergency-medical"
-        n.contains("quim") || n.contains("chemical") -> "emergency-chemical"
-        n.contains("industrial") || n.contains("factory") || n.contains("industr") -> "emergency-industrial"
-        else -> "emergency-default"
-    }
-}
+// chooseEmergencyIconName removed - use es.udc.emergencyapp.util.emergencyTypeMapKey instead
 
 private fun bitmapFromDrawable(context: Context, resId: Int, sizePx: Int): Bitmap {
     val drawable = androidx.core.content.ContextCompat.getDrawable(context, resId)
@@ -322,12 +300,9 @@ private fun addOrUpdateEmergencySource(
                     es.udc.emergencyapp.util.transformProjectedToGeographic(lonRaw, latRaw)
                 } else Pair(lonRaw, latRaw)
 
-                val typeKey =
-                    if (e.has("emergencyTypeName")) e.optString("emergencyTypeName") else if (e.has(
-                            "type"
-                        )
-                    ) e.optString("type") else ""
-                val iconName = chooseEmergencyIconName(typeKey)
+                val typeKey = if (e.has("emergencyTypeName")) e.optString("emergencyTypeName") else if (e.has("type")) e.optString("type") else ""
+                // Use centralized utility to decide which drawable/icon name to use on the map
+                val iconName = es.udc.emergencyapp.util.emergencyTypeMapKey(typeKey)
 
                 val feature = org.json.JSONObject()
                 feature.put("type", "Feature")
