@@ -19,14 +19,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.VerifiedUser
-import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -158,14 +157,20 @@ fun TeamScreenComposable(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Badge, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+                        Icon(
+                            Icons.Default.Badge,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
                         Spacer(modifier = Modifier.size(6.dp))
                         Text(text = "${members.size} members", color = Color.White)
                     }
                 }
                 // status / resource type column
                 Column(horizontalAlignment = Alignment.End) {
-                    val statusColor = if ("AVAILABLE" == "AVAILABLE") Color(0xFF4CAF50) else Color(0xFFF44336)
+                    val statusColor =
+                        if ("AVAILABLE" == "AVAILABLE") Color(0xFF4CAF50) else Color(0xFFF44336)
                     Text(text = "TEAM", color = Color.White, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = "AVAILABLE", color = statusColor, fontWeight = FontWeight.Bold)
@@ -248,8 +253,6 @@ class MyTeamComposeFragment : Fragment() {
                                     orgName = org?.optString("name", "") ?: ""
                                     val users = team.optJSONArray("userList")
                                     val list = mutableListOf<TeamUserItem>()
-                                    var teamStatus = team.optString("status", "")
-                                    var resourceType = team.optString("resourceType", "")
                                     if (users != null) {
                                         for (i in 0 until users.length()) {
                                             val u = users.getJSONObject(i)
@@ -266,8 +269,6 @@ class MyTeamComposeFragment : Fragment() {
                                         }
                                     }
                                     members = list
-                                    // update local vars if needed (we'll set via mutableState above)
-                                    // teamStatus and resourceType are not stored in state currently; could be shown in card
                                 }
                             } else if (code == 401) {
                                 error = "Unauthorized"
@@ -296,5 +297,85 @@ class MyTeamComposeFragment : Fragment() {
             }
         }
         return composeView
+    }
+}
+
+@Composable
+fun MyTeamScreen() {
+    val context = LocalContext.current
+    var teamCode by remember { mutableStateOf("") }
+    var orgName by remember { mutableStateOf("") }
+    var members by remember { mutableStateOf(listOf<TeamUserItem>()) }
+
+    var loading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        loading = true
+        error = null
+        try {
+            val prefs = context.getSharedPreferences("app_prefs", 0)
+            val token = prefs.getString("jwt_token", null)
+            withContext(Dispatchers.IO) {
+                val url = URL("http://10.0.2.2:8080/teams/myTeam")
+                val conn = (url.openConnection() as HttpURLConnection).apply {
+                    requestMethod = "GET"
+                    connectTimeout = 5000
+                    readTimeout = 5000
+                    if (!token.isNullOrBlank()) setRequestProperty("Authorization", "Bearer $token")
+                }
+                try {
+                    val code = conn.responseCode
+                    if (code == 200) {
+                        val body = conn.inputStream.bufferedReader().use { it.readText() }
+                        val arr = org.json.JSONArray(body)
+                        if (arr.length() > 0) {
+                            val team = arr.getJSONObject(0)
+                            teamCode = team.optString("code", "")
+                            val org = team.optJSONObject("organization")
+                            orgName = org?.optString("name", "") ?: ""
+                            val users = team.optJSONArray("userList")
+                            val list = mutableListOf<TeamUserItem>()
+                            if (users != null) {
+                                for (i in 0 until users.length()) {
+                                    val u = users.getJSONObject(i)
+                                    list.add(
+                                        TeamUserItem(
+                                            u.optString("firstName", null),
+                                            u.optString("lastName", null),
+                                            u.optString("email", null),
+                                            u.optString("userRole", null),
+                                            u.optString("phoneNumber", null),
+                                            u.optString("dni", null)
+                                        )
+                                    )
+                                }
+                            }
+                            members = list
+                        }
+                    } else if (code == 401) {
+                        error = "Unauthorized"
+                    } else {
+                        error = "Failed to fetch team: HTTP $code"
+                    }
+                } finally {
+                    conn.disconnect()
+                }
+            }
+        } catch (e: Exception) {
+            error = e.message ?: "Unknown error"
+        } finally {
+            loading = false
+        }
+    }
+
+    MaterialTheme {
+        TeamScreenComposable(
+            teamCode = teamCode,
+            orgName = orgName,
+            members = members,
+            loading = loading,
+            error = error
+        )
     }
 }

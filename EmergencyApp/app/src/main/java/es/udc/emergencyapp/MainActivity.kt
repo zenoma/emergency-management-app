@@ -36,6 +36,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Business
@@ -44,6 +45,7 @@ import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,7 +56,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -127,15 +128,12 @@ private fun MainScreenSimple() {
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
         topBar = {
-            androidx.compose.material.TopAppBar(
+            TopAppBar(
                 modifier = Modifier.statusBarsPadding(),
                 title = { Text(text = "EmergencyApp") },
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_gallery_black_24dp),
-                            contentDescription = null
-                        )
+                        Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu")
                     }
                 }
             )
@@ -355,7 +353,7 @@ private fun MainScreenSimple() {
                 composable("map") { MapScreen() }
                 composable("notices") { MyNoticesScreen() }
                 composable("organizations") { FeaturePlaceholder("Organizations") }
-                composable("myteam") { FeaturePlaceholder("My Team") }
+                composable("myteam") { es.udc.emergencyapp.ui.myteam.MyTeamScreen() }
                 composable("profile") { ProfileScreenCompose() }
                 composable("send_notice") { SendNoticeHost() }
                 composable("fire_management") { FeaturePlaceholder("Fire Management") }
