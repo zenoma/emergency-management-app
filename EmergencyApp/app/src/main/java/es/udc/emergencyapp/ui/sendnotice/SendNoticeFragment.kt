@@ -522,17 +522,26 @@ class SendNoticeFragment : Fragment() {
                                     try {
                                         // Use direct Uri for content/file schemes; only wrap as GlideUrl for http(s)
                                         val scheme = photoUri?.scheme ?: ""
-                                        val model: Any = if (scheme.startsWith("http") || scheme.startsWith("https")) {
-                                            if (!jwtLocal.isNullOrEmpty()) {
-                                                val headers = com.bumptech.glide.load.model.LazyHeaders.Builder()
-                                                    .addHeader("Authorization", "Bearer $jwtLocal")
-                                                    .build()
-                                                com.bumptech.glide.load.model.GlideUrl(photoUri.toString(), headers)
-                                            } else photoUri.toString()
-                                        } else {
-                                            photoUri
-                                        }
-                                        com.bumptech.glide.Glide.with(ctx).load(model).centerCrop().into(iv)
+                                        val model: Any =
+                                            if (scheme.startsWith("http") || scheme.startsWith("https")) {
+                                                if (!jwtLocal.isNullOrEmpty()) {
+                                                    val headers =
+                                                        com.bumptech.glide.load.model.LazyHeaders.Builder()
+                                                            .addHeader(
+                                                                "Authorization",
+                                                                "Bearer $jwtLocal"
+                                                            )
+                                                            .build()
+                                                    com.bumptech.glide.load.model.GlideUrl(
+                                                        photoUri.toString(),
+                                                        headers
+                                                    )
+                                                } else photoUri.toString()
+                                            } else {
+                                                photoUri
+                                            }
+                                        com.bumptech.glide.Glide.with(ctx).load(model).centerCrop()
+                                            .into(iv)
                                     } catch (e: Exception) {
                                         Log.w(
                                             "SendNotice",
@@ -544,9 +553,17 @@ class SendNoticeFragment : Fragment() {
                                                 ctx.contentResolver.openInputStream(photoUri!!)
                                             val bytes = `is`?.readBytes()
                                             `is`?.close()
-                                            Log.d("SendNotice", "Preview bytes size=${'$'}{bytes?.size}")
+                                            Log.d(
+                                                "SendNotice",
+                                                "Preview bytes size=${'$'}{bytes?.size}"
+                                            )
                                             if (bytes != null && bytes.isNotEmpty()) {
-                                                val bmp = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                                                val bmp =
+                                                    android.graphics.BitmapFactory.decodeByteArray(
+                                                        bytes,
+                                                        0,
+                                                        bytes.size
+                                                    )
                                                 if (bmp != null) iv.setImageBitmap(bmp)
                                             }
                                         } catch (fe: Exception) {
@@ -567,7 +584,8 @@ class SendNoticeFragment : Fragment() {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = "Remove photo"
+                                contentDescription = "Remove photo",
+                                tint = Color.Red
                             )
                         }
                     }
