@@ -3,10 +3,10 @@ package es.udc.emergencyapp
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,11 +24,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.darkColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
                     put("email", email)
                     put("password", password)
                 }.toString()
-                android.util.Log.d("LoginActivityNet", "Sending login payload=$payload")
+                Log.d("LoginActivityNet", "Sending login payload=$payload")
                 conn.outputStream.bufferedWriter().use { it.write(payload) }
 
                 val code = conn.responseCode
@@ -88,11 +85,11 @@ class LoginActivity : AppCompatActivity() {
                     if (code in 200..299) conn.inputStream.bufferedReader().use { it.readText() }
                     else conn.errorStream?.bufferedReader()?.use { it.readText() } ?: ""
                 } catch (e: Exception) {
-                    android.util.Log.w("LoginActivityNet", "Failed reading response stream", e)
+                    Log.w("LoginActivityNet", "Failed reading response stream", e)
                     ""
                 }
 
-                android.util.Log.d("LoginActivityNet", "Login response code=$code body=$resp")
+                Log.d("LoginActivityNet", "Login response code=$code body=$resp")
 
                 if (code == 200) {
                     val obj = JSONObject(resp)
@@ -133,11 +130,11 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_LONG)
                             .show()
                     }
-                    android.util.Log.w("LoginActivityNet", "Login failed code=$code body=$resp")
+                    Log.w("LoginActivityNet", "Login failed code=$code body=$resp")
                 }
                 conn.disconnect()
             } catch (e: Exception) {
-                android.util.Log.w("LoginActivityNet", "Exception during login", e)
+                Log.w("LoginActivityNet", "Exception during login", e)
                 runOnUiThread {
                     Toast.makeText(
                         this,
@@ -230,34 +227,3 @@ private fun LoginScreen(onLogin: (String, String) -> Unit, onSignup: () -> Unit)
     }
 }
 
-@Composable
-private fun AppTheme(content: @Composable () -> Unit) {
-    val dark = isSystemInDarkTheme()
-    val colors = if (dark) {
-        darkColors(
-            primary = colorResource(id = R.color.primary_main),
-            primaryVariant = colorResource(id = R.color.primary_variant),
-            secondary = colorResource(id = R.color.secondary_main),
-            background = colorResource(id = R.color.background_dark),
-            surface = colorResource(id = R.color.surface_dark_paper),
-            onPrimary = colorResource(id = R.color.on_primary),
-            onSecondary = colorResource(id = R.color.on_secondary),
-            onBackground = colorResource(id = R.color.on_background_dark)
-        )
-    } else {
-        lightColors(
-            primary = colorResource(id = R.color.primary_main),
-            primaryVariant = colorResource(id = R.color.primary_variant),
-            secondary = colorResource(id = R.color.secondary_main),
-            background = colorResource(id = R.color.background_light),
-            surface = colorResource(id = R.color.surface_light),
-            onPrimary = colorResource(id = R.color.on_primary),
-            onSecondary = colorResource(id = R.color.on_secondary),
-            onBackground = colorResource(id = R.color.on_background_light)
-        )
-    }
-
-    MaterialTheme(colors = colors) {
-        content()
-    }
-}

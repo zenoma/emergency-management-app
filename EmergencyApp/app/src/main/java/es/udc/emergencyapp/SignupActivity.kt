@@ -6,39 +6,36 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
-import androidx.compose.material.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.sp
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
-import androidx.compose.ui.res.colorResource
-import androidx.compose.foundation.isSystemInDarkTheme
-import es.udc.emergencyapp.R
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -135,7 +132,8 @@ class SignupActivity : AppCompatActivity() {
                     runOnUiThread {
                         Toast.makeText(this, "Signup successful", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, MainActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                     }
                 } else {
@@ -168,37 +166,7 @@ class SignupActivity : AppCompatActivity() {
     }
 }
 
-@androidx.compose.runtime.Composable
-private fun AppTheme(content: @androidx.compose.runtime.Composable () -> Unit) {
-    val dark = isSystemInDarkTheme()
-    val colors = if (dark) {
-        darkColors(
-            primary = colorResource(id = R.color.primary_main),
-            primaryVariant = colorResource(id = R.color.primary_variant),
-            secondary = colorResource(id = R.color.secondary_main),
-            background = colorResource(id = R.color.background_dark),
-            surface = colorResource(id = R.color.surface_dark_paper),
-            onPrimary = colorResource(id = R.color.on_primary),
-            onSecondary = colorResource(id = R.color.on_secondary),
-            onBackground = colorResource(id = R.color.on_background_dark)
-        )
-    } else {
-        lightColors(
-            primary = colorResource(id = R.color.primary_main),
-            primaryVariant = colorResource(id = R.color.primary_variant),
-            secondary = colorResource(id = R.color.secondary_main),
-            background = colorResource(id = R.color.background_light),
-            surface = colorResource(id = R.color.surface_light),
-            onPrimary = colorResource(id = R.color.on_primary),
-            onSecondary = colorResource(id = R.color.on_secondary),
-            onBackground = colorResource(id = R.color.on_background_light)
-        )
-    }
-
-    MaterialTheme(colors = colors) {
-        content()
-    }
-}
+// AppTheme is provided by ui.theme.AppTheme.kt
 
 @androidx.compose.runtime.Composable
 private fun SignupScreen(onSignup: (String, String, String, String, String, String) -> Unit) {
@@ -210,7 +178,9 @@ private fun SignupScreen(onSignup: (String, String, String, String, String, Stri
     var dni by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp), contentAlignment = Alignment.Center) {
         Card(
             shape = RoundedCornerShape(12.dp),
             elevation = 8.dp,
@@ -293,7 +263,16 @@ private fun SignupScreen(onSignup: (String, String, String, String, String, Stri
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { onSignup(firstName.trim(), lastName.trim(), email.trim(), password, dni.trim(), phone.trim()) },
+                    onClick = {
+                        onSignup(
+                            firstName.trim(),
+                            lastName.trim(),
+                            email.trim(),
+                            password,
+                            dni.trim(),
+                            phone.trim()
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = context.getString(R.string.signup))

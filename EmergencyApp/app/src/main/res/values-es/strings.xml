@@ -30,6 +30,7 @@
     <string name="last_name">Apellidos</string>
     <string name="dni">DNI</string>
     <string name="phone">Teléfono</string>
+    <string name="logout">Cerrar sesión</string>
     <string name="login_success">Login exitoso</string>
     <string name="login_failed">Login fallido: compruebe credenciales</string>
     <string name="nav_header_login_title">Por favor haz log in</string>

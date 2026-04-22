@@ -28,6 +28,7 @@
     <string name="last_name">Apelidos</string>
     <string name="dni">DNI</string>
     <string name="phone">Teléfono</string>
+    <string name="logout">Pechar sesión</string>
     <string name="login_success">Login exitoso</string>
     <string name="login_failed">Login fallido: comprobe credenciais</string>
     <string name="nav_header_login_title">Por favor fai log in</string>
