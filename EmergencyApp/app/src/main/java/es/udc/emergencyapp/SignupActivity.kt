@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import es.udc.emergencyapp.ui.setContentWithSystemBars
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import es.udc.emergencyapp.ui.setContentWithSystemBars
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -107,7 +107,7 @@ class SignupActivity : AppCompatActivity() {
                     } catch (_: Exception) {
                         null
                     }
-                    val token = obj?.optString("token", null)
+                    val token = obj?.optString("token", "")
                     val userObj = obj?.optJSONObject("user")
 
                     val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
@@ -178,9 +178,11 @@ private fun SignupScreen(onSignup: (String, String, String, String, String, Stri
     var dni by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp), contentAlignment = Alignment.Center
+    ) {
         Card(
             shape = RoundedCornerShape(12.dp),
             elevation = 8.dp,

@@ -91,18 +91,15 @@ fun MyNoticesScreen() {
                                     "quadrantId"
                                 ) else null
 
-                            val coords = if (o.has("coordinates") && !o.isNull("coordinates")) {
+                             val coords = if (o.has("coordinates") && !o.isNull("coordinates")) {
                                 val c = o.getJSONObject("coordinates")
-                                val lon =
-                                    if (c.has("lon")) c.optDouble("lon") else if (c.has("x")) c.optDouble(
-                                        "x"
-                                    ) else Double.NaN
-                                val lat =
-                                    if (c.has("lat")) c.optDouble("lat") else if (c.has("y")) c.optDouble(
-                                        "y"
-                                    ) else Double.NaN
-                                if (!lon.isNaN() && !lat.isNaN()) {
-                                    es.udc.emergencyapp.data.dto.CoordinatesDto(lon, lat)
+                                val lonRaw = if (c.has("lon")) c.optDouble("lon") else if (c.has("x")) c.optDouble("x") else Double.NaN
+                                val latRaw = if (c.has("lat")) c.optDouble("lat") else if (c.has("y")) c.optDouble("y") else Double.NaN
+                                if (!lonRaw.isNaN() && !latRaw.isNaN()) {
+                                    val (finalLon, finalLat) = if (kotlin.math.abs(lonRaw) > 1000000 || kotlin.math.abs(latRaw) > 1000000) {
+                                        es.udc.emergencyapp.util.transformProjectedToGeographic(lonRaw, latRaw)
+                                    } else Pair(lonRaw, latRaw)
+                                    es.udc.emergencyapp.data.dto.CoordinatesDto(finalLon, finalLat)
                                 } else null
                             } else null
 

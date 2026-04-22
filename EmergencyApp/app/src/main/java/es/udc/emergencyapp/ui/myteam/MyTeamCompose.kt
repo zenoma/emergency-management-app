@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -218,12 +217,12 @@ fun MyTeamScreen() {
                                 val u = users.getJSONObject(i)
                                 list.add(
                                     TeamUserItem(
-                                        u.optString("firstName", null),
-                                        u.optString("lastName", null),
-                                        u.optString("email", null),
-                                        u.optString("userRole", null),
-                                        u.optString("phoneNumber", null),
-                                        u.optString("dni", null)
+                                        u.optString("firstName", ""),
+                                        u.optString("lastName", ""),
+                                        u.optString("email", ""),
+                                        u.optString("userRole", ""),
+                                        u.optString("phoneNumber", ""),
+                                        u.optString("dni", "")
                                     )
                                 )
                             }

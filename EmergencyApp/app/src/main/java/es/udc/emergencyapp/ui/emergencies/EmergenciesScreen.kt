@@ -2,28 +2,43 @@ package es.udc.emergencyapp.ui.emergencies
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.Icon
+import androidx.compose.material.Surface
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.LocalHospital
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.Alignment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+// duplicate Alignment import removed
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
@@ -78,11 +93,16 @@ fun EmergenciesScreen() {
                             val createdAt = if (o.has("createdAt")) o.optString("createdAt") else null
                             val resolvedAt = if (o.has("resolvedAt")) if (o.isNull("resolvedAt")) null else o.optString("resolvedAt") else null
 
-                            val location = if (o.has("location") && !o.isNull("location")) {
+                val location = if (o.has("location") && !o.isNull("location")) {
                                 val c = o.getJSONObject("location")
-                                val lon = if (c.has("lon")) c.optDouble("lon") else if (c.has("x")) c.optDouble("x") else Double.NaN
-                                val lat = if (c.has("lat")) c.optDouble("lat") else if (c.has("y")) c.optDouble("y") else Double.NaN
-                                if (!lon.isNaN() && !lat.isNaN()) es.udc.emergencyapp.data.dto.CoordinatesDto(lon, lat) else null
+                                val lonRaw = if (c.has("lon")) c.optDouble("lon") else if (c.has("x")) c.optDouble("x") else Double.NaN
+                                val latRaw = if (c.has("lat")) c.optDouble("lat") else if (c.has("y")) c.optDouble("y") else Double.NaN
+                                if (!lonRaw.isNaN() && !latRaw.isNaN()) {
+                                    val (finalLon, finalLat) = if (kotlin.math.abs(lonRaw) > 1000000 || kotlin.math.abs(latRaw) > 1000000) {
+                                        es.udc.emergencyapp.util.transformProjectedToGeographic(lonRaw, latRaw)
+                                    } else Pair(lonRaw, latRaw)
+                                    es.udc.emergencyapp.data.dto.CoordinatesDto(finalLon, finalLat)
+                                } else null
                             } else null
 
                             val quadrants = mutableListOf<QuadrantInfoDto>()
@@ -128,10 +148,11 @@ fun EmergenciesScreen() {
         }
     }
 
-    Column(modifier = Modifier.padding(8.dp)) {
+    Column(modifier = Modifier.padding(12.dp)) {
         val searchQuery = remember { mutableStateOf("") }
         val showAll = remember { mutableStateOf(false) }
-        val defaultLimit = 8
+        val defaultLimit = 12
+        val sortByCreatedDesc = remember { mutableStateOf(true) }
 
         if (loading.value) {
             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
@@ -139,45 +160,131 @@ fun EmergenciesScreen() {
         }
 
         val rawList = emergenciesState.value ?: emptyList()
-        val filtered = rawList.filter {
+        // filtering
+        var filtered = rawList.filter {
             searchQuery.value.isBlank() || (it.description ?: "").contains(searchQuery.value, true) || (it.emergencyTypeName ?: "").contains(searchQuery.value, true)
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(value = searchQuery.value, onValueChange = { searchQuery.value = it }, label = { Text("Search") }, modifier = Modifier.weight(1f))
+        // simple sorting
+        filtered = if (sortByCreatedDesc.value) filtered.sortedByDescending { it.createdAt } else filtered.sortedBy { it.createdAt }
+
+        // header: title, count and controls
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Emergencies", style = MaterialTheme.typography.h5, modifier = Modifier.weight(1f))
+            Text(text = "Total: ${filtered.size}", modifier = Modifier.padding(end = 8.dp))
+            Button(onClick = { sortByCreatedDesc.value = !sortByCreatedDesc.value }) {
+                Text(text = if (sortByCreatedDesc.value) "Sort: Created ↓" else "Sort: Created ↑")
+            }
             Spacer(modifier = Modifier.padding(6.dp))
             TextButton(onClick = { showAll.value = !showAll.value }) {
                 Text(if (showAll.value) "Show less" else "Show all")
             }
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // search
+        OutlinedTextField(value = searchQuery.value, onValueChange = { searchQuery.value = it }, label = { Text("Search description or type") }, modifier = Modifier.fillMaxWidth())
+
+        Spacer(modifier = Modifier.height(12.dp))
+
         if (filtered.isEmpty()) {
             Text(text = if (errorMsg.value != null) "Error: ${errorMsg.value}" else "No emergencies found", modifier = Modifier.padding(16.dp))
-        } else {
-            val list = if (showAll.value) filtered else filtered.take(defaultLimit)
-            LazyColumn {
-                items(list) { e ->
-                    Card(modifier = Modifier
-                        .padding(8.dp)
-                        .clickable {
-                            try {
-                                // placeholder: show raw json in a new activity
-                                val intent = Intent(ctx, es.udc.emergencyapp.ui.notices.NoticeDetailActivity::class.java)
-                                intent.putExtra("notice", Gson().toJson(e))
-                                ctx.startActivity(intent)
-                            } catch (_: Exception) {}
-                        }, shape = RoundedCornerShape(12.dp), elevation = 6.dp) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(text = e.description ?: "(no description)", style = MaterialTheme.typography.h6)
-                            Text(text = "Type: ${e.emergencyTypeName ?: ""} • Index: ${e.emergencyIndex ?: ""}")
-                            Text(text = "Created: ${e.createdAt ?: ""}")
-                            if (!e.quadrantInfo.isNullOrEmpty()) {
-                                Text(text = "Quadrants: ${e.quadrantInfo.joinToString { it.nombre ?: it.id.toString() }}")
+            return@Column
+        }
+
+        val list = if (showAll.value) filtered else filtered.take(defaultLimit)
+
+        // compact cards list: each card shows condensed info with icon, colors and quick actions
+        LazyColumn {
+            itemsIndexed(list) { idx, e ->
+                val bg = if (idx % 2 == 0) Color.White else Color(0xFFF8F8F8)
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = 3.dp
+                ) {
+                    Row(modifier = Modifier
+                        .background(bg)
+                        .padding(10.dp)
+                        .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+
+                        // left: icon circle
+                        val icon = chooseIconForType(e.emergencyTypeName)
+                        val idxColor = colorForIndex(e.emergencyIndex)
+                        Surface(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            color = idxColor
+                        ) {
+                            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
+                                Icon(imageVector = icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.padding(6.dp))
+
+                        // middle: main info
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = e.description ?: "(no description)", style = MaterialTheme.typography.subtitle1, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                Spacer(modifier = Modifier.padding(6.dp))
+                                Text(text = "#${e.id}", style = MaterialTheme.typography.caption, color = Color.Gray, modifier = Modifier.padding(start = 6.dp))
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(text = (e.emergencyTypeName ?: "") + (if (!e.quadrantInfo.isNullOrEmpty()) " • ${e.quadrantInfo.first().nombre ?: ""}" else ""), style = MaterialTheme.typography.body2, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Spacer(modifier = Modifier.height(6.dp))
+                            // small row with created date and location
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = e.createdAt?.replace("T", " ")?.take(16) ?: "", style = MaterialTheme.typography.caption)
+                                Spacer(modifier = Modifier.padding(8.dp))
+                                val locText = e.location?.let { "${"%.3f".format(it.lon)}, ${"%.3f".format(it.lat)}" } ?: "-"
+                                Text(text = locText, style = MaterialTheme.typography.caption, color = Color.Gray)
+                            }
+                        }
+
+                        // right: badge/index and action
+                        Column(horizontalAlignment = Alignment.End) {
+                            // index badge
+                            Card(shape = RoundedCornerShape(12.dp), backgroundColor = idxColor, elevation = 0.dp) {
+                                Text(text = e.emergencyIndex ?: "", modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), color = Color.White)
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            TextButton(onClick = {
+                                try {
+                                    val intent = Intent(ctx, es.udc.emergencyapp.ui.notices.NoticeDetailActivity::class.java)
+                                    intent.putExtra("notice", Gson().toJson(e))
+                                    ctx.startActivity(intent)
+                                } catch (_: Exception) {}
+                            }) {
+                                Text(text = "Details")
                             }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+private fun chooseIconForType(typeName: String?): androidx.compose.ui.graphics.vector.ImageVector {
+    val n = typeName?.lowercase() ?: ""
+    return when {
+        n.contains("sanit") || n.contains("salud") || n.contains("medical") -> Icons.Filled.LocalHospital
+        n.contains("incend") || n.contains("fire") -> try { Icons.Filled.LocalFireDepartment } catch (_: Exception) { Icons.Filled.Warning }
+        else -> Icons.Filled.Warning
+    }
+}
+
+private fun colorForIndex(index: String?): Color {
+    return when (index?.uppercase()) {
+        "RESUELTO" -> Color(0xFF9E9E9E)
+        "CERO" -> Color(0xFF4CAF50)
+        "UNO" -> Color(0xFFFFC107)
+        "DOS" -> Color(0xFFF44336)
+        else -> Color(0xFF2196F3)
     }
 }

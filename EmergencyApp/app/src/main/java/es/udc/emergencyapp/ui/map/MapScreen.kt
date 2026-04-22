@@ -318,20 +318,13 @@ private fun addOrUpdateEmergencySource(
                     else -> null
                 }
                 if (loc == null) continue
-                val lon = if (loc.has("lon")) loc.optDouble(
-                    "lon",
-                    Double.NaN
-                ) else if (loc.has("x")) loc.optDouble("x", Double.NaN) else Double.NaN
-                val lat = if (loc.has("lat")) loc.optDouble(
-                    "lat",
-                    Double.NaN
-                ) else if (loc.has("y")) loc.optDouble("y", Double.NaN) else Double.NaN
-                if (lon.isNaN() || lat.isNaN()) continue
+                val lonRaw = if (loc.has("lon")) loc.optDouble("lon", Double.NaN) else if (loc.has("x")) loc.optDouble("x", Double.NaN) else Double.NaN
+                val latRaw = if (loc.has("lat")) loc.optDouble("lat", Double.NaN) else if (loc.has("y")) loc.optDouble("y", Double.NaN) else Double.NaN
+                if (lonRaw.isNaN() || latRaw.isNaN()) continue
 
-                val (finalLon, finalLat) = if (kotlin.math.abs(lon) > 1000000 || kotlin.math.abs(lat) > 1000000) {
-                    val geo = transformProjectedToGeographic(lon, lat)
-                    Pair(geo.first, geo.second)
-                } else Pair(lon, lat)
+                val (finalLon, finalLat) = if (kotlin.math.abs(lonRaw) > 1000000 || kotlin.math.abs(latRaw) > 1000000) {
+                    es.udc.emergencyapp.util.transformProjectedToGeographic(lonRaw, latRaw)
+                } else Pair(lonRaw, latRaw)
 
                 val typeKey =
                     if (e.has("emergencyTypeName")) e.optString("emergencyTypeName") else if (e.has(
@@ -380,48 +373,19 @@ private fun addOrUpdateEmergencySource(
     }
 }
 
-private fun transformProjectedToGeographic(x: Double, y: Double): Pair<Double, Double> {
-    return try {
-        val ctFactory = CoordinateTransformFactory()
-        val crsFactory = CRSFactory()
-        val srcCRS = crsFactory.createFromParameters(
-            null,
-            "+proj=utm +zone=29 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
-        )
-        val tgtCRS = crsFactory.createFromName("EPSG:4326")
-        val transform = ctFactory.createTransform(srcCRS, tgtCRS)
-        val src = ProjCoordinate(x, y)
-        val dst = ProjCoordinate()
-        transform.transform(src, dst)
-        Pair(dst.x, dst.y)
-    } catch (e: Exception) {
-        android.util.Log.w("MapScreen", "Failed to transform projected emergency coords", e)
-        Pair(x, y)
-    }
-}
+// Use centralized transform in util/CoordinateTransforms.kt
 
 private fun transformToWGS84GeoJson(raw: String?): String? {
     if (raw == null) return null
     return try {
         val trimmed = raw.trim()
-        val ctFactory = CoordinateTransformFactory()
-        val crsFactory = CRSFactory()
-        val srcCRS = crsFactory.createFromParameters(
-            null,
-            "+proj=utm +zone=29 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
-        )
-        val tgtCRS = crsFactory.createFromName("EPSG:4326")
-        val transform = ctFactory.createTransform(srcCRS, tgtCRS)
-
-        fun transformPoint(x: Double, y: Double): org.json.JSONArray {
-            val src = ProjCoordinate(x, y)
-            val dst = ProjCoordinate()
-            transform.transform(src, dst)
-            val ja = org.json.JSONArray()
-            ja.put(dst.x)
-            ja.put(dst.y)
-            return ja
-        }
+    fun transformPoint(x: Double, y: Double): org.json.JSONArray {
+        val (lon, lat) = es.udc.emergencyapp.util.transformProjectedToGeographic(x, y)
+        val ja = org.json.JSONArray()
+        ja.put(lon)
+        ja.put(lat)
+        return ja
+    }
 
         if (trimmed.startsWith("[")) {
             val arr = org.json.JSONArray(raw)
@@ -457,8 +421,8 @@ private fun transformToWGS84GeoJson(raw: String?): String? {
                 features
             ); fc.toString()
         } else {
-            val obj = org.json.JSONObject(raw)
-            if (obj.has("features")) obj.toString() else null
+        val obj = org.json.JSONObject(raw)
+        if (obj.has("features")) obj.toString() else null
         }
     } catch (e: Exception) {
         android.util.Log.w("MapScreen", "Failed to transform quadrants geojson to WGS84", e)
