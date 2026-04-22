@@ -61,6 +61,7 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import es.udc.emergencyapp.MainActivity
 import es.udc.emergencyapp.R
+import es.udc.emergencyapp.ui.setContentWithSystemBars
 import org.json.JSONObject
 import org.locationtech.proj4j.CRSFactory
 import org.locationtech.proj4j.CoordinateReferenceSystem
@@ -76,7 +77,6 @@ class SendNoticeFragment : Fragment() {
     private var lastLocation: Location? = null
     private var composeViewRef: ComposeView? = null
 
-    // When permission is denied we show a specific text in the Compose UI.
     private var locationTextOverride: String? = null
 
     private val takePictureLauncher =
@@ -84,7 +84,6 @@ class SendNoticeFragment : Fragment() {
             if (!success || photoUri == null) {
                 Toast.makeText(requireContext(), "Failed to take photo", Toast.LENGTH_SHORT).show()
             } else {
-                // re-render to show preview
                 renderSendNotice()
             }
         }
@@ -112,7 +111,6 @@ class SendNoticeFragment : Fragment() {
         composeViewRef = composeView
         renderSendNotice()
 
-        // request location
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -127,7 +125,6 @@ class SendNoticeFragment : Fragment() {
     }
 
     private fun onTakePhotoClicked() {
-        // check camera permission at runtime
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.CAMERA
@@ -155,14 +152,12 @@ class SendNoticeFragment : Fragment() {
     }
 
     private fun fetchLocation() {
-        // Robust: check permission and query all enabled providers' last known location
         try {
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                // We migrated to Compose; set an override string and re-render the ComposeView
                 locationTextOverride = "Location: permission"
                 renderSendNotice()
                 return
@@ -177,9 +172,7 @@ class SendNoticeFragment : Fragment() {
                 for (p in providers) {
                     try {
                         val l = lm.getLastKnownLocation(p)
-                        if (l != null) {
-                            if (best == null || l.time > best.time) best = l
-                        }
+                        if (l != null && (best == null || l.time > best.time)) best = l
                     } catch (se: SecurityException) {
                         Log.w("SendNotice", "No permission for provider $p", se)
                     } catch (ie: Exception) {
@@ -195,12 +188,12 @@ class SendNoticeFragment : Fragment() {
                 try {
                     val gps = try {
                         lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         null
                     }
                     val net = try {
                         lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         null
                     }
                     best = listOfNotNull(gps, net).maxByOrNull { it.time }
@@ -296,7 +289,7 @@ class SendNoticeFragment : Fragment() {
                 val jwtToken = try {
                     requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                         .getString("jwt_token", null)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     null
                 }
 
@@ -339,7 +332,7 @@ class SendNoticeFragment : Fragment() {
                 }
 
                 if (!success) throw (lastEx ?: Exception("Unknown network error"))
-                if (success && successCode in 200..299 && photoBytes != null) {
+                if (successCode in 200..299 && photoBytes != null) {
                     try {
                         var createdId: Long? = null
                         try {
@@ -401,7 +394,7 @@ class SendNoticeFragment : Fragment() {
                                 .setPositiveButton(android.R.string.ok) { dialogInterface, _ ->
                                     try {
                                         dialogInterface?.dismiss()
-                                    } catch (e: Exception) { /* ignore */
+                                    } catch (_: Exception) { /* ignore */
                                     }
                                     try {
                                         (requireActivity() as? MainActivity)?.navigateToRoute("notices")
@@ -529,7 +522,7 @@ class SendNoticeFragment : Fragment() {
                                     val jwtLocal = prefsLocal.getString("jwt_token", null)
                                     try {
                                         // Use direct Uri for content/file schemes; only wrap as GlideUrl for http(s)
-                                        val scheme = photoUri?.scheme ?: ""
+                                        val scheme = photoUri.scheme ?: ""
                                         val model: Any =
                                             if (scheme.startsWith("http") || scheme.startsWith("https")) {
                                                 if (!jwtLocal.isNullOrEmpty()) {
@@ -558,7 +551,7 @@ class SendNoticeFragment : Fragment() {
                                         )
                                         try {
                                             val `is` =
-                                                ctx.contentResolver.openInputStream(photoUri!!)
+                                                ctx.contentResolver.openInputStream(photoUri)
                                             val bytes = `is`?.readBytes()
                                             `is`?.close()
                                             Log.d(
@@ -637,7 +630,7 @@ class SendNoticeFragment : Fragment() {
     }
 
     private fun renderSendNotice() {
-        composeViewRef?.setContent {
+        composeViewRef?.setContentWithSystemBars {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colors.background

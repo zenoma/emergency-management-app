@@ -351,13 +351,13 @@ private fun MainScreenSimple() {
                 .padding(innerPadding)
         ) {
             NavHost(navController = navController, startDestination = "map") {
-                composable("map") { MapScreen() }
-                composable("notices") { MyNoticesScreen() }
-                composable("emergencies") { es.udc.emergencyapp.ui.emergencies.EmergenciesScreen() }
-                composable("organizations") { FeaturePlaceholder("Organizations") }
-                composable("myteam") { es.udc.emergencyapp.ui.myteam.MyTeamScreen() }
-                composable("profile") { ProfileScreenCompose() }
-                composable("send_notice") { SendNoticeHost() }
+                composable("map") { es.udc.emergencyapp.ui.ScreenContainer { MapScreen() } }
+                composable("notices") { es.udc.emergencyapp.ui.ScreenContainer { MyNoticesScreen() } }
+                composable("emergencies") { es.udc.emergencyapp.ui.ScreenContainer { es.udc.emergencyapp.ui.emergencies.EmergenciesScreen() } }
+                composable("organizations") { es.udc.emergencyapp.ui.ScreenContainer { FeaturePlaceholder("Organizations") } }
+                composable("myteam") { es.udc.emergencyapp.ui.ScreenContainer { es.udc.emergencyapp.ui.myteam.MyTeamScreen() } }
+                composable("profile") { es.udc.emergencyapp.ui.ScreenContainer { ProfileScreenCompose() } }
+                composable("send_notice") { es.udc.emergencyapp.ui.ScreenContainer { SendNoticeHost() } }
                 composable("fire_management") { FeaturePlaceholder("Fire Management") }
                 composable("user_management") { FeaturePlaceholder("User Management") }
                 composable("notice_management") { FeaturePlaceholder("Notice Management") }

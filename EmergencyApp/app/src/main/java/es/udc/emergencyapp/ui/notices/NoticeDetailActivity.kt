@@ -3,7 +3,6 @@ package es.udc.emergencyapp.ui.notices
 import android.os.Bundle
 import android.view.ViewGroup.LayoutParams
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,6 +38,7 @@ import com.bumptech.glide.load.model.LazyHeaders.Builder
 import com.google.gson.Gson
 import es.udc.emergencyapp.AppTheme
 import es.udc.emergencyapp.data.dto.NoticeDto
+import es.udc.emergencyapp.ui.setContentWithSystemBars
 import es.udc.emergencyapp.util.DateUtils
 import es.udc.emergencyapp.util.transformProjectedToGeographic
 import androidx.compose.ui.graphics.Color as UiColor
@@ -49,7 +49,7 @@ class NoticeDetailActivity : ComponentActivity() {
         val json = intent.getStringExtra("notice") ?: return
         val notice = Gson().fromJson(json, NoticeDto::class.java)
 
-        setContent {
+        setContentWithSystemBars {
             AppTheme {
                 androidx.compose.material.Scaffold(
                     topBar = {

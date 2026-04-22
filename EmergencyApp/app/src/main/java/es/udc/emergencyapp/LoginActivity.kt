@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.setContent
+import es.udc.emergencyapp.ui.setContentWithSystemBars
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
+        setContentWithSystemBars {
             AppTheme {
                 LoginScreen(
                     onLogin = { email, password -> performLogin(email, password) },
@@ -226,4 +226,3 @@ private fun LoginScreen(onLogin: (String, String) -> Unit, onSignup: () -> Unit)
         }
     }
 }
-

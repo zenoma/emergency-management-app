@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.compose.setContent
+import es.udc.emergencyapp.ui.setContentWithSystemBars
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,7 +44,7 @@ class SignupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
+        setContentWithSystemBars {
             AppTheme {
                 SignupScreen(onSignup = { firstName, lastName, email, password, dni, phone ->
                     performSignup(firstName, lastName, email, password, dni, phone)
