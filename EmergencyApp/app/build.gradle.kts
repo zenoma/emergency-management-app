@@ -1,10 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
-    // Apply Compose Compiler plugin (version declared in settings.gradle.kts)
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-// Compose Compiler plugin is declared in settings.gradle.kts
 
 android {
     namespace = "es.udc.emergencyapp"
@@ -52,17 +50,15 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    // Jetpack Compose
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui)
+    implementation(libs.androidx.navigation.compose.v272)
     implementation(libs.androidx.material)
     implementation(libs.material.icons.extended)
     implementation(libs.ui.tooling.preview)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.constraintlayout)
-    // CardView for item cards
     implementation(libs.androidx.cardview)
-    // ViewPager2 for image gallery
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.lifecycle.livedata.ktx)
@@ -73,6 +69,7 @@ dependencies {
     implementation(libs.proj4j)
     implementation(libs.glide)
     implementation(libs.gson)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

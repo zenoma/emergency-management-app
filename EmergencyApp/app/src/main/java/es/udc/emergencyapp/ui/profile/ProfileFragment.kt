@@ -94,7 +94,7 @@ class ProfileFragment : Fragment() {
 
 
 @Composable
-private fun ProfileScreen(
+fun ProfileScreen(
     name: String,
     email: String,
     dni: String,

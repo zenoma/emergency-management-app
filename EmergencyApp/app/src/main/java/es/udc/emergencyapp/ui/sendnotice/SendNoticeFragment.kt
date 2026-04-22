@@ -14,12 +14,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import es.udc.emergencyapp.MainActivity
 import es.udc.emergencyapp.R
-import es.udc.emergencyapp.databinding.FragmentSendNoticeBinding
 import org.json.JSONObject
 import org.locationtech.proj4j.CoordinateReferenceSystem
 import org.locationtech.proj4j.CoordinateTransform
@@ -30,17 +49,15 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class SendNoticeFragment : Fragment() {
-    private var _binding: FragmentSendNoticeBinding? = null
-    private val binding get() = _binding!!
-
     private var photoUri: Uri? = null
     private var lastLocation: Location? = null
+    private var composeViewRef: ComposeView? = null
+    // When permission is denied we show a specific text in the Compose UI.
+    private var locationTextOverride: String? = null
 
     private val takePictureLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-            if (success && photoUri != null) {
-                binding.imagePreview.setImageURI(photoUri)
-            } else {
+            if (!success || photoUri == null) {
                 Toast.makeText(requireContext(), "Failed to take photo", Toast.LENGTH_SHORT).show()
             }
         }
@@ -64,10 +81,9 @@ class SendNoticeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSendNoticeBinding.inflate(inflater, container, false)
-
-        binding.buttonTakePhoto.setOnClickListener { onTakePhotoClicked() }
-        binding.buttonSend.setOnClickListener { onSendClicked() }
+        val composeView = ComposeView(requireContext())
+        composeViewRef = composeView
+        renderSendNotice()
 
         // request location
         if (ContextCompat.checkSelfPermission(
@@ -80,7 +96,7 @@ class SendNoticeFragment : Fragment() {
             requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
-        return binding.root
+        return composeView
     }
 
     private fun onTakePhotoClicked() {
@@ -118,7 +134,9 @@ class SendNoticeFragment : Fragment() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                binding.textLocation.text = "Location: permission"
+                // We migrated to Compose; set an override string and re-render the ComposeView
+                locationTextOverride = "Location: permission"
+                renderSendNotice()
                 return
             }
 
@@ -165,18 +183,19 @@ class SendNoticeFragment : Fragment() {
 
             if (best != null) {
                 lastLocation = best
-                binding.textLocation.text = "Location: ${best.latitude}, ${best.longitude}"
-            } else {
-                binding.textLocation.text = "Location: unavailable"
+                // clear any previous override (permission message)
+                locationTextOverride = null
             }
+            // re-render UI with updated location
+            renderSendNotice()
         } catch (e: Exception) {
             Log.w("SendNotice", "Failed to fetch location", e)
-            binding.textLocation.text = "Location: error"
+            renderSendNotice()
         }
     }
 
-    private fun onSendClicked() {
-        val body = binding.inputBody.text.toString().trim()
+    private fun onSendClicked(body: String) {
+        val trimmedBody = body.trim()
         if (body.isEmpty()) {
             Toast.makeText(requireContext(), "Enter a description", Toast.LENGTH_SHORT)
                 .show(); return
@@ -356,19 +375,15 @@ class SendNoticeFragment : Fragment() {
                                         dialogInterface?.dismiss()
                                     } catch (e: Exception) { /* ignore */
                                     }
-                                    try {
-                                        (requireActivity() as? es.udc.emergencyapp.MainActivity)?.navigateToDrawerItem(
-                                            R.id.nav_my_notices
-                                        )
-                                    } catch (e: Exception) {
-                                        Log.w("SendNotice", "Navigation to My Notices failed", e)
-                                    }
+                                        try {
+                                            (requireActivity() as? MainActivity)?.navigateToRoute("notices")
+                                        } catch (e: Exception) {
+                                            Log.w("SendNotice", "Navigation to My Notices failed", e)
+                                        }
                                 }
                                 .setOnCancelListener { _ ->
                                     try {
-                                        (requireActivity() as? es.udc.emergencyapp.MainActivity)?.navigateToDrawerItem(
-                                            R.id.nav_my_notices
-                                        )
+                                        (requireActivity() as? MainActivity)?.navigateToRoute("notices")
                                     } catch (e: Exception) {
                                         Log.w("SendNotice", "Navigation to My Notices failed", e)
                                     }
@@ -412,7 +427,7 @@ class SendNoticeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        composeViewRef = null
     }
 
     private fun transformWgs84ToUtm29(lon: Double, lat: Double): Pair<Double, Double> {
@@ -432,6 +447,38 @@ class SendNoticeFragment : Fragment() {
         } catch (e: Exception) {
             Log.w("SendNotice", "Coordinate transform failed, returning WGS84", e)
             Pair(lon, lat)
+        }
+    }
+
+    @Composable
+    fun SendNoticeScreen(
+        onTakePhoto: () -> Unit,
+        onSend: (String) -> Unit,
+        photoUri: Uri?,
+        locationText: String
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = locationText)
+            Spacer(modifier = Modifier.height(8.dp))
+            val bodyState = remember { mutableStateOf("") }
+            OutlinedTextField(value = bodyState.value, onValueChange = { bodyState.value = it }, label = { Text("Description") })
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = { onTakePhoto() }) { Text(text = "Take Photo") }
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = { onSend(bodyState.value) }) { Text(text = "Send") }
+        }
+    }
+
+    private fun renderSendNotice() {
+        composeViewRef?.setContent {
+            Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+                SendNoticeScreen(
+                    onTakePhoto = { onTakePhotoClicked() },
+                    onSend = { onSendClicked(it) },
+                    photoUri = photoUri,
+                    locationText = locationTextOverride ?: lastLocation?.let { "Location: ${it.latitude}, ${it.longitude}" } ?: "Location: unavailable"
+                )
+            }
         }
     }
 }
