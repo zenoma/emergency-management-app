@@ -59,6 +59,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.edit
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import androidx.navigation.compose.NavHost
@@ -70,8 +71,8 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import es.udc.emergencyapp.ui.map.MapScreen
 import es.udc.emergencyapp.ui.notices.MyNoticesScreen
+import es.udc.emergencyapp.ui.notices.SendNoticeFragment
 import es.udc.emergencyapp.ui.profile.ProfileScreen
-import es.udc.emergencyapp.ui.sendnotice.SendNoticeFragment
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -112,7 +113,6 @@ private fun MainScreenSimple() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-    // allow other parts of the app to navigate
     (LocalContext.current as? MainActivity)?.composeRouteSetter = { r ->
         try {
             navController.navigate(r) { launchSingleTop = true }
@@ -200,7 +200,7 @@ private fun MainScreenSimple() {
                                                 val headers = LazyHeaders.Builder()
                                                     .addHeader(
                                                         "Authorization",
-                                                        "Bearer ${jwtLocal}"
+                                                        "Bearer $jwtLocal"
                                                     )
                                                     .build()
                                                 GlideUrl(avatarUrl, headers)
@@ -238,7 +238,7 @@ private fun MainScreenSimple() {
                                         .padding(6.dp)
                                         .clickable {
                                             try {
-                                                prefs.edit().clear().apply()
+                                                prefs.edit { clear() }
                                                 val i = Intent(context, MainActivity::class.java)
                                                 i.flags =
                                                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -256,7 +256,8 @@ private fun MainScreenSimple() {
                     val block1 = listOf(
                         Triple("map", "Map", Icons.Filled.Map),
                         Triple("myteam", "My Team", Icons.Filled.Group),
-                        Triple("organizations", "Organizations", Icons.Filled.Business)
+                        Triple("organizations", "Organizations", Icons.Filled.Business),
+                        Triple("emergencies", "Emergencies", Icons.Filled.Description)
                     )
                     val block2 = listOf(
                         Triple("send_notice", "Send Notice", Icons.Filled.Send),
@@ -352,6 +353,7 @@ private fun MainScreenSimple() {
             NavHost(navController = navController, startDestination = "map") {
                 composable("map") { MapScreen() }
                 composable("notices") { MyNoticesScreen() }
+                composable("emergencies") { es.udc.emergencyapp.ui.emergencies.EmergenciesScreen() }
                 composable("organizations") { FeaturePlaceholder("Organizations") }
                 composable("myteam") { es.udc.emergencyapp.ui.myteam.MyTeamScreen() }
                 composable("profile") { ProfileScreenCompose() }
@@ -403,7 +405,7 @@ private fun ProfileScreenCompose() {
         role = role,
         currentLang = currentLang,
         onLogout = {
-            prefs.edit().clear().apply()
+            prefs.edit { clear() }
             val intent = Intent(context, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             context.startActivity(intent)

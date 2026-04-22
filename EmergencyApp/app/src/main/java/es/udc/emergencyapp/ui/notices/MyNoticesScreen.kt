@@ -66,33 +66,10 @@ fun MyNoticesScreen() {
             var resp: String? = null
             var successfulHost: String? = null
             withContext(Dispatchers.IO) {
-                for (host in hostsToTry) {
-                    try {
-                        val url =
-                            if (userId > 0) java.net.URL("$host/notices?userId=$userId") else java.net.URL(
-                                "$host/notices/me"
-                            )
-                        val conn = (url.openConnection() as java.net.HttpURLConnection).apply {
-                            requestMethod = "GET"
-                            connectTimeout = 8000
-                            readTimeout = 8000
-                            if (!jwt.isNullOrEmpty()) setRequestProperty(
-                                "Authorization",
-                                "Bearer $jwt"
-                            )
-                        }
-                        val code = conn.responseCode
-                        if (code in 200..299) {
-                            resp = conn.inputStream.bufferedReader().use { it.readText() }
-                            successfulHost = host
-                        } else {
-                            android.util.Log.w("MyNotices", "GET $host/notices/me returned $code")
-                        }
-                        conn.disconnect()
-                        if (resp != null) break
-                    } catch (_: Exception) {
-                    }
-                }
+                val path = if (userId > 0) "/notices?userId=$userId" else "/notices/me"
+                val pair = es.udc.emergencyapp.net.HttpClient.getFromHosts(path, jwt, hostsToTry)
+                resp = pair.first
+                successfulHost = pair.second
             }
 
             if (resp != null) {

@@ -1,10 +1,12 @@
-package es.udc.emergencyapp.ui.sendnotice
+package es.udc.emergencyapp.ui.notices
 
 import android.Manifest
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,9 +15,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,9 +56,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import es.udc.emergencyapp.MainActivity
 import es.udc.emergencyapp.R
 import org.json.JSONObject
+import org.locationtech.proj4j.CRSFactory
 import org.locationtech.proj4j.CoordinateReferenceSystem
 import org.locationtech.proj4j.CoordinateTransform
 import org.locationtech.proj4j.CoordinateTransformFactory
@@ -161,7 +169,7 @@ class SendNoticeFragment : Fragment() {
             }
 
             val lm =
-                requireContext().getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
+                requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
             var best: Location? = null
             try {
                 val providers = lm.getProviders(true)
@@ -186,12 +194,12 @@ class SendNoticeFragment : Fragment() {
             if (best == null) {
                 try {
                     val gps = try {
-                        lm.getLastKnownLocation(android.location.LocationManager.GPS_PROVIDER)
+                        lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
                     } catch (e: Exception) {
                         null
                     }
                     val net = try {
-                        lm.getLastKnownLocation(android.location.LocationManager.NETWORK_PROVIDER)
+                        lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                     } catch (e: Exception) {
                         null
                     }
@@ -453,7 +461,7 @@ class SendNoticeFragment : Fragment() {
     private fun transformWgs84ToUtm29(lon: Double, lat: Double): Pair<Double, Double> {
         return try {
             val ctFactory = CoordinateTransformFactory()
-            val crsFactory = org.locationtech.proj4j.CRSFactory()
+            val crsFactory = CRSFactory()
             val srcCRS: CoordinateReferenceSystem = crsFactory.createFromName("EPSG:4326")
             val tgtCRS: CoordinateReferenceSystem = crsFactory.createFromParameters(
                 null,
@@ -513,8 +521,8 @@ class SendNoticeFragment : Fragment() {
                     Box(modifier = Modifier.height(220.dp)) {
                         AndroidView(
                             factory = { ctx ->
-                                val iv = androidx.appcompat.widget.AppCompatImageView(ctx)
-                                iv.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+                                val iv = AppCompatImageView(ctx)
+                                iv.scaleType = ImageView.ScaleType.CENTER_CROP
                                 try {
                                     val prefsLocal =
                                         ctx.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -526,13 +534,13 @@ class SendNoticeFragment : Fragment() {
                                             if (scheme.startsWith("http") || scheme.startsWith("https")) {
                                                 if (!jwtLocal.isNullOrEmpty()) {
                                                     val headers =
-                                                        com.bumptech.glide.load.model.LazyHeaders.Builder()
+                                                        LazyHeaders.Builder()
                                                             .addHeader(
                                                                 "Authorization",
                                                                 "Bearer $jwtLocal"
                                                             )
                                                             .build()
-                                                    com.bumptech.glide.load.model.GlideUrl(
+                                                    GlideUrl(
                                                         photoUri.toString(),
                                                         headers
                                                     )
@@ -540,7 +548,7 @@ class SendNoticeFragment : Fragment() {
                                             } else {
                                                 photoUri
                                             }
-                                        com.bumptech.glide.Glide.with(ctx).load(model).centerCrop()
+                                        Glide.with(ctx).load(model).centerCrop()
                                             .into(iv)
                                     } catch (e: Exception) {
                                         Log.w(
@@ -559,7 +567,7 @@ class SendNoticeFragment : Fragment() {
                                             )
                                             if (bytes != null && bytes.isNotEmpty()) {
                                                 val bmp =
-                                                    android.graphics.BitmapFactory.decodeByteArray(
+                                                    BitmapFactory.decodeByteArray(
                                                         bytes,
                                                         0,
                                                         bytes.size
@@ -593,11 +601,14 @@ class SendNoticeFragment : Fragment() {
             } else {
                 // placeholder box
                 Card(
-                    shape = RoundedCornerShape(8.dp),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
                     elevation = 3.dp,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Box(modifier = Modifier.height(220.dp), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.height(220.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
                                 imageVector = Icons.Default.Photo,
@@ -612,7 +623,10 @@ class SendNoticeFragment : Fragment() {
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-            Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Button(onClick = { onSend(bodyState.value) }) {
                     Icon(imageVector = Icons.Default.Send, contentDescription = null)
                     Spacer(modifier = Modifier.size(8.dp))
@@ -624,7 +638,10 @@ class SendNoticeFragment : Fragment() {
 
     private fun renderSendNotice() {
         composeViewRef?.setContent {
-            Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colors.background
+            ) {
                 SendNoticeScreen(
                     onTakePhoto = { onTakePhotoClicked() },
                     onSend = { onSendClicked(it) },

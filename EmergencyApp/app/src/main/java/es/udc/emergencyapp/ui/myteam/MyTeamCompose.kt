@@ -1,8 +1,5 @@
 package es.udc.emergencyapp.ui.myteam
 
-import android.os.Bundle
-import java.net.HttpURLConnection
-import java.net.URL
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +18,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.runtime.Composable
@@ -37,10 +33,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import es.udc.emergencyapp.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
-import es.udc.emergencyapp.R
 
 @Composable
 fun TeamUserRow(user: TeamUserItem) {
@@ -206,49 +202,36 @@ fun MyTeamScreen() {
             val prefs = context.getSharedPreferences("app_prefs", 0)
             val token = prefs.getString("jwt_token", null)
             withContext(Dispatchers.IO) {
-                val url = URL("http://10.0.2.2:8080/teams/myTeam")
-                val conn = (url.openConnection() as HttpURLConnection).apply {
-                    requestMethod = "GET"
-                    connectTimeout = 5000
-                    readTimeout = 5000
-                    if (!token.isNullOrBlank()) setRequestProperty("Authorization", "Bearer $token")
-                }
-                try {
-                    val code = conn.responseCode
-                    if (code == 200) {
-                        val body = conn.inputStream.bufferedReader().use { it.readText() }
-                        val arr = JSONArray(body)
-                        if (arr.length() > 0) {
-                            val team = arr.getJSONObject(0)
-                            teamCode = team.optString("code", "")
-                            val org = team.optJSONObject("organization")
-                            orgName = org?.optString("name", "") ?: ""
-                            val users = team.optJSONArray("userList")
-                            val list = mutableListOf<TeamUserItem>()
-                            if (users != null) {
-                                for (i in 0 until users.length()) {
-                                    val u = users.getJSONObject(i)
-                                    list.add(
-                                        TeamUserItem(
-                                            u.optString("firstName", null),
-                                            u.optString("lastName", null),
-                                            u.optString("email", null),
-                                            u.optString("userRole", null),
-                                            u.optString("phoneNumber", null),
-                                            u.optString("dni", null)
-                                        )
+                val pair = es.udc.emergencyapp.net.HttpClient.getFromHosts("/teams/myTeam", token)
+                val body = pair.first
+                if (body != null) {
+                    val arr = JSONArray(body)
+                    if (arr.length() > 0) {
+                        val team = arr.getJSONObject(0)
+                        teamCode = team.optString("code", "")
+                        val org = team.optJSONObject("organization")
+                        orgName = org?.optString("name", "") ?: ""
+                        val users = team.optJSONArray("userList")
+                        val list = mutableListOf<TeamUserItem>()
+                        if (users != null) {
+                            for (i in 0 until users.length()) {
+                                val u = users.getJSONObject(i)
+                                list.add(
+                                    TeamUserItem(
+                                        u.optString("firstName", null),
+                                        u.optString("lastName", null),
+                                        u.optString("email", null),
+                                        u.optString("userRole", null),
+                                        u.optString("phoneNumber", null),
+                                        u.optString("dni", null)
                                     )
-                                }
+                                )
                             }
-                            members = list
                         }
-                    } else if (code == 401) {
-                        error = "Unauthorized"
-                    } else {
-                        error = "Failed to fetch team: HTTP $code"
+                        members = list
                     }
-                } finally {
-                    conn.disconnect()
+                } else {
+                    error = "Failed to fetch team"
                 }
             }
         } catch (e: Exception) {
@@ -258,13 +241,11 @@ fun MyTeamScreen() {
         }
     }
 
-    MaterialTheme {
-        TeamScreenComposable(
-            teamCode = teamCode,
-            orgName = orgName,
-            members = members,
-            loading = loading,
-            error = error
-        )
-    }
+    TeamScreenComposable(
+        teamCode = teamCode,
+        orgName = orgName,
+        members = members,
+        loading = loading,
+        error = error
+    )
 }

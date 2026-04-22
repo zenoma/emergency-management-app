@@ -108,8 +108,8 @@ fun MapScreen(modifier: Modifier = Modifier) {
                             Context.MODE_PRIVATE
                         )
                         val jwt = prefs.getString("jwt_token", null)
-                        val quadrantsJson = fetchQuadrantsJson(hostsToTry, jwt)
-                        val emergenciesJson = fetchEmergenciesJson(hostsToTry, jwt)
+                        val quadrantsJson = es.udc.emergencyapp.net.HttpClient.getFromHosts("/quadrants/active", jwt, hostsToTry).first
+                        val emergenciesJson = es.udc.emergencyapp.net.HttpClient.getFromHosts("/emergencies", jwt, hostsToTry).first
                         val jsonToUse = transformToWGS84GeoJson(quadrantsJson)
 
                         (ctx as? android.app.Activity)?.runOnUiThread {
@@ -148,50 +148,7 @@ fun MapScreen(modifier: Modifier = Modifier) {
     }, modifier = modifier)
 }
 
-// --- Helper functions ---
-private fun fetchQuadrantsJson(hosts: List<String>, jwt: String?): String? {
-    for (host in hosts) {
-        try {
-            val url = java.net.URL("$host/quadrants/active")
-            val conn = (url.openConnection() as java.net.HttpURLConnection).apply {
-                requestMethod = "GET"
-                connectTimeout = 8000
-                readTimeout = 8000
-                if (!jwt.isNullOrEmpty()) setRequestProperty("Authorization", "Bearer $jwt")
-            }
-            val code = conn.responseCode
-            val body =
-                if (code == 200) conn.inputStream.bufferedReader().use { it.readText() } else null
-            conn.disconnect()
-            if (body != null) return body
-        } catch (e: Exception) {
-            android.util.Log.w("MapScreen", "Failed to fetch quadrants from $host", e)
-        }
-    }
-    return null
-}
-
-private fun fetchEmergenciesJson(hosts: List<String>, jwt: String?): String? {
-    for (host in hosts) {
-        try {
-            val url = java.net.URL("$host/emergencies")
-            val conn = (url.openConnection() as java.net.HttpURLConnection).apply {
-                requestMethod = "GET"
-                connectTimeout = 8000
-                readTimeout = 8000
-                if (!jwt.isNullOrEmpty()) setRequestProperty("Authorization", "Bearer $jwt")
-            }
-            val code = conn.responseCode
-            val body =
-                if (code == 200) conn.inputStream.bufferedReader().use { it.readText() } else null
-            conn.disconnect()
-            if (body != null) return body
-        } catch (e: Exception) {
-            android.util.Log.w("MapScreen", "Failed to fetch emergencies from $host", e)
-        }
-    }
-    return null
-}
+// Network functions centralized in es.udc.emergencyapp.net.HttpClient
 
 private fun chooseEmergencyIconName(typeKey: String?): String {
     val lowered = (typeKey ?: "").lowercase()
