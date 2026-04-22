@@ -389,4 +389,3 @@ fun MyNoticesScreen() {
     }
 }
 
-// Use Row from androidx.compose.foundation.layout; no custom Row implementation needed.

@@ -7,6 +7,9 @@ object HttpClient {
         "http://10.0.2.2:8080",
         "http://10.0.3.2:8080",
     )
+    // Cache last successful host to try it first on next requests (speeds up retries)
+    @Volatile
+    private var lastGoodHost: String? = null
 
 
     private fun getFromHosts(
@@ -15,9 +18,15 @@ object HttpClient {
         connectTimeout: Int = 8000,
         readTimeout: Int = 8000
     ): Pair<String?, String?> {
-        for (host in defaultHosts) {
+        // Build ordered list of hosts: try lastGoodHost first if present
+        val hostsToTry = mutableListOf<String>()
+        lastGoodHost?.let { if (defaultHosts.contains(it)) hostsToTry.add(it) }
+        hostsToTry.addAll(defaultHosts.filterNot { hostsToTry.contains(it) })
+
+        for (host in hostsToTry) {
             try {
                 val full = if (path.startsWith("/")) "$host$path" else "$host/$path"
+                android.util.Log.d("HttpClient", "GET $full")
                 val url = java.net.URL(full)
                 val conn = (url.openConnection() as java.net.HttpURLConnection).apply {
                     requestMethod = "GET"
@@ -29,9 +38,13 @@ object HttpClient {
                 val body = if (code in 200..299) conn.inputStream.bufferedReader()
                     .use { it.readText() } else null
                 conn.disconnect()
-                if (body != null) return Pair(body, host)
+                if (body != null) {
+                    // remember successful host
+                    lastGoodHost = host
+                    return Pair(body, host)
+                }
             } catch (e: Exception) {
-                android.util.Log.w("HttpClient", "Failed GET $host$path", e)
+                android.util.Log.w("HttpClient", "Failed GET $host$path: ${e.message}", e)
             }
         }
         return Pair(null, null)

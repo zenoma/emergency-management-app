@@ -44,6 +44,7 @@ import es.udc.emergencyapp.indexColor
 import es.udc.emergencyapp.net.HttpClient
 import es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip
 import es.udc.emergencyapp.ui.notices.NoticeDetailActivity
+import android.widget.Toast
 import es.udc.emergencyapp.util.transformProjectedToGeographic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -144,18 +145,47 @@ fun EmergenciesScreen() {
         LazyColumn {
             itemsIndexed(list) { idx, e ->
                 val bg = if (idx % 2 == 0) Color.White else Color(0xFFF8F8F8)
+                val openDetails = {
+                    try {
+                        val intent = Intent(ctx, EmergencyDetailActivity::class.java)
+                        intent.putExtra("emergency", Gson().toJson(e))
+                        // prefer Activity.startActivity when possible, otherwise add FLAG_ACTIVITY_NEW_TASK
+                        val activity = ctx as? android.app.Activity
+                        if (activity != null) {
+                            activity.startActivity(intent)
+                        } else {
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            ctx.startActivity(intent)
+                        }
+                    } catch (ex: android.content.ActivityNotFoundException) {
+                        // Fallback: if the new EmergencyDetailActivity isn't available (manifest/build issue),
+                        // fallback to the legacy NoticeDetailActivity (which is present in the manifest)
+                        android.util.Log.w("Emergencies", "EmergencyDetailActivity not found, falling back to NoticeDetailActivity", ex)
+                        try {
+                            val fallback = Intent(ctx, NoticeDetailActivity::class.java)
+                            fallback.putExtra("notice", Gson().toJson(e))
+                            val activity = ctx as? android.app.Activity
+                            if (activity != null) {
+                                activity.startActivity(fallback)
+                            } else {
+                                fallback.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                ctx.startActivity(fallback)
+                            }
+                        } catch (ex2: Exception) {
+                            android.util.Log.w("Emergencies", "Fallback also failed", ex2)
+                            Toast.makeText(ctx, "No se pudo abrir detalle: ${ex2.localizedMessage}", Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (ex: Exception) {
+                        android.util.Log.w("Emergencies", "Failed to open detail", ex)
+                        Toast.makeText(ctx, "No se pudo abrir detalle: ${ex.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 6.dp)
-                        .clickable {
-                            try {
-                                val intent = Intent(ctx, NoticeDetailActivity::class.java)
-                                intent.putExtra("notice", Gson().toJson(e))
-                                ctx.startActivity(intent)
-                            } catch (_: Exception) {
-                            }
-                        },
+                            .clickable { openDetails() },
                     shape = RoundedCornerShape(8.dp),
                     elevation = 3.dp
                 ) {

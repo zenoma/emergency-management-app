@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -30,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -41,9 +39,6 @@ import es.udc.emergencyapp.data.dto.NoticeDto
 import es.udc.emergencyapp.ui.setContentWithSystemBars
 import es.udc.emergencyapp.util.DateUtils
 import es.udc.emergencyapp.util.transformProjectedToGeographic
-import androidx.compose.ui.graphics.Color as UiColor
-import androidx.compose.ui.res.colorResource
-import es.udc.emergencyapp.R
 
 class NoticeDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -174,8 +169,8 @@ fun NoticeDetailScreen(notice: NoticeDto) {
                         transformProjectedToGeographic(lonRaw, latRaw)
                     } else Pair(lonRaw, latRaw)
 
-                    val lonText = if (lon.isNaN()) "-" else "${"%.6f".format(lon)}"
-                    val latText = if (lat.isNaN()) "-" else "${"%.6f".format(lat)}"
+                    if (lon.isNaN()) "-" else "${"%.6f".format(lon)}"
+                    if (lat.isNaN()) "-" else "${"%.6f".format(lat)}"
 
                     es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip(lon = lon, lat = lat)
                 } ?: run {
