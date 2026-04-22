@@ -15,24 +15,32 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.contentColorFor
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -99,6 +107,9 @@ private fun MainScreenSimple() {
     )
 
     Scaffold(
+        modifier = Modifier
+            .statusBarsPadding()
+            .navigationBarsPadding(),
         scaffoldState = scaffoldState,
         // Disable swipe-to-open so map gestures are not intercepted by the drawer.
         drawerGesturesEnabled = false,
@@ -116,13 +127,122 @@ private fun MainScreenSimple() {
                 })
         },
         drawerContent = {
-            Column(modifier = Modifier.padding(8.dp)) {
-                Text(
-                    text = "EmergencyApp",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(8.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+            val context = LocalContext.current
+            val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+            val jwtLocal = prefs.getString("jwt_token", null)
+            Column(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    color = MaterialTheme.colors.primary,
+                    contentColor = contentColorFor(MaterialTheme.colors.primary),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        if (jwtLocal.isNullOrBlank()) {
+                            androidx.compose.material.IconButton(onClick = {
+                                try {
+                                    val intent = Intent(context, LoginActivity::class.java)
+                                    context.startActivity(intent)
+                                    scope.launch { scaffoldState.drawerState.close() }
+                                } catch (e: Exception) {
+                                    android.util.Log.w("MainActivity", "Failed to open Login", e)
+                                }
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Login,
+                                    contentDescription = "Login",
+                                    modifier = Modifier.size(64.dp)
+                                )
+                            }
+                        } else {
+                            AndroidView(
+                                factory = { ctx ->
+                                    val iv = androidx.appcompat.widget.AppCompatImageView(ctx)
+                                    val size = (64 * ctx.resources.displayMetrics.density).toInt()
+                                    iv.layoutParams =
+                                        android.view.ViewGroup.LayoutParams(size, size)
+                                    iv.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+                                    try {
+                                        val avatarUrl = prefs.getString("avatar_url", null)
+                                        val model = if (!avatarUrl.isNullOrBlank()) {
+                                            val headers =
+                                                com.bumptech.glide.load.model.LazyHeaders.Builder()
+                                                    .addHeader(
+                                                        "Authorization",
+                                                        "Bearer ${jwtLocal}"
+                                                    )
+                                                    .build()
+                                            com.bumptech.glide.load.model.GlideUrl(
+                                                avatarUrl,
+                                                headers
+                                            )
+                                        } else R.drawable.avatar_1
+                                        com.bumptech.glide.Glide.with(ctx).load(model).circleCrop()
+                                            .into(iv)
+                                    } catch (e: Exception) {
+                                        android.util.Log.w(
+                                            "MainActivity",
+                                            "Failed to load avatar",
+                                            e
+                                        )
+                                    }
+                                    iv
+                                },
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(androidx.compose.foundation.shape.CircleShape)
+                                    .clickable {
+                                        try {
+                                            navController.navigate("profile") {
+                                                launchSingleTop = true
+                                            }
+                                            scope.launch { scaffoldState.drawerState.close() }
+                                        } catch (e: Exception) {
+                                            android.util.Log.w(
+                                                "MainActivity",
+                                                "Failed to navigate to profile",
+                                                e
+                                            )
+                                        }
+                                    })
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = prefs.getString("user_name", "User") ?: "User",
+                                modifier = Modifier.padding(4.dp)
+                            )
+                            Text(text = "Logout", modifier = Modifier
+                                .padding(6.dp)
+                                .clickable {
+                                    try {
+                                        prefs.edit().clear().apply()
+                                        val i = Intent(context, MainActivity::class.java)
+                                        i.flags =
+                                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        context.startActivity(i)
+                                    } catch (e: Exception) {
+                                        android.util.Log.w("MainActivity", "Logout failed", e)
+                                    }
+                                })
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+                }
+
                 val routes = listOf(
                     Pair("map", "Map"),
                     Pair("notices", "Notices"),

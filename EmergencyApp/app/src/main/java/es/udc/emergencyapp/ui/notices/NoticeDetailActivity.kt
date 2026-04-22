@@ -1,8 +1,10 @@
 package es.udc.emergencyapp.ui.notices
 
 import android.os.Bundle
+import android.view.ViewGroup.LayoutParams
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,9 +21,11 @@ import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.bumptech.glide.load.model.LazyHeaders.Builder
 import com.google.gson.Gson
 import es.udc.emergencyapp.AppTheme
 import es.udc.emergencyapp.data.dto.NoticeDto
@@ -51,10 +56,10 @@ class NoticeDetailActivity : ComponentActivity() {
                         androidx.compose.material.TopAppBar(
                             title = { Text(text = "Notice") },
                             navigationIcon = {
-                                androidx.compose.material.IconButton(onClick = { finish() }) {
-                                    androidx.compose.material.icons.Icons.Filled.ArrowBack
+                                IconButton(onClick = { finish() }) {
+                                    Icons.Filled.ArrowBack
                                     Icon(
-                                        imageVector = androidx.compose.material.icons.Icons.Filled.ArrowBack,
+                                        imageVector = Icons.Filled.ArrowBack,
                                         contentDescription = "Back"
                                     )
                                 }
@@ -63,7 +68,6 @@ class NoticeDetailActivity : ComponentActivity() {
                     },
                     bottomBar = {
                         androidx.compose.material.BottomAppBar {
-                            // empty bottom bar to reserve space so content sits between bars
                         }
                     }
                 ) { innerPadding ->
@@ -94,10 +98,10 @@ fun NoticeDetailScreen(notice: NoticeDto) {
         if (!imageUrl.isNullOrBlank()) {
             AndroidView(
                 factory = { ctx ->
-                    val iv = androidx.appcompat.widget.AppCompatImageView(ctx)
-                    iv.layoutParams = android.view.ViewGroup.LayoutParams(
-                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    val iv = AppCompatImageView(ctx)
+                    iv.layoutParams = LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT
                     )
                     iv.adjustViewBounds = true
                     try {
@@ -108,7 +112,7 @@ fun NoticeDetailScreen(notice: NoticeDto) {
                             )
                         val jwtLocal = prefsLocal.getString("jwt_token", null)
                         val model = if (!jwtLocal.isNullOrEmpty()) {
-                            val headers = com.bumptech.glide.load.model.LazyHeaders.Builder()
+                            val headers = Builder()
                                 .addHeader("Authorization", "Bearer $jwtLocal")
                                 .build()
                             com.bumptech.glide.load.model.GlideUrl(imageUrl, headers)
