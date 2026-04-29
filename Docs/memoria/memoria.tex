@@ -3,19 +3,18 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[11pt,a4paper,titlepage,oneside]{report}
-
 %%% RELACIÓN DE VARIABLES A PERSONALIZAR %%%
 %\def\lingua{gal}
 \def\lingua{esp} % descomenta esta liña se redactarás a memoria en español
 %\def\lingua{eng} % descomenta esta liña se redactarás a memoria en inglés
-\def\nome{Nome Completo}                             % substitúe aquí o teu nome
+\def\nome{Adrián García Vázquez}                             % substitúe aquí o teu nome
 \def\nomedirectorA{Manuel Álvarez Díaz}              % substitúe aquí o nome de quen dirixe
 %\def\nomedirectorB{Outro Nome Completo}             % duplica esta liña máis veces se o precisas, cambiando
                                                      % a letra final (A, B, C, D...): úsanse na portada.tex
-\def\titulo{Título completo do traballo} % substitúe aquí o título do teu TFG
-\def\mencion{NOME DA MENCIÓN}                        % descomenta a mención correspondente
+\def\titulo{Aplicación para la Gestión de Emergencias} % substitúe aquí o título do teu TFG
+%\def\mencion{NOME DA MENCIÓN}                        % descomenta a mención correspondente
 %\def\mencion{COMPUTACIÓN}
-%\def\mencion{ENXEÑARÍA DO SOFTWARE}
+\def\mencion{ENXEÑARÍA DO SOFTWARE}
 %\def\mencion{ENXEÑARÍA DE COMPUTADORES}
 %\def\mencion{SISTEMAS DE INFORMACIÓN}
 %\def\mencion{TECNOLOXÍAS DA INFORMACIÓN}
@@ -61,7 +60,14 @@
  \dedicatoria{Dedicatoria} % escribe neste comando o teu texto de dedicatoria
  \paxinaenbranco
  \begin{agradecementos}
- \blindtext                % substitúe este comando polo teu texto de agradecementos
+
+Gracias a Manuel, mi tutor, por su paciencia infinita y sus consejos que me han permitido hacer realidad este proyecto.\\ 
+
+Gracias a mi familia, mis amigos y a mi novia por el apoyo incondicional y ánimos. \\
+
+También agradezco a mis compañeros y profesorado do MUEI que me han ayudado a mejorar como
+informático y como persona.\\
+
  \end{agradecementos}
  \include{portada/resumo}
 
@@ -81,17 +87,17 @@
  % Capítulos                            %
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \include{contido/00-demo}
- \include{contido/10-introducion}
- \include{contido/15-tecnoloxia}
- \include{contido/20-arte}
- \include{contido/30-desenrolo}
- \include{contido/35-requisitos}
- \include{contido/40-planificacion}
- \include{contido/45-deseño}
- \include{contido/50-implementacion}
- \include{contido/55-probas}
- \include{contido/60-conclusions}
+ \include{contido/1-introducion}
+ \include{contido/2-tecnoloxia}
+ \include{contido/3-arte}
+ \include{contido/4-viabilidade}
+ \include{contido/5-desenrolo}
+ \include{contido/6-planificacion}
+ \include{contido/7-requisitos}
+ \include{contido/8-deseño}
+ \include{contido/9-implementacion}
+ \include{contido/10-probas}
+ \include{contido/11-conclusions}
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % Apéndices, glosarios e bibliografía  %
@@ -109,7 +115,6 @@
  \bibliography{\bibconfig,bibliografia/bibliografia}
  \clearpage
  
- { \color{red} Bibliografía en formato IEEE, así como las referencias a la misma. En el caso de referencia a páginas web indicar además del URL la fecha en la que fue consultado [último acceso: dd.MM.YYY]. }
 
 \end{document}
 

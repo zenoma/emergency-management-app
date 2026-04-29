@@ -1,0 +1,78 @@
+\chapter{Introdución}
+\label{chap:introducion}
+
+\lettrine{G}{alicia} presenta una elevada exposición a emergencias en su territorio, entre las que destacan especialmente los incendios forestales, las inundaciones derivadas de episodios de lluvia intensa, los derrumbes de carreteras o terraplenes y determinados riesgos industriales. En los últimos años han surgido emergencias que ilustran su importancia y su impacto operativo: campañas con incendios que han afectado a superficies significativas según la estadística oficial \cite{EGIFMITECO}; episodios de abril de 2026 que motivaron una decena de incidencias en Ourense y la activación de alertas en las Rías Baixas \cite{AxegaIncidenciasChuviaOurense2026,AxegaAlertaChuvia2026}; y movimientos sísmicos locales perceptibles por la población, como el registrado en Ponteceso en 2026 \cite{AxegaSismoPonteceso2026}. La complejidad operativa de la respuesta exige coordinación entre múltiples actores, toma de decisiones en ventanas temporales reducidas y disponibilidad de información operativa fiable. Estos retos son tanto tecnológicos como organizativos y normativos, ya que confluyen distintos niveles administrativos y tecnologías
+
+Este \acrfull{tfm} se apoya y amplía el trabajo previo desarrollado en el \acrfull{tfg} "Aplicación para coordinación de equipos para la prevención y extinción de incendios forestales" \cite{TFGAdrianGarcia2025}, que documenta el diseño e implementación de una aplicación web destinada a centralizar avisos, recursos y despliegues en el contexto de incendios forestales en Galicia. El \acrshort{tfg} aporta decisiones y soluciones de diseño que se toman como punto de partida en este \acrshort{tfm}.
+
+\section{Determinación de la situación actual}
+\label{sec:actual}
+
+
+La situación actual combina capacidades consolidadas de detección, alerta y despliegue con limitaciones de integración entre sistemas y organizaciones. En el ámbito forestal, existen estadísticas nacionales y autonómicas que permiten caracterizar la magnitud del problema \cite{EGIFMITECO}. Galicia dispone además de una estructura operativa asentada en torno a \acrfull{axega} y cuenta con planes de emergencia por tipología de riesgo a nivel autonómico \cite{AxegaPortal,PlansEmerxenciaGalicia}.
+
+Galicia dispone de una organización y planificación detallada para distintas tipologías de riesgo —por ejemplo, \acrfull{pladiga} para riesgos forestales—. La Consellería de Presidencia centraliza catálogos, protocolos y guías municipales; la Consellería de Medio Rural publica documentación técnica y memorias sobre defensa del monte; y \acrshort{axega} mantiene boletines e instrumentos operativos. Sin embargo, estos planes y protocolos están dispersos entre distintos organismos y repositorios, y no están unificados en una solución digital compartida y accesible tanto para los equipos de gestión de emergencias como para la ciudadanía común \cite{PlansEmerxenciaGalicia,PladigaXunta2026,AxegaPortal}.
+
+No obstante, persisten dificultades operativas que limitan la eficacia conjunta:
+
+\begin{itemize}
+    \item \textbf{Fragmentación de la información}: avisos ciudadanos, información meteorológicas, mapas de emergencias y estado de recursos residen en sistemas segregados.
+    \item \textbf{Heterogeneidad organizativa}: organismos y equipos tienen procedimientos y necesidades distintas (coordinación estratégica, mando táctico, intervención en campo).
+    \item \textbf{Variabilidad del riesgo y concurrencia de eventos}: no es realista el tratamiento aislado de las emergencias, ciertas emergencias suelen estar relacionadas con otroas emergencias, exigiendo un modelo multi-riesgo \cite{PlansEmerxenciaGalicia,AxegaAlertaChuvia2026}.
+    \item \textbf{Presión temporal y trazabilidad}: la necesidad de decisiones rápidas hace imprescindible la actualización en tiempo real y el registro de actuaciones para análisis posteriores.
+\end{itemize}
+
+El análisis realizado en el \acrshort{tfg} muestra que estas limitaciones no son debidas a la ausencia de medios, sino a falta de cohesión operativa digital. Por ello, este \acrshort{tfm} propone una evolución del sistema desarrollado en el \acrshort{tfg} hacia una plataforma de coordinación que mejore la integración, la trazabilidad y el soporte a la decisión en contextos multi-riesgo.
+
+\section{Alcance y objetivos}
+\label{sec:objetivos}
+
+El alcance de este \acrshort{tfm} es evolucionar la solución técnica y los modelos operativos desarrollados en el \acrshort{tfg} hacia una plataforma de coordinación de emergencias multi-riesgo para Galicia, con dos componentes principales: una plataforma web para gestión y coordinación, y una aplicación móvil nativa para uso en campo y participación ciudadana. Este \acrshort{tfm} parte explícitamente del trabajo técnico y de campo documentado en el \acrshort{tfg} \cite{TFGAdrianGarcia2025}.
+
+La solución propuesta se alinea con el trabajo realizado por protección civil y otros organismos de respuesta a emergencias, priorizando la interoperabilidad entre estos organismos, sin pretender sustituir sistemas institucionales existentes, sino complementarlos aportando una capa unificada de gestión, visualización y soporte a la decisión \cite{LeySNPC17_2015,NormaBasicaPC2023}.
+
+\subsection{Objetivos principales}
+
+A continuación se enumeran los principales objetivos que debe cumplir la aplicación a
+desarrollar en este trabajo:
+
+\begin{enumerate}
+    \item Extender el dominio funcional del \acrshort{tfg} hacia un enfoque multi-riesgo (incendios, inundaciones, derrumbes y riesgos industriales) acorde con los planes autonómicos.
+    \item Ampliar funcionalidades de la plataforma web existente que centraliza la gestión de alertas, emergencias, recursos y despliegues operativos.
+    \item Diseñar e implementar una aplicación móvil nativa en Kotlin para reporte ciudadano y soporte a la intervención en campo.
+    \item Mejorar la coordinación multi-organizativa, integrando en un mismo flujo de trabajo a coordinadores, brigadas, protección civil y ciudadanía.
+    \item Reforzar la trazabilidad y el análisis post-emergencia mediante históricos e indicadores operativos.
+\end{enumerate}
+
+
+\subsection{Objetivos concretos}
+
+\begin{enumerate}
+    \item Contextualización: esclarecer el valor aportado por el TFM y definir el nuevo dominio multi-riesgo.
+    \item Definir la arquitectura de la aplicación móvil y entregar un esqueleto que permita añadir funcionalidades progresivamente.
+    \item Introducir un modelo unificado de recursos y organizaciones y definir sus capacidades y área operativa.
+    \item Permitir la creación y edición de emergencias (por punto o por cuadrante) y la creación o propuesta manual de asignaciones.
+    \item Introducir un registro de logs operativos de las emergencias y de las asignaciones de recursos que permita el análisis posterior de las emergencias y la generación de indicadores. 
+    \item Integrar notificaciones móviles mediante \acrfull{fcm}, registrar dispositivos y definir el flujo de notificación y aceptación de asignaciones.
+    \item Implementar el almacenamiento de protocolos (por ejemplo, campo \acrfull{jsonb}) y un motor de reglas capaz de generar propuestas de asignación automáticamente.
+\end{enumerate}
+
+
+\section{Estructura de la memoria}
+\label{sec:estructura}
+
+La memoria se organiza en once capítulos y anexos. A continuación se ofrece un resumen del contenido de cada capítulo:
+
+\begin{enumerate}
+    \item Capítulo 1: Presenta el contexto general, describe la situación actual en Galicia, expone las motivaciones del trabajo y enuncia los objetivos generales y concretos del proyecto.
+    \item Capítulo 2 (\ref{chap:basetecnoloxica}): Detalla la base tecnológica empleada: componentes de backend y frontend, bases de datos, servicios y librerías relevantes, y las decisiones arquitectónicas que sustentan la implementación.
+    \item Capítulo 3 (\ref{chap:estadoarte}): Revisa el estado del arte, compara soluciones existentes y extrae lecciones aplicables al diseño de la plataforma propuesta.
+    \item Capítulo 4 (\ref{chap:viabilidade}): Analiza la viabilidad del proyecto desde las perspectivas técnica, organizativa y normativa, e incluye una estimación de recursos y riesgos.
+    \item Capítulo 5 (\ref{chap:desenrolo}): Documenta el desarrollo realizado, describiendo la arquitectura global del sistema, los módulos principales y las integraciones implementadas.
+    \item Capítulo 6 (\ref{chap:planificacion}): Presenta la planificación temporal del trabajo, los hitos y la metodología seguida para organizar las iteraciones de desarrollo.
+    \item Capítulo 7 (\ref{chap:requisitos}): Especifica los requisitos funcionales y no funcionales que guían el diseño y la implementación de la plataforma.
+    \item Capítulo 8 (\ref{chap:deseño}): Describe el diseño funcional y técnico, incluyendo el modelo de datos, las APIs, los flujos de interacción y las decisiones de UX/UI.
+    \item Capítulo 9 (\ref{chap:implementacion}): Detalla la implementación: estructura de código, despliegue, configuraciones y ejemplos de componentes desarrollados.
+    \item Capítulo 10 (\ref{chap:probas}): Documenta las pruebas realizadas (unitarias, de integración y de aceptación), su cobertura y los resultados obtenidos.
+    \item Capítulo 11 (\ref{chap:conclusions}): Resume las conclusiones, las aportaciones del trabajo y propone líneas futuras de mejora y continuidad.
+\end{enumerate}
