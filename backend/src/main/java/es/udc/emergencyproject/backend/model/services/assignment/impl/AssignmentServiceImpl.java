@@ -19,6 +19,7 @@ import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyExcepti
 import es.udc.emergencyproject.backend.model.exceptions.ResourceBusyException;
 import es.udc.emergencyproject.backend.model.services.assignment.AssignmentService;
 import es.udc.emergencyproject.backend.model.services.logs.LogManagementService;
+import es.udc.emergencyproject.backend.model.services.notifications.AssignmentNotificationService;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class AssignmentServiceImpl implements AssignmentService {
   private final ResourceRepository resourceRepository;
   private final EmergencyRepository emergencyRepository;
   private final LogManagementService logManagementService;
+  private final AssignmentNotificationService assignmentNotificationService;
 
 
   @Override
@@ -89,6 +91,8 @@ public class AssignmentServiceImpl implements AssignmentService {
           "Assignment created");
     } catch (Exception ignored) {
     }
+
+    assignmentNotificationService.notifyTeamAssignmentCreated(saved);
 
     try {
       if (resource.getResourceType() == ResourceType.VEHICLE) {
@@ -197,6 +201,8 @@ public class AssignmentServiceImpl implements AssignmentService {
             "Assignment accepted");
       } catch (Exception ignored) {
       }
+
+      assignmentNotificationService.notifyTeamAssignmentStatusChanged(saved, status);
     }
 
     if (status == AssignmentStatus.COMPLETED) {
@@ -209,6 +215,8 @@ public class AssignmentServiceImpl implements AssignmentService {
             "Assignment completed");
       } catch (Exception ignored) {
       }
+
+      assignmentNotificationService.notifyTeamAssignmentStatusChanged(saved, status);
     }
 
     return saved;

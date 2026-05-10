@@ -17,7 +17,9 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import es.udc.emergencyapp.AppTheme
+import es.udc.emergencyapp.R
 import es.udc.emergencyapp.ui.setContentWithSystemBars
 
 class QuadrantResourcesActivity : ComponentActivity() {
@@ -33,12 +35,12 @@ class QuadrantResourcesActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            title = { Text(text = "Recursos cuadrante") },
+                            title = { Text(text = stringResource(R.string.recursos_cuadrante)) },
                             navigationIcon = {
                                 IconButton(onClick = { finish() }) {
                                     Icon(
                                         imageVector = Icons.Filled.ArrowBack,
-                                        contentDescription = "Back"
+                                        contentDescription = stringResource(R.string.back_label)
                                     )
                                 }
                             },
@@ -48,7 +50,7 @@ class QuadrantResourcesActivity : ComponentActivity() {
                                 }) {
                                     Icon(
                                         imageVector = Icons.Filled.Refresh,
-                                        contentDescription = "Refrescar"
+                                        contentDescription = stringResource(R.string.refresh_label)
                                     )
                                 }
                             }

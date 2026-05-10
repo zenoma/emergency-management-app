@@ -34,10 +34,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.gson.Gson
+import es.udc.emergencyapp.R
 import es.udc.emergencyapp.data.dto.NoticeDto
 import es.udc.emergencyapp.ui.common.StatusChip
 import kotlinx.coroutines.Dispatchers
@@ -224,19 +226,19 @@ fun MyNoticesScreen() {
                 OutlinedTextField(
                     value = searchQuery.value,
                     onValueChange = { searchQuery.value = it },
-                    label = { Text("Search") },
+                    label = { Text(stringResource(R.string.search_label)) },
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.padding(6.dp))
                 // simple status dropdown
                 var expanded by remember { mutableStateOf(false) }
                 TextButton(onClick = { expanded = true }) {
-                    Text(text = statusFilter.value ?: "All")
+                    Text(text = statusFilter.value ?: stringResource(R.string.all_label))
                 }
                 DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                     DropdownMenuItem(onClick = {
                         statusFilter.value = null; expanded = false
-                    }) { Text("All") }
+                    }) { Text(stringResource(R.string.all_label)) }
                     for (s in statuses.filterNotNull()) {
                         DropdownMenuItem(onClick = {
                             statusFilter.value = s; expanded = false
@@ -254,10 +256,13 @@ fun MyNoticesScreen() {
                         statusFilter.value == null || statusFilter.value == it.status
                     matchesQuery && matchesStatus
                 }
-                Text(text = "Found: $filteredCount", modifier = Modifier.padding(start = 4.dp))
+                Text(
+                    text = "Total: $filteredCount",
+                    modifier = Modifier.padding(start = 4.dp)
+                )
                 Spacer(modifier = Modifier.weight(1f))
                 TextButton(onClick = { showAll.value = !showAll.value }) {
-                    Text(if (showAll.value) "Show less" else "Show all")
+                    Text(if (showAll.value) stringResource(R.string.show_less) else stringResource(R.string.show_all))
                 }
             }
         }
@@ -275,9 +280,12 @@ fun MyNoticesScreen() {
             val list = if (showAll.value) filteredList else filteredList.take(defaultLimit)
             if (filteredList.isEmpty()) {
                 if (errorMsg.value != null) {
-                    Text(text = "Error: ${errorMsg.value}", modifier = Modifier.padding(16.dp))
+                    Text(text = errorMsg.value ?: "", modifier = Modifier.padding(16.dp))
                 } else {
-                    Text(text = "No notices found", modifier = Modifier.padding(16.dp))
+                    Text(
+                        text = stringResource(R.string.no_notices_found),
+                        modifier = Modifier.padding(16.dp)
+                    )
                 }
             } else {
                 LazyColumn {
@@ -364,7 +372,8 @@ fun MyNoticesScreen() {
                                         .background(Color(0x66000000))
                                 ) {
                                     Text(
-                                        text = n.body ?: "(no description)",
+                                        text = n.body
+                                            ?: stringResource(R.string.description_default),
                                         color = Color.White,
                                         maxLines = 2,
                                         overflow = TextOverflow.Ellipsis,
@@ -374,7 +383,9 @@ fun MyNoticesScreen() {
                                         StatusChip(status = n.status)
                                         Spacer(modifier = Modifier.size(8.dp))
                                         Text(
-                                            text = es.udc.emergencyapp.util.DateUtils.formatForDisplay(n.createdAt),
+                                            text = es.udc.emergencyapp.util.DateUtils.formatForDisplay(
+                                                n.createdAt
+                                            ),
                                             color = Color.White,
                                             style = MaterialTheme.typography.body2
                                         )

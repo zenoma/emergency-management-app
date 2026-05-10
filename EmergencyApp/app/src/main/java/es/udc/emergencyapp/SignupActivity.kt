@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,7 +63,7 @@ class SignupActivity : AppCompatActivity() {
         phone: String
     ) {
         if (email.isBlank() || password.isBlank()) {
-            Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.fill_credentials), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -117,7 +118,7 @@ class SignupActivity : AppCompatActivity() {
                     }
 
                     runOnUiThread {
-                        Toast.makeText(this, "Signup successful", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, MainActivity::class.java)
                         intent.flags =
                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -126,13 +127,13 @@ class SignupActivity : AppCompatActivity() {
                 } else {
                     android.util.Log.w("SignupActivityNet", "Signup failed or empty response")
                     runOnUiThread {
-                        Toast.makeText(this, "Signup failed", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: Exception) {
                 android.util.Log.w("SignupActivityNet", "Exception during signup", e)
                 runOnUiThread {
-                    Toast.makeText(this, "Signup failed: ${e.localizedMessage}", Toast.LENGTH_LONG)
+                    Toast.makeText(this, getString(R.string.login_failed) + ": ${e.localizedMessage}", Toast.LENGTH_LONG)
                         .show()
                 }
             }
@@ -182,7 +183,7 @@ private fun SignupScreen(onSignup: (String, String, String, String, String, Stri
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = "Create account", style = MaterialTheme.typography.h6, fontSize = 20.sp)
+                Text(text = stringResource(R.string.signup_title), style = MaterialTheme.typography.h6, fontSize = 20.sp)
 
                 Spacer(modifier = Modifier.height(12.dp))
 

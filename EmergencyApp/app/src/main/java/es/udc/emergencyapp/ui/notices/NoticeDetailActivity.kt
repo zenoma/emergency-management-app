@@ -29,15 +29,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.bumptech.glide.load.model.LazyHeaders.Builder
 import com.google.gson.Gson
 import es.udc.emergencyapp.AppTheme
+import es.udc.emergencyapp.R
 import es.udc.emergencyapp.data.dto.NoticeDto
 import es.udc.emergencyapp.ui.setContentWithSystemBars
-import es.udc.emergencyapp.util.DateUtils
 import es.udc.emergencyapp.util.transformProjectedToGeographic
 
 class NoticeDetailActivity : ComponentActivity() {
@@ -51,13 +52,13 @@ class NoticeDetailActivity : ComponentActivity() {
                 androidx.compose.material.Scaffold(
                     topBar = {
                         androidx.compose.material.TopAppBar(
-                            title = { Text(text = "Notice") },
+                            title = { Text(text = stringResource(R.string.notice_title)) },
                             navigationIcon = {
                                 IconButton(onClick = { finish() }) {
                                     Icons.Filled.ArrowBack
                                     Icon(
                                         imageVector = Icons.Filled.ArrowBack,
-                                        contentDescription = "Back"
+                                        contentDescription = stringResource(R.string.back_label)
                                     )
                                 }
                             }
@@ -142,18 +143,20 @@ fun NoticeDetailScreen(notice: NoticeDto) {
                 ) {
                     Column {
                         Text(
-                            text = notice.body ?: "(no description)",
+                            text = notice.body ?: stringResource(R.string.description_default),
                             style = MaterialTheme.typography.h6
                         )
                         Spacer(modifier = Modifier.size(6.dp))
                         Text(
-                            text = "Date: ${es.udc.emergencyapp.util.DateUtils.formatForDisplay(notice.createdAt)}",
+                            text = stringResource(
+                                R.string.date_label,
+                                es.udc.emergencyapp.util.DateUtils.formatForDisplay(notice.createdAt)
+                            ),
                             style = MaterialTheme.typography.body2,
                             fontSize = 12.sp
                         )
                     }
                     val rawStatus = notice.status ?: ""
-                    // Use common StatusChip composable for consistent status UI
                     es.udc.emergencyapp.ui.common.StatusChip(status = rawStatus)
                 }
 
@@ -161,7 +164,6 @@ fun NoticeDetailScreen(notice: NoticeDto) {
                 Divider()
                 Spacer(modifier = Modifier.size(8.dp))
 
-                // Show coordinates as a small chip with quadrant name fetched from backend
                 notice.coordinates?.let { c ->
                     val lonRaw = c.lon ?: Double.NaN
                     val latRaw = c.lat ?: Double.NaN
@@ -174,11 +176,17 @@ fun NoticeDetailScreen(notice: NoticeDto) {
 
                     es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip(lon = lon, lat = lat)
                 } ?: run {
-                    Text(text = "Coordinates: (not provided)")
+                    Text(text = stringResource(R.string.coordinates_not_provided))
                 }
 
                 Spacer(modifier = Modifier.size(8.dp))
-                Text(text = "Quadrant: ${notice.quadrantName ?: "-"} (${notice.quadrantId ?: "-"})")
+                Text(
+                    text = stringResource(
+                        R.string.quadrant_format,
+                        notice.quadrantName ?: "-",
+                        notice.quadrantId ?: "-"
+                    )
+                )
             }
         }
     }

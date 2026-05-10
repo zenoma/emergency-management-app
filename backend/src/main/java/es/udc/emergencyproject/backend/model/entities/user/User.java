@@ -1,5 +1,6 @@
 package es.udc.emergencyproject.backend.model.entities.user;
 
+import es.udc.emergencyproject.backend.model.entities.mobiledevice.MobileDevice;
 import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -12,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
@@ -30,7 +32,7 @@ import lombok.ToString;
 @Table(name = "user", schema = "public")
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = "password")
+@EqualsAndHashCode(exclude = {"password", "mobileDevice"})
 @ToString(exclude = "password")
 @AllArgsConstructor
 public class User {
@@ -75,6 +77,9 @@ public class User {
   @JoinColumn(name = "team_id")
   private Team team;
 
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+  private MobileDevice mobileDevice;
+
   public User() {
   }
 
@@ -96,5 +101,3 @@ public class User {
 
 
 }
-
-

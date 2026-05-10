@@ -1,5 +1,7 @@
 package es.udc.emergencyproject.backend.model.services.personal.impl;
 
+import es.udc.emergencyproject.backend.model.entities.mobiledevice.MobileDevice;
+import es.udc.emergencyproject.backend.model.entities.mobiledevice.MobileDeviceRepository;
 import es.udc.emergencyproject.backend.model.entities.user.User;
 import es.udc.emergencyproject.backend.model.entities.user.UserRepository;
 import es.udc.emergencyproject.backend.model.entities.user.UserRole;
@@ -24,6 +26,7 @@ public class UserServiceImpl implements UserService {
   private static final String USER_NOT_FOUND = "User not found";
   private static final String TARGET_USER_NOT_FOUND = "Target user not found";
   private final UserRepository userRepository;
+  private final MobileDeviceRepository mobileDeviceRepository;
   private final PasswordEncoder passwordEncoder;
 
   private User getUser(String email, String password, String firstName, String lastName, String phoneNumber, String dni,
@@ -96,6 +99,22 @@ public class UserServiceImpl implements UserService {
     userRepository.save(user);
     return user;
 
+  }
+
+  @Override
+  public void registerMobileDevice(Long userId, String fcmToken) throws InstanceNotFoundException {
+    User user = userRepository.findById(userId).orElseThrow(() -> new InstanceNotFoundException(USER_NOT_FOUND, userId));
+
+    MobileDevice mobileDevice = mobileDeviceRepository.findByUserId(userId)
+        .orElseGet(MobileDevice::new);
+
+    mobileDevice.setUser(user);
+    mobileDevice.setFcmToken(fcmToken);
+    mobileDevice.setLastSeenAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+
+    mobileDeviceRepository.save(mobileDevice);
+    user.setMobileDevice(mobileDevice);
+    userRepository.save(user);
   }
 
   @Override

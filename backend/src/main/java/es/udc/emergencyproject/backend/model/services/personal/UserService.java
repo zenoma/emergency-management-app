@@ -25,6 +25,8 @@ public interface UserService {
   User updateProfile(Long id, String firstName, String lastName, String email, Integer phoneNumber, String dni)
       throws InstanceNotFoundException;
 
+  void registerMobileDevice(Long userId, String fcmToken) throws InstanceNotFoundException;
+
   void changePassword(Long id, String oldPassword, String newPassword)
       throws InstanceNotFoundException, IncorrectPasswordException;
 

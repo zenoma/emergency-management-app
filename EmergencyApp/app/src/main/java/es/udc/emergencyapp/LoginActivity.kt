@@ -34,9 +34,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.messaging.FirebaseMessaging
 import es.udc.emergencyapp.ui.setContentWithSystemBars
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -95,6 +97,7 @@ class LoginActivity : AppCompatActivity() {
                     val obj = JSONObject(resp)
                     val token = obj.optString("token", "")
                     val userObj = obj.optJSONObject("user")
+                    var userId = -1L
 
                     val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
                     prefs.edit().apply {
@@ -107,12 +110,12 @@ class LoginActivity : AppCompatActivity() {
                             putString("user_phone", userObj.optString("phoneNumber", ""))
                             putString("user_dni", userObj.optString("dni", ""))
                             putString("user_role", userObj.optString("userRole", ""))
-                            val uid = try {
+                            userId = try {
                                 userObj.optLong("id", -1L)
                             } catch (e: Exception) {
                                 -1L
                             }
-                            if (uid > 0) putLong("user_id", uid)
+                            if (userId > 0) putLong("user_id", userId)
                         }
                         apply()
                     }
@@ -184,7 +187,7 @@ private fun LoginScreen(onLogin: (String, String) -> Unit, onSignup: () -> Unit)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = "Welcome", style = MaterialTheme.typography.h6, fontSize = 20.sp)
+                Text(text = stringResource(R.string.login_title), style = MaterialTheme.typography.h6, fontSize = 20.sp)
 
                 Spacer(modifier = Modifier.height(12.dp))
 

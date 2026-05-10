@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1027996400032",
+    "project_id": "emergency-kotlin-app",
+    "storage_bucket": "emergency-kotlin-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1027996400032:android:e03eebfbf900259a74ccc5",
+        "android_client_info": {
+          "package_name": "es.udc.emergencyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACfP5YuWp2ZtQVdR-Gl0jrJBPutlJ8V08"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

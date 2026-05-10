@@ -127,6 +127,8 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/users/{id}/changePassword")
             .hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/users/{id}/updateRole").hasAnyRole(COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.POST, "/users/{id}/mobileDevice")
+            .hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
 
             .anyRequest().authenticated()
         )

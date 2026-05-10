@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.gms.google-services")
 }
 
 
@@ -69,6 +70,8 @@ dependencies {
     implementation(libs.proj4j)
     implementation(libs.glide)
     implementation(libs.gson)
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
     implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

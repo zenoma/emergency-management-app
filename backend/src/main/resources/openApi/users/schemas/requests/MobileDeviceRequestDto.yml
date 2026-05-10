@@ -1,0 +1,6 @@
+type: object
+required:
+  - fcmToken
+properties:
+  fcmToken:
+    type: string

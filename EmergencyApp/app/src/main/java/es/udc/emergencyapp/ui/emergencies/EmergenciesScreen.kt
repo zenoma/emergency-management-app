@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,9 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
+import es.udc.emergencyapp.R
 import es.udc.emergencyapp.data.dto.EmergencyDto
 import es.udc.emergencyapp.data.dto.QuadrantInfoDto
 import es.udc.emergencyapp.indexColor
@@ -65,7 +68,7 @@ fun EmergenciesScreen() {
                     emergenciesState.value = parseEmergenciesJson(resp)
                 } catch (e: Exception) {
                     android.util.Log.w("Emergencies", "Failed to parse emergencies JSON", e)
-                    errorMsg.value = "Parse error"
+                    errorMsg.value = ctx.getString(R.string.parse_error)
                     emergenciesState.value = emptyList()
                 }
             } else {
@@ -102,17 +105,24 @@ fun EmergenciesScreen() {
         filtered =
             if (sortByCreatedDesc.value) filtered.sortedByDescending { it.createdAt } else filtered.sortedBy { it.createdAt }
         Text(
-            text = "Emergencies",
+            text = stringResource(R.string.emergencies_title),
             style = MaterialTheme.typography.h5,
         )
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Total: ${filtered.size}", modifier = Modifier.padding(end = 8.dp))
+            Text(
+                text = stringResource(R.string.emergencies_total, filtered.size),
+                modifier = Modifier.padding(end = 8.dp)
+            )
             Button(onClick = { sortByCreatedDesc.value = !sortByCreatedDesc.value }) {
-                Text(text = if (sortByCreatedDesc.value) "Sort: Created ↓" else "Sort: Created ↑")
+                Text(
+                    text = if (sortByCreatedDesc.value) stringResource(R.string.sort_created_desc) else stringResource(
+                        R.string.sort_created_asc
+                    )
+                )
             }
             Spacer(modifier = Modifier.padding(6.dp))
             TextButton(onClick = { showAll.value = !showAll.value }) {
-                Text(if (showAll.value) "Show less" else "Show all")
+                Text(if (showAll.value) stringResource(R.string.show_less) else stringResource(R.string.show_all))
             }
         }
 
@@ -121,7 +131,7 @@ fun EmergenciesScreen() {
         OutlinedTextField(
             value = searchQuery.value,
             onValueChange = { searchQuery.value = it },
-            label = { Text("Search description or type") },
+            label = { Text(stringResource(R.string.search_description_or_type)) },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -129,7 +139,8 @@ fun EmergenciesScreen() {
 
         if (filtered.isEmpty()) {
             Text(
-                text = if (errorMsg.value != null) "Error: ${errorMsg.value}" else "No emergencies found",
+                text = if (errorMsg.value != null) errorMsg.value
+                    ?: "" else stringResource(R.string.no_emergencies_found),
                 modifier = Modifier.padding(16.dp)
             )
             return@Column
@@ -174,7 +185,10 @@ fun EmergenciesScreen() {
                             android.util.Log.w("Emergencies", "Fallback also failed", ex2)
                             Toast.makeText(
                                 ctx,
-                                "No se pudo abrir detalle: ${ex2.localizedMessage}",
+                                ctx.getString(
+                                    R.string.failed_to_send_notice,
+                                    ex2.localizedMessage ?: ""
+                                ),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -182,7 +196,10 @@ fun EmergenciesScreen() {
                         android.util.Log.w("Emergencies", "Failed to open detail", ex)
                         Toast.makeText(
                             ctx,
-                            "No se pudo abrir detalle: ${ex.localizedMessage}",
+                            ctx.getString(
+                                R.string.failed_to_send_notice,
+                                ex.localizedMessage ?: ""
+                            ),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -191,15 +208,15 @@ fun EmergenciesScreen() {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 6.dp)
+                        .padding(vertical = 8.dp)
                         .clickable { openDetails() },
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = 3.dp
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = 6.dp
                 ) {
                     Row(
                         modifier = Modifier
                             .background(bg)
-                            .padding(10.dp)
+                            .padding(14.dp)
                             .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
                     ) {
 
@@ -225,39 +242,40 @@ fun EmergenciesScreen() {
                             }
                         }
 
-                        Spacer(modifier = Modifier.padding(6.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
 
                         Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = e.description ?: "(no description)",
+                                style = MaterialTheme.typography.subtitle1,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = e.description ?: "(no description)",
-                                    style = MaterialTheme.typography.subtitle1,
+                                    text = (e.emergencyTypeName
+                                        ?: "") + (if (!e.quadrantInfo.isNullOrEmpty()) " • ${e.quadrantInfo.first().nombre ?: ""}" else ""),
+                                    style = MaterialTheme.typography.body2,
+                                    color = Color.DarkGray,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f)
                                 )
-                                Spacer(modifier = Modifier.padding(6.dp))
                                 Text(
                                     text = "#${e.id}",
                                     style = MaterialTheme.typography.caption,
                                     color = Color.Gray,
-                                    modifier = Modifier.padding(start = 6.dp)
+                                    modifier = Modifier.padding(start = 8.dp)
                                 )
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = (e.emergencyTypeName
-                                    ?: "") + (if (!e.quadrantInfo.isNullOrEmpty()) " • ${e.quadrantInfo.first().nombre ?: ""}" else ""),
-                                style = MaterialTheme.typography.body2,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
                             Spacer(modifier = Modifier.height(6.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = es.udc.emergencyapp.util.DateUtils.formatForDisplay(e.createdAt),
                                     style = MaterialTheme.typography.caption
                                 )
-                                Spacer(modifier = Modifier.padding(8.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
                                 val loc = e.location
                                 if (loc != null) {
                                     CoordinateWithQuadrantChip(
@@ -280,6 +298,8 @@ fun EmergenciesScreen() {
                                 }
                             }
                         }
+
+                        Spacer(modifier = Modifier.width(10.dp))
 
                         Column(horizontalAlignment = Alignment.End) {
                             CompactChip(label = e.emergencyIndex ?: "", bgColor = idxColor)

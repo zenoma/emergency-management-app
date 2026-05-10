@@ -111,6 +111,10 @@ public class PersonalManagementFacade {
     return userService.updateProfile(id, firstName, lastName, email, phoneNumber, dni);
   }
 
+  public void registerMobileDevice(Long userId, String fcmToken) throws InstanceNotFoundException {
+    userService.registerMobileDevice(userId, fcmToken);
+  }
+
   public void changePassword(Long id, String oldPassword, String newPassword)
       throws InstanceNotFoundException, IncorrectPasswordException {
 

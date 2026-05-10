@@ -14,8 +14,10 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.google.gson.Gson
 import es.udc.emergencyapp.AppTheme
+import es.udc.emergencyapp.R
 import es.udc.emergencyapp.data.dto.EmergencyDto
 import es.udc.emergencyapp.ui.setContentWithSystemBars
 
@@ -34,12 +36,12 @@ class EmergencyDetailActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            title = { Text(text = "Emergency") },
+                            title = { Text(text = stringResource(R.string.emergency_title)) },
                             navigationIcon = {
                                 IconButton(onClick = { finish() }) {
                                     Icon(
                                         imageVector = Icons.Filled.ArrowBack,
-                                        contentDescription = "Back"
+                                        contentDescription = stringResource(R.string.back_label)
                                     )
                                 }
                             }

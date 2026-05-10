@@ -8,3 +8,10 @@ data class TeamUserItem(
     val phoneNumber: String? = null,
     val dni: String? = null
 )
+
+data class TeamSummary(
+    val id: Long = -1L,
+    val code: String = "",
+    val orgName: String = "",
+    val members: List<TeamUserItem> = emptyList()
+)

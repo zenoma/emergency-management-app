@@ -25,6 +25,7 @@ import es.udc.emergencyproject.backend.model.exceptions.QuadrantNotLinkedToEmerg
 import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.services.emergency.EmergencyManagementService;
 import es.udc.emergencyproject.backend.model.services.logs.LogManagementService;
+import es.udc.emergencyproject.backend.model.services.notifications.AssignmentNotificationService;
 import es.udc.emergencyproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -51,6 +52,7 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
   private final EmergencyTypeRepository emergencyTypeRepository;
   private final AssignmentRepository assignmentRepository;
   private final ResourceRepository resourceRepository;
+  private final AssignmentNotificationService assignmentNotificationService;
 
   // QUADRANT SERVICE
   @Override
@@ -248,6 +250,7 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
             a.setStatus(AssignmentStatus.COMPLETED);
             a.setCompletedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
             assignmentRepository.save(a);
+            assignmentNotificationService.notifyTeamAssignmentStatusChanged(a, AssignmentStatus.COMPLETED);
             try {
               logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_COMPLETED,
                   "Assignment auto-completed due to emergency resolved");
