@@ -51,4 +51,5 @@
     <string name="label_user">User</string>
     <string name="label_coordinates">Coordinates</string>
     <string name="assignments">Assignments</string>
+    <string name="no_se_ha_podido_aceptar_la_asignaci_n_porque_el_equipo_est_en_estado_ocupado">Can\'t assign the team because it\'s state is busy.</string>
 </resources>

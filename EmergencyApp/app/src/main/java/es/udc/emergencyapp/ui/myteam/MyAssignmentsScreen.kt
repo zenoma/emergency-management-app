@@ -1,5 +1,6 @@
 package es.udc.emergencyapp.ui.myteam
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import es.udc.emergencyapp.MainActivity
+import es.udc.emergencyapp.R
 import es.udc.emergencyapp.net.HttpClient
+import es.udc.emergencyapp.ui.DrawerBadgeState
 import es.udc.emergencyapp.ui.common.StatusChip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,12 +41,10 @@ fun MyAssignmentsScreen(teamId: Long) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
     var assignments by remember { mutableStateOf(listOf<JSONObject>()) }
 
     LaunchedEffect(teamId) {
         loading = true
-        error = null
         try {
             withContext(Dispatchers.IO) {
                 val pair =
@@ -58,20 +60,24 @@ fun MyAssignmentsScreen(teamId: Long) {
                         }
                     }
                     assignments = list
-                } else {
-                    error = "No response"
                 }
             }
         } catch (e: Exception) {
-            error = e.localizedMessage ?: e.toString()
+            Toast.makeText(
+                context,
+                "No se ha podido asignar el recurso, porque está ocupado",
+                Toast.LENGTH_LONG
+            ).show()
         } finally {
             loading = false
         }
     }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Text(text = "Mis assignments", style = MaterialTheme.typography.h5)
 
         if (loading) {
@@ -86,11 +92,6 @@ fun MyAssignmentsScreen(teamId: Long) {
             return@Column
         }
 
-        if (!error.isNullOrBlank()) {
-            Text(text = error ?: "Error", color = MaterialTheme.colors.error)
-            return@Column
-        }
-
         if (assignments.isEmpty()) {
             Text(text = "No hay asignaciones activas")
         } else {
@@ -100,13 +101,22 @@ fun MyAssignmentsScreen(teamId: Long) {
                         assignment = a,
                         onAccept = { assignmentId ->
                             scope.launch {
-                                val updated = acceptAssignment(context, assignmentId)
+                                val result = acceptAssignment(context, assignmentId)
+                                val updated = result.first
                                 if (updated != null) {
                                     assignments = assignments.map { current ->
-                                        if (current.optLong("id", -1L) == assignmentId) updated else current
+                                        if (current.optLong(
+                                                "id",
+                                                -1L
+                                            ) == assignmentId
+                                        ) updated else current
                                     }.filter { it.optString("status").uppercase() != "COMPLETED" }
+                                    DrawerBadgeState.refreshTrigger++
+                                    (context as? MainActivity)?.refreshDrawerAssignments()
                                 } else {
-                                    error = "No se ha podido aceptar la asignación"
+                                    val message =
+                                        context.getString(R.string.no_se_ha_podido_aceptar_la_asignaci_n_porque_el_equipo_est_en_estado_ocupado)
+                                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                                 }
                             }
                         }
@@ -123,9 +133,11 @@ private fun AssignmentCard(
     onAccept: (Long) -> Unit
 ) {
     val status = assignment.optString("status")
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 6.dp)) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+    ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(text = "#${assignment.optLong("id", 0)}")
             StatusChip(status = status)
@@ -154,7 +166,7 @@ private fun AssignmentCard(
 private suspend fun acceptAssignment(
     context: android.content.Context,
     assignmentId: Long
-): JSONObject? {
+): Pair<JSONObject?, String?> {
     return withContext(Dispatchers.IO) {
         for (host in HttpClient.defaultHosts) {
             try {
@@ -180,11 +192,17 @@ private suspend fun acceptAssignment(
                 }
                 conn.disconnect()
                 if (code in 200..299 && !responseBody.isNullOrBlank()) {
-                    return@withContext JSONObject(responseBody)
+                    return@withContext Pair(JSONObject(responseBody), null)
+                }
+                if (code !in 200..299) {
+                    return@withContext Pair(
+                        null,
+                        responseBody?.takeIf { it.isNotBlank() }
+                            ?: "No se ha podido aceptar la asignación")
                 }
             } catch (_: Exception) {
             }
         }
-        null
+        Pair(null, "No se ha podido aceptar la asignación")
     }
 }

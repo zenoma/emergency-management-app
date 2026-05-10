@@ -52,5 +52,6 @@
     <string name="label_user">Usuario</string>
     <string name="label_coordinates">Coordenadas</string>
     <string name="assignments">Asignaciones</string>
+    <string name="no_se_ha_podido_aceptar_la_asignaci_n_porque_el_equipo_est_en_estado_ocupado">No se ha podido aceptar la asignación porque el equipo está en estado ocupado.</string>
 
 </resources>

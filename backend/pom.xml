@@ -163,6 +163,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-admin</artifactId>
+      <version>9.4.3</version>
+    </dependency>
+
+    <dependency>
       <artifactId>jackson-databind-nullable</artifactId>
       <groupId>org.openapitools</groupId>
       <version>0.2.3</version>

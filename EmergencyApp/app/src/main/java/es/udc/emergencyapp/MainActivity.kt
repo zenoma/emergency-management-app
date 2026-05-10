@@ -2,12 +2,15 @@ package es.udc.emergencyapp
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.compose.foundation.background
@@ -48,9 +51,13 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,6 +67,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.edit
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import androidx.navigation.compose.NavHost
@@ -78,21 +86,51 @@ import es.udc.emergencyapp.ui.notices.MyNoticesScreen
 import es.udc.emergencyapp.ui.notices.SendNoticeFragment
 import es.udc.emergencyapp.ui.profile.ProfileScreen
 import es.udc.emergencyapp.ui.myteam.MyAssignmentsScreen
+import es.udc.emergencyapp.ui.DrawerBadgeState
 import org.json.JSONObject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        const val EXTRA_ROUTE = "extra_route"
+    }
+
     var composeRouteSetter: ((String) -> Unit)? = null
+    private var pendingNotificationRoute by mutableStateOf<String?>(null)
+
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val lang = LocaleHelper.getPersistedLanguage(this)
         LocaleHelper.setLocale(this, lang)
 
+        pendingNotificationRoute = intent?.getStringExtra(EXTRA_ROUTE)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+
         setContent {
             AppTheme {
-                MainScreenSimple()
+                MainScreenSimple(initialRoute = pendingNotificationRoute)
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val route = intent.getStringExtra(EXTRA_ROUTE)
+        if (!route.isNullOrBlank()) {
+            pendingNotificationRoute = route
+            composeRouteSetter?.invoke(route)
         }
     }
 
@@ -113,6 +151,10 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.w("MainActivityNav", "Failed to set route $route", e)
         }
+    }
+
+    fun refreshDrawerAssignments() {
+        DrawerBadgeState.refreshTrigger++
     }
 
     private fun syncMobileDeviceToken() {
@@ -144,7 +186,7 @@ class MainActivity : AppCompatActivity() {
 }
 
 @Composable
-private fun MainScreenSimple() {
+private fun MainScreenSimple(initialRoute: String? = null) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
@@ -156,6 +198,12 @@ private fun MainScreenSimple() {
             navController.navigate(r) { launchSingleTop = true }
         } catch (e: Exception) {
             Log.w("MainActivityNav", "Failed to navigate to $r", e)
+        }
+    }
+
+    LaunchedEffect(initialRoute) {
+        if (!initialRoute.isNullOrBlank()) {
+            navController.navigate(initialRoute) { launchSingleTop = true }
         }
     }
 
@@ -180,11 +228,59 @@ private fun MainScreenSimple() {
             val context = LocalContext.current
             val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
             val jwtLocal = prefs.getString("jwt_token", null)
+            var teamId by remember { mutableStateOf<Long?>(null) }
+            var pendingAssignmentsCount by remember { mutableStateOf(0) }
+            val drawerRefreshTrigger = DrawerBadgeState.refreshTrigger
+
+            LaunchedEffect(jwtLocal, drawerRefreshTrigger) {
+                teamId = null
+                pendingAssignmentsCount = 0
+                if (!jwtLocal.isNullOrBlank()) {
+                    val teamPair = withContext(Dispatchers.IO) {
+                        HttpClient.getFromHosts("/teams/myTeam", context)
+                    }
+                    val teamBody = teamPair.first
+                    if (!teamBody.isNullOrBlank()) {
+                        try {
+                            val teamArr = org.json.JSONArray(teamBody)
+                            if (teamArr.length() > 0) {
+                                val team = teamArr.getJSONObject(0)
+                                val id = team.optLong("id", -1L)
+                                if (id > 0) {
+                                    teamId = id
+                                    val assignmentsPair = withContext(Dispatchers.IO) {
+                                        HttpClient.getFromHosts("/assignments?resourceId=$id", context)
+                                    }
+                                    val assignmentsBody = assignmentsPair.first
+                                    if (!assignmentsBody.isNullOrBlank()) {
+                                        val arr = org.json.JSONArray(assignmentsBody)
+                                        var count = 0
+                                        for (i in 0 until arr.length()) {
+                                            val assignment = arr.getJSONObject(i)
+                                            if (assignment.optString("status").uppercase() == "PENDING") {
+                                                count++
+                                            }
+                                        }
+                                        pendingAssignmentsCount = count
+                                    }
+                                }
+                            }
+                        } catch (_: Exception) {
+                        }
+                    }
+                }
+            }
 
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colors.primary.copy(alpha = 0.06f))
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        scope.launch { scaffoldState.drawerState.close() }
+                    }
             ) {
                 Column(
                     modifier = Modifier
@@ -294,6 +390,7 @@ private fun MainScreenSimple() {
                     val block1 = listOf(
                         Triple("map", "Map", Icons.Filled.Map),
                         Triple("myteam", "My Team", Icons.Filled.Group),
+                        Triple("myassignments", "Team assignments", Icons.Filled.Description),
                         Triple("organizations", "Organizations", Icons.Filled.Business),
                         Triple("emergencies", "Emergencies", Icons.Filled.Description)
                     )
@@ -314,7 +411,11 @@ private fun MainScreenSimple() {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
-                                            navController.navigate(route) { launchSingleTop = true }
+                                            if (route == "myassignments" && teamId != null) {
+                                                navController.navigate("myassignments/${teamId}") { launchSingleTop = true }
+                                            } else {
+                                                navController.navigate(route) { launchSingleTop = true }
+                                            }
                                             scope.launch { scaffoldState.drawerState.close() }
                                         }
                                         .padding(10.dp),
@@ -325,6 +426,23 @@ private fun MainScreenSimple() {
                                         modifier = Modifier.padding(end = 12.dp)
                                     )
                                     Text(text = title, style = MaterialTheme.typography.body1)
+                                    if (route == "myassignments" && pendingAssignmentsCount > 0) {
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(start = 8.dp)
+                                                .background(
+                                                    color = androidx.compose.ui.graphics.Color.Red,
+                                                    shape = RoundedCornerShape(999.dp)
+                                                )
+                                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                                        ) {
+                                            Text(
+                                                text = pendingAssignmentsCount.toString(),
+                                                color = androidx.compose.ui.graphics.Color.White,
+                                                style = MaterialTheme.typography.caption
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -399,6 +517,9 @@ private fun MainScreenSimple() {
                             navController.navigate("myassignments/$teamId") { launchSingleTop = true }
                         })
                     }
+                }
+                composable("myassignments") {
+                    es.udc.emergencyapp.ui.ScreenContainer { MyAssignmentsScreen(-1L) }
                 }
                 composable(
                     "myassignments/{teamId}",
