@@ -66,6 +66,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
@@ -73,6 +75,7 @@ import es.udc.emergencyapp.ui.map.MapScreen
 import es.udc.emergencyapp.ui.notices.MyNoticesScreen
 import es.udc.emergencyapp.ui.notices.SendNoticeFragment
 import es.udc.emergencyapp.ui.profile.ProfileScreen
+import es.udc.emergencyapp.ui.myteam.MyAssignmentsScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -355,7 +358,20 @@ private fun MainScreenSimple() {
                 composable("notices") { es.udc.emergencyapp.ui.ScreenContainer { MyNoticesScreen() } }
                 composable("emergencies") { es.udc.emergencyapp.ui.ScreenContainer { es.udc.emergencyapp.ui.emergencies.EmergenciesScreen() } }
                 composable("organizations") { es.udc.emergencyapp.ui.ScreenContainer { FeaturePlaceholder("Organizations") } }
-                composable("myteam") { es.udc.emergencyapp.ui.ScreenContainer { es.udc.emergencyapp.ui.myteam.MyTeamScreen() } }
+                composable("myteam") {
+                    es.udc.emergencyapp.ui.ScreenContainer {
+                        es.udc.emergencyapp.ui.myteam.MyTeamScreen(onOpenAssignments = { teamId ->
+                            navController.navigate("myassignments/$teamId") { launchSingleTop = true }
+                        })
+                    }
+                }
+                composable(
+                    "myassignments/{teamId}",
+                    arguments = listOf(navArgument("teamId") { type = NavType.LongType })
+                ) { backStackEntry ->
+                    val teamId = backStackEntry.arguments?.getLong("teamId") ?: -1L
+                    es.udc.emergencyapp.ui.ScreenContainer { MyAssignmentsScreen(teamId) }
+                }
                 composable("profile") { es.udc.emergencyapp.ui.ScreenContainer { ProfileScreenCompose() } }
                 composable("send_notice") { es.udc.emergencyapp.ui.ScreenContainer { SendNoticeHost() } }
                 composable("fire_management") { FeaturePlaceholder("Fire Management") }

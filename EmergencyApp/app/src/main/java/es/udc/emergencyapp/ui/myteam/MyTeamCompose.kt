@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -96,6 +98,8 @@ fun TeamScreenComposable(
     teamCode: String,
     orgName: String,
     members: List<TeamUserItem>,
+    teamId: Long,
+    onOpenAssignments: (Long) -> Unit,
     loading: Boolean = false,
     error: String? = null
 ) {
@@ -153,6 +157,16 @@ fun TeamScreenComposable(
             }
         }
 
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Button(
+            onClick = { if (teamId > 0) onOpenAssignments(teamId) },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = teamId > 0
+        ) {
+            Text(text = stringResource(R.string.assignments))
+        }
+
         Text(
             text = "Members",
             fontSize = 28.sp,
@@ -185,11 +199,12 @@ fun TeamScreenComposable(
 }
 
 @Composable
-fun MyTeamScreen() {
+fun MyTeamScreen(onOpenAssignments: (Long) -> Unit = {}) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var teamCode by remember { mutableStateOf("") }
     var orgName by remember { mutableStateOf("") }
     var members by remember { mutableStateOf(listOf<TeamUserItem>()) }
+    var teamId by remember { mutableStateOf(-1L) }
 
     var loading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -199,7 +214,7 @@ fun MyTeamScreen() {
         error = null
         try {
             val prefs = context.getSharedPreferences("app_prefs", 0)
-            val token = prefs.getString("jwt_token", null)
+            prefs.getString("jwt_token", null)
             withContext(Dispatchers.IO) {
                 val pair = es.udc.emergencyapp.net.HttpClient.getFromHosts("/teams/myTeam", context)
                 val body = pair.first
@@ -207,6 +222,7 @@ fun MyTeamScreen() {
                     val arr = JSONArray(body)
                     if (arr.length() > 0) {
                         val team = arr.getJSONObject(0)
+                        teamId = team.optLong("id", -1L)
                         teamCode = team.optString("code", "")
                         val org = team.optJSONObject("organization")
                         orgName = org?.optString("name", "") ?: ""
@@ -244,6 +260,8 @@ fun MyTeamScreen() {
         teamCode = teamCode,
         orgName = orgName,
         members = members,
+        teamId = teamId,
+        onOpenAssignments = onOpenAssignments,
         loading = loading,
         error = error
     )
