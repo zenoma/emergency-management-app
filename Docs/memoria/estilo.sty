@@ -93,11 +93,12 @@
 \usepackage[nottoc,notlot,notlof,notindex]{tocbibind}
 \usepackage{titlesec}
 \usepackage{url}
+\usepackage{float}
 
 \usepackage{blindtext}
 \usepackage{silence}
 \WarningsOff[blindtext] % suppress warnings related to package blindtext (galician not defined)
-\usepackage[pdfencoding=auto,colorlinks]{hyperref}
+\usepackage[pdfencoding=auto,colorlinks,plainpages=false,pdfpagelabels]{hyperref}
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% % definición de comandos               %
@@ -130,9 +131,9 @@
 \pagestyle{fancy}
 \fancyhead{}
 \fancyhead[LO]{{\small\leftmark}}
-\fancyhead[RE]{{\small\nouppercase{\textsl{\rightmark}}}}
+\fancyhead[R]{{\small\nouppercase{\textsl{\rightmark}}}}
 \fancyfoot{}
-\fancyfoot[CE,CO]{\thepage}
+\fancyfoot[C]{\thepage}
 \setlength{\headheight}{14pt}
 
 \fancypagestyle{sobrante}{\fancyfoot[CE,CO]{\color{red} \hrulefill PÁXINA EXTRA \hrulefill \thepage{} \hrulefill PÁXINA EXTRA \hrulefill}}
@@ -211,3 +212,9 @@
 \input{bibliografia/glosario}
 
 \endinput
+
+
+\emergencystretch=3em
+\tolerance=1000
+\hfuzz=10pt
+

@@ -1,0 +1,187 @@
+\chapter{Estado del arte}
+\label{chap:estadoarte}
+
+\lettrine{E}{n este capítulo} se realiza un análisis de las aplicaciones y herramientas existentes que pueden aportar soluciones para abordar la problemática comentada en este  documento. 
+
+El objetivo no es ofrecer una revisión exhaustiva, sino identificar soluciones relevantes que aporten funcionalidades parecidas a las requeridas:  como gestión de avisos/incidencias, representación geoespacial de emergencias y coordinación de equipos en campo.
+
+\section{Aplicaciones de gestión de incidencias}
+\label{sec:arte-incidencias}
+
+\subsection{Jira}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/jira.jpg}
+  \caption{Vista de proyecto en Jira}
+  \label{fig:Jira}
+\end{figure}
+
+Jira \cite{jira} es una plataforma de gestión de incidencias y proyectos que facilita la creación, seguimiento y priorización de tickets. Permite asignar incidencias a usuarios o equipos, definir flujos de trabajo personalizados y enviar notificaciones a través de correo o integraciones con otras plataformas. Es muy usada en entornos de desarrollo de software y en gestión de servicios.
+
+Una limitación grande para solucionar esta problemática es que no incluye representación geoespacial de incidencias para ello sería necesario integrar componentes de mapas con un sistema GIS.
+
+\subsection{Asana}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imaxes/arte/asana.png}
+  \caption{Vista de proyecto en Asana}
+  \label{fig:Asana}
+\end{figure}
+
+Asana \cite{asana} es una herramienta de gestión de tareas y proyectos orientada a la colaboración. Permite la creación de tareas, asignación, prioridades, vistas en lista/kanban/calendario y notificaciones móviles.
+
+Un gran inconveniente es que Asana no dispone de capacidades de representación cartográfica integradas, por lo que su uso en coordinación de emergencias quedaría limitado a la gestión de tareas y comunicaciones.
+
+\subsection{Línea Verde}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/linea_verde.png}
+  \caption{Vista de la app Línea Verde}
+  \label{fig:LíneaVerde}
+\end{figure}
+
+Línea Verde \cite{linea_verde} es una plataforma de participación ciudadana y gestión de incidencias orientada a ayuntamientos. Ofrece una app gratuita para ciudadanos para notificar problemas y un sistema de gestión para que los equipos municipales asignen, gestionen y cierren las incidencias en tiempo real. También proporciona portales web.
+
+Limitaciones respecto a la problemática de coordinación de emergencias: Línea Verde está claramente orientada al mantenimiento urbano y a la comunicación ciudadano con la administración. Su foco funcional es la gestión de incidencias cotidianas y la mejora del servicio municipal. No parece centrarse en la gestión operativa de emergencias.
+
+\section{Aplicaciones sobre geolocalización de información}
+\label{sec:arte-geolocalizacion}
+
+\subsection{Global Forest Watch - Fires}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/AFISMap.png}
+  \caption{Ejemplo de mapa de detección de incendios (AFIS / capa de incendios)}
+  \label{fig:AFISMap}
+\end{figure}
+
+Global Forest Watch Fires \cite{gfw_fires} ofrece capas de detección de incendios y alertas a partir de datos satelitales. Proporciona herramientas de visualización temporal y filtrado por región.
+
+Un problema a la hora de solventar esta problemática es que se centra en detección remota basada en satélites y no está diseñado para la coordinación operativa de recursos humanos en el terreno ni para la participación ciudadana.
+
+\subsection{InciWeb}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/inci_web.png}
+  \caption{Vista de la app InciWeb}
+  \label{fig:InciWeb}
+\end{figure}
+
+InciWeb \cite{inciweb} es una plataforma de información sobre incidentes (especialmente grandes incendios) gestionada por agencias en Estados Unidos. Ofrece mapas, informes y enlaces a recursos locales.
+
+Limitaciones: Está orientada a la difusión de información entre agencias y al público, pero no incluye herramientas para la creación colaborativa de avisos por parte de ciudadanos ni para la gestión táctica de equipos.
+
+\subsection{Google Maps}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/GoogleMaps.png}
+  \caption{Ejemplo de capa/alertas en Google Maps}
+  \label{fig:GoogleMaps}
+\end{figure}
+
+Google Maps \cite{google_maps} permite mostrar capas y alertas geoespaciales y ofrece APIs fáciles de integrar en aplicaciones. Su ventaja es la amplia base de usuarios y la calidad de su cartografía.
+
+Google Maps no gestiona la parte de despliegue de recursos ni proporciona un flujo de trabajo de incident management; requiere integración con backend para esas funcionalidades.
+
+
+\section{Aplicaciones orientadas a organizar grupos de trabajo}
+\label{sec:arte-equipos}
+
+\subsection{Microsoft Teams}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/teams.png}
+  \caption{Vista equipos en Microsoft Teams}
+  \label{fig:Teams}
+\end{figure}
+
+Microsoft Teams \cite{microsoft_teams} es una plataforma de colaboración que combina chat, videollamadas, gestión de archivos y organización por equipos. Es útil para coordinación y comunicación entre miembros de una organización.
+
+Su gran inconveniente es que no ofrece una visión geoespacial de recursos ni integra, por defecto, flujos de notificación orientados a emergencias o despliegue de equipos.
+
+\subsection{Odoo}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/odoo.jpg}
+  \caption{Vista equipos en Odoo}
+  \label{fig:Odoo}
+\end{figure}
+
+Odoo \cite{odoo} es un ERP modular que puede adaptarse para gestionar proyectos, recursos y comunicaciones. Su flexibilidad permite crear módulos específicos para necesidades concretas.
+
+Para poder utilizar este recurso se requiere desarrollo y personalización que permitan cubrir flujos de coordinación de emergencias; la representación cartográfica suele necesitar módulos adicionales.
+
+\subsection{PCAM Gestión}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/PCAM.png}
+  \caption{Panel de control en PCAM Gestión}
+  \label{fig:PCAM}
+\end{figure}
+
+PCAM Gestión \cite{pcam_gestion} es una solución orientada a la protección civil que facilita la creación de avisos, asignación de personal y notificaciones. Incluye app móvil y panel de control para administradores.
+
+Esta applicación integra funcionalidades geoespaciales y visibilidad en tiempo real de recursos pero son limitadas o dependen de módulos adicionales.
+
+\subsection{XeoCode Lite}
+XeoCode Lite permite consultar el origen y evolución de incendios, recursos asignados y cartografía asociada. Al ser una herramienta de uso interno normalmente no facilita la participación ciudadana directa.
+
+
+\section{Iniciativas públicas recientes}
+\label{sec:arte-public}
+
+\subsection{Xunta de Galicia: nueva app y ampliación de detección temprana}
+
+En una comunicado, la Xunta de Galicia ha anunciado la ampliación de mecanismos de detección temprana de incendios forestales mediante la creación de una nueva app para la ciudadanía junto el uso de cámaras de videovigilancia.\cite{xunta_deteccion_incendios_2026}.
+
+Esta applicación combina un canal para notificaciones tempranas, sensores y cámaras para observación remota y procesamiento automatizado con IA para priorizar alertas y detectar anomalías. Todo ello para ayudar a la notificación y coordinación de emergencias en tiempo real.
+
+Funcionalmente esta nueva app parece converger mucho con el dominio funcional del \acrshort{tfg} \cite{TFGAdrianGarcia2025}: reportes ciudadanos, integración de sistemas de información dispares como avisos ciudadanos y meteorológicos y también cuenta con representación geoespacial; a efectos prácticos la solución de la Xunta incorpora muchas de las ideas que se prototiparon en el \acrshort{tfg}.
+
+Algunas diferencias clave respecto al \acrshort{tfg} son que la applicación  añade una capa de hardware y vigilancia (cámaras/sensores) y está diseñada para integrarse en procedimientos administrativos y operativos a escala autonómica. Por otro lado, el \acrshort{tfg}  aporta un énfasis en la coordinación táctica como la asignación de recursos, gestión por cuadrantes y soporte a decisiones de despliegue en campo.
+
+Como comentario crítico, cabe destacar la coincidencia temática que resalta la relevancia del problema abordado en el \acrshort{tfg} y demuestra que las soluciones propuestas tienen aplicación real. Ambas aproximaciones son complementarias y evidencian la necesidad de soluciones integrales que aborden todo el ciclo de gestión de emergencias, desde la detección hasta la coordinación en campo. 
+
+
+\section{Conclusión}
+Las aplicaciones analizadas ofrecen soluciones parciales en las tres dimensiones de interés: gestión de avisos, representación geoespacial y coordinación de equipos. Ninguna de las herramientas revisadas integra de forma nativa las tres capacidades con enfoque ciudadano-operativo y despliegue de recursos; esto evidencia el hueco funcional que aborda la propuesta de este trabajo.
+
+La tabla comparativa 3.1 resume las funcionalidades analizadas para resaltar fortalezas y carencias de cada alternativa:
+
+\begin{table}[H]
+  \centering
+  \resizebox{\textwidth}{!}{
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabular}{c|c|c|c|c|c|c|c|c}
+      \rowcolor{udcpink!25}
+      &
+      \begin{tabular}[c]{@{}l@{}}Visualización \\ geográfica\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Datos \\ meteorológicos\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Gestión de \\ personal y recursos\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Plan gratuito \\ suficiente\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Plugins \\o margen de mejora\end{tabular} & 
+      \begin{tabular}[c]{@{}l@{}}Sistema de avisos \\o notificaciones\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}Multi-\\emergencia\end{tabular} &
+      \begin{tabular}[c]{@{}l@{}}App \\ móvil\end{tabular} \\
+      \textit{Jira} &  &  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+      \textit{Asana} &  &  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+      \textit{Línea Verde} & \checkmark &  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+      \textit{Global Forest Watch - Fires} & \checkmark & \checkmark &  & \checkmark &  & \checkmark &  &  \\
+      \textit{InciWeb} & \checkmark &  &  & \checkmark &  &  &  &  \\
+      \textit{Google Maps} & \checkmark &  &  & \checkmark & \checkmark &  &  & \checkmark \\
+      \textit{Microsoft Teams} &  &  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+      \textit{Odoo} &  &  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+      \textit{PCAM Gestión} & \checkmark &  & \checkmark &  & \checkmark & \checkmark & \checkmark & \checkmark \\
+      \textit{XeoCode Lite} & \checkmark & ? & \checkmark & ? & ? & ? & ? & ? \\
+      \textit{Xunta (nueva app)} & \checkmark & \checkmark &  & \checkmark &  & \checkmark &  & \checkmark \\
+    \end{tabular}}    
+    \caption{Tabla de comparativa entre aplicaciones}
+    \label{tab:comparativa}
+\end{table}
