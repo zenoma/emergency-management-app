@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -207,15 +208,15 @@ fun EmergenciesScreen() {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 6.dp)
+                        .padding(vertical = 8.dp)
                         .clickable { openDetails() },
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = 3.dp
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = 6.dp
                 ) {
                     Row(
                         modifier = Modifier
                             .background(bg)
-                            .padding(10.dp)
+                            .padding(14.dp)
                             .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
                     ) {
 
@@ -241,39 +242,40 @@ fun EmergenciesScreen() {
                             }
                         }
 
-                        Spacer(modifier = Modifier.padding(6.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
 
                         Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = e.description ?: "(no description)",
+                                style = MaterialTheme.typography.subtitle1,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = e.description ?: "(no description)",
-                                    style = MaterialTheme.typography.subtitle1,
+                                    text = (e.emergencyTypeName
+                                        ?: "") + (if (!e.quadrantInfo.isNullOrEmpty()) " • ${e.quadrantInfo.first().nombre ?: ""}" else ""),
+                                    style = MaterialTheme.typography.body2,
+                                    color = Color.DarkGray,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f)
                                 )
-                                Spacer(modifier = Modifier.padding(6.dp))
                                 Text(
                                     text = "#${e.id}",
                                     style = MaterialTheme.typography.caption,
                                     color = Color.Gray,
-                                    modifier = Modifier.padding(start = 6.dp)
+                                    modifier = Modifier.padding(start = 8.dp)
                                 )
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = (e.emergencyTypeName
-                                    ?: "") + (if (!e.quadrantInfo.isNullOrEmpty()) " • ${e.quadrantInfo.first().nombre ?: ""}" else ""),
-                                style = MaterialTheme.typography.body2,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
                             Spacer(modifier = Modifier.height(6.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = es.udc.emergencyapp.util.DateUtils.formatForDisplay(e.createdAt),
                                     style = MaterialTheme.typography.caption
                                 )
-                                Spacer(modifier = Modifier.padding(8.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
                                 val loc = e.location
                                 if (loc != null) {
                                     CoordinateWithQuadrantChip(
@@ -296,6 +298,8 @@ fun EmergenciesScreen() {
                                 }
                             }
                         }
+
+                        Spacer(modifier = Modifier.width(10.dp))
 
                         Column(horizontalAlignment = Alignment.End) {
                             CompactChip(label = e.emergencyIndex ?: "", bgColor = idxColor)

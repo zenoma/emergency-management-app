@@ -60,7 +60,7 @@ ON CONFLICT (id) DO NOTHING;
 
 -- Users, some attached to teams
 INSERT INTO "user" (id, email, password, first_name, last_name, dni, phone_number, user_role, created_at, team_id)
-VALUES (401, 'coord.galicia@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'John', 'Doe', '11111111A', 611111111, 'COORDINATOR', CURRENT_TIMESTAMP(3), NULL),
+VALUES (401, 'coord.galicia@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'John', 'Doe', '11111111A', 611111111, 'COORDINATOR', CURRENT_TIMESTAMP(3), 201),
        (402, 'marta.team@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Marta', 'Lago', '22222222B', 622222222, 'USER', CURRENT_TIMESTAMP(3), 201),
        (403, 'diego.team@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Diego', 'Fernandez', '33333333C', 633333333, 'USER', CURRENT_TIMESTAMP(3), 201),
        (404, 'lara.team@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Lara', 'Mendez', '44444444D', 644444444, 'USER', CURRENT_TIMESTAMP(3), 202),

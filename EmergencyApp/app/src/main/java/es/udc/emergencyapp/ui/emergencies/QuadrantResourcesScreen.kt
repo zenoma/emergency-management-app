@@ -30,7 +30,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import es.udc.emergencyapp.R
 import es.udc.emergencyapp.net.HttpClient
+import es.udc.emergencyapp.ui.common.AssignmentResourceCard
 import es.udc.emergencyapp.ui.common.StatusChip
+import es.udc.emergencyapp.util.DateUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -258,84 +260,5 @@ private fun AssignmentRow(assignment: JSONObject) {
 
 @Composable
 private fun ModernAssignmentRow(assignment: JSONObject) {
-    val status = assignment.optString("status")
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "#${assignment.optLong("id", 0)}",
-                    style = MaterialTheme.typography.subtitle1
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                StatusChip(status = status)
-            }
-
-            Column(modifier = Modifier.weight(2f)) {
-                val assignedAt = assignment.optString("assignedAt")
-                val acceptedAt = assignment.optString("acceptedAt")
-                val completedAt = assignment.optString("completedAt")
-                if (assignedAt.isNotBlank()) Text(
-                    text = stringResource(
-                        R.string.assigned_label,
-                        assignedAt
-                    ), style = MaterialTheme.typography.body2
-                )
-                if (acceptedAt.isNotBlank()) Text(
-                    text = stringResource(
-                        R.string.accepted_label,
-                        acceptedAt
-                    ), style = MaterialTheme.typography.body2
-                )
-                if (completedAt.isNotBlank()) Text(
-                    text = stringResource(
-                        R.string.completed_label,
-                        completedAt
-                    ), style = MaterialTheme.typography.body2
-                )
-
-                val teamJson =
-                    if (assignment.has("teamInfo") && !assignment.isNull("teamInfo")) assignment.optJSONObject(
-                        "teamInfo"
-                    ) else null
-                val vehicleJson =
-                    if (assignment.has("vehicleInfo") && !assignment.isNull("vehicleInfo")) assignment.optJSONObject(
-                        "vehicleInfo"
-                    ) else null
-                Spacer(modifier = Modifier.height(6.dp))
-                teamJson?.let { t ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Default.Group,
-                            contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.size(6.dp))
-                        Text(
-                            text = t.optString("code"),
-                            style = MaterialTheme.typography.body1
-                        )
-                    }
-                }
-                vehicleJson?.let { v ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Default.DirectionsCar,
-                            contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.size(6.dp))
-                        Text(
-                            text = v.optString("vehiclePlate"),
-                            style = MaterialTheme.typography.body1
-                        )
-                    }
-                }
-            }
-        }
-    }
+    AssignmentResourceCard(assignment)
 }
