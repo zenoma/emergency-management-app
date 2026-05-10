@@ -48,6 +48,8 @@ paths:
     $ref: './users/users_$id$_changePassword.yml'
   /users/{id}/updateRole:
     $ref: './users/users_$id$_updateRole.yml'
+  /users/{id}/mobileDevice:
+    $ref: './users/users_$id$_mobileDevice.yml'
 
   /quadrants:
     $ref: './quadrants/quadrants.yml'

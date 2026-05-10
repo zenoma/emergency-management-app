@@ -120,6 +120,14 @@ CREATE TABLE image
     created_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL
 );
 
+CREATE TABLE mobile_device
+(
+    id           BIGSERIAL PRIMARY KEY,
+    fcm_token    VARCHAR(255) UNIQUE NOT NULL,
+    last_seen_at TIMESTAMP(3),
+    user_id      BIGINT UNIQUE NOT NULL
+);
+
 
 CREATE TABLE emergency_quadrant
 (
@@ -209,6 +217,11 @@ ALTER TABLE "user"
     ADD CONSTRAINT fk_team_id
         FOREIGN KEY (team_id)
             REFERENCES team (id);
+
+ALTER TABLE mobile_device
+    ADD CONSTRAINT fk_mobile_device_user_id
+        FOREIGN KEY (user_id)
+            REFERENCES "user" (id);
 
 ALTER TABLE notice
     ADD CONSTRAINT fk_user_id

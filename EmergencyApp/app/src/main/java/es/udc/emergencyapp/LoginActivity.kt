@@ -37,6 +37,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.messaging.FirebaseMessaging
+import es.udc.emergencyapp.net.HttpClient
 import es.udc.emergencyapp.ui.setContentWithSystemBars
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -95,6 +97,7 @@ class LoginActivity : AppCompatActivity() {
                     val obj = JSONObject(resp)
                     val token = obj.optString("token", "")
                     val userObj = obj.optJSONObject("user")
+                    var userId = -1L
 
                     val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
                     prefs.edit().apply {
@@ -107,14 +110,18 @@ class LoginActivity : AppCompatActivity() {
                             putString("user_phone", userObj.optString("phoneNumber", ""))
                             putString("user_dni", userObj.optString("dni", ""))
                             putString("user_role", userObj.optString("userRole", ""))
-                            val uid = try {
+                            userId = try {
                                 userObj.optLong("id", -1L)
                             } catch (e: Exception) {
                                 -1L
                             }
-                            if (uid > 0) putLong("user_id", uid)
+                            if (userId > 0) putLong("user_id", userId)
                         }
                         apply()
+                    }
+
+                    if (userId > 0) {
+                        registerMobileDevice(userId)
                     }
 
                     runOnUiThread {
@@ -144,6 +151,27 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }.start()
+    }
+
+    private fun registerMobileDevice(userId: Long) {
+        FirebaseMessaging.getInstance().token
+            .addOnSuccessListener { fcmToken ->
+                Thread {
+                    try {
+                        val payload = JSONObject().apply {
+                            put("fcmToken", fcmToken)
+                        }.toString()
+                        val path = "/users/$userId/mobileDevice"
+                        val response = HttpClient.postToHosts(path, this@LoginActivity, payload)
+                        Log.d("LoginActivityNet", "Mobile device register host=${response.second} body=${response.first}")
+                    } catch (e: Exception) {
+                        Log.w("LoginActivityNet", "Failed to register mobile device", e)
+                    }
+                }.start()
+            }
+            .addOnFailureListener { e ->
+                Log.w("LoginActivityNet", "Failed to get FCM token", e)
+            }
     }
 
     override fun attachBaseContext(newBase: Context) {

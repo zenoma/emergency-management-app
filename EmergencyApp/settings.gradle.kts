@@ -13,6 +13,7 @@ pluginManagement {
     plugins {
         // Compose Compiler Gradle plugin required for Kotlin 2.x + Compose
         id("org.jetbrains.kotlin.plugin.compose") version "2.2.10" apply false
+        id("com.google.gms.google-services") version "4.4.2" apply false
     }
 }
 plugins {

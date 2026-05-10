@@ -1,18 +1,18 @@
 meta {
-  name: addUser
+  name: Send FMC token
   type: http
-  seq: 10
+  seq: 8
 }
 
 post {
-  url: {{base_url}}/teams/1/addUser
+  url: {{base_url}}/users/1/mobileDevice
   body: json
   auth: inherit
 }
 
 body:json {
   {
-      "memberId": "1"
+    "fcmToken": "string"
   }
 }
 

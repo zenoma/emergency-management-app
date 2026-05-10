@@ -10,6 +10,7 @@ import es.udc.emergencyproject.backend.rest.config.JwtUtils;
 import es.udc.emergencyproject.backend.rest.dtos.AuthenticatedUserDto;
 import es.udc.emergencyproject.backend.rest.dtos.ChangePasswordParamsDto;
 import es.udc.emergencyproject.backend.rest.dtos.LoginParamsDto;
+import es.udc.emergencyproject.backend.rest.dtos.MobileDeviceRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.UserDto;
 import es.udc.emergencyproject.backend.rest.dtos.UserRoleRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.UserSignUpRequestDto;
@@ -156,6 +157,22 @@ public class UsersController implements UsersApi {
 
     return ResponseEntity.noContent().build();
 
+  }
+
+  @Override
+  public ResponseEntity<Void> postUserMobileDevice(Long id, MobileDeviceRequestDto mobileDeviceRequestDto) {
+    final Optional<JwtInfo> jwtInfo = JwtUtils.getJwtInfo();
+
+    if (jwtInfo.isEmpty()) {
+      throw new PermissionException();
+    }
+
+    if (!id.equals(jwtInfo.get().userId())) {
+      throw new PermissionException();
+    }
+
+    personalManagementFacade.registerMobileDevice(id, mobileDeviceRequestDto.getFcmToken());
+    return ResponseEntity.noContent().build();
   }
 
   private String generateServiceToken(User user) {

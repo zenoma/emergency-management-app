@@ -1,0 +1,29 @@
+post:
+  summary: Registrar dispositivo móvil
+  operationId: postUserMobileDevice
+  tags:
+    - UserManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/MobileDeviceRequestDto.yml'
+  responses:
+    '204':
+      description: Dispositivo registrado
+    '403':
+      description: Permission denied
+      content:
+        application/json:
+          schema:
+            $ref: '../common/schemas/ErrorDto.yml'
