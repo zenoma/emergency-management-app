@@ -24,4 +24,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
   List<User> findTeamUsersWithMobileDeviceByTeamIdAndUserRoleIn(@Param("teamId") Long teamId,
       @Param("roles") Collection<UserRole> roles);
 
+  @Query("select distinct u from User u "
+      + "join fetch u.mobileDevice md "
+      + "where u.team.id = :teamId "
+      + "and md.fcmToken is not null")
+  List<User> findTeamUsersWithMobileDeviceByTeamId(@Param("teamId") Long teamId);
+
 }

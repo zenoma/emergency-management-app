@@ -18,7 +18,9 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import es.udc.emergencyapp.R
+import es.udc.emergencyapp.ui.common.StatusChip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -48,32 +51,36 @@ fun TeamUserRow(user: TeamUserItem) {
             .fillMaxWidth()
             .padding(6.dp), elevation = 2.dp
     ) {
-        Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                Icons.Default.Person,
-                contentDescription = null,
-                tint = Color.Gray,
-                modifier = Modifier.size(40.dp)
-            )
+        Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.Top) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 12.dp)
             ) {
                 Text(
                     text = listOfNotNull(user.firstName, user.lastName).joinToString(" "),
                     fontWeight = FontWeight.Bold
                 )
-                Text(text = user.email ?: "", color = Color.Gray)
-                if (!user.phoneNumber.isNullOrBlank() || !user.dni.isNullOrBlank()) {
-                    Text(
-                        text = listOfNotNull(user.phoneNumber, user.dni).joinToString(" • "),
-                        color = Color.Gray,
-                        fontSize = 12.sp
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Email, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(14.dp))
+                    Spacer(modifier = Modifier.size(4.dp))
+                Text(text = user.email ?: "", color = Color.Gray, fontSize = 12.sp)
+                }
+                if (!user.phoneNumber.isNullOrBlank()) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Phone, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(14.dp))
+                        Spacer(modifier = Modifier.size(4.dp))
+                    Text(text = user.phoneNumber ?: "", color = Color.Gray, fontSize = 12.sp)
+                    }
+                }
+                if (!user.dni.isNullOrBlank()) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Badge, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(14.dp))
+                        Spacer(modifier = Modifier.size(4.dp))
+                    Text(text = user.dni ?: "", color = Color.Gray, fontSize = 12.sp)
+                    }
                 }
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = Alignment.Top) {
                 Icon(
                     Icons.Default.VerifiedUser,
                     contentDescription = null,
@@ -96,20 +103,38 @@ fun TeamUserRow(user: TeamUserItem) {
 @Composable
 fun TeamScreenComposable(
     teamCode: String,
+    teamStatus: String,
     orgName: String,
     members: List<TeamUserItem>,
     teamId: Long,
     onOpenAssignments: (Long) -> Unit,
     loading: Boolean = false,
-    error: String? = null
+    error: String? = null,
+    noTeam: Boolean = false
 ) {
+    if (noTeam) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = stringResource(R.string.my_team_not_linked),
+                fontSize = 18.sp,
+                color = Color(0xFF6B7280)
+            )
+        }
+        return
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Text(
-            text = "My team",
+            text = stringResource(R.string.menu_my_team),
             fontSize = 34.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF0B3A66)
@@ -120,40 +145,29 @@ fun TeamScreenComposable(
             modifier = Modifier.fillMaxWidth(),
             elevation = 6.dp
         ) {
-            Row(
-                modifier = Modifier.padding(18.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.padding(18.dp)
             ) {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = null,
-                    tint = Color.LightGray,
-                    modifier = Modifier.size(72.dp)
-                )
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp)
-                ) {
-                    Text(
-                        text = teamCode.ifBlank { "-" },
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = orgName,
-                        color = Color.White,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
+                Row(verticalAlignment = Alignment.Top) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = teamCode.ifBlank { "-" },
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = orgName,
+                            color = Color.White,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                    StatusChip(status = teamStatus)
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = members.size.toString(),
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(text = "members", color = Color.White)
-                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = stringResource(R.string.team_members, members.size), color = Color.White)
             }
         }
 
@@ -168,7 +182,7 @@ fun TeamScreenComposable(
         }
 
         Text(
-            text = "Members",
+            text = stringResource(R.string.team_members),
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF0B3A66),
@@ -202,9 +216,11 @@ fun TeamScreenComposable(
 fun MyTeamScreen(onOpenAssignments: (Long) -> Unit = {}) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var teamCode by remember { mutableStateOf("") }
+    var teamStatus by remember { mutableStateOf("") }
     var orgName by remember { mutableStateOf("") }
     var members by remember { mutableStateOf(listOf<TeamUserItem>()) }
     var teamId by remember { mutableStateOf(-1L) }
+    var noTeam by remember { mutableStateOf(false) }
 
     var loading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -212,6 +228,7 @@ fun MyTeamScreen(onOpenAssignments: (Long) -> Unit = {}) {
     LaunchedEffect(Unit) {
         loading = true
         error = null
+        noTeam = false
         try {
             val prefs = context.getSharedPreferences("app_prefs", 0)
             prefs.getString("jwt_token", null)
@@ -224,6 +241,7 @@ fun MyTeamScreen(onOpenAssignments: (Long) -> Unit = {}) {
                         val team = arr.getJSONObject(0)
                         teamId = team.optLong("id", -1L)
                         teamCode = team.optString("code", "")
+                        teamStatus = team.optString("status", "")
                         val org = team.optJSONObject("organization")
                         orgName = org?.optString("name", "") ?: ""
                         val users = team.optJSONArray("userList")
@@ -244,13 +262,15 @@ fun MyTeamScreen(onOpenAssignments: (Long) -> Unit = {}) {
                             }
                         }
                         members = list
+                    } else {
+                        noTeam = true
                     }
                 } else {
-                    error = "Failed to fetch team"
+                    noTeam = true
                 }
             }
         } catch (e: Exception) {
-            error = e.message ?: "Unknown error"
+            noTeam = true
         } finally {
             loading = false
         }
@@ -258,11 +278,13 @@ fun MyTeamScreen(onOpenAssignments: (Long) -> Unit = {}) {
 
     TeamScreenComposable(
         teamCode = teamCode,
+        teamStatus = teamStatus,
         orgName = orgName,
         members = members,
         teamId = teamId,
         onOpenAssignments = onOpenAssignments,
         loading = loading,
-        error = error
+        error = error,
+        noTeam = noTeam
     )
 }

@@ -20,7 +20,7 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         val data = message.data
         val route = data["route"] ?: "myteam"
         val title = data["title"] ?: message.notification?.title ?: getString(R.string.app_name)
-        val body = data["body"] ?: message.notification?.body ?: "Nueva asignación"
+        val body = data["body"] ?: message.notification?.body ?: getString(R.string.notice_sent)
 
         DrawerBadgeState.refreshTrigger++
 
@@ -58,12 +58,12 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun ensureChannel(channelId: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             if (manager.getNotificationChannel(channelId) == null) {
                 manager.createNotificationChannel(
                     NotificationChannel(
                         channelId,
-                        "Assignments",
+                        getString(R.string.assignments_channel_name),
                         NotificationManager.IMPORTANCE_HIGH
                     )
                 )

@@ -201,6 +201,8 @@ public class AssignmentServiceImpl implements AssignmentService {
             "Assignment accepted");
       } catch (Exception ignored) {
       }
+
+      assignmentNotificationService.notifyTeamAssignmentStatusChanged(saved, status);
     }
 
     if (status == AssignmentStatus.COMPLETED) {
@@ -213,6 +215,8 @@ public class AssignmentServiceImpl implements AssignmentService {
             "Assignment completed");
       } catch (Exception ignored) {
       }
+
+      assignmentNotificationService.notifyTeamAssignmentStatusChanged(saved, status);
     }
 
     return saved;

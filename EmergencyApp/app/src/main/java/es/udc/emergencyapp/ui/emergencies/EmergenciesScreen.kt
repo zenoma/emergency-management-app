@@ -30,9 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
+import es.udc.emergencyapp.R
 import es.udc.emergencyapp.data.dto.EmergencyDto
 import es.udc.emergencyapp.data.dto.QuadrantInfoDto
 import es.udc.emergencyapp.indexColor
@@ -65,7 +67,7 @@ fun EmergenciesScreen() {
                     emergenciesState.value = parseEmergenciesJson(resp)
                 } catch (e: Exception) {
                     android.util.Log.w("Emergencies", "Failed to parse emergencies JSON", e)
-                    errorMsg.value = "Parse error"
+                    errorMsg.value = ctx.getString(R.string.parse_error)
                     emergenciesState.value = emptyList()
                 }
             } else {
@@ -102,17 +104,24 @@ fun EmergenciesScreen() {
         filtered =
             if (sortByCreatedDesc.value) filtered.sortedByDescending { it.createdAt } else filtered.sortedBy { it.createdAt }
         Text(
-            text = "Emergencies",
+            text = stringResource(R.string.emergencies_title),
             style = MaterialTheme.typography.h5,
         )
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Total: ${filtered.size}", modifier = Modifier.padding(end = 8.dp))
+            Text(
+                text = stringResource(R.string.emergencies_total, filtered.size),
+                modifier = Modifier.padding(end = 8.dp)
+            )
             Button(onClick = { sortByCreatedDesc.value = !sortByCreatedDesc.value }) {
-                Text(text = if (sortByCreatedDesc.value) "Sort: Created ↓" else "Sort: Created ↑")
+                Text(
+                    text = if (sortByCreatedDesc.value) stringResource(R.string.sort_created_desc) else stringResource(
+                        R.string.sort_created_asc
+                    )
+                )
             }
             Spacer(modifier = Modifier.padding(6.dp))
             TextButton(onClick = { showAll.value = !showAll.value }) {
-                Text(if (showAll.value) "Show less" else "Show all")
+                Text(if (showAll.value) stringResource(R.string.show_less) else stringResource(R.string.show_all))
             }
         }
 
@@ -121,7 +130,7 @@ fun EmergenciesScreen() {
         OutlinedTextField(
             value = searchQuery.value,
             onValueChange = { searchQuery.value = it },
-            label = { Text("Search description or type") },
+            label = { Text(stringResource(R.string.search_description_or_type)) },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -129,7 +138,8 @@ fun EmergenciesScreen() {
 
         if (filtered.isEmpty()) {
             Text(
-                text = if (errorMsg.value != null) "Error: ${errorMsg.value}" else "No emergencies found",
+                text = if (errorMsg.value != null) errorMsg.value
+                    ?: "" else stringResource(R.string.no_emergencies_found),
                 modifier = Modifier.padding(16.dp)
             )
             return@Column
@@ -174,7 +184,10 @@ fun EmergenciesScreen() {
                             android.util.Log.w("Emergencies", "Fallback also failed", ex2)
                             Toast.makeText(
                                 ctx,
-                                "No se pudo abrir detalle: ${ex2.localizedMessage}",
+                                ctx.getString(
+                                    R.string.failed_to_send_notice,
+                                    ex2.localizedMessage ?: ""
+                                ),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -182,7 +195,10 @@ fun EmergenciesScreen() {
                         android.util.Log.w("Emergencies", "Failed to open detail", ex)
                         Toast.makeText(
                             ctx,
-                            "No se pudo abrir detalle: ${ex.localizedMessage}",
+                            ctx.getString(
+                                R.string.failed_to_send_notice,
+                                ex.localizedMessage ?: ""
+                            ),
                             Toast.LENGTH_SHORT
                         ).show()
                     }

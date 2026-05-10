@@ -3,8 +3,8 @@ package es.udc.emergencyapp
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Bundle
 import android.os.Build
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,40 +58,40 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.edit
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.google.firebase.messaging.FirebaseMessaging
 import es.udc.emergencyapp.net.HttpClient
+import es.udc.emergencyapp.ui.DrawerBadgeState
 import es.udc.emergencyapp.ui.map.MapScreen
+import es.udc.emergencyapp.ui.myteam.MyAssignmentsScreen
 import es.udc.emergencyapp.ui.notices.MyNoticesScreen
 import es.udc.emergencyapp.ui.notices.SendNoticeFragment
 import es.udc.emergencyapp.ui.profile.ProfileScreen
-import es.udc.emergencyapp.ui.myteam.MyAssignmentsScreen
-import es.udc.emergencyapp.ui.DrawerBadgeState
-import org.json.JSONObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -158,7 +159,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun syncMobileDeviceToken() {
-        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
         val userId = prefs.getLong("user_id", -1L)
         if (userId <= 0) return
 
@@ -169,7 +170,11 @@ class MainActivity : AppCompatActivity() {
                         val payload = JSONObject().apply {
                             put("fcmToken", fcmToken)
                         }.toString()
-                        val response = HttpClient.postToHosts("/users/$userId/mobileDevice", this@MainActivity, payload)
+                        val response = HttpClient.postToHosts(
+                            "/users/$userId/mobileDevice",
+                            this@MainActivity,
+                            payload
+                        )
                         Log.d(
                             "MainActivityNet",
                             "Mobile device sync host=${response.second} body=${response.first}"
@@ -216,10 +221,13 @@ private fun MainScreenSimple(initialRoute: String? = null) {
         topBar = {
             TopAppBar(
                 modifier = Modifier.statusBarsPadding(),
-                title = { Text(text = "EmergencyApp") },
+                title = { Text(text = stringResource(R.string.app_title)) },
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
-                        Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu")
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = stringResource(R.string.menu_content_description)
+                        )
                     }
                 }
             )
@@ -249,7 +257,10 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                                 if (id > 0) {
                                     teamId = id
                                     val assignmentsPair = withContext(Dispatchers.IO) {
-                                        HttpClient.getFromHosts("/assignments?resourceId=$id", context)
+                                        HttpClient.getFromHosts(
+                                            "/assignments?resourceId=$id",
+                                            context
+                                        )
                                     }
                                     val assignmentsBody = assignmentsPair.first
                                     if (!assignmentsBody.isNullOrBlank()) {
@@ -257,7 +268,9 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                                         var count = 0
                                         for (i in 0 until arr.length()) {
                                             val assignment = arr.getJSONObject(i)
-                                            if (assignment.optString("status").uppercase() == "PENDING") {
+                                            if (assignment.optString("status")
+                                                    .uppercase() == "PENDING"
+                                            ) {
                                                 count++
                                             }
                                         }
@@ -316,7 +329,7 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                                 }) {
                                     Icon(
                                         imageVector = Icons.Filled.Login,
-                                        contentDescription = "Login",
+                                        contentDescription = stringResource(R.string.login_content_description),
                                         modifier = Modifier.size(64.dp)
                                     )
                                 }
@@ -368,7 +381,8 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                                     modifier = Modifier.padding(4.dp)
                                 )
                                 Text(
-                                    text = "Logout", modifier = Modifier
+                                    text = stringResource(R.string.logout_action),
+                                    modifier = Modifier
                                         .padding(6.dp)
                                         .clickable {
                                             try {
@@ -388,14 +402,34 @@ private fun MainScreenSimple(initialRoute: String? = null) {
 
                     // Logical blocks
                     val block1 = listOf(
-                        Triple("map", "Map", Icons.Filled.Map),
-                        Triple("myteam", "My Team", Icons.Filled.Group),
-                        Triple("myassignments", "Team assignments", Icons.Filled.Description),
-                        Triple("organizations", "Organizations", Icons.Filled.Business),
-                        Triple("emergencies", "Emergencies", Icons.Filled.Description)
+                        Triple("map", stringResource(R.string.map_label), Icons.Filled.Map),
+                        Triple(
+                            "myteam",
+                            stringResource(R.string.my_team_label),
+                            Icons.Filled.Group
+                        ),
+                        Triple(
+                            "myassignments",
+                            stringResource(R.string.my_assignments_title),
+                            Icons.Filled.Description
+                        ),
+                        Triple(
+                            "organizations",
+                            stringResource(R.string.menu_organizations),
+                            Icons.Filled.Business
+                        ),
+                        Triple(
+                            "emergencies",
+                            stringResource(R.string.emergency_title),
+                            Icons.Filled.Description
+                        )
                     )
                     val block2 = listOf(
-                        Triple("send_notice", "Send Notice", Icons.Filled.Send),
+                        Triple(
+                            "send_notice",
+                            stringResource(R.string.menu_send_notice),
+                            Icons.Filled.Send
+                        ),
                         Triple("notices", "My Notices", Icons.Filled.Description)
                     )
 
@@ -412,9 +446,13 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                                         .fillMaxWidth()
                                         .clickable {
                                             if (route == "myassignments" && teamId != null) {
-                                                navController.navigate("myassignments/${teamId}") { launchSingleTop = true }
+                                                navController.navigate("myassignments/${teamId}") {
+                                                    launchSingleTop = true
+                                                }
                                             } else {
-                                                navController.navigate(route) { launchSingleTop = true }
+                                                navController.navigate(route) {
+                                                    launchSingleTop = true
+                                                }
                                             }
                                             scope.launch { scaffoldState.drawerState.close() }
                                         }
@@ -471,7 +509,7 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                         selected = current == "map",
                         onClick = { navController.navigate("map") { launchSingleTop = true } },
                         icon = { Icon(imageVector = Icons.Filled.Map, contentDescription = null) },
-                        label = { Text(text = "Map") })
+                        label = { Text(text = stringResource(R.string.map_label)) })
                     BottomNavigationItem(
                         selected = current == "send_notice",
                         onClick = {
@@ -480,7 +518,7 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                             }
                         },
                         icon = { Icon(imageVector = Icons.Filled.Send, contentDescription = null) },
-                        label = { Text(text = "Send") })
+                        label = { Text(text = stringResource(R.string.send_label)) })
                     if (!jwtBb.isNullOrBlank()) {
                         BottomNavigationItem(
                             selected = current == "myteam",
@@ -495,7 +533,7 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                                     contentDescription = null
                                 )
                             },
-                            label = { Text(text = "My Team") })
+                            label = { Text(text = stringResource(R.string.my_team_label)) })
                     }
                 }
             }
@@ -510,11 +548,19 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                 composable("map") { es.udc.emergencyapp.ui.ScreenContainer { MapScreen() } }
                 composable("notices") { es.udc.emergencyapp.ui.ScreenContainer { MyNoticesScreen() } }
                 composable("emergencies") { es.udc.emergencyapp.ui.ScreenContainer { es.udc.emergencyapp.ui.emergencies.EmergenciesScreen() } }
-                composable("organizations") { es.udc.emergencyapp.ui.ScreenContainer { FeaturePlaceholder("Organizations") } }
+                composable("organizations") {
+                    es.udc.emergencyapp.ui.ScreenContainer {
+                        FeaturePlaceholder(
+                            stringResource(R.string.menu_organizations)
+                        )
+                    }
+                }
                 composable("myteam") {
                     es.udc.emergencyapp.ui.ScreenContainer {
                         es.udc.emergencyapp.ui.myteam.MyTeamScreen(onOpenAssignments = { teamId ->
-                            navController.navigate("myassignments/$teamId") { launchSingleTop = true }
+                            navController.navigate("myassignments/$teamId") {
+                                launchSingleTop = true
+                            }
                         })
                     }
                 }
@@ -530,9 +576,9 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                 }
                 composable("profile") { es.udc.emergencyapp.ui.ScreenContainer { ProfileScreenCompose() } }
                 composable("send_notice") { es.udc.emergencyapp.ui.ScreenContainer { SendNoticeHost() } }
-                composable("fire_management") { FeaturePlaceholder("Fire Management") }
-                composable("user_management") { FeaturePlaceholder("User Management") }
-                composable("notice_management") { FeaturePlaceholder("Notice Management") }
+                composable("fire_management") { FeaturePlaceholder(stringResource(R.string.menu_fire_management)) }
+                composable("user_management") { FeaturePlaceholder(stringResource(R.string.menu_user_management)) }
+                composable("notice_management") { FeaturePlaceholder(stringResource(R.string.menu_notice_management)) }
             }
         }
     }
@@ -602,7 +648,7 @@ private fun FeaturePlaceholder(name: String) {
         ) {
             Text(text = name, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Placeholder - migrate screen to Compose")
+            Text(text = stringResource(R.string.app_title))
         }
     }
 }

@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -186,7 +187,7 @@ private fun LoginScreen(onLogin: (String, String) -> Unit, onSignup: () -> Unit)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = "Welcome", style = MaterialTheme.typography.h6, fontSize = 20.sp)
+                Text(text = stringResource(R.string.login_title), style = MaterialTheme.typography.h6, fontSize = 20.sp)
 
                 Spacer(modifier = Modifier.height(12.dp))
 

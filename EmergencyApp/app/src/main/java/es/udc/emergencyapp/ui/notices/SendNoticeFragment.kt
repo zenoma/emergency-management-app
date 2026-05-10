@@ -48,6 +48,7 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -82,7 +83,7 @@ class SendNoticeFragment : Fragment() {
     private val takePictureLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (!success || photoUri == null) {
-                Toast.makeText(requireContext(), "Failed to take photo", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.failed_to_take_photo), Toast.LENGTH_SHORT).show()
             } else {
                 renderSendNotice()
             }
@@ -91,14 +92,14 @@ class SendNoticeFragment : Fragment() {
     private val requestCameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) startCameraCapture()
-            else Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
+            else Toast.makeText(requireContext(), getString(R.string.camera_permission_denied), Toast.LENGTH_SHORT)
                 .show()
         }
 
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) fetchLocation()
-            else Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT)
+            else Toast.makeText(requireContext(), getString(R.string.location_permission_denied), Toast.LENGTH_SHORT)
                 .show()
         }
 
@@ -147,7 +148,7 @@ class SendNoticeFragment : Fragment() {
             takePictureLauncher.launch(photoUri)
         } catch (e: Exception) {
             Log.w("SendNotice", "Failed to start camera capture", e)
-            Toast.makeText(requireContext(), "Failed to start camera", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.failed_to_start_camera), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -218,11 +219,11 @@ class SendNoticeFragment : Fragment() {
     private fun onSendClicked(body: String) {
         body.trim()
         if (body.isEmpty()) {
-            Toast.makeText(requireContext(), "Enter a description", Toast.LENGTH_SHORT)
+            Toast.makeText(requireContext(), getString(R.string.enter_description), Toast.LENGTH_SHORT)
                 .show(); return
         }
         if (lastLocation == null) {
-            Toast.makeText(requireContext(), "Location unavailable", Toast.LENGTH_SHORT)
+            Toast.makeText(requireContext(), getString(R.string.send_notice_error_no_location), Toast.LENGTH_SHORT)
                 .show(); return
         }
         // read photo bytes
@@ -412,35 +413,19 @@ class SendNoticeFragment : Fragment() {
                                 .show()
                         } catch (e: Exception) {
                             Log.w("SendNotice", "Failed to show confirmation dialog", e)
-                            Toast.makeText(
-                                requireContext(),
-                                "Notice sent (via $usedHost)",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(requireContext(), getString(R.string.notice_sent_via, usedHost ?: ""), Toast.LENGTH_SHORT).show()
                         }
                     } else if (successCode in 200..299) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Notice sent (via $usedHost)",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(requireContext(), getString(R.string.notice_sent_via, usedHost ?: ""), Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Failed to send: $successCode (via $usedHost)",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toast.makeText(requireContext(), getString(R.string.failed_to_send, successCode, usedHost ?: ""), Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: Exception) {
                 Log.w("SendNotice", "Exception sending notice", e)
                 requireActivity().runOnUiThread {
                     val msg = e.localizedMessage ?: e.toString()
-                    Toast.makeText(
-                        requireContext(),
-                        "Failed to send notice: $msg",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(requireContext(), getString(R.string.failed_to_send_notice, msg), Toast.LENGTH_LONG).show()
                 }
             }
         }.start()
@@ -497,7 +482,7 @@ class SendNoticeFragment : Fragment() {
                     }
                 }
                 IconButton(onClick = { onTakePhoto() }) {
-                    Icon(imageVector = Icons.Default.CameraAlt, contentDescription = "Take photo")
+                    Icon(imageVector = Icons.Default.CameraAlt, contentDescription = stringResource(R.string.notice_take_photo))
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -505,7 +490,7 @@ class SendNoticeFragment : Fragment() {
             OutlinedTextField(
                 value = bodyState.value,
                 onValueChange = { bodyState.value = it },
-                label = { Text("Description") },
+                label = { Text(stringResource(R.string.notice_description_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -591,7 +576,7 @@ class SendNoticeFragment : Fragment() {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = "Remove photo",
+                                contentDescription = stringResource(R.string.notice_remove_photo),
                                 tint = Color.Red
                             )
                         }
@@ -615,7 +600,7 @@ class SendNoticeFragment : Fragment() {
                                 modifier = Modifier.size(48.dp)
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text(text = "No photo selected", color = Color.Gray)
+                            Text(text = stringResource(R.string.notice_no_photo_selected), color = Color.Gray)
                         }
                     }
                 }
@@ -629,7 +614,7 @@ class SendNoticeFragment : Fragment() {
                 Button(onClick = { onSend(bodyState.value) }) {
                     Icon(imageVector = Icons.Default.Send, contentDescription = null)
                     Spacer(modifier = Modifier.size(8.dp))
-                    Text(text = "Send")
+                    Text(text = stringResource(R.string.notice_send))
                 }
             }
         }
@@ -650,8 +635,8 @@ class SendNoticeFragment : Fragment() {
                     },
                     photoUri = photoUri,
                     locationText = locationTextOverride
-                        ?: lastLocation?.let { "Location: ${it.latitude}, ${it.longitude}" }
-                        ?: "Location: unavailable",
+                        ?: lastLocation?.let { getString(R.string.notice_location_format, it.latitude, it.longitude) }
+                        ?: getString(R.string.notice_location_unavailable),
                     lon = lastLocation?.longitude,
                     lat = lastLocation?.latitude
                 )

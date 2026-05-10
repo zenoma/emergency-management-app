@@ -26,7 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import es.udc.emergencyapp.R
 import es.udc.emergencyapp.net.HttpClient
 import es.udc.emergencyapp.ui.common.StatusChip
 import kotlinx.coroutines.Dispatchers
@@ -87,7 +89,7 @@ fun QuadrantResourcesScreen(
                 } catch (_: Exception) {
                 }
             } else {
-                error = "No response"
+                error = ctx.getString(R.string.no_response)
             }
         } catch (e: Exception) {
             error = e.localizedMessage ?: e.toString()
@@ -97,7 +99,10 @@ fun QuadrantResourcesScreen(
     }
 
     Column(modifier = Modifier.padding(12.dp)) {
-        Text(text = "Recursos en cuadrante", style = MaterialTheme.typography.h6)
+        Text(
+            text = stringResource(R.string.resources_in_quadrant),
+            style = MaterialTheme.typography.h6
+        )
         Spacer(modifier = Modifier.height(8.dp))
 
         if (loading.value) {
@@ -111,29 +116,29 @@ fun QuadrantResourcesScreen(
         }
 
         if (error != null) {
-            Text(text = "Error: $error", color = MaterialTheme.colors.error)
+            Text(text = error ?: "", color = MaterialTheme.colors.error)
             lastHostAttempt.value?.let {
                 Text(
-                    text = "Host intentado: $it",
+                    text = it,
                     style = MaterialTheme.typography.caption
                 )
             }
             androidx.compose.material.TextButton(onClick = {
                 retryTrigger.value = retryTrigger.value + 1
             }) {
-                Text("Reintentar")
+                Text(stringResource(R.string.retry))
             }
             return@Column
         }
 
         Text(
-            text = "Asignaciones",
+            text = stringResource(R.string.assignments_label),
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
         )
 
         if (assignments.isEmpty()) {
-            Text(text = "No hay asignaciones")
+            Text(text = stringResource(R.string.no_assignments))
         } else {
             LazyColumn {
                 items(assignments) { a -> ModernAssignmentRow(a) }
@@ -149,7 +154,7 @@ private object Companion {
 
 @Composable
 private fun TeamRow(team: JSONObject) {
-    val name = team.optString("code") ?: "Equipo"
+    val name = team.optString("code") ?: ""
     val org = team.optJSONObject("organization")?.optString("name") ?: ""
     Card(
         modifier = Modifier
@@ -165,7 +170,7 @@ private fun TeamRow(team: JSONObject) {
 
 @Composable
 private fun VehicleRow(vehicle: JSONObject) {
-    val plate = vehicle.optString("vehiclePlate") ?: "Vehículo"
+    val plate = vehicle.optString("vehiclePlate") ?: ""
     val type = vehicle.optString("type") ?: ""
     Card(
         modifier = Modifier
@@ -198,38 +203,53 @@ private fun AssignmentRow(assignment: JSONObject) {
             .padding(vertical = 4.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-            Text(text = "Status: $status", style = MaterialTheme.typography.body1)
+            Text(
+                text = stringResource(R.string.status_label, status),
+                style = MaterialTheme.typography.body1
+            )
             if (assignedAt.isNotBlank()) Text(
-                text = "Assigned: $assignedAt",
+                text = stringResource(R.string.assigned_label, assignedAt),
                 style = MaterialTheme.typography.caption
             )
             if (acceptedAt.isNotBlank()) Text(
-                text = "Accepted: $acceptedAt",
+                text = stringResource(R.string.accepted_label, acceptedAt),
                 style = MaterialTheme.typography.caption
             )
             if (completedAt.isNotBlank()) Text(
-                text = "Completed: $completedAt",
+                text = stringResource(R.string.completed_label, completedAt),
                 style = MaterialTheme.typography.caption
             )
 
             teamJson?.let { t ->
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Team:")
-                Text(text = "  code: ${t.optString("code")}")
+                Text(text = stringResource(R.string.team_label))
+                Text(text = stringResource(R.string.code_label, t.optString("code")))
                 val org = t.optJSONObject("organization")
                 if (org != null) {
-                    Text(text = "  org: ${org.optString("code")} - ${org.optString("name")}")
+                    Text(
+                        text = stringResource(
+                            R.string.org_label,
+                            org.optString("code"),
+                            org.optString("name")
+                        )
+                    )
                 }
             }
 
             vehicleJson?.let { v ->
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Vehicle:")
-                Text(text = "  plate: ${v.optString("vehiclePlate")}")
-                Text(text = "  type: ${v.optString("type")}")
+                Text(text = stringResource(R.string.vehicle_label))
+                Text(text = stringResource(R.string.plate_label, v.optString("vehiclePlate")))
+                Text(text = stringResource(R.string.type_label, v.optString("type")))
                 val org = v.optJSONObject("organization")
                 if (org != null) {
-                    Text(text = "  org: ${org.optString("code")} - ${org.optString("name")}")
+                    Text(
+                        text = stringResource(
+                            R.string.org_label,
+                            org.optString("code"),
+                            org.optString("name")
+                        )
+                    )
                 }
             }
         }
@@ -262,16 +282,22 @@ private fun ModernAssignmentRow(assignment: JSONObject) {
                 val acceptedAt = assignment.optString("acceptedAt")
                 val completedAt = assignment.optString("completedAt")
                 if (assignedAt.isNotBlank()) Text(
-                    text = "Asignado: $assignedAt",
-                    style = MaterialTheme.typography.body2
+                    text = stringResource(
+                        R.string.assigned_label,
+                        assignedAt
+                    ), style = MaterialTheme.typography.body2
                 )
                 if (acceptedAt.isNotBlank()) Text(
-                    text = "Aceptado: $acceptedAt",
-                    style = MaterialTheme.typography.body2
+                    text = stringResource(
+                        R.string.accepted_label,
+                        acceptedAt
+                    ), style = MaterialTheme.typography.body2
                 )
                 if (completedAt.isNotBlank()) Text(
-                    text = "Completado: $completedAt",
-                    style = MaterialTheme.typography.body2
+                    text = stringResource(
+                        R.string.completed_label,
+                        completedAt
+                    ), style = MaterialTheme.typography.body2
                 )
 
                 val teamJson =

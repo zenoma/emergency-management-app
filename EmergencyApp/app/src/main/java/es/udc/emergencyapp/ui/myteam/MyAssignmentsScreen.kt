@@ -3,16 +3,25 @@ package es.udc.emergencyapp.ui.myteam
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import es.udc.emergencyapp.MainActivity
 import es.udc.emergencyapp.R
@@ -65,7 +75,7 @@ fun MyAssignmentsScreen(teamId: Long) {
         } catch (e: Exception) {
             Toast.makeText(
                 context,
-                "No se ha podido asignar el recurso, porque está ocupado",
+                context.getString(R.string.assignment_accept_failed_occupied),
                 Toast.LENGTH_LONG
             ).show()
         } finally {
@@ -78,7 +88,10 @@ fun MyAssignmentsScreen(teamId: Long) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "Mis assignments", style = MaterialTheme.typography.h5)
+        Text(
+            text = stringResource(R.string.my_assignments_title),
+            style = MaterialTheme.typography.h5
+        )
 
         if (loading) {
             Box(
@@ -93,7 +106,7 @@ fun MyAssignmentsScreen(teamId: Long) {
         }
 
         if (assignments.isEmpty()) {
-            Text(text = "No hay asignaciones activas")
+            Text(text = stringResource(R.string.no_active_assignments))
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(assignments) { a ->
@@ -133,30 +146,95 @@ private fun AssignmentCard(
     onAccept: (Long) -> Unit
 ) {
     val status = assignment.optString("status")
+    val teamInfo = assignment.optJSONObject("teamInfo")
+    val emergency = assignment.optJSONObject("emergencyInfo")
+    val quadrant = assignment.optJSONObject("quadrantInfo")
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Text(text = "#${assignment.optLong("id", 0)}")
-            StatusChip(status = status)
-            val emergency = assignment.optJSONObject("emergencyInfo")
-            if (emergency != null) {
-                Text(text = emergency.optString("name", "Emergencia"))
-                Text(text = emergency.optString("description", ""))
+        Column(modifier = Modifier.padding(14.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "${stringResource(R.string.assignment_prefix)} #${
+                        assignment.optLong(
+                            "id",
+                            0
+                        )
+                    }"
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                StatusChip(status = status)
             }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            teamInfo?.let { team ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Business, contentDescription = null)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = team.optString("code", ""), style = MaterialTheme.typography.body1)
+                    val org = team.optJSONObject("organization")
+                    if (org != null) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = org.optString("code", ""),
+                            color = androidx.compose.ui.graphics.Color.Gray
+                        )
+                    }
+                }
+            }
+
+            emergency?.let { em ->
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Description, contentDescription = null)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = em.optString(
+                            "emergencyTypeName",
+                            em.optString("name", stringResource(R.string.label_details))
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = em.optString("emergencyIndex", ""),
+                        color = androidx.compose.ui.graphics.Color.Gray
+                    )
+                }
+            }
+
+            quadrant?.let { q ->
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Place, contentDescription = null)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = q.optString("nombre", q.optString("name", "")))
+                    val quadrantId = q.optLong("id", -1L)
+                    if (quadrantId > 0) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "#$quadrantId", color = androidx.compose.ui.graphics.Color.Gray)
+                    }
+                }
+            }
+
             val notes = assignment.optString("notes")
             if (notes.isNotBlank()) {
-                Text(text = notes)
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "${stringResource(R.string.label_details)}: $notes",
+                    color = androidx.compose.ui.graphics.Color.Gray
+                )
             }
 
             if (status.uppercase() == "PENDING") {
+                Spacer(modifier = Modifier.height(8.dp))
                 Button(
                     onClick = { onAccept(assignment.optLong("id", -1L)) },
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Aceptar")
+                    Text(text = stringResource(R.string.accept))
                 }
             }
         }
@@ -198,11 +276,11 @@ private suspend fun acceptAssignment(
                     return@withContext Pair(
                         null,
                         responseBody?.takeIf { it.isNotBlank() }
-                            ?: "No se ha podido aceptar la asignación")
+                            ?: context.getString(R.string.assignment_accept_failed))
                 }
             } catch (_: Exception) {
             }
         }
-        Pair(null, "No se ha podido aceptar la asignación")
+        Pair(null, context.getString(R.string.assignment_accept_failed))
     }
 }

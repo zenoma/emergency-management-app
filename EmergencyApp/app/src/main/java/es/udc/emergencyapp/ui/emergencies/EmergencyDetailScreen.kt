@@ -24,10 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import es.udc.emergencyapp.R
 import es.udc.emergencyapp.data.dto.EmergencyDto
-import es.udc.emergencyapp.ui.common.CompactChip
 import es.udc.emergencyapp.indexColor
+import es.udc.emergencyapp.ui.common.CompactChip
 import es.udc.emergencyapp.ui.common.CoordinateChip
 import es.udc.emergencyapp.util.emergencyTypeIcon
 
@@ -69,7 +71,8 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
                     // Description
                     if (!emergency.description.isNullOrBlank()) {
                         Text(
-                            text = emergency.description ?: "(no description)",
+                            text = emergency.description
+                                ?: stringResource(R.string.description_default),
                             style = MaterialTheme.typography.body1
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -80,7 +83,10 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
                         val idx = emergency.emergencyIndex ?: "-"
                         CompactChip(label = idx, bgColor = indexColor(idx))
                         Spacer(modifier = Modifier.size(12.dp))
-                        Icon(imageVector = Icons.Default.DateRange, contentDescription = "Created")
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = stringResource(R.string.created_label)
+                        )
                         Spacer(modifier = Modifier.size(6.dp))
                         Text(text = es.udc.emergencyapp.util.DateUtils.formatForDisplay(emergency.createdAt))
                     }
@@ -92,7 +98,7 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Default.LocationOn,
-                                contentDescription = "Location"
+                                contentDescription = stringResource(R.string.location_label)
                             )
                             Spacer(modifier = Modifier.size(8.dp))
                             CoordinateChip(
@@ -104,7 +110,12 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
                         }
                     } else {
                         val qCount = emergency.quadrantInfo?.size ?: 0
-                        if (qCount > 0) CompactChip(label = "Cuadrantes $qCount")
+                        if (qCount > 0) CompactChip(
+                            label = stringResource(
+                                R.string.quadrant_label_format,
+                                qCount
+                            )
+                        )
                     }
                 }
             }
@@ -114,7 +125,7 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
         if (!emergency.quadrantInfo.isNullOrEmpty()) {
             item {
                 Text(
-                    text = "Cuadrantes afectados",
+                    text = stringResource(R.string.quadrants_label),
                     style = MaterialTheme.typography.subtitle1,
                     modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
                 )
@@ -150,7 +161,7 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
                         Column(modifier = Modifier.weight(1f)) {
                             Text(text = q.nombre ?: "-", style = MaterialTheme.typography.body1)
                             Text(
-                                text = "Escala: ${q.escala ?: "-"}",
+                                text = stringResource(R.string.scale_label, q.escala ?: "-"),
                                 style = MaterialTheme.typography.caption
                             )
                         }
@@ -167,7 +178,7 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
         if (emergency.location != null) {
             item {
                 Text(
-                    text = "Equipos disponibles (mock)",
+                    text = stringResource(R.string.available_teams_mock),
                     style = MaterialTheme.typography.subtitle1,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
@@ -184,7 +195,10 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
                         modifier = Modifier.padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Equipo #$t", style = MaterialTheme.typography.body1)
+                        Text(
+                            text = stringResource(R.string.team_item_label, t),
+                            style = MaterialTheme.typography.body1
+                        )
                     }
                 }
             }
@@ -192,7 +206,7 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
 
             item {
                 Text(
-                    text = "Vehículos disponibles (mock)",
+                    text = stringResource(R.string.available_vehicles_mock),
                     style = MaterialTheme.typography.subtitle1,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
@@ -209,7 +223,10 @@ fun EmergencyDetailScreen(emergency: EmergencyDto, onClose: (() -> Unit)? = null
                         modifier = Modifier.padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Vehículo #$v", style = MaterialTheme.typography.body1)
+                        Text(
+                            text = stringResource(R.string.vehicle_item_label, v),
+                            style = MaterialTheme.typography.body1
+                        )
                     }
                 }
             }
