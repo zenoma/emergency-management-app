@@ -51,5 +51,6 @@
     <string name="label_id">ID</string>
     <string name="label_user">Usuario</string>
     <string name="label_coordinates">Coordenadas</string>
+    <string name="assignments">Asignaciones</string>
 
 </resources>

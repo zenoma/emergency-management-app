@@ -71,11 +71,14 @@ import androidx.navigation.navArgument
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
+import com.google.firebase.messaging.FirebaseMessaging
+import es.udc.emergencyapp.net.HttpClient
 import es.udc.emergencyapp.ui.map.MapScreen
 import es.udc.emergencyapp.ui.notices.MyNoticesScreen
 import es.udc.emergencyapp.ui.notices.SendNoticeFragment
 import es.udc.emergencyapp.ui.profile.ProfileScreen
 import es.udc.emergencyapp.ui.myteam.MyAssignmentsScreen
+import org.json.JSONObject
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -93,6 +96,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        syncMobileDeviceToken()
+    }
+
     override fun attachBaseContext(newBase: Context) {
         val lang = LocaleHelper.getPersistedLanguage(newBase)
         val ctx = LocaleHelper.setLocale(newBase, lang)
@@ -105,6 +113,33 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.w("MainActivityNav", "Failed to set route $route", e)
         }
+    }
+
+    private fun syncMobileDeviceToken() {
+        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val userId = prefs.getLong("user_id", -1L)
+        if (userId <= 0) return
+
+        FirebaseMessaging.getInstance().token
+            .addOnSuccessListener { fcmToken ->
+                Thread {
+                    try {
+                        val payload = JSONObject().apply {
+                            put("fcmToken", fcmToken)
+                        }.toString()
+                        val response = HttpClient.postToHosts("/users/$userId/mobileDevice", this@MainActivity, payload)
+                        Log.d(
+                            "MainActivityNet",
+                            "Mobile device sync host=${response.second} body=${response.first}"
+                        )
+                    } catch (e: Exception) {
+                        Log.w("MainActivityNet", "Failed to sync mobile device", e)
+                    }
+                }.start()
+            }
+            .addOnFailureListener { e ->
+                Log.w("MainActivityNet", "Failed to get FCM token", e)
+            }
     }
 }
 

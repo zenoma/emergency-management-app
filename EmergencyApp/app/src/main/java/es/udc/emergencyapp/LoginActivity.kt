@@ -38,7 +38,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.messaging.FirebaseMessaging
-import es.udc.emergencyapp.net.HttpClient
 import es.udc.emergencyapp.ui.setContentWithSystemBars
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -120,10 +119,6 @@ class LoginActivity : AppCompatActivity() {
                         apply()
                     }
 
-                    if (userId > 0) {
-                        registerMobileDevice(userId)
-                    }
-
                     runOnUiThread {
                         Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT)
                             .show()
@@ -151,27 +146,6 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }.start()
-    }
-
-    private fun registerMobileDevice(userId: Long) {
-        FirebaseMessaging.getInstance().token
-            .addOnSuccessListener { fcmToken ->
-                Thread {
-                    try {
-                        val payload = JSONObject().apply {
-                            put("fcmToken", fcmToken)
-                        }.toString()
-                        val path = "/users/$userId/mobileDevice"
-                        val response = HttpClient.postToHosts(path, this@LoginActivity, payload)
-                        Log.d("LoginActivityNet", "Mobile device register host=${response.second} body=${response.first}")
-                    } catch (e: Exception) {
-                        Log.w("LoginActivityNet", "Failed to register mobile device", e)
-                    }
-                }.start()
-            }
-            .addOnFailureListener { e ->
-                Log.w("LoginActivityNet", "Failed to get FCM token", e)
-            }
     }
 
     override fun attachBaseContext(newBase: Context) {
