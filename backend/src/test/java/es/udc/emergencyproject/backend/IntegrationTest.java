@@ -22,10 +22,12 @@ public abstract class IntegrationTest {
       .withDatabaseName("emergencydb")
       .withUsername("emergencyuser")
       .withPassword("emergencypass")
-      .withCopyFileToContainer(
-          MountableFile.forClasspathResource("db"),
-          "/docker-entrypoint-initdb.d/"
-      );
+      .withCopyFileToContainer(MountableFile.forClasspathResource("db/01_create_tables.sql"),
+          "/docker-entrypoint-initdb.d/01_create_tables.sql")
+      .withCopyFileToContainer(MountableFile.forClasspathResource("db/02_init_quadrants.sql"),
+          "/docker-entrypoint-initdb.d/02_init_quadrants.sql")
+      .withCopyFileToContainer(MountableFile.forClasspathResource("db/03_init_data.sql"),
+          "/docker-entrypoint-initdb.d/03_init_data.sql");
 
   static {
     postgis.start();
