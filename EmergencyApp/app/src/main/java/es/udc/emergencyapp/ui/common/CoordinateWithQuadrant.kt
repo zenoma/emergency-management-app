@@ -1,5 +1,6 @@
 package es.udc.emergencyapp.ui.common
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -8,7 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -75,18 +79,45 @@ fun CoordinateWithQuadrantChip(lon: Double?, lat: Double?, showCoordinates: Bool
             color = MaterialTheme.colors.primary.copy(alpha = 0.04f),
             modifier = Modifier.padding(4.dp)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
+            Column(modifier = Modifier.padding(8.dp)) {
                 CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
                 Spacer(modifier = Modifier.size(8.dp))
-                Text(text = "$lonText, $latText", style = MaterialTheme.typography.body2)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.size(4.dp))
+                    Text(text = quadrantName ?: "-", style = MaterialTheme.typography.subtitle1)
+                }
+                Text(text = "$lonText, $latText", style = MaterialTheme.typography.caption)
             }
         }
     } else {
-        CoordinateChip(
-            lonText = lonText,
-            latText = latText,
-            quadrantName = quadrantName,
-            showCoordinates = showCoordinates
-        )
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colors.primary.copy(alpha = 0.08f),
+            modifier = Modifier.padding(4.dp)
+        ) {
+            Column(modifier = Modifier.padding(8.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.size(4.dp))
+                    Text(
+                        text = quadrantName ?: "-",
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
+                if (showCoordinates) {
+                    Spacer(modifier = Modifier.size(4.dp))
+                    Text(text = "$lonText, $latText", style = MaterialTheme.typography.caption)
+                }
+            }
+        }
     }
 }

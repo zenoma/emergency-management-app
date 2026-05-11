@@ -7,6 +7,16 @@
     <string name="nav_header_desc">Navigation header</string>
 
     <string name="menu_organizations">Organizations</string>
+    <string name="organizations_title">Organizations</string>
+    <string name="organizations_subtitle">Browse by organization type</string>
+    <string name="organizations_all">All</string>
+    <string name="organizations_empty">No organizations found</string>
+    <string name="organizations_coordinates_format">Lon: %1$s  Lat: %2$s</string>
+    <string name="organizations_clear_filters">Clear filters</string>
+    <string name="organizations_results_format">%1$d of %2$d</string>
+    <string name="organizations_teams_title">Teams</string>
+    <string name="organizations_vehicles_title">Vehicles</string>
+    <string name="organizations_no_resources">No resources found</string>
     <string name="menu_my_team">My team</string>
     <string name="menu_my_notices">My notices</string>
     <string name="menu_map">Map</string>
@@ -150,4 +160,5 @@
     <string name="emergencies_total">Total</string>
     <string name="notice_sent">Notice sent successfully</string>
     <string name="scale_label">Scale</string>
+    <string name="create_date_label">Creation date</string>
 </resources>
