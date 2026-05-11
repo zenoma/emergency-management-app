@@ -10,13 +10,13 @@ import com.google.firebase.messaging.Notification;
 import es.udc.emergencyproject.backend.model.entities.assignment.Assignment;
 import es.udc.emergencyproject.backend.model.entities.assignment.AssignmentStatus;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceType;
-import es.udc.emergencyproject.backend.model.entities.user.UserRole;
 import es.udc.emergencyproject.backend.model.entities.user.UserRepository;
+import es.udc.emergencyproject.backend.model.entities.user.UserRole;
+import jakarta.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -99,7 +99,8 @@ public class AssignmentNotificationService {
           .build();
 
       BatchResponse response = FirebaseMessaging.getInstance().sendEachForMulticast(message);
-      log.info("Assignment notification sent: {} success, {} failure", response.getSuccessCount(), response.getFailureCount());
+      log.debug("Assignment notification sent: {} success, {} failure", response.getSuccessCount(),
+          response.getFailureCount());
     } catch (Exception e) {
       log.warn("Failed to send assignment notification", e);
     }
@@ -168,7 +169,8 @@ public class AssignmentNotificationService {
           .build();
 
       BatchResponse response = FirebaseMessaging.getInstance().sendEachForMulticast(message);
-      log.info("Assignment status notification sent: {} success, {} failure", response.getSuccessCount(), response.getFailureCount());
+      log.info("Assignment status notification sent: {} success, {} failure", response.getSuccessCount(),
+          response.getFailureCount());
     } catch (Exception e) {
       log.warn("Failed to send assignment status notification", e);
     }
