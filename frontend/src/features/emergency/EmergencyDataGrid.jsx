@@ -229,6 +229,13 @@ export default function EmergencyDataGrid() {
         setSnackbarMsg(t("emergency-created-successfully"));
         setSnackbarSeverity('success');
         setSnackbarOpen(true);
+        const emergencyId = res?.id;
+        if (emergencyId) {
+          handleClose();
+          navigate("/emergency-details/", { state: { emergencyId } });
+          return;
+        }
+
         refetch();
         handleClose();
       })

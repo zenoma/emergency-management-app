@@ -1,6 +1,8 @@
 package es.udc.emergencyproject.backend.model.services.emergency.recommendation;
 
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceType;
+import es.udc.emergencyproject.backend.rest.dtos.TeamResponseDto;
+import es.udc.emergencyproject.backend.rest.dtos.VehicleResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,4 +16,6 @@ public class AssignmentRecommendation {
   private final String organizationName;
   private final double distanceMeters;
   private final String reason;
+  private final TeamResponseDto teamInfo;
+  private final VehicleResponseDto vehicleInfo;
 }

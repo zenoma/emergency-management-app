@@ -13,6 +13,8 @@ import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundExceptio
 import es.udc.emergencyproject.backend.model.services.emergency.recommendation.AssignmentRecommendation;
 import es.udc.emergencyproject.backend.model.services.emergency.recommendation.EmergencyRecommendationService;
 import es.udc.emergencyproject.backend.model.services.emergency.recommendation.RecommendationRuleEngine;
+import es.udc.emergencyproject.backend.rest.mappers.TeamMapper;
+import es.udc.emergencyproject.backend.rest.mappers.VehicleMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -60,6 +62,7 @@ public class EmergencyRecommendationServiceImpl implements EmergencyRecommendati
     if (evaluation.getTeams() > 0) {
       List<Team> teams = teamRepository.findAvailableClosestToLocation(location,
           PageRequest.of(0, evaluation.getTeams()));
+      List<Team> filteredTeams = new ArrayList<>();
       for (Team team : teams) {
         if (!matchesOrganizationPreference(team.getOrganization(), preferredOrganizationType)) {
           continue;
@@ -70,19 +73,42 @@ public class EmergencyRecommendationServiceImpl implements EmergencyRecommendati
         if (distance > maxDistanceMeters) {
           continue;
         }
+        filteredTeams.add(team);
         result.add(new AssignmentRecommendation(
             team.getId(),
             ResourceType.TEAM,
             team.getOrganization() != null ? team.getOrganization().getId() : null,
             team.getOrganization() != null ? team.getOrganization().getName() : null,
             distance,
-            evaluation.getReason()));
+            evaluation.getReason(),
+            TeamMapper.toTeamDtoWithoutQuadrantInfo(team),
+            null));
+      }
+      if (filteredTeams.isEmpty()) {
+        for (Team team : teams) {
+          double distance = team.getOrganization() != null && team.getOrganization().getLocation() != null
+              ? team.getOrganization().getLocation().distance(location)
+              : 0d;
+          if (distance > maxDistanceMeters) {
+            continue;
+          }
+          result.add(new AssignmentRecommendation(
+              team.getId(),
+              ResourceType.TEAM,
+              team.getOrganization() != null ? team.getOrganization().getId() : null,
+              team.getOrganization() != null ? team.getOrganization().getName() : null,
+              distance,
+              evaluation.getReason(),
+              TeamMapper.toTeamDtoWithoutQuadrantInfo(team),
+              null));
+        }
       }
     }
 
     if (evaluation.getVehicles() > 0) {
       List<Vehicle> vehicles = vehicleRepository.findAvailableClosestToLocation(location,
           PageRequest.of(0, evaluation.getVehicles()));
+      List<Vehicle> filteredVehicles = new ArrayList<>();
       for (Vehicle vehicle : vehicles) {
         if (!matchesOrganizationPreference(vehicle.getOrganization(), preferredOrganizationType)) {
           continue;
@@ -93,13 +119,35 @@ public class EmergencyRecommendationServiceImpl implements EmergencyRecommendati
         if (distance > maxDistanceMeters) {
           continue;
         }
+        filteredVehicles.add(vehicle);
         result.add(new AssignmentRecommendation(
             vehicle.getId(),
             ResourceType.VEHICLE,
             vehicle.getOrganization() != null ? vehicle.getOrganization().getId() : null,
             vehicle.getOrganization() != null ? vehicle.getOrganization().getName() : null,
             distance,
-            evaluation.getReason()));
+            evaluation.getReason(),
+            null,
+            VehicleMapper.toVehicleDtoWithoutQuadrantInfo(vehicle)));
+      }
+      if (filteredVehicles.isEmpty()) {
+        for (Vehicle vehicle : vehicles) {
+          double distance = vehicle.getOrganization() != null && vehicle.getOrganization().getLocation() != null
+              ? vehicle.getOrganization().getLocation().distance(location)
+              : 0d;
+          if (distance > maxDistanceMeters) {
+            continue;
+          }
+          result.add(new AssignmentRecommendation(
+              vehicle.getId(),
+              ResourceType.VEHICLE,
+              vehicle.getOrganization() != null ? vehicle.getOrganization().getId() : null,
+              vehicle.getOrganization() != null ? vehicle.getOrganization().getName() : null,
+              distance,
+              evaluation.getReason(),
+              null,
+              VehicleMapper.toVehicleDtoWithoutQuadrantInfo(vehicle)));
+        }
       }
     }
 

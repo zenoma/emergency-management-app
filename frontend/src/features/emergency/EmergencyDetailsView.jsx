@@ -38,6 +38,7 @@ import {
   useGetEmergencyByIdQuery,
   useUpdateEmergencyMutation,
   useLinkEmergencyToPointMutation,
+  useGetEmergencyRecommendationsQuery,
 } from "../../api/emergencyApi";
 import { useGetQuadrantByCoordinatesQuery } from "../../api/quadrantApi";
 import { useLinkQuadrantsMutation } from "../../api/emergencyApi";
@@ -95,6 +96,10 @@ export default function EmergencyDetailsView() {
   const payload = { token: token, emergencyId: emergencyId, locale: locale };
 
   const { data, refetch, isLoading, isError } = useGetEmergencyByIdQuery(payload);
+  const { data: recommendations, isLoading: recommendationsLoading, refetch: refetchRecommendations } = useGetEmergencyRecommendationsQuery(
+    payload,
+    { skip: !emergencyId }
+  );
 
   // Local error boundary to catch unexpected render errors from child components
   class WeatherErrorBoundary extends React.Component {
@@ -142,6 +147,14 @@ export default function EmergencyDetailsView() {
   );
 
   const quadrantName = quadrantByCoordinates?.nombre || quadrantByCoordinates?.name || quadrantByCoordinates?.data?.nombre || quadrantByCoordinates?.data?.name || t('quadrant-name-unknown');
+
+  const recommendationGroups = React.useMemo(() => {
+    const items = Array.isArray(recommendations) ? recommendations : [];
+    return {
+      teams: items.filter((r) => r.resourceType === 'TEAM'),
+      vehicles: items.filter((r) => r.resourceType === 'VEHICLE'),
+    };
+  }, [recommendations]);
 
 
   useEffect(() => {
@@ -228,6 +241,7 @@ export default function EmergencyDetailsView() {
       .then(() => {
         toast.success(t("quadrant-linked-successfully"));
         refetch();
+        refetchRecommendations();
         handleClose();
       })
       .catch((error) => {
@@ -471,21 +485,23 @@ export default function EmergencyDetailsView() {
         </Paper>
       )
       }
-      <Grid
-        container
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 4, sm: 8, md: 12 }}
-      >
-        <Grid item xs={4} sm={8} md={6}>
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item xs={12} lg={8}>
           <Paper
             sx={{
               color: "primary.light",
               padding: 2,
+              height: '100%',
             }}
             variant="outlined"
           >
-            <Typography variant="h6">{t("quadrant-map")}</Typography>
-            {data && <Box sx={{ height: 450 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+              <Typography variant="h6">{t("quadrant-map")}</Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {data?.quadrantInfo?.length ? `${data.quadrantInfo.length} ${t('quadrants', 'quadrants')}` : t('quadrants-empty-list')}
+              </Typography>
+            </Box>
+            {data && <Box sx={{ height: { xs: 320, md: 520 }, borderRadius: 2, overflow: 'hidden' }}>
               <LandingMap
                 quadrants={data.quadrantInfo || []}
                 emergencies={data.location ? [{
@@ -498,15 +514,52 @@ export default function EmergencyDetailsView() {
                 }] : []}
               />
             </Box>}
+
+            <Box sx={{ mt: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+              <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+                <Typography variant="h6" sx={{ mb: 1 }}>{t('recommended-teams', 'Recommended teams')}</Typography>
+                {recommendationsLoading ? (
+                  <CircularProgress size={20} />
+                ) : recommendationGroups.teams.length > 0 ? (
+                  recommendationGroups.teams.map((item) => (
+                    <Paper key={`team-${item.resourceId}`} variant="outlined" sx={{ p: 1.25, my: 1 }}>
+                      <Typography variant="body2"><strong>{t('resource', 'Resource')}:</strong> {item.teamInfo?.code || `${t('team', 'Team')} #${item.resourceId}`}</Typography>
+                      <Typography variant="body2"><strong>{t('code', 'Code')}:</strong> {item.teamInfo?.code || '-'}</Typography>
+                      <Typography variant="body2"><strong>{t('organization', 'Organization')}:</strong> {item.teamInfo?.organization?.name || item.organizationName || '-'}</Typography>
+                      <Typography variant="body2"><strong>{t('organization-type-name', 'Organization type')}:</strong> {item.teamInfo?.organization?.organizationTypeName || '-'}</Typography>
+                      <Typography variant="body2"><strong>{t('distance', 'Distance')}:</strong> {(item.distanceMeters / 1000).toFixed(1)} km</Typography>
+                    </Paper>
+                  ))
+                ) : (
+                  <Alert severity="info">{t('no-team-recommendations', 'No team recommendations available due to lack of resources.')}</Alert>
+                )}
+              </Paper>
+
+              <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+                <Typography variant="h6" sx={{ mb: 1 }}>{t('recommended-vehicles', 'Recommended vehicles')}</Typography>
+                {recommendationsLoading ? (
+                  <CircularProgress size={20} />
+                ) : recommendationGroups.vehicles.length > 0 ? (
+                  recommendationGroups.vehicles.map((item) => (
+                    <Paper key={`vehicle-${item.resourceId}`} variant="outlined" sx={{ p: 1.25, my: 1 }}>
+                      <Typography variant="body2"><strong>{t('resource', 'Resource')}:</strong> {item.vehicleInfo?.vehiclePlate || `${t('vehicle', 'Vehicle')} #${item.resourceId}`}</Typography>
+                      <Typography variant="body2"><strong>{t('vehicle-plate', 'Vehicle plate')}:</strong> {item.vehicleInfo?.vehiclePlate || '-'}</Typography>
+                      <Typography variant="body2"><strong>{t('organization', 'Organization')}:</strong> {item.vehicleInfo?.organization?.name || item.organizationName || '-'}</Typography>
+                      <Typography variant="body2"><strong>{t('organization-type-name', 'Organization type')}:</strong> {item.vehicleInfo?.organization?.organizationTypeName || '-'}</Typography>
+                      <Typography variant="body2"><strong>{t('distance', 'Distance')}:</strong> {(item.distanceMeters / 1000).toFixed(1)} km</Typography>
+                    </Paper>
+                  ))
+                ) : (
+                  <Alert severity="info">{t('no-vehicle-recommendations', 'No vehicle recommendations available due to lack of resources.')}</Alert>
+                )}
+              </Paper>
+            </Box>
           </Paper>
         </Grid>
-        <Grid item xs={4} sm={8} md={3}>
-          {data && (
+        <Grid item xs={12} lg={4}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}>
             <Paper
-              sx={{
-                color: "primary.light",
-                padding: 2,
-              }}
+              sx={{ color: 'primary.light', p: 2 }}
               variant="outlined"
             >
               <Typography variant="h6">{t("quadrant-link")}</Typography>
@@ -516,23 +569,9 @@ export default function EmergencyDetailsView() {
                   const hasQuadrants = data && data.quadrantInfo && data.quadrantInfo.length > 0;
                   const hasLocation = data && data.location != null;
                   return (
-                    <RadioGroup
-                      row
-                      value={linkMode}
-                      onChange={(e) => setLinkMode(e.target.value)}
-                    >
-                      <FormControlLabel
-                        value="QUADRANT"
-                        control={<Radio />}
-                        label={t('link-mode-quadrant') || 'Quadrant'}
-                        disabled={hasLocation}
-                      />
-                      <FormControlLabel
-                        value="POINT"
-                        control={<Radio />}
-                        label={t('link-mode-point') || 'Point'}
-                        disabled={hasQuadrants}
-                      />
+                    <RadioGroup row value={linkMode} onChange={(e) => setLinkMode(e.target.value)}>
+                      <FormControlLabel value="QUADRANT" control={<Radio />} label={t('link-mode-quadrant') || 'Quadrant'} disabled={hasLocation} />
+                      <FormControlLabel value="POINT" control={<Radio />} label={t('link-mode-point') || 'Point'} disabled={hasQuadrants} />
                     </RadioGroup>
                   );
                 })()}
@@ -541,77 +580,40 @@ export default function EmergencyDetailsView() {
               {linkMode === 'QUADRANT' ? (
                 <>
                   <Typography variant="subtitle1">{t("quadrant-list")}</Typography>
-                  <TableContainer
-                    component={Paper}
-                    elevation={3}
-                    sx={{ maxHeight: 320 }}
-                  >
+                  <TableContainer component={Paper} elevation={3} sx={{ maxHeight: 320 }}>
                     <Table stickyHeader aria-label="sticky table">
                       <TableHead>
                         <TableRow>
-                          <TableCell sx={{ color: "secondary.light" }}>
-                            {t("quadrant-id")}
-                          </TableCell>
-                          <TableCell
-                            sx={{ color: "secondary.light" }}
-                            align="right"
-                          >
-                            {t("quadrant-name")}
-                          </TableCell>
-                          {/* options column removed - delete action moved into the name cell */}
+                          <TableCell sx={{ color: 'secondary.light' }}>{t('quadrant-id')}</TableCell>
+                          <TableCell sx={{ color: 'secondary.light' }} align="right">{t('quadrant-name')}</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {data.quadrantInfo && data.quadrantInfo.length > 0 ? (
-                          data.quadrantInfo.map((row) => (
-                            <TableRow
-                              key={row.id}
-                              hover
-                              sx={{
-                                "&:last-child td, &:last-child th": { border: 0 },
-                              }}
-                              onClick={() =>
-                                navigate("/quadrant", {
-                                  state: { quadrantId: row.id, emergencyId: emergencyId },
-                                })}
-                            >
-                              <TableCell component="th" scope="row">
-                                {row.id}
-                              </TableCell>
-                              <TableCell align="right" sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1 }}>
-                                <Box sx={{ flex: 1, textAlign: 'right' }}>{row.nombre}</Box>
-                                <IconButton
-                                  aria-label={t('remove-quadrant') || 'Remove quadrant'}
-                                  size="small"
-                                  color="error"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleResolveQuadrantOpenClick(row.id);
-                                  }}
-                                >
-                                  <DeleteIcon fontSize="small" />
-                                </IconButton>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        ) : (
-                          <TableRow>
-                            <TableCell colSpan={3} align="center">
-                              {t("quadrants-empty-list")}
+                        {data.quadrantInfo && data.quadrantInfo.length > 0 ? data.quadrantInfo.map((row) => (
+                          <TableRow
+                            key={row.id}
+                            hover
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            onClick={() => navigate('/quadrant', { state: { quadrantId: row.id, emergencyId: emergencyId } })}
+                          >
+                            <TableCell component="th" scope="row">{row.id}</TableCell>
+                            <TableCell align="right" sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1 }}>
+                              <Box sx={{ flex: 1, textAlign: 'right' }}>{row.nombre}</Box>
+                              <IconButton aria-label={t('remove-quadrant') || 'Remove quadrant'} size="small" color="error" onClick={(e) => { e.stopPropagation(); handleResolveQuadrantOpenClick(row.id); }}>
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
                             </TableCell>
+                          </TableRow>
+                        )) : (
+                          <TableRow>
+                            <TableCell colSpan={2} align="center">{t('quadrants-empty-list')}</TableCell>
                           </TableRow>
                         )}
                       </TableBody>
                     </Table>
                   </TableContainer>
-                  <Box m={1}>
-                    <Fab
-                      color="primary"
-                      aria-label="add"
-                      onClick={() => handleOpenClick()}
-                    >
-                      <AddIcon />
-                    </Fab>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+                    <Fab color="primary" aria-label="add" onClick={() => handleOpenClick()} size="small"><AddIcon /></Fab>
                   </Box>
                 </>
               ) : (
@@ -619,115 +621,53 @@ export default function EmergencyDetailsView() {
                   <Typography variant="subtitle1">{t('point-link-title') || 'Link to point'}</Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
                     {data && data.location == null ? (
-                      <>
-                        <Button variant="contained" onClick={() => setOpenPointPicker(true)}>{t('select-point-on-map') || 'Select point on map'}</Button>
-                      </>
+                      <Button variant="contained" onClick={() => setOpenPointPicker(true)}>{t('select-point-on-map') || 'Select point on map'}</Button>
                     ) : (
-                      <Box>
-                        <Button variant="text" onClick={() => {
-                          navigate('/emergency-point', { state: { emergencyId: emergencyId } });
-                        }}>
-                          {quadrantByCoordinates?.name || quadrantByCoordinates?.nombre || t('quadrant-name-unknown') || '-'}
-                        </Button>
-                      </Box>
+                      <Button variant="text" onClick={() => { navigate('/emergency-point', { state: { emergencyId: emergencyId } }); }}>
+                        {quadrantByCoordinates?.name || quadrantByCoordinates?.nombre || t('quadrant-name-unknown') || '-'}
+                      </Button>
                     )}
-
                   </Box>
                 </>
               )}
             </Paper>
-          )}
-        </Grid>
-        <Grid item xs={4} sm={8} md={3} >
-          {data && (
-            <Paper
-              sx={{
-                color: "primary.light",
-                padding: 2,
-              }}
-              variant="outlined"
-            >
-              <Typography variant="h6">{t("emergency-options")}</Typography>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ margin: "5px" }}
-                onClick={() => handleClickOpenEdit(data)}
-              >
-                {t("edit")}
+
+            <Paper sx={{ color: 'primary.light', p: 2 }} variant="outlined">
+              <Typography variant="h6">{t('emergency-options')}</Typography>
+              <Button fullWidth variant="contained" sx={{ mt: 1, mb: 1 }} onClick={() => handleClickOpenEdit(data)}>{t('edit')}</Button>
+              <Button variant="contained" fullWidth sx={{ backgroundColor: 'error.light', ':hover': { backgroundColor: 'error.dark' } }} onClick={() => handleResolveOpenClick()}>
+                {t('emergency-resolve')}
               </Button>
-              <Button
-                variant="contained"
-                fullWidth
-                sx={{
-                  backgroundColor: "error.light",
-                  margin: "5px",
-                  ":hover": { backgroundColor: "error.dark" },
-                }}
-                onClick={() => handleResolveOpenClick()}
-              >
-                {t("emergency-resolve")}
-              </Button>
-              <Dialog
-                open={openQuadrantResolve}
-                onClose={handleResolveQuadrantClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
-                  {t("quadrant-resolve-dialog")}
-                </DialogTitle>
+              <Dialog open={openQuadrantResolve} onClose={handleResolveQuadrantClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                <DialogTitle id="alert-dialog-title" sx={{ color: 'primary.light' }}>{t('quadrant-resolve-dialog')}</DialogTitle>
                 <DialogContent>
-                  <Typography variant="body2">
-                    {t("quadrant-resolve-text")}
-                  </Typography>
+                  <Typography variant="body2">{t('quadrant-resolve-text')}</Typography>
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleResolveQuadrantClose}>{t("cancel")}</Button>
-                  <Button
-                    onClick={handleResolveQuadrantClick}
-                    color="error"
-                    autoFocus
-                  >
-                    {t("quadrant-resolve")}
-                  </Button>
+                  <Button onClick={handleResolveQuadrantClose}>{t('cancel')}</Button>
+                  <Button onClick={handleResolveQuadrantClick} color="error" autoFocus>{t('quadrant-resolve')}</Button>
                 </DialogActions>
               </Dialog>
-              <Dialog
-                open={openResolve}
-                onClose={handleResolveClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title" sx={{ color: "primary.light" }}>
-                  {t("emergency-resolve-dialog")}
-                </DialogTitle>
+              <Dialog open={openResolve} onClose={handleResolveClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                <DialogTitle id="alert-dialog-title" sx={{ color: 'primary.light' }}>{t('emergency-resolve-dialog')}</DialogTitle>
                 <DialogContent>
-                  <Typography variant="body2">
-                    {t("emergency-resolve-text")}
-                  </Typography>
+                  <Typography variant="body2">{t('emergency-resolve-text')}</Typography>
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleResolveClose}>{t("cancel")}</Button>
-                  <Button
-                    onClick={handleResolveClick}
-                    color="error"
-                    autoFocus
-                  >
-                    {t("emergency-resolve")}
-                  </Button>
+                  <Button onClick={handleResolveClose}>{t('cancel')}</Button>
+                  <Button onClick={handleResolveClick} color="error" autoFocus>{t('emergency-resolve')}</Button>
                 </DialogActions>
               </Dialog>
             </Paper>
-          )}
 
-          {(() => {
-            if (coordinates && coordinates.lat != null && coordinates.lon != null) {
-              return <WeatherErrorBoundary><WeatherInfo sx={{ padding: 2 }} lat={coordinates.lat} lon={coordinates.lon} /></WeatherErrorBoundary>;
-            }
-            return null;
-          })()}
+            {(() => {
+              if (coordinates && coordinates.lat != null && coordinates.lon != null) {
+                return <WeatherErrorBoundary><WeatherInfo sx={{ padding: 2 }} lat={coordinates.lat} lon={coordinates.lon} /></WeatherErrorBoundary>;
+              }
+              return null;
+            })()}
 
+          </Box>
         </Grid>
       </Grid>
 
@@ -800,6 +740,7 @@ export default function EmergencyDetailsView() {
               .then(() => {
                 toast.success(t('quadrant-linked-successfully'));
                 refetch();
+                refetchRecommendations();
               })
               .catch(() => {
                 toast.error(t('quadrant-linked-error'));

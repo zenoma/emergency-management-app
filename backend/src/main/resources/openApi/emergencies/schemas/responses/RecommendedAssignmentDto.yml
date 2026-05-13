@@ -20,3 +20,7 @@ properties:
     format: double
   reason:
     type: string
+  teamInfo:
+    $ref: '../../../teams/schemas/responses/TeamResponseDto.yml'
+  vehicleInfo:
+    $ref: '../../../vehicles/schemas/responses/VehicleResponseDto.yml'

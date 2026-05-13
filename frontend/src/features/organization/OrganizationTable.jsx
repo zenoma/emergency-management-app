@@ -113,7 +113,7 @@ export default function OrganizationTable(props) {
   };
 
   const childToParent = (childdata) => {
-    setData({ lat: childdata[0], lng: childdata[1] });
+    setData({ lng: childdata[0], lat: childdata[1] });
   };
 
   const handleChange = (event) => {

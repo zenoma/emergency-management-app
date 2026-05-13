@@ -20,6 +20,8 @@ public class RecommendationMapper {
     dto.setOrganizationName(recommendation.getOrganizationName());
     dto.setDistanceMeters(recommendation.getDistanceMeters());
     dto.setReason(recommendation.getReason());
+    dto.setTeamInfo(recommendation.getTeamInfo());
+    dto.setVehicleInfo(recommendation.getVehicleInfo());
     return dto;
   }
 
