@@ -8,5 +8,8 @@ public interface EmergencyRecommendationService {
 
   List<AssignmentRecommendation> recommendForEmergency(Long emergencyId) throws InstanceNotFoundException;
 
+  List<AssignmentRecommendation> recommendForEmergency(Long emergencyId, Integer quadrantId)
+      throws InstanceNotFoundException;
+
   List<AssignmentRecommendation> recommendForEmergency(Emergency emergency);
 }

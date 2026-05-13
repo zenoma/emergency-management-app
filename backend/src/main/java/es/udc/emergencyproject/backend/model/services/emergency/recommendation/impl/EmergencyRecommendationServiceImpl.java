@@ -5,6 +5,8 @@ import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyReposit
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyTypeRuleRepository;
 import es.udc.emergencyproject.backend.model.entities.organization.Organization;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceType;
+import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
+import es.udc.emergencyproject.backend.model.entities.quadrant.QuadrantRepository;
 import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
 import es.udc.emergencyproject.backend.model.entities.resource.team.TeamRepository;
 import es.udc.emergencyproject.backend.model.entities.resource.vehicle.Vehicle;
@@ -29,20 +31,36 @@ public class EmergencyRecommendationServiceImpl implements EmergencyRecommendati
 
   private final EmergencyRepository emergencyRepository;
   private final EmergencyTypeRuleRepository emergencyTypeRuleRepository;
+  private final QuadrantRepository quadrantRepository;
   private final TeamRepository teamRepository;
   private final VehicleRepository vehicleRepository;
   private final RecommendationRuleEngine ruleEngine;
 
   @Override
   public List<AssignmentRecommendation> recommendForEmergency(Long emergencyId) throws InstanceNotFoundException {
+    return recommendForEmergency(emergencyId, null);
+  }
+
+  @Override
+  public List<AssignmentRecommendation> recommendForEmergency(Long emergencyId, Integer quadrantId)
+      throws InstanceNotFoundException {
     Emergency emergency = emergencyRepository.findById(emergencyId)
         .orElseThrow(() -> new InstanceNotFoundException("Emergency not found", emergencyId));
-    return recommendForEmergency(emergency);
+    return recommendForEmergency(emergency, quadrantId);
   }
 
   @Override
   public List<AssignmentRecommendation> recommendForEmergency(Emergency emergency) {
-    if (emergency == null || emergency.getLocation() == null || emergency.getEmergencyType() == null) {
+    return recommendForEmergency(emergency, null);
+  }
+
+  private List<AssignmentRecommendation> recommendForEmergency(Emergency emergency, Integer quadrantId) {
+    if (emergency == null || emergency.getEmergencyType() == null) {
+      return List.of();
+    }
+
+    Point location = resolveRecommendationPoint(emergency, quadrantId);
+    if (location == null) {
       return List.of();
     }
 
@@ -54,7 +72,6 @@ public class EmergencyRecommendationServiceImpl implements EmergencyRecommendati
     }
 
     List<AssignmentRecommendation> result = new ArrayList<>();
-    Point location = emergency.getLocation();
     double maxDistanceMeters =
         evaluation.getMaxDistanceKm() != null ? evaluation.getMaxDistanceKm() * 1000d : Double.MAX_VALUE;
     String preferredOrganizationType = evaluation.getPreferredOrganizationType();
@@ -152,6 +169,29 @@ public class EmergencyRecommendationServiceImpl implements EmergencyRecommendati
     }
 
     return result;
+  }
+
+  private Point resolveRecommendationPoint(Emergency emergency, Integer quadrantId) {
+    if (quadrantId != null) {
+      Quadrant quadrant = quadrantRepository.findById(quadrantId)
+          .orElse(null);
+      if (quadrant != null && quadrant.getGeom() != null) {
+        return quadrant.getGeom().getCentroid();
+      }
+    }
+
+    if (emergency.getLocation() != null) {
+      return emergency.getLocation();
+    }
+
+    if (emergency.getQuadrantGids() != null && !emergency.getQuadrantGids().isEmpty()) {
+      Quadrant quadrant = emergency.getQuadrantGids().get(0);
+      if (quadrant != null && quadrant.getGeom() != null) {
+        return quadrant.getGeom().getCentroid();
+      }
+    }
+
+    return null;
   }
 
   private boolean matchesOrganizationPreference(Organization organization, String preferredOrganizationType) {

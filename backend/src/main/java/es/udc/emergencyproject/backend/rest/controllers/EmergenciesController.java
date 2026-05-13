@@ -152,8 +152,10 @@ public class EmergenciesController implements EmergenciesApi {
   }
 
   @Override
-  public ResponseEntity<List<RecommendedAssignmentDto>> getEmergencyRecommendations(Long id) {
-    return ResponseEntity.ok(RecommendationMapper.toDtoList(emergencyRecommendationService.recommendForEmergency(id)));
+  public ResponseEntity<List<RecommendedAssignmentDto>> getEmergencyRecommendations(Long id,
+      @org.springframework.web.bind.annotation.RequestParam(value = "quadrantID", required = false) Integer quadrantId) {
+    return ResponseEntity.ok(RecommendationMapper.toDtoList(
+        emergencyRecommendationService.recommendForEmergency(id, quadrantId)));
   }
 
 

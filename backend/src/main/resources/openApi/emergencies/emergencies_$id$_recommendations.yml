@@ -10,6 +10,11 @@ get:
       schema:
         type: integer
         format: int64
+    - in: query
+      name: quadrantID
+      required: false
+      schema:
+        type: integer
   responses:
     '200':
       description: OK
