@@ -44,11 +44,13 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.CrisisAlert
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -87,6 +89,8 @@ import es.udc.emergencyapp.ui.map.MapScreen
 import es.udc.emergencyapp.ui.myteam.MyAssignmentsScreen
 import es.udc.emergencyapp.ui.notices.MyNoticesScreen
 import es.udc.emergencyapp.ui.notices.SendNoticeFragment
+import es.udc.emergencyapp.ui.organizations.OrganizationDetailScreen
+import es.udc.emergencyapp.ui.organizations.OrganizationsScreen
 import es.udc.emergencyapp.ui.profile.ProfileScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -401,8 +405,24 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                     }
 
                     // Logical blocks
-                    val block1 = listOf(
-                        Triple("map", stringResource(R.string.map_label), Icons.Filled.Map),
+                    val role = prefs.getString("user_role", "") ?: ""
+                    val isUser = role.uppercase() == "USER"
+
+                    val commonBlock =
+                        listOf(Triple("map", stringResource(R.string.map_label), Icons.Filled.Map))
+                    val noticesBlock = listOf(
+                        Triple(
+                            "send_notice",
+                            stringResource(R.string.menu_send_notice),
+                            Icons.Filled.Send
+                        ),
+                        Triple(
+                            "notices",
+                            stringResource(R.string.menu_my_notices),
+                            Icons.Filled.Notes
+                        )
+                    )
+                    val teamBlock = listOf(
                         Triple(
                             "myteam",
                             stringResource(R.string.my_team_label),
@@ -412,7 +432,9 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                             "myassignments",
                             stringResource(R.string.my_assignments_title),
                             Icons.Filled.Description
-                        ),
+                        )
+                    )
+                    val managementBlock = listOf(
                         Triple(
                             "organizations",
                             stringResource(R.string.menu_organizations),
@@ -420,17 +442,9 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                         ),
                         Triple(
                             "emergencies",
-                            stringResource(R.string.emergency_title),
-                            Icons.Filled.Description
+                            stringResource(R.string.emergencies_title),
+                            Icons.Filled.CrisisAlert
                         )
-                    )
-                    val block2 = listOf(
-                        Triple(
-                            "send_notice",
-                            stringResource(R.string.menu_send_notice),
-                            Icons.Filled.Send
-                        ),
-                        Triple("notices", "My Notices", Icons.Filled.Description)
                     )
 
                     @Composable
@@ -486,13 +500,29 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                         }
                     }
 
-                    renderBlock(block1)
+                    renderBlock(commonBlock)
                     Divider(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 6.dp)
                     )
-                    renderBlock(block2)
+                    if (isUser) {
+                        renderBlock(noticesBlock)
+                    } else {
+                        renderBlock(noticesBlock)
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                        )
+                        renderBlock(teamBlock)
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                        )
+                        renderBlock(managementBlock)
+                    }
                     Spacer(modifier = Modifier.weight(1f))
                 }
             }
@@ -550,9 +580,22 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                 composable("emergencies") { es.udc.emergencyapp.ui.ScreenContainer { es.udc.emergencyapp.ui.emergencies.EmergenciesScreen() } }
                 composable("organizations") {
                     es.udc.emergencyapp.ui.ScreenContainer {
-                        FeaturePlaceholder(
-                            stringResource(R.string.menu_organizations)
-                        )
+                        OrganizationsScreen(onOpenOrganization = { orgId ->
+                            navController.navigate("organizations/$orgId") {
+                                launchSingleTop = true
+                            }
+                        })
+                    }
+                }
+                composable(
+                    "organizations/{organizationId}",
+                    arguments = listOf(navArgument("organizationId") { type = NavType.LongType })
+                ) { backStackEntry ->
+                    val organizationId = backStackEntry.arguments?.getLong("organizationId") ?: -1L
+                    es.udc.emergencyapp.ui.ScreenContainer {
+                        OrganizationDetailScreen(organizationId = organizationId, onBack = {
+                            navController.popBackStack()
+                        })
                     }
                 }
                 composable("myteam") {
