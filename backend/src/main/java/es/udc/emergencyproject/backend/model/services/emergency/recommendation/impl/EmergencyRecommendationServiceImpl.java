@@ -3,6 +3,7 @@ package es.udc.emergencyproject.backend.model.services.emergency.recommendation.
 import es.udc.emergencyproject.backend.model.entities.emergency.Emergency;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyRepository;
 import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyTypeRuleRepository;
+import es.udc.emergencyproject.backend.model.entities.organization.Organization;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceType;
 import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
 import es.udc.emergencyproject.backend.model.entities.resource.team.TeamRepository;
@@ -14,6 +15,7 @@ import es.udc.emergencyproject.backend.model.services.emergency.recommendation.E
 import es.udc.emergencyproject.backend.model.services.emergency.recommendation.RecommendationRuleEngine;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.PageRequest;
@@ -42,7 +44,8 @@ public class EmergencyRecommendationServiceImpl implements EmergencyRecommendati
       return List.of();
     }
 
-    var rules = emergencyTypeRuleRepository.findByEmergencyTypeIdOrderByPriorityAsc(emergency.getEmergencyType().getId());
+    var rules = emergencyTypeRuleRepository.findByEmergencyTypeIdOrderByPriorityAsc(
+        emergency.getEmergencyType().getId());
     var evaluation = ruleEngine.evaluate(emergency.getEmergencyType().getName(), rules);
     if (evaluation.getTeams() <= 0 && evaluation.getVehicles() <= 0) {
       return List.of();
@@ -50,37 +53,68 @@ public class EmergencyRecommendationServiceImpl implements EmergencyRecommendati
 
     List<AssignmentRecommendation> result = new ArrayList<>();
     Point location = emergency.getLocation();
+    double maxDistanceMeters =
+        evaluation.getMaxDistanceKm() != null ? evaluation.getMaxDistanceKm() * 1000d : Double.MAX_VALUE;
+    String preferredOrganizationType = evaluation.getPreferredOrganizationType();
 
     if (evaluation.getTeams() > 0) {
-      List<Team> teams = teamRepository.findAvailableClosestToLocation(location, PageRequest.of(0, evaluation.getTeams()));
+      List<Team> teams = teamRepository.findAvailableClosestToLocation(location,
+          PageRequest.of(0, evaluation.getTeams()));
       for (Team team : teams) {
+        if (!matchesOrganizationPreference(team.getOrganization(), preferredOrganizationType)) {
+          continue;
+        }
+        double distance = team.getOrganization() != null && team.getOrganization().getLocation() != null
+            ? team.getOrganization().getLocation().distance(location)
+            : 0d;
+        if (distance > maxDistanceMeters) {
+          continue;
+        }
         result.add(new AssignmentRecommendation(
             team.getId(),
             ResourceType.TEAM,
             team.getOrganization() != null ? team.getOrganization().getId() : null,
             team.getOrganization() != null ? team.getOrganization().getName() : null,
-            team.getOrganization() != null && team.getOrganization().getLocation() != null
-                ? team.getOrganization().getLocation().distance(location)
-                : 0d,
+            distance,
             evaluation.getReason()));
       }
     }
 
     if (evaluation.getVehicles() > 0) {
-      List<Vehicle> vehicles = vehicleRepository.findAvailableClosestToLocation(location, PageRequest.of(0, evaluation.getVehicles()));
+      List<Vehicle> vehicles = vehicleRepository.findAvailableClosestToLocation(location,
+          PageRequest.of(0, evaluation.getVehicles()));
       for (Vehicle vehicle : vehicles) {
+        if (!matchesOrganizationPreference(vehicle.getOrganization(), preferredOrganizationType)) {
+          continue;
+        }
+        double distance = vehicle.getOrganization() != null && vehicle.getOrganization().getLocation() != null
+            ? vehicle.getOrganization().getLocation().distance(location)
+            : 0d;
+        if (distance > maxDistanceMeters) {
+          continue;
+        }
         result.add(new AssignmentRecommendation(
             vehicle.getId(),
             ResourceType.VEHICLE,
             vehicle.getOrganization() != null ? vehicle.getOrganization().getId() : null,
             vehicle.getOrganization() != null ? vehicle.getOrganization().getName() : null,
-            vehicle.getOrganization() != null && vehicle.getOrganization().getLocation() != null
-                ? vehicle.getOrganization().getLocation().distance(location)
-                : 0d,
+            distance,
             evaluation.getReason()));
       }
     }
 
     return result;
+  }
+
+  private boolean matchesOrganizationPreference(Organization organization, String preferredOrganizationType) {
+    if (preferredOrganizationType == null || preferredOrganizationType.isBlank()) {
+      return true;
+    }
+    if (organization == null || organization.getOrganizationType() == null
+        || organization.getOrganizationType().getName() == null) {
+      return false;
+    }
+    return organization.getOrganizationType().getName().toLowerCase(Locale.ROOT)
+        .contains(preferredOrganizationType.toLowerCase(Locale.ROOT));
   }
 }

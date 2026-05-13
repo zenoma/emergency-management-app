@@ -9,5 +9,7 @@ public class RuleEvaluationResult {
 
   private final int teams;
   private final int vehicles;
+  private final Double maxDistanceKm;
+  private final String preferredOrganizationType;
   private final String reason;
 }

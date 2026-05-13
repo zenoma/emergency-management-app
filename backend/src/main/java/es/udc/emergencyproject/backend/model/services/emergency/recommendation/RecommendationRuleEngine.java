@@ -15,7 +15,7 @@ public class RecommendationRuleEngine {
 
   public RuleEvaluationResult evaluate(String emergencyTypeName, Iterable<EmergencyTypeRule> rules) {
     if (emergencyTypeName == null || rules == null) {
-      return new RuleEvaluationResult(0, 0, "No protocol configured");
+      return new RuleEvaluationResult(0, 0, null, null, "No protocol configured");
     }
 
     try {
@@ -34,14 +34,19 @@ public class RecommendationRuleEngine {
         if (matches(typeName, when)) {
           int teams = then.path("teams").asInt(0);
           int vehicles = then.path("vehicles").asInt(0);
-          return new RuleEvaluationResult(teams, vehicles, buildReason(when, teams, vehicles));
+          Double maxDistanceKm = then.has("maxDistanceKm") ? then.path("maxDistanceKm").asDouble() : null;
+          String preferredOrganizationType = then.hasNonNull("preferredOrganizationType")
+              ? then.path("preferredOrganizationType").asText(null)
+              : null;
+          return new RuleEvaluationResult(teams, vehicles, maxDistanceKm, preferredOrganizationType,
+              buildReason(when, teams, vehicles, maxDistanceKm, preferredOrganizationType));
         }
       }
     } catch (Exception ex) {
-      return new RuleEvaluationResult(0, 0, "Failed to evaluate protocol");
+      return new RuleEvaluationResult(0, 0, null, null, "Failed to evaluate protocol");
     }
 
-    return new RuleEvaluationResult(0, 0, "No matching rule");
+    return new RuleEvaluationResult(0, 0, null, null, "No matching rule");
   }
 
   private boolean matches(String typeName, JsonNode when) {
@@ -56,8 +61,18 @@ public class RecommendationRuleEngine {
     return false;
   }
 
-  private String buildReason(JsonNode when, int teams, int vehicles) {
+  private String buildReason(JsonNode when, int teams, int vehicles, Double maxDistanceKm, String preferredOrganizationType) {
     String value = when.path("value").asText("default");
-    return "Rule matched: " + value + " -> teams=" + teams + ", vehicles=" + vehicles;
+    StringBuilder sb = new StringBuilder();
+    sb.append("Rule matched: ").append(value)
+        .append(" -> teams=").append(teams)
+        .append(", vehicles=").append(vehicles);
+    if (maxDistanceKm != null) {
+      sb.append(", maxDistanceKm=").append(maxDistanceKm);
+    }
+    if (preferredOrganizationType != null) {
+      sb.append(", preferredOrganizationType=").append(preferredOrganizationType);
+    }
+    return sb.toString();
   }
 }
