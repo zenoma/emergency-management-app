@@ -1,0 +1,22 @@
+type: object
+required:
+  - resourceId
+  - resourceType
+  - distanceMeters
+properties:
+  resourceId:
+    type: integer
+    format: int64
+  resourceType:
+    type: string
+    enum: [ TEAM, VEHICLE ]
+  organizationId:
+    type: integer
+    format: int64
+  organizationName:
+    type: string
+  distanceMeters:
+    type: number
+    format: double
+  reason:
+    type: string

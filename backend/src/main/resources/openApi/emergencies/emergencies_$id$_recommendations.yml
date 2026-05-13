@@ -1,0 +1,21 @@
+get:
+  summary: Sugerencias de asignación para una emergencia
+  operationId: getEmergencyRecommendations
+  tags:
+    - EmergencyManagement
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/RecommendedAssignmentDto.yml'

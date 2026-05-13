@@ -6,6 +6,7 @@ import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
+import es.udc.emergencyproject.backend.model.services.emergency.recommendation.AssignmentRecommendation;
 import java.util.List;
 import java.util.Optional;
 import org.locationtech.jts.geom.Point;
@@ -38,6 +39,8 @@ public interface EmergencyManagementService {
   Emergency findEmergencyById(Long id) throws InstanceNotFoundException;
 
   Emergency createEmergency(String description, Long emergencyTypeId, EmergencyIndex emergencyIndex);
+
+  List<AssignmentRecommendation> recommendAssignments(Long emergencyId) throws InstanceNotFoundException;
 
   Emergency resolveEmergency(Long id)
       throws InstanceNotFoundException, ResolvedEmergencyException, AlreadyDismantledException;
