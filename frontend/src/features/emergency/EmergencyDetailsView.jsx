@@ -40,6 +40,7 @@ import {
   useLinkEmergencyToPointMutation,
   useGetEmergencyRecommendationsQuery,
 } from "../../api/emergencyApi";
+import { useCreateAssignmentMutation } from "../../api/assignmentApi";
 import { useGetQuadrantByCoordinatesQuery } from "../../api/quadrantApi";
 import { useLinkQuadrantsMutation } from "../../api/emergencyApi";
 import LandingMap from "../map/LandingMap";
@@ -89,6 +90,7 @@ export default function EmergencyDetailsView() {
   const [openPointPicker, setOpenPointPicker] = useState(false);
   const [openPointConfirm, setOpenPointConfirm] = useState(false);
   const [pendingProjPoint, setPendingProjPoint] = useState(null); // { x, y }
+  const [createdRecommendationAssignments, setCreatedRecommendationAssignments] = useState({});
 
 
   const [coordinates, setCoordinates] = useState(null);
@@ -100,6 +102,7 @@ export default function EmergencyDetailsView() {
     payload,
     { skip: !emergencyId }
   );
+  const [createAssignment, { isLoading: creatingAssignment }] = useCreateAssignmentMutation();
 
   // Local error boundary to catch unexpected render errors from child components
   class WeatherErrorBoundary extends React.Component {
@@ -150,11 +153,41 @@ export default function EmergencyDetailsView() {
 
   const recommendationGroups = React.useMemo(() => {
     const items = Array.isArray(recommendations) ? recommendations : [];
+    const createdKeys = new Set(Object.keys(createdRecommendationAssignments));
     return {
-      teams: items.filter((r) => r.resourceType === 'TEAM'),
-      vehicles: items.filter((r) => r.resourceType === 'VEHICLE'),
+      teams: items.filter((r) => r.resourceType === 'TEAM' && !createdKeys.has(`TEAM-${r.resourceId}`)),
+      vehicles: items.filter((r) => r.resourceType === 'VEHICLE' && !createdKeys.has(`VEHICLE-${r.resourceId}`)),
     };
-  }, [recommendations]);
+  }, [recommendations, createdRecommendationAssignments]);
+
+  const handleCreateAssignmentFromRecommendation = async (item) => {
+    const quadrantId = Number(data?.quadrantInfo?.[0]?.id ?? 0);
+    try {
+      const response = await createAssignment({
+        emergencyId,
+        quadrantId,
+        resourceId: item.resourceId,
+        notes: t('created-from-recommendation', 'Created from recommendation'),
+        token,
+        locale,
+      }).unwrap();
+
+      if (response?.id) {
+        setCreatedRecommendationAssignments((prev) => ({
+          ...prev,
+          [`${item.resourceType}-${item.resourceId}`]: {
+            assignmentId: response.id,
+            item,
+          },
+        }));
+      }
+      toast.success(t('assignment-created-successfully', 'Assignment created successfully'));
+      refetchRecommendations();
+    } catch (error) {
+      console.error('Failed to create assignment from recommendation', error);
+      toast.error(t('assignment-created-error', 'Could not create assignment'));
+    }
+  };
 
 
   useEffect(() => {
@@ -518,18 +551,46 @@ export default function EmergencyDetailsView() {
             <Box sx={{ mt: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
               <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>{t('recommended-teams', 'Recommended teams')}</Typography>
+                {Object.entries(createdRecommendationAssignments)
+                  .filter(([key]) => key.startsWith('TEAM-'))
+                  .map(([key, entry]) => (
+                    <Paper key={`created-${key}`} variant="outlined" sx={{ p: 1.25, my: 1, borderColor: 'success.main' }}>
+                      <Typography variant="body2"><strong>{t('resource', 'Resource')}:</strong> {entry.item?.teamInfo?.code || `${t('team', 'Team')} #${entry.item?.resourceId}`}</Typography>
+                      <Typography variant="body2"><strong>{t('organization', 'Organization')}:</strong> {entry.item?.teamInfo?.organization?.name || entry.item?.organizationName || '-'}</Typography>
+                      <Typography variant="body2"><strong>{t('distance', 'Distance')}:</strong> {((entry.item?.distanceMeters || 0) / 1000).toFixed(1)} km</Typography>
+                      <Box sx={{ mt: 1 }}>
+                        <Button size="small" variant="contained" onClick={() => navigate(`/assignments/${entry.assignmentId}`)}>
+                          {t('go-to-assignment-details', 'Go to assignment details')}
+                        </Button>
+                      </Box>
+                    </Paper>
+                  ))}
                 {recommendationsLoading ? (
                   <CircularProgress size={20} />
                 ) : recommendationGroups.teams.length > 0 ? (
-                  recommendationGroups.teams.map((item) => (
+                  recommendationGroups.teams.map((item) => {
+                    const assignmentId = createdRecommendationAssignments[`TEAM-${item.resourceId}`];
+                    return (
                     <Paper key={`team-${item.resourceId}`} variant="outlined" sx={{ p: 1.25, my: 1 }}>
                       <Typography variant="body2"><strong>{t('resource', 'Resource')}:</strong> {item.teamInfo?.code || `${t('team', 'Team')} #${item.resourceId}`}</Typography>
                       <Typography variant="body2"><strong>{t('code', 'Code')}:</strong> {item.teamInfo?.code || '-'}</Typography>
                       <Typography variant="body2"><strong>{t('organization', 'Organization')}:</strong> {item.teamInfo?.organization?.name || item.organizationName || '-'}</Typography>
                       <Typography variant="body2"><strong>{t('organization-type-name', 'Organization type')}:</strong> {item.teamInfo?.organization?.organizationTypeName || '-'}</Typography>
                       <Typography variant="body2"><strong>{t('distance', 'Distance')}:</strong> {(item.distanceMeters / 1000).toFixed(1)} km</Typography>
+                      <Box sx={{ mt: 1 }}>
+                        {assignmentId ? (
+                          <Button size="small" variant="contained" onClick={() => navigate(`/assignments/${assignmentId}`)}>
+                            {t('go-to-assignment-details', 'Go to assignment details')}
+                          </Button>
+                        ) : (
+                          <Button size="small" variant="contained" disabled={creatingAssignment} onClick={() => handleCreateAssignmentFromRecommendation(item)}>
+                            {t('create-assignment', 'Create assignment')}
+                          </Button>
+                        )}
+                      </Box>
                     </Paper>
-                  ))
+                    );
+                  })
                 ) : (
                   <Alert severity="info">{t('no-team-recommendations', 'No team recommendations available due to lack of resources.')}</Alert>
                 )}
@@ -537,18 +598,46 @@ export default function EmergencyDetailsView() {
 
               <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>{t('recommended-vehicles', 'Recommended vehicles')}</Typography>
+                {Object.entries(createdRecommendationAssignments)
+                  .filter(([key]) => key.startsWith('VEHICLE-'))
+                  .map(([key, entry]) => (
+                    <Paper key={`created-${key}`} variant="outlined" sx={{ p: 1.25, my: 1, borderColor: 'success.main' }}>
+                      <Typography variant="body2"><strong>{t('resource', 'Resource')}:</strong> {entry.item?.vehicleInfo?.vehiclePlate || `${t('vehicle', 'Vehicle')} #${entry.item?.resourceId}`}</Typography>
+                      <Typography variant="body2"><strong>{t('organization', 'Organization')}:</strong> {entry.item?.vehicleInfo?.organization?.name || entry.item?.organizationName || '-'}</Typography>
+                      <Typography variant="body2"><strong>{t('distance', 'Distance')}:</strong> {((entry.item?.distanceMeters || 0) / 1000).toFixed(1)} km</Typography>
+                      <Box sx={{ mt: 1 }}>
+                        <Button size="small" variant="contained" onClick={() => navigate(`/assignments/${entry.assignmentId}`)}>
+                          {t('go-to-assignment-details', 'Go to assignment details')}
+                        </Button>
+                      </Box>
+                    </Paper>
+                  ))}
                 {recommendationsLoading ? (
                   <CircularProgress size={20} />
                 ) : recommendationGroups.vehicles.length > 0 ? (
-                  recommendationGroups.vehicles.map((item) => (
+                  recommendationGroups.vehicles.map((item) => {
+                    const assignmentId = createdRecommendationAssignments[`VEHICLE-${item.resourceId}`];
+                    return (
                     <Paper key={`vehicle-${item.resourceId}`} variant="outlined" sx={{ p: 1.25, my: 1 }}>
                       <Typography variant="body2"><strong>{t('resource', 'Resource')}:</strong> {item.vehicleInfo?.vehiclePlate || `${t('vehicle', 'Vehicle')} #${item.resourceId}`}</Typography>
                       <Typography variant="body2"><strong>{t('vehicle-plate', 'Vehicle plate')}:</strong> {item.vehicleInfo?.vehiclePlate || '-'}</Typography>
                       <Typography variant="body2"><strong>{t('organization', 'Organization')}:</strong> {item.vehicleInfo?.organization?.name || item.organizationName || '-'}</Typography>
                       <Typography variant="body2"><strong>{t('organization-type-name', 'Organization type')}:</strong> {item.vehicleInfo?.organization?.organizationTypeName || '-'}</Typography>
                       <Typography variant="body2"><strong>{t('distance', 'Distance')}:</strong> {(item.distanceMeters / 1000).toFixed(1)} km</Typography>
+                      <Box sx={{ mt: 1 }}>
+                        {assignmentId ? (
+                          <Button size="small" variant="contained" onClick={() => navigate(`/assignments/${assignmentId}`)}>
+                            {t('go-to-assignment-details', 'Go to assignment details')}
+                          </Button>
+                        ) : (
+                          <Button size="small" variant="contained" disabled={creatingAssignment} onClick={() => handleCreateAssignmentFromRecommendation(item)}>
+                            {t('create-assignment', 'Create assignment')}
+                          </Button>
+                        )}
+                      </Box>
                     </Paper>
-                  ))
+                    );
+                  })
                 ) : (
                   <Alert severity="info">{t('no-vehicle-recommendations', 'No vehicle recommendations available due to lack of resources.')}</Alert>
                 )}
