@@ -15,6 +15,14 @@ CREATE TABLE IF NOT EXISTS emergency_type
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS emergency_type_rule
+(
+    id                BIGSERIAL PRIMARY KEY,
+    emergency_type_id BIGINT NOT NULL,
+    priority          INTEGER NOT NULL DEFAULT 0,
+    rule_json         JSONB NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS emergency
 (
     id          BIGSERIAL PRIMARY KEY,
@@ -253,6 +261,11 @@ ALTER TABLE emergency_quadrant
 ALTER TABLE emergency
     ADD CONSTRAINT fk_emergency_type_id
         FOREIGN KEY (type_id)
+            REFERENCES emergency_type (id);
+
+ALTER TABLE emergency_type_rule
+    ADD CONSTRAINT fk_emergency_type_rule_emergency_type_id
+        FOREIGN KEY (emergency_type_id)
             REFERENCES emergency_type (id);
 
 ALTER TABLE assignment

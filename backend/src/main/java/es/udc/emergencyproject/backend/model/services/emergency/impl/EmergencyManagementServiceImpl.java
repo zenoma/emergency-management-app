@@ -16,11 +16,6 @@ import es.udc.emergencyproject.backend.model.entities.quadrant.Quadrant;
 import es.udc.emergencyproject.backend.model.entities.quadrant.QuadrantRepository;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceRepository;
 import es.udc.emergencyproject.backend.model.entities.resource.ResourceStatus;
-import es.udc.emergencyproject.backend.model.entities.resource.ResourceType;
-import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
-import es.udc.emergencyproject.backend.model.entities.resource.team.TeamRepository;
-import es.udc.emergencyproject.backend.model.entities.resource.vehicle.Vehicle;
-import es.udc.emergencyproject.backend.model.entities.resource.vehicle.VehicleRepository;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToPointException;
 import es.udc.emergencyproject.backend.model.exceptions.EmergencyAlreadyLinkedToQuadrantsException;
@@ -29,19 +24,16 @@ import es.udc.emergencyproject.backend.model.exceptions.QuadrantAlreadyLinkedToE
 import es.udc.emergencyproject.backend.model.exceptions.QuadrantNotLinkedToEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.services.emergency.EmergencyManagementService;
-import es.udc.emergencyproject.backend.model.services.emergency.recommendation.AssignmentRecommendation;
 import es.udc.emergencyproject.backend.model.services.logs.LogManagementService;
 import es.udc.emergencyproject.backend.model.services.notifications.AssignmentNotificationService;
 import es.udc.emergencyproject.backend.model.services.utils.ConstraintValidator;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,8 +52,6 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
   private final EmergencyTypeRepository emergencyTypeRepository;
   private final AssignmentRepository assignmentRepository;
   private final ResourceRepository resourceRepository;
-  private final TeamRepository teamRepository;
-  private final VehicleRepository vehicleRepository;
   private final AssignmentNotificationService assignmentNotificationService;
 
   // QUADRANT SERVICE
@@ -238,32 +228,6 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     return saved;
   }
 
-  @Override
-  public List<AssignmentRecommendation> recommendAssignments(Long emergencyId)
-      throws InstanceNotFoundException {
-    Emergency emergency = emergencyRepository.findById(emergencyId)
-        .orElseThrow(() -> new InstanceNotFoundException(EMERGENCY_NOT_FOUND, emergencyId));
-
-    if (emergency.getLocation() == null || emergency.getEmergencyType() == null) {
-      return List.of();
-    }
-
-    String normalizedType = normalize(emergency.getEmergencyType().getName());
-    int teamCount = 1;
-    int vehicleCount = 1;
-    String reason = "Default recommendation for point-based emergency";
-
-    if (normalizedType.contains("desprend") || normalizedType.contains("derrum")) {
-      teamCount = 1;
-      vehicleCount = 1;
-      reason = "Rule: landslide-style emergency needs one team and one vehicle";
-    }
-
-    List<AssignmentRecommendation> recommendations = new ArrayList<>();
-    addTeamRecommendations(emergency.getLocation(), teamCount, recommendations, reason);
-    addVehicleRecommendations(emergency.getLocation(), vehicleCount, recommendations, reason);
-    return recommendations;
-  }
 
   @Override
   public Emergency resolveEmergency(Long id)
@@ -394,46 +358,6 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
   @Override
   public List<EmergencyType> findAllEmergencyTypes() {
     return emergencyTypeRepository.findAll();
-  }
-
-  private void addTeamRecommendations(Point location, int count, List<AssignmentRecommendation> recommendations,
-      String reason) {
-    List<Team> teams = teamRepository.findAvailableClosestToLocation(location, PageRequest.of(0, count));
-    for (Team team : teams) {
-      recommendations.add(new AssignmentRecommendation(
-          team.getId(),
-          ResourceType.TEAM,
-          team.getOrganization() != null ? team.getOrganization().getId() : null,
-          team.getOrganization() != null ? team.getOrganization().getName() : null,
-          team.getOrganization() != null && team.getOrganization().getLocation() != null
-              ? team.getOrganization().getLocation().distance(location)
-              : 0d,
-          reason));
-    }
-  }
-
-  private void addVehicleRecommendations(Point location, int count, List<AssignmentRecommendation> recommendations,
-      String reason) {
-    List<Vehicle> vehicles = vehicleRepository.findAvailableClosestToLocation(location, PageRequest.of(0, count));
-    for (Vehicle vehicle : vehicles) {
-      recommendations.add(new AssignmentRecommendation(
-          vehicle.getId(),
-          ResourceType.VEHICLE,
-          vehicle.getOrganization() != null ? vehicle.getOrganization().getId() : null,
-          vehicle.getOrganization() != null ? vehicle.getOrganization().getName() : null,
-          vehicle.getOrganization() != null && vehicle.getOrganization().getLocation() != null
-              ? vehicle.getOrganization().getLocation().distance(location)
-              : 0d,
-          reason));
-    }
-  }
-
-  private String normalize(String value) {
-    if (value == null) {
-      return "";
-    }
-    String normalized = Normalizer.normalize(value, Normalizer.Form.NFD);
-    return normalized.replaceAll("\\p{M}", "").toLowerCase(java.util.Locale.ROOT);
   }
 
 

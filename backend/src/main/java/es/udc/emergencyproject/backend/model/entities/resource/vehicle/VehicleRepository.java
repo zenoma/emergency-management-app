@@ -1,11 +1,11 @@
 package es.udc.emergencyproject.backend.model.entities.resource.vehicle;
 
 import java.util.List;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.locationtech.jts.geom.Point;
+import org.springframework.data.domain.Pageable;
 
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 

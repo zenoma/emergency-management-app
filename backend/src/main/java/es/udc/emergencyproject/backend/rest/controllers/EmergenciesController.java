@@ -5,6 +5,7 @@ import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.services.emergency.EmergencyManagementService;
+import es.udc.emergencyproject.backend.model.services.emergency.recommendation.EmergencyRecommendationService;
 import es.udc.emergencyproject.backend.rest.dtos.CoordinatesDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyResponseDto;
@@ -32,6 +33,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class EmergenciesController implements EmergenciesApi {
 
   private final EmergencyManagementService emergencyManagementService;
+  private final EmergencyRecommendationService emergencyRecommendationService;
 
   @Override
   public ResponseEntity<List<EmergencyResponseDto>> getAllEmergencys() {
@@ -151,7 +153,7 @@ public class EmergenciesController implements EmergenciesApi {
 
   @Override
   public ResponseEntity<List<RecommendedAssignmentDto>> getEmergencyRecommendations(Long id) {
-    return ResponseEntity.ok(RecommendationMapper.toDtoList(emergencyManagementService.recommendAssignments(id)));
+    return ResponseEntity.ok(RecommendationMapper.toDtoList(emergencyRecommendationService.recommendForEmergency(id)));
   }
 
 

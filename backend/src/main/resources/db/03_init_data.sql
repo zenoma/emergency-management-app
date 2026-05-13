@@ -11,6 +11,19 @@ INSERT INTO emergency_type (name) VALUES
   ('Otros')
 ON CONFLICT (name) DO NOTHING;
 
+INSERT INTO emergency_type_rule (emergency_type_id, priority, rule_json) VALUES
+  ((SELECT id FROM emergency_type WHERE name = 'Incendio (forestal/estructural)'), 1, '{"when":{"type":"name_contains","value":"incend"},"then":{"teams":3,"vehicles":2}}'::jsonb),
+  ((SELECT id FROM emergency_type WHERE name = 'Inundación'), 1, '{"when":{"type":"name_contains","value":"inund"},"then":{"teams":2,"vehicles":1}}'::jsonb),
+  ((SELECT id FROM emergency_type WHERE name = 'Derrumbe/Desprendimiento'), 1, '{"when":{"type":"name_contains","value":"desprend"},"then":{"teams":1,"vehicles":1}}'::jsonb),
+  ((SELECT id FROM emergency_type WHERE name = 'Derrumbe/Desprendimiento'), 2, '{"when":{"type":"name_contains","value":"derrum"},"then":{"teams":1,"vehicles":1}}'::jsonb),
+  ((SELECT id FROM emergency_type WHERE name = 'Accidente vial'), 1, '{"when":{"type":"name_contains","value":"accident"},"then":{"teams":1,"vehicles":1}}'::jsonb),
+  ((SELECT id FROM emergency_type WHERE name = 'Emergencia sanitaria'), 1, '{"when":{"type":"name_contains","value":"sanit"},"then":{"teams":1,"vehicles":1}}'::jsonb),
+  ((SELECT id FROM emergency_type WHERE name = 'Riesgo químico'), 1, '{"when":{"type":"name_contains","value":"quim"},"then":{"teams":2,"vehicles":1}}'::jsonb),
+  ((SELECT id FROM emergency_type WHERE name = 'Riesgo industrial'), 1, '{"when":{"type":"name_contains","value":"industrial"},"then":{"teams":2,"vehicles":1}}'::jsonb),
+  ((SELECT id FROM emergency_type WHERE name = 'Temporal/Evento meteorológico'), 1, '{"when":{"type":"name_contains","value":"temporal"},"then":{"teams":1,"vehicles":1}}'::jsonb),
+  ((SELECT id FROM emergency_type WHERE name = 'Otros'), 1, '{"when":{"type":"default"},"then":{"teams":1,"vehicles":0}}'::jsonb)
+ON CONFLICT DO NOTHING;
+
 
 INSERT INTO organization_type (name)
 VALUES ('Centro Coordinación'),
