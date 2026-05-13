@@ -32,7 +32,7 @@
     <jts.version>1.19.0</jts.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <postgis.version>2.5.1</postgis.version>
-    <postgresql.version>42.7.3</postgresql.version>
+    <postgresql.version>42.7.11</postgresql.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Codificación -->
