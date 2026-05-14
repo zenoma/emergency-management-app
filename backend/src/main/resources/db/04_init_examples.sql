@@ -65,7 +65,7 @@ VALUES (501,
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO emergency_quadrant (id, emergency_id, quadrant_gid, linked_at, notes)
-VALUES (601, 502, (SELECT gid FROM quadrants WHERE nombre = 'Ourense' LIMIT 1), CURRENT_TIMESTAMP(3), 'Zona de desprendimiento en el acceso norte')
+VALUES (601, 502, 4086, CURRENT_TIMESTAMP(3), 'Zona de desprendimiento en el acceso norte')
 ON CONFLICT (id) DO NOTHING;
 
 -- Assignments: mix of point-based and quadrant-based

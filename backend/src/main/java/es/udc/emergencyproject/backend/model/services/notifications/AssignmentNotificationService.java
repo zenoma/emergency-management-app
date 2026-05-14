@@ -14,6 +14,7 @@ import es.udc.emergencyproject.backend.model.entities.user.UserRepository;
 import es.udc.emergencyproject.backend.model.entities.user.UserRole;
 import jakarta.annotation.PostConstruct;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,7 +47,11 @@ public class AssignmentNotificationService {
       return;
     }
 
-    try (FileInputStream serviceAccount = new FileInputStream(path)) {
+    try (InputStream serviceAccount = openServiceAccount(path)) {
+      if (serviceAccount == null) {
+        log.warn("Firebase service account not found at {} and not available on classpath; assignment notifications disabled", path);
+        return;
+      }
       if (FirebaseApp.getApps().isEmpty()) {
         FirebaseOptions options = FirebaseOptions.builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -54,8 +59,22 @@ public class AssignmentNotificationService {
         FirebaseApp.initializeApp(options);
       }
       firebaseReady = true;
+      log.info("Firebase Admin initialized for assignment notifications");
     } catch (Exception e) {
       log.warn("Unable to initialize Firebase Admin for assignment notifications", e);
+    }
+  }
+
+  private InputStream openServiceAccount(String path) throws Exception {
+    try {
+      return new FileInputStream(path);
+    } catch (Exception fileError) {
+      String resourcePath = path.startsWith("/") ? path.substring(1) : path;
+      InputStream resourceStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
+      if (resourceStream != null) {
+        return resourceStream;
+      }
+      throw fileError;
     }
   }
 
