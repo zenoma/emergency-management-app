@@ -1,37 +1,52 @@
 \chapter{Estado del arte}
 \label{chap:estadoarte}
 
-\lettrine{E}{n este capítulo} se realiza un análisis de las aplicaciones y herramientas existentes que pueden aportar soluciones para abordar la problemática comentada en este  documento. 
+\lettrine{E}{n este capítulo} se realiza un análisis de las aplicaciones y herramientas existentes que pueden aportar soluciones para abordar la problemática comentada en este documento.
 
-El objetivo no es ofrecer una revisión exhaustiva, sino identificar soluciones relevantes que aporten funcionalidades parecidas a las requeridas:  como gestión de avisos/incidencias, representación geoespacial de emergencias y coordinación de equipos en campo.
+El objetivo no es ofrecer una revisión exhaustiva, sino separar de forma clara las alternativas ya citadas en el \acrshort{tfg} de las incorporaciones nuevas, manteniendo en ambos casos una evaluación muy breve de su utilidad para la coordinación de emergencias.
 
-\section{Aplicaciones de gestión de incidencias}
-\label{sec:arte-incidencias}
+\section{Alternativas ya evaluadas en el TFG}
+\label{sec:arte-tfg}
+
+Estas alternativas ya fueron analizadas en el \acrshort{tfg}, a continuación se ofrece un resumen de cada una de ellas, con especial atención a sus fortalezas y limitaciones en el contexto de coordinación de emergencias.
 
 \subsection{Jira}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{imaxes/arte/jira.jpg}
-  \caption{Vista de proyecto en Jira}
-  \label{fig:Jira}
-\end{figure}
-
-Jira \cite{jira} es una plataforma de gestión de incidencias y proyectos que facilita la creación, seguimiento y priorización de tickets. Permite asignar incidencias a usuarios o equipos, definir flujos de trabajo personalizados y enviar notificaciones a través de correo o integraciones con otras plataformas. Es muy usada en entornos de desarrollo de software y en gestión de servicios.
-
-Una limitación grande para solucionar esta problemática es que no incluye representación geoespacial de incidencias para ello sería necesario integrar componentes de mapas con un sistema GIS.
+Jira \cite{jira} es una plataforma de gestión de incidencias y proyectos útil para crear, priorizar y asignar tickets. Sin embargo, no aporta representación geoespacial nativa, por lo que su encaje en emergencias es parcial.
 
 \subsection{Asana}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{imaxes/arte/asana.png}
-  \caption{Vista de proyecto en Asana}
-  \label{fig:Asana}
-\end{figure}
 
-Asana \cite{asana} es una herramienta de gestión de tareas y proyectos orientada a la colaboración. Permite la creación de tareas, asignación, prioridades, vistas en lista/kanban/calendario y notificaciones móviles.
+Asana \cite{asana} ofrece gestión de tareas, prioridades y colaboración en equipo. Su principal carencia para este caso es que no integra mapas ni soporte geográfico.
 
-Un gran inconveniente es que Asana no dispone de capacidades de representación cartográfica integradas, por lo que su uso en coordinación de emergencias quedaría limitado a la gestión de tareas y comunicaciones.
+\subsection{Global Forest Watch - Fires}
+
+Global Forest Watch Fires \cite{gfw_fires} aporta cartografía y alertas sobre incendios a partir de datos satelitales, pero no está pensada para coordinar recursos humanos ni para participación ciudadana.
+
+\subsection{InciWeb}
+
+InciWeb \cite{inciweb} centraliza información sobre incidentes y grandes incendios con mapas e informes, pero no incorpora avisos colaborativos ni gestión táctica de equipos.
+
+\subsection{Google Maps}
+
+Google Maps \cite{google_maps} permite mostrar alertas geoespaciales y ofrece una cartografía muy amplia, aunque no resuelve por sí mismo la gestión de despliegue ni el flujo de incidentes.
+
+\subsection{Microsoft Teams}
+
+Microsoft Teams \cite{microsoft_teams} ayuda a organizar equipos y comunicación, pero no ofrece geolocalización ni procesos específicos para emergencias.
+
+\subsection{Odoo}
+
+Odoo \cite{odoo} es flexible y modular, pero requiere personalización para ajustarse a flujos de coordinación de emergencias y a soporte geográfico.
+
+\subsection{PCAM Gestión}
+
+PCAM Gestión \cite{pcam_gestion} ofrece avisos, asignación de personal y notificaciones en el ámbito de la protección civil, aunque con capacidades geoespaciales limitadas.
+
+\subsection{XeoCode Lite}
+XeoCode Lite \cite{xeocode_lite} es una herramienta interna y privada de la Xunta de Galicia. Permite consultar el origen y evolución de incendios, recursos asignados y cartografía asociada, pero no expone información funcional al público ni permite participación ciudadana directa.
+
+\section{Nuevas alternativas del mercado}
+\label{sec:arte-nuevas}
 
 \subsection{Línea Verde}
 
@@ -42,96 +57,17 @@ Un gran inconveniente es que Asana no dispone de capacidades de representación 
   \label{fig:LíneaVerde}
 \end{figure}
 
-Línea Verde \cite{linea_verde} es una plataforma de participación ciudadana y gestión de incidencias orientada a ayuntamientos. Ofrece una app gratuita para ciudadanos para notificar problemas y un sistema de gestión para que los equipos municipales asignen, gestionen y cierren las incidencias en tiempo real. También proporciona portales web.
+Línea Verde \cite{linea_verde} es una plataforma municipal de participación ciudadana y gestión de incidencias. Está bien orientada a comunicación con la administración, pero su foco es urbano y no operativo para emergencias.
 
-Limitaciones respecto a la problemática de coordinación de emergencias: Línea Verde está claramente orientada al mantenimiento urbano y a la comunicación ciudadano con la administración. Su foco funcional es la gestión de incidencias cotidianas y la mejora del servicio municipal. No parece centrarse en la gestión operativa de emergencias.
-
-\section{Aplicaciones sobre geolocalización de información}
-\label{sec:arte-geolocalizacion}
-
-\subsection{Global Forest Watch - Fires}
-
+\subsection{S.O.S Emergencias}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{imaxes/arte/AFISMap.png}
-  \caption{Ejemplo de mapa de detección de incendios (AFIS / capa de incendios)}
-  \label{fig:AFISMap}
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/sos_emergencias.png}
+  \caption{Vista de la app S.O.S Emergencias}
+  \label{fig:SOSEmergencias}
 \end{figure}
 
-Global Forest Watch Fires \cite{gfw_fires} ofrece capas de detección de incendios y alertas a partir de datos satelitales. Proporciona herramientas de visualización temporal y filtrado por región.
-
-Un problema a la hora de solventar esta problemática es que se centra en detección remota basada en satélites y no está diseñado para la coordinación operativa de recursos humanos en el terreno ni para la participación ciudadana.
-
-\subsection{InciWeb}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{imaxes/arte/inci_web.png}
-  \caption{Vista de la app InciWeb}
-  \label{fig:InciWeb}
-\end{figure}
-
-InciWeb \cite{inciweb} es una plataforma de información sobre incidentes (especialmente grandes incendios) gestionada por agencias en Estados Unidos. Ofrece mapas, informes y enlaces a recursos locales.
-
-Limitaciones: Está orientada a la difusión de información entre agencias y al público, pero no incluye herramientas para la creación colaborativa de avisos por parte de ciudadanos ni para la gestión táctica de equipos.
-
-\subsection{Google Maps}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{imaxes/arte/GoogleMaps.png}
-  \caption{Ejemplo de capa/alertas en Google Maps}
-  \label{fig:GoogleMaps}
-\end{figure}
-
-Google Maps \cite{google_maps} permite mostrar capas y alertas geoespaciales y ofrece APIs fáciles de integrar en aplicaciones. Su ventaja es la amplia base de usuarios y la calidad de su cartografía.
-
-Google Maps no gestiona la parte de despliegue de recursos ni proporciona un flujo de trabajo de incident management; requiere integración con backend para esas funcionalidades.
-
-
-\section{Aplicaciones orientadas a organizar grupos de trabajo}
-\label{sec:arte-equipos}
-
-\subsection{Microsoft Teams}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{imaxes/arte/teams.png}
-  \caption{Vista equipos en Microsoft Teams}
-  \label{fig:Teams}
-\end{figure}
-
-Microsoft Teams \cite{microsoft_teams} es una plataforma de colaboración que combina chat, videollamadas, gestión de archivos y organización por equipos. Es útil para coordinación y comunicación entre miembros de una organización.
-
-Su gran inconveniente es que no ofrece una visión geoespacial de recursos ni integra, por defecto, flujos de notificación orientados a emergencias o despliegue de equipos.
-
-\subsection{Odoo}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{imaxes/arte/odoo.jpg}
-  \caption{Vista equipos en Odoo}
-  \label{fig:Odoo}
-\end{figure}
-
-Odoo \cite{odoo} es un ERP modular que puede adaptarse para gestionar proyectos, recursos y comunicaciones. Su flexibilidad permite crear módulos específicos para necesidades concretas.
-
-Para poder utilizar este recurso se requiere desarrollo y personalización que permitan cubrir flujos de coordinación de emergencias; la representación cartográfica suele necesitar módulos adicionales.
-
-\subsection{PCAM Gestión}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{imaxes/arte/PCAM.png}
-  \caption{Panel de control en PCAM Gestión}
-  \label{fig:PCAM}
-\end{figure}
-
-PCAM Gestión \cite{pcam_gestion} es una solución orientada a la protección civil que facilita la creación de avisos, asignación de personal y notificaciones. Incluye app móvil y panel de control para administradores.
-
-Esta applicación integra funcionalidades geoespaciales y visibilidad en tiempo real de recursos pero son limitadas o dependen de módulos adicionales.
-
-\subsection{XeoCode Lite}
-XeoCode Lite permite consultar el origen y evolución de incendios, recursos asignados y cartografía asociada. Al ser una herramienta de uso interno normalmente no facilita la participación ciudadana directa.
+S.O.S Emergencias \cite{sos_emergencias} es una aplicación móvil orientada a la notificación y gestión básica de emergencias. Aporta una aproximación más directa al ámbito de alertas, aunque no integra una visión completa de coordinación geoespacial y despliegue de recursos.
 
 
 \section{Iniciativas públicas recientes}
@@ -172,7 +108,8 @@ La tabla comparativa 3.1 resume las funcionalidades analizadas para resaltar for
       \begin{tabular}[c]{@{}l@{}}App \\ móvil\end{tabular} \\
       \textit{Jira} &  &  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
       \textit{Asana} &  &  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
-      \textit{Línea Verde} & \checkmark &  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+      \textit{Línea Verde} & \checkmark &  & \checkmark & \checkmark & & \checkmark & \checkmark & \checkmark \\
+      \textit{SOS Emergencias} & & & \checkmark & \checkmark & & \checkmark & \checkmark & \checkmark \\
       \textit{Global Forest Watch - Fires} & \checkmark & \checkmark &  & \checkmark &  & \checkmark &  &  \\
       \textit{InciWeb} & \checkmark &  &  & \checkmark &  &  &  &  \\
       \textit{Google Maps} & \checkmark &  &  & \checkmark & \checkmark &  &  & \checkmark \\
