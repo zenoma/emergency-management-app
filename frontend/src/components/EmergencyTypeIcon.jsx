@@ -5,6 +5,7 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import ScienceIcon from '@mui/icons-material/Science';
 import StormIcon from '@mui/icons-material/Storm';
+import FactoryIcon from '@mui/icons-material/Factory';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { Box, Typography } from '@mui/material';
 

@@ -8,7 +8,7 @@ export const assignmentApi = baseApi.injectEndpoints({
         method: "POST",
         body: {
           emergencyId: payload.emergencyId,
-          quadrantId: payload.quadrantId,
+          ...(payload.quadrantId != null ? { quadrantId: payload.quadrantId } : {}),
           resourceId: payload.resourceId,
           notes: payload.notes,
         },

@@ -228,6 +228,7 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
     return saved;
   }
 
+
   @Override
   public Emergency resolveEmergency(Long id)
       throws InstanceNotFoundException, ResolvedEmergencyException, AlreadyDismantledException {

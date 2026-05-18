@@ -32,7 +32,7 @@ export default function OrganizationCreateDialog(props) {
   const locale = i18n.language;
 
   const childToParent = (childdata) => {
-    setData({ lat: childdata[0], lng: childdata[1] });
+    setData({ lng: childdata[0], lat: childdata[1] });
   };
 
   const token = useSelector(selectToken);

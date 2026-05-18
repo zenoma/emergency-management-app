@@ -45,6 +45,18 @@ export const emergencyApi = baseApi.injectEndpoints({
         return response;
       },
     }),
+    getEmergencyRecommendations: build.query({
+      query: (payload) => ({
+        url: "/emergencies/" + payload.emergencyId + "/recommendations" + (payload.quadrantId != null ? `?quadrantID=${payload.quadrantId}` : ''),
+        headers: {
+          Authorization: "Bearer " + payload.token,
+          "Accept-Language": payload.locale,
+        },
+      }),
+      transformResponse: (response, meta, arg) => {
+        return response;
+      },
+    }),
     createEmergency: build.mutation({
       query: (payload) => ({
         url: "/emergencies",
@@ -152,6 +164,7 @@ export const emergencyApi = baseApi.injectEndpoints({
 export const {
   useGetEmergenciesQuery,
   useGetEmergencyByIdQuery,
+  useGetEmergencyRecommendationsQuery,
   useGetEmergencyTypesQuery,
   useCreateEmergencyMutation,
   useUpdateEmergencyMutation,

@@ -5,14 +5,17 @@ import es.udc.emergencyproject.backend.model.entities.emergency.EmergencyType;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.services.emergency.EmergencyManagementService;
+import es.udc.emergencyproject.backend.model.services.emergency.recommendation.EmergencyRecommendationService;
 import es.udc.emergencyproject.backend.rest.dtos.CoordinatesDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyResponseDto;
 import es.udc.emergencyproject.backend.rest.dtos.EmergencyTypeDto;
+import es.udc.emergencyproject.backend.rest.dtos.RecommendedAssignmentDto;
 import es.udc.emergencyproject.backend.rest.dtos.LinkQuadrantsRequestDto;
 import es.udc.emergencyproject.backend.rest.dtos.QuadrantEmergencyRequestDto;
 import es.udc.emergencyproject.backend.rest.mappers.EmergencyMapper;
 import es.udc.emergencyproject.backend.rest.mappers.EmergencyTypeMapper;
+import es.udc.emergencyproject.backend.rest.mappers.RecommendationMapper;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class EmergenciesController implements EmergenciesApi {
 
   private final EmergencyManagementService emergencyManagementService;
+  private final EmergencyRecommendationService emergencyRecommendationService;
 
   @Override
   public ResponseEntity<List<EmergencyResponseDto>> getAllEmergencys() {
@@ -145,6 +149,13 @@ public class EmergenciesController implements EmergenciesApi {
     final EmergencyResponseDto emergencyResponseDto = EmergencyMapper.toEmergencyDto(emergency);
 
     return ResponseEntity.ok(emergencyResponseDto);
+  }
+
+  @Override
+  public ResponseEntity<List<RecommendedAssignmentDto>> getEmergencyRecommendations(Long id,
+      @org.springframework.web.bind.annotation.RequestParam(value = "quadrantID", required = false) Integer quadrantId) {
+    return ResponseEntity.ok(RecommendationMapper.toDtoList(
+        emergencyRecommendationService.recommendForEmergency(id, quadrantId)));
   }
 
 
