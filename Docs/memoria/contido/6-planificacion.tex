@@ -6,7 +6,7 @@
 \section{Planificación}
 \label{sec:planificacion}
 
-La planificación inicial se definió en 9 sprints, cada una organizada internamente siguiendo el modelo clásico de cuatro fases: análisis, diseño, implementación y pruebas. La estimación de esfuerzo inicial se basó en jornadas de 6 horas diarias y en una duración prevista del proyecto de cuatro meses. No obstante, las complejidades técnicas y errores imprevistos motivaron desviaciones en varias iteraciones, tal y como se comenta en la sección de seguimiento.
+La planificación inicial se definió en 9 sprints, cada una organizada internamente siguiendo el modelo clásico de cuatro fases: análisis, diseño, implementación y pruebas. En este trabajo se considera que cada sprint equivale a un bloque de dos semanas, lo que facilita agrupar el esfuerzo y revisar avances de forma periódica. La estimación de esfuerzo inicial se basó en jornadas de 6 horas diarias y en una duración prevista del proyecto de cuatro meses. No obstante, las complejidades técnicas y errores imprevistos motivaron desviaciones en varias iteraciones, tal y como se comenta en la sección de seguimiento.
 
 \begin{table}[H]
   \centering
@@ -58,7 +58,14 @@ En la tabla~\ref{tab:sprint3} se puede observar un desglose del sprint 3, que se
 \section{Sprints}
 \label{sec:sprints}
 
-El proyecto se estructuró en una sucesión de sprints, cada uno de los cuales incrementaba la funcionalidad de los artefactos entregados.  A continuación se detalla cada sprint con sus objetivos y resultados principales.
+El proyecto se estructuró en una sucesión de sprints, con una duración de dos semanas para cada uno de los cuales incrementaba la funcionalidad de los artefactos entregados. A continuación se detalla cada sprint con sus objetivos y resultados principales.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{imaxes/gantt-diagram.png}
+  \caption{Diagrama de Gantt de los sprints}
+  \label{fig:gantt}
+\end{figure}
 
 \subsection{Sprint 0: Contextualización}
 En esta fase inicial se realizó la contextualización del dominio y la justificación del valor del \acrshort{tfm}. Se investigaron fuentes, alternativas a la aplicación y tecnologías potenciales (mapas, sistema de notificaciones android, sistema de recomendación y reglas básico). El objetivo fue delimitar el alcance y dominio del proyecto para que este sea viable en un espacio temporal acotado.
@@ -80,7 +87,7 @@ Se definió un nuevo esquema para los logs operativos, ahora centralizados en la
 Se integró Firebase Cloud Messaging (\acrshort{fcm}) en la aplicación Android: registro de MobileDevice, manejo de tokens y recepción de notificaciones. Se implementó el flujo de envío de notificaciones desde el Backend y la experiencia de usuario en la app para aceptar o rechazar asignaciones recibidas.
 
 \subsection{Sprint 6: Protocolos semiautomáticos (motor de reglas simple)}
-Se introdujo la capacidad de definir Protocols almacenados en \acrshort{jsonb} y un motor de reglas ligero que permite generar propuestas de Asignaciones de forma semiautomática en el frontend. Esto incluyó la definición del formato JSON para los protocolos, la implementación de un evaluador simple y la integración con el pipeline de creación de propuestas.
+Se introdujo la capacidad de definir Protocolos almacenados en \acrshort{jsonb} y un motor de reglas ligero que permite generar propuestas de Asignaciones de forma semiautomática en el frontend. Esto incluyó la definición del formato JSON para los protocolos, la implementación de un evaluador simple y la integración con el pipeline de creación de propuestas.
 
 \subsection{Sprint 7 y 8: Finalización, pruebas y despliegue}
 Las iteraciones finales se dedicaron a la estabilización: pruebas end-to-end, ajuste de UX tanto del frontal como de la aplicación Android, corrección de errores, poblamiento de datos de ejemplo y preparación de artefactos de despliegue (contenedores Docker para BBDD y servicio). También incluyeron la redacción y revisión de la memoria y la generación de la documentación.
@@ -90,7 +97,7 @@ Las iteraciones finales se dedicaron a la estabilización: pruebas end-to-end, a
 
 El seguimiento se llevó a cabo mediante reuniones mensuales con el tutor y el uso de un tablero Kanban de tareas que permitía visualizar el estado de ellas. En cada revisión se presentaron artefactos funcionales (pantallas, endpoints, wireframes).
 
-Las desviaciones más relevantes provinieron de problemas técnicos con la representación de cuadrantes en el mapa, configuración de la aplicación Android y el motor de reglas básico para los protocolos. 
+Las desviaciones más relevantes provinieron de problemas técnicos con la representación de cuadrantes en el mapa, de la configuración de la aplicación Android y, especialmente, de la integración del backend con Firebase Cloud Messaging (\acrshort{fcm}) y del motor de reglas básico para los protocolos. En el primer caso fue necesario revisar documentación oficial y ejemplos de proyectos similares para ajustar correctamente la configuración de notificaciones y el envío de mensajes. En el segundo, al tratarse de una tecnología y un enfoque de diseño que el autor no había implementado previamente, se dedicó tiempo adicional a comprender el patrón y a validar su encaje en el flujo de propuestas, lo que retrasó parcialmente algunas entregas.
 
 \section{Análisis de costes}
 \label{sec:costes}
