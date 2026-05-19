@@ -6,21 +6,29 @@
 
 \lettrine{E}{n} este capítulo se presenta una descripción del desarrollo realizado, los objetivos perseguidos y la metodología aplicada durante la implementación. El propósito es ofrecer un vistazo general de los artefactos construidos y de las decisiones más relevantes tomadas durante el desarrollo del proyecto.
 
-\section{Arquitectura de la Solución}
-
-
-\vspace{1em}
-
-{ \color{red} PENDIENTE una vez avanzado más el proyecto }
-
 \section{Metodología e iteraciones}
 
-El proceso de desarrollo se organizó mediante iteraciones cortas con objetivos funcionales concretos, siguiendo las ideas de Scrum adaptadas al contexto de trabajo individual. Aunque no se aplicó una implementación completa y formal de Scrum (debido al tamaño reducido del equipo), se adoptaron sus pilares fundamentales: planificación por sprints, revisiónes y \emph{feedback} contínuo.
+El proceso de desarrollo se organizó mediante iteraciones cortas con objetivos funcionales concretos, siguiendo las ideas de Scrum adaptadas al contexto de trabajo individual. Aunque no se aplicó una implementación completa y formal de Scrum (debido al tamaño reducido del equipo), se adoptaron sus pilares fundamentales: planificación por sprints, revisiones y \emph{feedback} continuo.
 
 En cuanto a roles, el autor del \acrshort{tfm} asumió las responsabilidades de desarrollo y encargado de definición funcional, mientras que el tutor actuó como responsable de supervisión y de aceptación.
 
 Se establecieron reuniones de revisión mensuales con el tutor en las que se presentaron los artefactos construidos (prototipos, endpoints, pantallas, pruebas y documentación). Estas sesiones sirvieron para validar funcionalidades, priorizar tareas y ajustar el dominio del \acrshort{tfm} y el alcance de las siguientes iteraciones.
 
-El proyecto se estructuró en una serie de sprints. De una forma resumida, las fases necesarias para realizar este \acrshort{tfm} fueron: una fase inicial de contextualización y definición del valor del proyecto; la creación del esqueleto y la arquitectura base de la aplicación móvil para facilitar el desarrollo posterior; la normalización y actualización del modelo de recursos y organizaciones manteniendo compatibilidad con las entidades Equipo y Vehículo; la implementación de la gestión de emergencias y asignaciones básicas; la introducción de un esquema de logs operativos y la migración o compatibilidad con tablas legacy; la integración de notificaciones móviles mediante \acrshort{fcm} y el flujo de aceptación de asignaciones; y, finalmente, la implementación de capacidades semiautomáticas junto a un motor de reglas sencillo para generar propuestas automáticamente.
-
 Para la planificación y el detalle de cada sprint se describen con mayor extensión en el capítulo de planificación (capítulo \ref{sec:sprints}).
+
+\section{Arquitectura de la Solución}
+
+\vspace{1em}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{imaxes/diagrama-arquitectura.png}
+  \caption{Arquitectura de la solución}
+  \label{fig:Arquitectura}
+\end{figure}
+
+La solución mantiene la base cliente-servidor ya empleada en el \acrshort{tfg}, en el que la arquitectura se concentraba en un backend encargado de la lógica de negocio y un frontend web orientado a la interacción con el usuario. En este \acrshort{tfm}, esa base se amplía para dar soporte a una plataforma multi-dispositivo más completa.
+
+En la parte web, el frontend sigue actuando como capa de interacción principal y está construido sobre React y Redux, con RTK Query como mecanismo de acceso a la \acrshort{api}. El backend centraliza la lógica de negocio con Spring Boot y las capas de persistencia con Spring Data, Hibernate y \acrshort{jpa}, mientras que la base de datos se apoya en PostgreSQL y PostGIS. La solución se despliega con Docker para facilitar la reproducción del entorno, y el frontend complementa la visualización con MapLibre y el consumo de información meteorológica de OpenWeatherMap.
+
+Como ampliación respecto al \acrshort{tfg}, el \acrshort{tfm} incorpora una aplicación Android desarrollada en Kotlin y Jetpack Compose, que reutiliza la misma \acrshort{api} para consultar emergencias, asignaciones y recursos. Además, la mensajería con Firebase Cloud Messaging permite que el backend notifique eventos relevantes a los dispositivos móviles, cerrando el flujo de comunicación entre la capa de gestión y la app de campo.
