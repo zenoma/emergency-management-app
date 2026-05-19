@@ -55,7 +55,7 @@ function App({ t }) {
 
   const logged = useSelector(selectToken);
 
-  const userRole = useSelector(selectUser)?.userRole || 'USER';
+  const userRole = useSelector(selectUser)?.userRole || 'MEMBER';
 
 
   const [token] = useState(localStorage.getItem("token"));
@@ -125,12 +125,12 @@ function App({ t }) {
             />
             <Route path="/my-notices" element={logged ? <MyNoticesList /> : <Navigate replace to="/" />} />
 
-            <Route path="/emergency-management" element={userRole !== 'USER' ? <EmergencyManagementView /> : <Navigate to="/" />} />
-            <Route path="/emergency-details/" element={userRole !== 'USER' ? <EmergencyDetailsView /> : <Navigate to="/" />} />
-            <Route path="/emergency-history" element={userRole !== 'USER' ? <EmergencyHistoryView /> : <Navigate to="/" />} />
-            <Route path="/emergency-point" element={userRole !== 'USER' ? <EmergencyPointView /> : <Navigate to="/" />} />
-            <Route path="/quadrant" element={userRole !== 'USER' ? <QuadrantView /> : <Navigate to="/" />} />
-            <Route path="/quadrant-history" element={userRole !== 'USER' ? <QuadrantHistoryView /> : <Navigate to="/" />} />
+            <Route path="/emergency-management" element={userRole !== 'MEMBER' ? <EmergencyManagementView /> : <Navigate to="/" />} />
+            <Route path="/emergency-details/" element={userRole !== 'MEMBER' ? <EmergencyDetailsView /> : <Navigate to="/" />} />
+            <Route path="/emergency-history" element={userRole !== 'MEMBER' ? <EmergencyHistoryView /> : <Navigate to="/" />} />
+            <Route path="/emergency-point" element={userRole !== 'MEMBER' ? <EmergencyPointView /> : <Navigate to="/" />} />
+            <Route path="/quadrant" element={userRole !== 'MEMBER' ? <QuadrantView /> : <Navigate to="/" />} />
+            <Route path="/quadrant-history" element={userRole !== 'MEMBER' ? <QuadrantHistoryView /> : <Navigate to="/" />} />
 
             <Route path="/user-management" element={userRole === 'COORDINATOR' ? <UserManagementView /> : <Navigate to="/" />} />
             <Route path="/notice-management" element={userRole === 'COORDINATOR' ? <CoordinatorNoticesView /> : <Navigate to="/" />} />

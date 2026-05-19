@@ -187,7 +187,7 @@ export default function TeamItem(props) {
                                 {column.format && typeof value === "number"
                                   ? column.format(value)
                                   : value}
-                                {column.id === "options" && user.userRole !== "USER" ? (
+                                {column.id === "options" && user.userRole !== "MEMBER" ? (
                                   <Button
                                     color="primary"
                                     aria-label="add"

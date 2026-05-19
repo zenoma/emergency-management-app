@@ -72,7 +72,7 @@ export default function TeamsView(props) {
         <TeamsTable reloadData={reloadData} teams={teamsList} />
       ) : null}
 
-      {userRole !== "USER" && <TeamCreateDialog
+      {userRole !== "MEMBER" && <TeamCreateDialog
         reloadData={reloadData}
         organizationId={organizationId}
       />}

@@ -406,7 +406,7 @@ private fun MainScreenSimple(initialRoute: String? = null) {
 
                     // Logical blocks
                     val role = prefs.getString("user_role", "") ?: ""
-                    val isUser = role.uppercase() == "USER"
+                    val hasRole = role.isNotBlank()
 
                     val commonBlock =
                         listOf(Triple("map", stringResource(R.string.map_label), Icons.Filled.Map))
@@ -500,15 +500,15 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                         }
                     }
 
-                    renderBlock(commonBlock)
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp)
-                    )
-                    if (isUser) {
-                        renderBlock(noticesBlock)
+                    if (!hasRole) {
+                        renderBlock(listOf(commonBlock.first(), noticesBlock.first()))
                     } else {
+                        renderBlock(commonBlock)
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                        )
                         renderBlock(noticesBlock)
                         Divider(
                             modifier = Modifier
@@ -531,6 +531,8 @@ private fun MainScreenSimple(initialRoute: String? = null) {
             val ctx = LocalContext.current
             val prefsBb = ctx.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
             val jwtBb = prefsBb.getString("jwt_token", null)
+            val roleBb = prefsBb.getString("user_role", "") ?: ""
+            val hasRoleBb = roleBb.isNotBlank()
 
             BottomAppBar(elevation = 8.dp, modifier = Modifier.navigationBarsPadding()) {
                 BottomNavigation(modifier = Modifier.fillMaxWidth()) {
@@ -549,7 +551,7 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                         },
                         icon = { Icon(imageVector = Icons.Filled.Send, contentDescription = null) },
                         label = { Text(text = stringResource(R.string.send_label)) })
-                    if (!jwtBb.isNullOrBlank()) {
+                    if (!jwtBb.isNullOrBlank() && hasRoleBb) {
                         BottomNavigationItem(
                             selected = current == "myteam",
                             onClick = {

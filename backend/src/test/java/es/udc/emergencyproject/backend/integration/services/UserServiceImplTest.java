@@ -188,7 +188,7 @@ public class UserServiceImplTest extends IntegrationTest {
     personalManagementFacade.signUp(user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(),
         String.valueOf(user.getPhoneNumber()), user.getDni());
 
-    Assertions.assertEquals(UserRole.USER, user.getUserRole(), "Role must be USER");
+    Assertions.assertEquals(UserRole.MEMBER, user.getUserRole(), "Role must be MEMBER");
 
   }
 
@@ -217,9 +217,9 @@ public class UserServiceImplTest extends IntegrationTest {
 
     targetUserOm.setUserRole(UserRole.MANAGER);
 
-    personalManagementFacade.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
+    personalManagementFacade.updateRole(user.getId(), targetUser.getId(), UserRole.MEMBER);
 
-    Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(), "Role must be MANAGER");
+    Assertions.assertEquals(UserRole.MEMBER, targetUser.getUserRole(), "Role must be MANAGER");
 
   }
 
@@ -303,10 +303,10 @@ public class UserServiceImplTest extends IntegrationTest {
 
     user.setUserRole(UserRole.MANAGER);
     targetUser.setUserRole(UserRole.MANAGER);
-    personalManagementFacade.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
+    personalManagementFacade.updateRole(user.getId(), targetUser.getId(), UserRole.MEMBER);
 
-    Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(),
-        "Updated user role must be USER");
+    Assertions.assertEquals(UserRole.MEMBER, targetUser.getUserRole(),
+        "Updated user role must be MEMBER");
 
   }
 

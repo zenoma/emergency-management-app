@@ -41,7 +41,7 @@ export default function UserDataGrid({ childToParent }) {
   const UserRole = {
     COORDINATOR: { value: 0, name: 'COORDINATOR' },
     MANAGER: { value: 1, name: 'MANAGER' },
-    USER: { value: 2, name: 'USER' },
+    MEMBER: { value: 2, name: 'MEMBER' },
   };
 
   const [pageSize, setPageSize] = useState(10);
@@ -82,7 +82,7 @@ export default function UserDataGrid({ childToParent }) {
       throw new Error(`Invalid role: ${role}`);
     }
     const prevValue = currentRole.value + 1;
-    if (prevValue > UserRole.USER.value) {
+    if (prevValue > UserRole.MEMBER.value) {
       throw new Error(`Role ${role} has no inferior role`);
     }
     const nextRole = Object.values(UserRole).find(role => role.value === prevValue);
@@ -207,7 +207,7 @@ export default function UserDataGrid({ childToParent }) {
               sx={{ borderRadius: "20px" }}
               variant="contained"
               color="error"
-              disabled={params.row.userRole === UserRole.USER.name || user.id === params.row.id}
+              disabled={params.row.userRole === UserRole.MEMBER.name || user.id === params.row.id}
               onClick={(e) => handleClickRoleDown(e, params.row)}
             >
               <ArrowDownwardIcon />
