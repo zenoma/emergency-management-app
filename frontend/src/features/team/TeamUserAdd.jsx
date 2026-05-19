@@ -83,7 +83,7 @@ export default function TeamUserAdd(props) {
       >
         <DialogTitle sx={{ color: "primary.light" }}>{t("team-user-add")} </DialogTitle>
         <DialogContent>
-          <UserDataGrid childToParent={childToParent} />
+          <UserDataGrid childToParent={childToParent} hideRoles={["USER"]} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>{t("cancel")}</Button>
