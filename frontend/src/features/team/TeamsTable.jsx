@@ -200,7 +200,7 @@ export default function TeamsTable(props) {
                           {column.format && typeof value === "number"
                             ? column.format(value)
                             : value}
-                           {column.id === "options" && userRole !== "MEMBER" ? (
+                           {column.id === "options" && userRole !== "USER" ? (
                             <Box>
                               <Button
                                 color="primary"

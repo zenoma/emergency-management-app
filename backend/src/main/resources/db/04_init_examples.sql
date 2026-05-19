@@ -39,11 +39,11 @@ ON CONFLICT (id) DO NOTHING;
 -- Users, some attached to teams
 INSERT INTO "user" (id, email, password, first_name, last_name, dni, phone_number, user_role, created_at, team_id)
 VALUES (401, 'coord.galicia@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'John', 'Doe', '11111111A', 611111111, 'COORDINATOR', CURRENT_TIMESTAMP(3), 201),
-        (402, 'marta.team@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Marta', 'Lago', '22222222B', 622222222, 'MEMBER', CURRENT_TIMESTAMP(3), 201),
-        (403, 'diego.team@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Diego', 'Fernandez', '33333333C', 633333333, 'MEMBER', CURRENT_TIMESTAMP(3), 201),
-        (404, 'lara.team@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Lara', 'Mendez', '44444444D', 644444444, 'MEMBER', CURRENT_TIMESTAMP(3), 202),
+        (402, 'marta.team@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Marta', 'Lago', '22222222B', 622222222, 'USER', CURRENT_TIMESTAMP(3), 201),
+        (403, 'diego.team@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Diego', 'Fernandez', '33333333C', 633333333, 'USER', CURRENT_TIMESTAMP(3), 201),
+        (404, 'lara.team@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Lara', 'Mendez', '44444444D', 644444444, 'USER', CURRENT_TIMESTAMP(3), 202),
        (405, 'manager.ourense@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Iria', 'Souto', '55555555E', 655555555, 'MANAGER', CURRENT_TIMESTAMP(3), NULL),
-        (406, 'alex.vehicle@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Alex', 'Varela', '66666666F', 666666666, 'MEMBER', CURRENT_TIMESTAMP(3), 202)
+        (406, 'alex.vehicle@example.com', '$2a$10$.EY8p807N/jaGFK96BfhWOb9sI9NUV/6FtmKflf92nM7hUc7sFj3O', 'Alex', 'Varela', '66666666F', 666666666, 'USER', CURRENT_TIMESTAMP(3), 202)
 ON CONFLICT (id) DO NOTHING;
 
 -- Emergencies

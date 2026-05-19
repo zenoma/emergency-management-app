@@ -53,7 +53,7 @@ const pages = [
   {
     name: "my-notices",
     icon: <ArticleIcon />,
-    role: ["COORDINATOR", "MANAGER", "MEMBER"],
+    role: ["COORDINATOR", "MANAGER", "MEMBER", "USER"],
   },
   {
     name: "emergency-management",

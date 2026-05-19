@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     user.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
-    user.setUserRole(UserRole.MEMBER);
+    user.setUserRole(UserRole.USER);
 
     return userRepository.save(user);
   }

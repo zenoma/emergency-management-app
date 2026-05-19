@@ -96,7 +96,7 @@ public class User {
     this.dni = dni;
     this.phoneNumber = phoneNumber;
     this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-    this.userRole = UserRole.MEMBER;
+    this.userRole = UserRole.USER;
   }
 
 

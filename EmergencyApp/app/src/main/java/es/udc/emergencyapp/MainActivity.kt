@@ -85,6 +85,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.google.firebase.messaging.FirebaseMessaging
 import es.udc.emergencyapp.net.HttpClient
 import es.udc.emergencyapp.ui.DrawerBadgeState
+import es.udc.emergencyapp.ui.ScreenContainer
 import es.udc.emergencyapp.ui.map.MapScreen
 import es.udc.emergencyapp.ui.myteam.MyAssignmentsScreen
 import es.udc.emergencyapp.ui.notices.MyNoticesScreen
@@ -407,6 +408,7 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                     // Logical blocks
                     val role = prefs.getString("user_role", "") ?: ""
                     val hasRole = role.isNotBlank()
+                    val isBasicUser = role.uppercase() == "USER"
 
                     val commonBlock =
                         listOf(Triple("map", stringResource(R.string.map_label), Icons.Filled.Map))
@@ -502,6 +504,14 @@ private fun MainScreenSimple(initialRoute: String? = null) {
 
                     if (!hasRole) {
                         renderBlock(listOf(commonBlock.first(), noticesBlock.first()))
+                    } else if (isBasicUser) {
+                        renderBlock(
+                            listOf(
+                                commonBlock.first(),
+                                noticesBlock.first(),
+                                noticesBlock[1]
+                            )
+                        )
                     } else {
                         renderBlock(commonBlock)
                         Divider(
@@ -551,7 +561,7 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                         },
                         icon = { Icon(imageVector = Icons.Filled.Send, contentDescription = null) },
                         label = { Text(text = stringResource(R.string.send_label)) })
-                    if (!jwtBb.isNullOrBlank() && hasRoleBb) {
+                    if (!jwtBb.isNullOrBlank() && hasRoleBb && roleBb.uppercase() != "USER") {
                         BottomNavigationItem(
                             selected = current == "myteam",
                             onClick = {
@@ -577,11 +587,11 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                 .padding(innerPadding)
         ) {
             NavHost(navController = navController, startDestination = "map") {
-                composable("map") { es.udc.emergencyapp.ui.ScreenContainer { MapScreen() } }
-                composable("notices") { es.udc.emergencyapp.ui.ScreenContainer { MyNoticesScreen() } }
-                composable("emergencies") { es.udc.emergencyapp.ui.ScreenContainer { es.udc.emergencyapp.ui.emergencies.EmergenciesScreen() } }
+                composable("map") { ScreenContainer { MapScreen() } }
+                composable("notices") { ScreenContainer { MyNoticesScreen() } }
+                composable("emergencies") { ScreenContainer { es.udc.emergencyapp.ui.emergencies.EmergenciesScreen() } }
                 composable("organizations") {
-                    es.udc.emergencyapp.ui.ScreenContainer {
+                    ScreenContainer {
                         OrganizationsScreen(onOpenOrganization = { orgId ->
                             navController.navigate("organizations/$orgId") {
                                 launchSingleTop = true
@@ -594,33 +604,40 @@ private fun MainScreenSimple(initialRoute: String? = null) {
                     arguments = listOf(navArgument("organizationId") { type = NavType.LongType })
                 ) { backStackEntry ->
                     val organizationId = backStackEntry.arguments?.getLong("organizationId") ?: -1L
-                    es.udc.emergencyapp.ui.ScreenContainer {
+                    ScreenContainer {
                         OrganizationDetailScreen(organizationId = organizationId, onBack = {
                             navController.popBackStack()
                         })
                     }
                 }
                 composable("myteam") {
-                    es.udc.emergencyapp.ui.ScreenContainer {
-                        es.udc.emergencyapp.ui.myteam.MyTeamScreen(onOpenAssignments = { teamId ->
-                            navController.navigate("myassignments/$teamId") {
-                                launchSingleTop = true
-                            }
-                        })
+                    val currentContext = LocalContext.current
+                    val currentPrefs = currentContext.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                    val currentRole = currentPrefs.getString("user_role", "") ?: ""
+                    if (currentRole.uppercase() == "USER") {
+                        navController.navigate("map") { launchSingleTop = true }
+                    } else {
+                        ScreenContainer {
+                            es.udc.emergencyapp.ui.myteam.MyTeamScreen(onOpenAssignments = { teamId ->
+                                navController.navigate("myassignments/$teamId") {
+                                    launchSingleTop = true
+                                }
+                            })
+                        }
                     }
                 }
                 composable("myassignments") {
-                    es.udc.emergencyapp.ui.ScreenContainer { MyAssignmentsScreen(-1L) }
+                    ScreenContainer { MyAssignmentsScreen(-1L) }
                 }
                 composable(
                     "myassignments/{teamId}",
                     arguments = listOf(navArgument("teamId") { type = NavType.LongType })
                 ) { backStackEntry ->
                     val teamId = backStackEntry.arguments?.getLong("teamId") ?: -1L
-                    es.udc.emergencyapp.ui.ScreenContainer { MyAssignmentsScreen(teamId) }
+                    ScreenContainer { MyAssignmentsScreen(teamId) }
                 }
-                composable("profile") { es.udc.emergencyapp.ui.ScreenContainer { ProfileScreenCompose() } }
-                composable("send_notice") { es.udc.emergencyapp.ui.ScreenContainer { SendNoticeHost() } }
+                composable("profile") { ScreenContainer { ProfileScreenCompose() } }
+                composable("send_notice") { ScreenContainer { SendNoticeHost() } }
                 composable("fire_management") { FeaturePlaceholder(stringResource(R.string.menu_fire_management)) }
                 composable("user_management") { FeaturePlaceholder(stringResource(R.string.menu_user_management)) }
                 composable("notice_management") { FeaturePlaceholder(stringResource(R.string.menu_notice_management)) }

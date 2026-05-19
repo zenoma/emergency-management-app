@@ -59,7 +59,7 @@ class UserServiceImplTest {
         String.valueOf(user.getPhoneNumber()), user.getDni());
 
     User loggedInUser = userService.loginFromId(user.getId());
-    loggedInUser.setUserRole(UserRole.MEMBER);
+    loggedInUser.setUserRole(UserRole.USER);
     loggedInUser.setPassword(user.getPassword());
 
     Assertions.assertEquals(user, loggedInUser, "Users must be the same");
@@ -102,7 +102,7 @@ class UserServiceImplTest {
 
     User loggedInUser = userService.login(userOm.getEmail(), clearPassword);
     loggedInUser.setPassword(userOm.getPassword());
-    loggedInUser.setUserRole(UserRole.MEMBER);
+    loggedInUser.setUserRole(UserRole.USER);
 
     Assertions.assertEquals(user, loggedInUser, "Users must be the same");
 
@@ -229,7 +229,7 @@ class UserServiceImplTest {
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
-    Assertions.assertEquals(UserRole.MEMBER, user.getUserRole(), "Role must be MEMBER");
+    Assertions.assertEquals(UserRole.USER, user.getUserRole(), "Role must be USER");
 
   }
 
@@ -255,9 +255,9 @@ class UserServiceImplTest {
         targetUser.getLastName(),
         String.valueOf(targetUser.getPhoneNumber()), targetUser.getDni());
 
-    userService.updateRole(user.getId(), targetUser.getId(), UserRole.MEMBER);
+    userService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
 
-    Assertions.assertEquals(UserRole.MEMBER, targetUser.getUserRole(), "Role must be MANAGER");
+    Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(), "Role must be MANAGER");
 
   }
 
@@ -288,7 +288,7 @@ class UserServiceImplTest {
     int totalUsers = 2;
     List<User> userList = UserOM.withRandomNames(totalUsers);
     User user = userList.get(0);
-    user.setUserRole(UserRole.MEMBER);
+    user.setUserRole(UserRole.USER);
     user.setId(0L);
 
     User targetUser = userList.get(1);
@@ -320,9 +320,9 @@ class UserServiceImplTest {
     when(userRepository.findById(0L)).thenReturn(Optional.of(user));
     when(userRepository.findById(1L)).thenReturn(Optional.of(targetUser));
 
-    userService.updateRole(user.getId(), targetUser.getId(), UserRole.MEMBER);
+    userService.updateRole(user.getId(), targetUser.getId(), UserRole.USER);
 
-    Assertions.assertEquals(UserRole.MEMBER, targetUser.getUserRole(), "Updated user role must be MEMBER");
+    Assertions.assertEquals(UserRole.USER, targetUser.getUserRole(), "Updated user role must be USER");
 
   }
 

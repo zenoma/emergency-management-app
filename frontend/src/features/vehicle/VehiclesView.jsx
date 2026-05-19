@@ -73,7 +73,7 @@ export default function VehiclesView(props) {
         ) : null}
 
 
-        {userRole !== "MEMBER" && <VehicleCreateDialog
+        {userRole !== "USER" && <VehicleCreateDialog
           reloadData={reloadData}
           organizationId={organizationId}
         />}

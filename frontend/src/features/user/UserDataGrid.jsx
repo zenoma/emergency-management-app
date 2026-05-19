@@ -18,7 +18,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { toast } from "react-toastify";
 
-export default function UserDataGrid({ childToParent }) {
+export default function UserDataGrid({ childToParent, hideRoles = [] }) {
   const token = useSelector(selectToken);
   const user = useSelector(selectUser);
 
@@ -42,6 +42,7 @@ export default function UserDataGrid({ childToParent }) {
     COORDINATOR: { value: 0, name: 'COORDINATOR' },
     MANAGER: { value: 1, name: 'MANAGER' },
     MEMBER: { value: 2, name: 'MEMBER' },
+    USER: { value: 3, name: 'USER' },
   };
 
   const [pageSize, setPageSize] = useState(10);
@@ -82,7 +83,7 @@ export default function UserDataGrid({ childToParent }) {
       throw new Error(`Invalid role: ${role}`);
     }
     const prevValue = currentRole.value + 1;
-    if (prevValue > UserRole.MEMBER.value) {
+    if (prevValue > UserRole.USER.value) {
       throw new Error(`Role ${role} has no inferior role`);
     }
     const nextRole = Object.values(UserRole).find(role => role.value === prevValue);
@@ -134,10 +135,12 @@ export default function UserDataGrid({ childToParent }) {
 
   const initData = (users) => {
     if (users) {
-      return users.map((user) => ({
-        ...user,
-        hasTeam: user.teamId !== undefined,
-      }));
+      return users
+        .filter((user) => !hideRoles.includes(user.userRole))
+        .map((user) => ({
+          ...user,
+          hasTeam: user.teamId !== undefined,
+        }));
     }
   };
 
@@ -207,7 +210,7 @@ export default function UserDataGrid({ childToParent }) {
               sx={{ borderRadius: "20px" }}
               variant="contained"
               color="error"
-              disabled={params.row.userRole === UserRole.MEMBER.name || user.id === params.row.id}
+              disabled={params.row.userRole === UserRole.USER.name || user.id === params.row.id}
               onClick={(e) => handleClickRoleDown(e, params.row)}
             >
               <ArrowDownwardIcon />

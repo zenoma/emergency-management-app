@@ -27,6 +27,7 @@ public class SecurityConfig {
   private static final String COORDINATOR_ROLE = "COORDINATOR";
   private static final String MANAGER_ROLE = "MANAGER";
   private static final String MEMBER_ROLE = "MEMBER";
+  private static final String USER_ROLE = "USER";
 
   private final JwtGenerator jwtGenerator;
 
@@ -123,12 +124,12 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/users/signUp").permitAll()
             .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
             .requestMatchers(HttpMethod.POST, "/users/loginFromServiceToken").permitAll()
-            .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole(USER_ROLE, MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/users/{id}/changePassword")
-            .hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .hasAnyRole(USER_ROLE, MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/users/{id}/updateRole").hasAnyRole(COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/users/{id}/mobileDevice")
-            .hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .hasAnyRole(USER_ROLE, MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
 
             .anyRequest().authenticated()
         )
