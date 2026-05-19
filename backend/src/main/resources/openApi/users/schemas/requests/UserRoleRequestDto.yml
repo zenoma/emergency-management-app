@@ -4,5 +4,5 @@ required:
 properties:
   userRole:
     type: string
-    enum: [ COORDINATOR, MANAGER, USER ]
+    enum: [ COORDINATOR, MANAGER, MEMBER, USER ]
 

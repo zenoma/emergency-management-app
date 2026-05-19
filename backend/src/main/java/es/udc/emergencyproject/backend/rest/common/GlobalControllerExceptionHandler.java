@@ -24,6 +24,7 @@ import es.udc.emergencyproject.backend.model.exceptions.InvalidAssignmentTransit
 import es.udc.emergencyproject.backend.model.exceptions.ResolvedEmergencyException;
 import es.udc.emergencyproject.backend.model.exceptions.ResourceBusyException;
 import es.udc.emergencyproject.backend.model.exceptions.UserWithoutTeamException;
+import es.udc.emergencyproject.backend.model.exceptions.UserAlreadyRegisteredException;
 import es.udc.emergencyproject.backend.rest.dtos.ErrorDto;
 import es.udc.emergencyproject.backend.rest.dtos.FieldErrorDto;
 import es.udc.emergencyproject.backend.rest.exceptions.ImageRequiredException;
@@ -51,6 +52,7 @@ public class GlobalControllerExceptionHandler {
   private static final String GLOBAL_ERROR_EXCEPTION = "project.exceptions.GlobalErrorException";
   private static final String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
   private static final String USER_WITHOUT_TEAM_EXCEPTION_CODE = "project.exceptions.UserWithoutTeamException";
+  private static final String USER_ALREADY_REGISTERED_EXCEPTION_CODE = "project.exceptions.UserAlreadyRegisteredException";
   private static final String BAD_REQUEST_EXCEPTION_CODE = "project.exceptions.BadRequestException";
   private static final String METHOD_ARGUMENT_NOT_VALID_EXCEPTION = "project.exceptions.MethodArgumentNotValidException";
   private static final String RESOURCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.ResourceNotFoundException";
@@ -195,6 +197,19 @@ public class GlobalControllerExceptionHandler {
     String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
     String errorMessage = messageSource.getMessage(USER_WITHOUT_TEAM_EXCEPTION_CODE,
         new Object[]{nameMessage, exception.getKey().toString()}, USER_WITHOUT_TEAM_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+
+  }
+
+  @ExceptionHandler(UserAlreadyRegisteredException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleUserAlreadyRegisteredException(UserAlreadyRegisteredException exception, Locale locale) {
+
+    String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
+    String errorMessage = messageSource.getMessage(USER_ALREADY_REGISTERED_EXCEPTION_CODE,
+        new Object[]{nameMessage, exception.getId()}, USER_ALREADY_REGISTERED_EXCEPTION_CODE, locale);
 
     return new ErrorDto(errorMessage);
 

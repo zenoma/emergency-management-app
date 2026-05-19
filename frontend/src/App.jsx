@@ -115,22 +115,22 @@ function App({ t }) {
 
             <Route
               path="/organizations"
-              element={logged ? <OrganizationView /> : <Navigate replace to="/" />}
+              element={logged && userRole !== 'USER' ? <OrganizationView /> : <Navigate replace to="/" />}
             />
-            <Route path="/teams" element={logged ? <TeamView /> : <Navigate replace to="/" />} />
-            <Route path="/my-team" element={logged ? <MyTeamView /> : <Navigate replace to="/" />} />
+            <Route path="/teams" element={logged && userRole !== 'USER' ? <TeamView /> : <Navigate replace to="/" />} />
+            <Route path="/my-team" element={logged && userRole !== 'USER' ? <MyTeamView /> : <Navigate replace to="/" />} />
             <Route
               path="/organizations/teams"
-              element={logged ? <OrganizationTeamsVehiclesView /> : <Navigate replace to="/" />}
+              element={logged && userRole !== 'USER' ? <OrganizationTeamsVehiclesView /> : <Navigate replace to="/" />}
             />
             <Route path="/my-notices" element={logged ? <MyNoticesList /> : <Navigate replace to="/" />} />
 
-            <Route path="/emergency-management" element={userRole !== 'USER' ? <EmergencyManagementView /> : <Navigate to="/" />} />
-            <Route path="/emergency-details/" element={userRole !== 'USER' ? <EmergencyDetailsView /> : <Navigate to="/" />} />
-            <Route path="/emergency-history" element={userRole !== 'USER' ? <EmergencyHistoryView /> : <Navigate to="/" />} />
-            <Route path="/emergency-point" element={userRole !== 'USER' ? <EmergencyPointView /> : <Navigate to="/" />} />
-            <Route path="/quadrant" element={userRole !== 'USER' ? <QuadrantView /> : <Navigate to="/" />} />
-            <Route path="/quadrant-history" element={userRole !== 'USER' ? <QuadrantHistoryView /> : <Navigate to="/" />} />
+            <Route path="/emergency-management" element={userRole === 'USER' ? <Navigate to="/" /> : <EmergencyManagementView />} />
+            <Route path="/emergency-details/" element={userRole === 'USER' ? <Navigate to="/" /> : <EmergencyDetailsView />} />
+            <Route path="/emergency-history" element={userRole === 'USER' ? <Navigate to="/" /> : <EmergencyHistoryView />} />
+            <Route path="/emergency-point" element={userRole === 'USER' ? <Navigate to="/" /> : <EmergencyPointView />} />
+            <Route path="/quadrant" element={userRole === 'USER' ? <Navigate to="/" /> : <QuadrantView />} />
+            <Route path="/quadrant-history" element={userRole === 'USER' ? <Navigate to="/" /> : <QuadrantHistoryView />} />
 
             <Route path="/user-management" element={userRole === 'COORDINATOR' ? <UserManagementView /> : <Navigate to="/" />} />
             <Route path="/notice-management" element={userRole === 'COORDINATOR' ? <CoordinatorNoticesView /> : <Navigate to="/" />} />

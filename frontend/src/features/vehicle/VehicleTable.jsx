@@ -196,7 +196,7 @@ export default function VehicleTable(props) {
                           {column.format && typeof value === "number"
                             ? column.format(value)
                             : value}
-                          {column.id === "options" && userRole !== "USER" ? (
+                           {column.id === "options" && userRole !== "USER" ? (
                             <Box>
                               <Button
                                 color="primary"

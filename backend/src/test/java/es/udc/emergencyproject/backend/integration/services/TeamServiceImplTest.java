@@ -5,6 +5,7 @@ import es.udc.emergencyproject.backend.model.entities.organization.Organization;
 import es.udc.emergencyproject.backend.model.entities.organization.OrganizationType;
 import es.udc.emergencyproject.backend.model.entities.resource.team.Team;
 import es.udc.emergencyproject.backend.model.entities.user.User;
+import es.udc.emergencyproject.backend.model.entities.user.UserRole;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
 import es.udc.emergencyproject.backend.model.exceptions.AlreadyExistException;
 import es.udc.emergencyproject.backend.model.exceptions.DuplicateInstanceException;
@@ -160,6 +161,7 @@ class TeamServiceImplTest extends IntegrationTest {
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
+    user.setUserRole(UserRole.MEMBER);
     user.setTeam(team);
 
     resourceManagementFacade.addMemberToTeam(team.getId(), user.getId());
@@ -186,6 +188,7 @@ class TeamServiceImplTest extends IntegrationTest {
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
+    user.setUserRole(UserRole.MEMBER);
     user.setTeam(team);
 
     final Team finalTeam = user.getTeam();
@@ -218,6 +221,7 @@ class TeamServiceImplTest extends IntegrationTest {
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
+    user.setUserRole(UserRole.MEMBER);
     resourceManagementFacade.addMemberToTeam(team.getId(), user.getId());
 
     Assertions.assertTrue(resourceManagementFacade.findAllUsersByTeamId(team.getId()).contains(user),
@@ -246,6 +250,7 @@ class TeamServiceImplTest extends IntegrationTest {
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
+    user.setUserRole(UserRole.MEMBER);
     user.setTeam(team);
     resourceManagementFacade.addMemberToTeam(user.getTeam().getId(), user.getId());
 
@@ -285,6 +290,7 @@ class TeamServiceImplTest extends IntegrationTest {
           String.valueOf(userOm.getPhoneNumber()),
           userOm.getDni());
 
+      user.setUserRole(UserRole.MEMBER);
       user.setTeam(team);
       resourceManagementFacade.addMemberToTeam(team.getId(), user.getId());
     }
@@ -315,6 +321,7 @@ class TeamServiceImplTest extends IntegrationTest {
           String.valueOf(userOm.getPhoneNumber()),
           userOm.getDni());
 
+      user.setUserRole(UserRole.MEMBER);
       user.setTeam(team);
       resourceManagementFacade.addMemberToTeam(team.getId(), user.getId());
 
@@ -344,6 +351,7 @@ class TeamServiceImplTest extends IntegrationTest {
         userOm.getLastName(),
         String.valueOf(userOm.getPhoneNumber()), userOm.getDni());
 
+    user.setUserRole(UserRole.MEMBER);
     team = resourceManagementFacade.addMemberToTeam(team.getId(), user.getId());
 
     Assertions.assertEquals(team, resourceManagementFacade.findTeamByUserId(user.getId()));

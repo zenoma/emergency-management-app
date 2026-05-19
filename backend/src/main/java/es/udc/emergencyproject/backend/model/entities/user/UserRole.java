@@ -3,7 +3,7 @@ package es.udc.emergencyproject.backend.model.entities.user;
 
 public enum UserRole {
   // Highest rol functions will have the bigger number
-  COORDINATOR(0), MANAGER(1), USER(2);
+  COORDINATOR(0), MANAGER(1), MEMBER(2), USER(3);
 
   public final Integer priority;
 

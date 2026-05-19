@@ -18,7 +18,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { toast } from "react-toastify";
 
-export default function UserDataGrid({ childToParent }) {
+export default function UserDataGrid({ childToParent, hideRoles = [] }) {
   const token = useSelector(selectToken);
   const user = useSelector(selectUser);
 
@@ -41,7 +41,8 @@ export default function UserDataGrid({ childToParent }) {
   const UserRole = {
     COORDINATOR: { value: 0, name: 'COORDINATOR' },
     MANAGER: { value: 1, name: 'MANAGER' },
-    USER: { value: 2, name: 'USER' },
+    MEMBER: { value: 2, name: 'MEMBER' },
+    USER: { value: 3, name: 'USER' },
   };
 
   const [pageSize, setPageSize] = useState(10);
@@ -134,10 +135,12 @@ export default function UserDataGrid({ childToParent }) {
 
   const initData = (users) => {
     if (users) {
-      return users.map((user) => ({
-        ...user,
-        hasTeam: user.teamId !== undefined,
-      }));
+      return users
+        .filter((user) => !hideRoles.includes(user.userRole))
+        .map((user) => ({
+          ...user,
+          hasTeam: user.teamId !== undefined,
+        }));
     }
   };
 

@@ -42,18 +42,18 @@ const pages = [
   {
     name: "organizations",
     icon: <GroupsIcon />,
-    role: ["COORDINATOR", "MANAGER", "USER"],
+    role: ["COORDINATOR", "MANAGER", "MEMBER"],
 
   },
   {
     name: "my-team",
     icon: <GroupWorkIcon />,
-    role: ["COORDINATOR", "MANAGER", "USER"],
+    role: ["COORDINATOR", "MANAGER", "MEMBER"],
   },
   {
     name: "my-notices",
     icon: <ArticleIcon />,
-    role: ["COORDINATOR", "MANAGER", "USER"],
+    role: ["COORDINATOR", "MANAGER", "MEMBER", "USER"],
   },
   {
     name: "emergency-management",

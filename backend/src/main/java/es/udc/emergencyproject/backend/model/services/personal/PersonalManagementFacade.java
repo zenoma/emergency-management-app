@@ -79,7 +79,7 @@ public class PersonalManagementFacade {
     return organizationService.updateOrganization(id, name, code, headquartersAddress, location);
   }
 
-  // USER SERVICES
+  // Member and user services
 
   public List<User> findAllUsers() {
     return userService.findAllUsers();

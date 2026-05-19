@@ -1,6 +1,6 @@
 # Firefighter Coordination App
 
-Aplicacion web para la coordinacion de emergencias de incendios forestales. Permite gestionar incendios, cuadrantes, equipos, vehiculos, organizaciones y avisos en tiempo real con soporte geoespacial completo.
+Aplicacion web y app Android para la coordinacion de emergencias de incendios forestales. Permite gestionar incendios, cuadrantes, equipos, vehiculos, organizaciones y avisos en tiempo real con soporte geoespacial completo.
 
 ## Tecnologias
 
@@ -27,6 +27,17 @@ Aplicacion web para la coordinacion de emergencias de incendios forestales. Perm
 **APIs externas integradas:**
 - **OpenWeatherMap** - Datos meteorologicos en tiempo real
 - **MapTiler** - Tiles de mapas topograficos
+
+### Android
+
+| Tecnologia | Version | Descripcion |
+|---|---|---|
+| **Kotlin** | 2.x | Lenguaje principal |
+| **Jetpack Compose** | - | UI declarativa para pantallas nativas |
+| **Android SDK** | 34 | Plataforma Android |
+| **Firebase Cloud Messaging** | - | Notificaciones push |
+| **Firebase Auth/Storage** | - | Integraciones de usuario y ficheros segun configuracion del proyecto |
+| **Google Services** | - | Configuracion del cliente Firebase |
 
 ### Backend
 
@@ -78,6 +89,9 @@ Aplicacion web para la coordinacion de emergencias de incendios forestales. Perm
 - PostgreSQL 14+
 - PostGIS 3.1.4+
 - Docker (para la base de datos)
+- Android Studio
+- Android SDK 34+
+- Configuracion local de Firebase para la app Android
 
 ## Ejecucion
 
@@ -103,3 +117,11 @@ Dentro de la carpeta `frontend/`:
 npm install    # solo la primera vez
 npm run dev    # servidor de desarrollo con Vite
 ```
+
+### Android
+
+Dentro de la carpeta `EmergencyApp/`:
+
+1. Abrir el proyecto con Android Studio.
+2. Configurar localmente `google-services.json` y credenciales de Firebase fuera del repo.
+3. Ejecutar la app desde Android Studio o con Gradle.

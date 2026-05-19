@@ -26,6 +26,7 @@ public class SecurityConfig {
 
   private static final String COORDINATOR_ROLE = "COORDINATOR";
   private static final String MANAGER_ROLE = "MANAGER";
+  private static final String MEMBER_ROLE = "MEMBER";
   private static final String USER_ROLE = "USER";
 
   private final JwtGenerator jwtGenerator;
@@ -78,16 +79,16 @@ public class SecurityConfig {
                 "/webjars/**"
             ).permitAll()
 
-            .requestMatchers(HttpMethod.GET, "/organizations").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/organizations").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.GET, "/organizations/{id}")
-            .hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.DELETE, "/organizations/{id}").hasAnyRole(COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/organizations").hasAnyRole(COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.PUT, "/organizations/{id}").hasAnyRole(COORDINATOR_ROLE)
 
-            .requestMatchers(HttpMethod.GET, "/organizationTypes").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/organizationTypes").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.GET, "/organizationTypes/{id}")
-            .hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/organizationTypes").hasAnyRole(COORDINATOR_ROLE)
 
             .requestMatchers(HttpMethod.GET, "/quadrants").permitAll()
@@ -98,14 +99,14 @@ public class SecurityConfig {
             .hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
 
             .requestMatchers(HttpMethod.POST, "/teams").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
-            .requestMatchers(HttpMethod.GET, "/teams").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
-            .requestMatchers(HttpMethod.GET, "/teams/active").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
-            .requestMatchers(HttpMethod.GET, "/teams/{id}").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
-            .requestMatchers(HttpMethod.GET, "/teams/myTeam").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/teams").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/teams/active").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/teams/{id}").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/teams/myTeam").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/teams/{id}/addUser").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.DELETE, "/teams/{id}").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/teams/{id}/deleteUser").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
-            .requestMatchers(HttpMethod.GET, "/teams/{id}/users").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/teams/{id}/users").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.PUT, "/teams/{id}").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/teams/{id}/deploy").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/teams/{id}/retract").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
@@ -113,22 +114,22 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/vehicles").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.DELETE, "/vehicles/{id}").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.PUT, "/vehicles/{id}").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
-            .requestMatchers(HttpMethod.GET, "/vehicles/{id}").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
-            .requestMatchers(HttpMethod.GET, "/vehicles").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
-            .requestMatchers(HttpMethod.GET, "/vehicles/active").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/vehicles/{id}").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/vehicles").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/vehicles/active").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/vehicles/{id}/deploy").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/vehicles/{id}/retract").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
 
-            .requestMatchers(HttpMethod.GET, "/users/").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/users/").hasAnyRole(MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/users/signUp").permitAll()
             .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
             .requestMatchers(HttpMethod.POST, "/users/loginFromServiceToken").permitAll()
-            .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole(USER_ROLE, MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/users/{id}/changePassword")
-            .hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .hasAnyRole(USER_ROLE, MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/users/{id}/updateRole").hasAnyRole(COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.POST, "/users/{id}/mobileDevice")
-            .hasAnyRole(USER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
+            .hasAnyRole(USER_ROLE, MEMBER_ROLE, MANAGER_ROLE, COORDINATOR_ROLE)
 
             .anyRequest().authenticated()
         )
