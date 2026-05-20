@@ -41,6 +41,7 @@ import UserManagementView from "./features/user/management/UserManagementView";
 import AssignmentManagementView from "./features/assignment/AssignmentManagementView";
 import AssignmentListView from "./features/assignment/AssignmentListView";
 import AssignmentDetailsView from "./features/assignment/AssignmentDetailsView";
+import RecommendationRulesView from "./features/emergency/RecommendationRulesView";
 
 function App({ t }) {
 
@@ -137,6 +138,7 @@ function App({ t }) {
             <Route path="/assignment-management" element={userRole === 'COORDINATOR' ? <AssignmentManagementView /> : <Navigate to="/" />} />
             <Route path="/assignments" element={userRole === 'COORDINATOR' ? <AssignmentListView /> : <Navigate to="/" />} />
             <Route path="/assignments/:id" element={userRole === 'COORDINATOR' ? <AssignmentDetailsView /> : <Navigate to="/" />} />
+            <Route path="/recommendation-rules" element={userRole === 'COORDINATOR' ? <RecommendationRulesView /> : <Navigate to="/" />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>

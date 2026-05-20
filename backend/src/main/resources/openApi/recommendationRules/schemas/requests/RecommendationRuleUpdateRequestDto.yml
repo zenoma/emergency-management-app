@@ -1,0 +1,9 @@
+type: object
+required:
+  - priority
+  - ruleJson
+properties:
+  priority:
+    type: integer
+  ruleJson:
+    type: string

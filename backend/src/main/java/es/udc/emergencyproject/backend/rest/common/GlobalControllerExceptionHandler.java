@@ -13,6 +13,7 @@ import es.udc.emergencyproject.backend.model.exceptions.IncorrectLoginException;
 import es.udc.emergencyproject.backend.model.exceptions.IncorrectPasswordException;
 import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.emergencyproject.backend.model.exceptions.InsufficientRolePermissionException;
+import es.udc.emergencyproject.backend.model.exceptions.InvalidRecommendationRuleException;
 import es.udc.emergencyproject.backend.model.exceptions.NoticeCheckStatusException;
 import es.udc.emergencyproject.backend.model.exceptions.NoticeDeleteStatusException;
 import es.udc.emergencyproject.backend.model.exceptions.NoticeUpdateStatusException;
@@ -81,6 +82,7 @@ public class GlobalControllerExceptionHandler {
   private static final String QUADRANT_ALREADY_LINKED_TO_EMERGENCY_EXCEPTION_CODE = "project.exceptions.QuadrantAlreadyLinkedToEmergencyException";
   private static final String ASSIGNMENT_ALREADY_IN_STATUS_EXCEPTION_CODE = "project.exceptions.AssignmentAlreadyInStatusException";
   private static final String INVALID_ASSIGNMENT_TRANSITION_EXCEPTION_CODE = "project.exceptions.InvalidAssignmentTransitionException";
+  private static final String INVALID_RECOMMENDATION_RULE_EXCEPTION_CODE = "project.exceptions.InvalidRecommendationRuleException";
 
   private final MessageSource messageSource;
 
@@ -493,6 +495,18 @@ public class GlobalControllerExceptionHandler {
 
     String errorMessage = messageSource.getMessage(INVALID_ASSIGNMENT_TRANSITION_EXCEPTION_CODE,
         new Object[]{exception.getName(), exception.getId()}, INVALID_ASSIGNMENT_TRANSITION_EXCEPTION_CODE, locale);
+
+    return new ErrorDto(errorMessage);
+  }
+
+  @ExceptionHandler(InvalidRecommendationRuleException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorDto handleInvalidRecommendationRuleException(InvalidRecommendationRuleException exception,
+      Locale locale) {
+
+    String errorMessage = messageSource.getMessage(INVALID_RECOMMENDATION_RULE_EXCEPTION_CODE,
+        new Object[]{exception.getName(), exception.getId()}, INVALID_RECOMMENDATION_RULE_EXCEPTION_CODE, locale);
 
     return new ErrorDto(errorMessage);
   }

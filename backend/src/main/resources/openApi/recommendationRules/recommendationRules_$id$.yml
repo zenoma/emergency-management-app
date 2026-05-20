@@ -1,0 +1,27 @@
+put:
+  summary: Update a recommendation rule
+  operationId: putRecommendationRule
+  tags:
+    - EmergencyManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/requests/RecommendationRuleUpdateRequestDto.yml'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/responses/RecommendationRuleDto.yml'
