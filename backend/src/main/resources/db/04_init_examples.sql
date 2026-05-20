@@ -71,6 +71,6 @@ ON CONFLICT (id) DO NOTHING;
 -- Assignments: mix of point-based and quadrant-based
 INSERT INTO assignment (id, emergency_quadrant_id, emergency_id, resource_id, status, notes, assigned_at, accepted_at, completed_at, removed)
 VALUES (701, 601, 502, 301, 'PENDING', 'Primera salida para valoración de incendio', CURRENT_TIMESTAMP(3), NULL, NULL, FALSE),
-       (702, NULL, 501, 201, 'ACCEPTED', 'Equipo asignado al perímetro del derrumbe', CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3), NULL, FALSE),
-       (703, 601, 502, 302, 'COMPLETED', 'Apoyo logístico cerrado tras la intervención', CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3), FALSE)
-ON CONFLICT (id) DO NOTHING;
+        (702, NULL, 501, 201, 'ACCEPTED', 'Equipo asignado al perímetro del derrumbe', CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3), NULL, FALSE),
+        (703, 601, 502, 302, 'COMPLETED', 'Apoyo logístico cerrado tras la intervención', CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3), FALSE)
+ ON CONFLICT (id) DO NOTHING;

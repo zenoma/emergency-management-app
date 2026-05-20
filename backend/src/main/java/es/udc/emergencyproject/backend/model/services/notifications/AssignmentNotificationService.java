@@ -166,6 +166,17 @@ public class AssignmentNotificationService {
           .filter(token -> token != null && !token.isBlank())
           .distinct()
           .collect(Collectors.toList());
+    } else if (status == AssignmentStatus.RELEASED) {
+      title = "Asignaci\u00f3n liberada";
+      body = "Una asignaci\u00f3n ha liberado el recurso asociado";
+      route = "myassignments/" + teamId;
+      tokens = userRepository
+          .findTeamUsersWithMobileDeviceByTeamId(teamId)
+          .stream()
+          .map(user -> user.getMobileDevice() != null ? user.getMobileDevice().getFcmToken() : null)
+          .filter(token -> token != null && !token.isBlank())
+          .distinct()
+          .collect(Collectors.toList());
     } else {
       return;
     }

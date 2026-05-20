@@ -134,9 +134,19 @@ export default function AssignmentManagementView() {
 
 
   return (
-    <Box p={3}>
+    <Paper
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        padding: "10px",
+        minWidth: "1000px",
+        height: "calc(100vh - 120px)",
+        boxSizing: "border-box",
+        overflow: "hidden",
+      }}
+    >
       <Typography variant="h5" sx={{ mb: 2 }}> {t('create-assignments', 'Creación de asignaciones de emergencias')} </Typography>
-      <div className="parent">
+      <Box className="parent" sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
         <div className="div1">
           <FormControl fullWidth required error={!selectedEmergency}>
             <InputLabel shrink sx={{ mb: 1 }}>{t('emergency-selection', 'Emergency')}</InputLabel>
@@ -243,7 +253,7 @@ export default function AssignmentManagementView() {
             </Box>
           </Paper>
         </div>
-      </div>
-    </Box>
+      </Box>
+    </Paper>
   );
 }

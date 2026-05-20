@@ -166,6 +166,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     boolean valid = (previous == AssignmentStatus.PENDING && status == AssignmentStatus.ACCEPTED)
+        || (previous == AssignmentStatus.ACCEPTED && status == AssignmentStatus.RELEASED)
         || (previous == AssignmentStatus.ACCEPTED && status == AssignmentStatus.COMPLETED);
 
     if (!valid) {
@@ -176,6 +177,9 @@ public class AssignmentServiceImpl implements AssignmentService {
     a.setStatus(status);
     if (status == AssignmentStatus.ACCEPTED) {
       a.setAcceptedAt(LocalDateTime.now());
+    }
+    if (status == AssignmentStatus.RELEASED) {
+      a.setCompletedAt(LocalDateTime.now());
     }
     if (status == AssignmentStatus.COMPLETED) {
       a.setCompletedAt(LocalDateTime.now());
@@ -199,6 +203,20 @@ public class AssignmentServiceImpl implements AssignmentService {
       try {
         logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_ACCEPTED,
             "Assignment accepted");
+      } catch (Exception ignored) {
+      }
+
+      assignmentNotificationService.notifyTeamAssignmentStatusChanged(saved, status);
+    }
+
+    if (status == AssignmentStatus.RELEASED) {
+      resource.setStatus(ResourceStatus.AVAILABLE);
+      resource.setDeployAt(null);
+      resourceRepository.save(resource);
+
+      try {
+        logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_RELEASED,
+            "Assignment released");
       } catch (Exception ignored) {
       }
 

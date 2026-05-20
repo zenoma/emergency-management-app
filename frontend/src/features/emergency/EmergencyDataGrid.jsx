@@ -30,8 +30,34 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Snackbar, Alert } from '@mui/material';
 import { useCreateEmergencyMutation, useGetEmergenciesQuery, useGetEmergencyTypesQuery } from "../../api/emergencyApi";
+import { useGetQuadrantByCoordinatesQuery } from "../../api/quadrantApi";
 import EmergencyTypeIcon from '../../components/EmergencyTypeIcon';
 import { selectToken, selectUser } from "../user/login/LoginSlice";
+import formatDate from '../../utils/formatDate';
+
+function LocationSummaryCell({ location, quadrantCount, locale, loadingLabel }) {
+  const hasLocation = location != null && location.lon != null && location.lat != null;
+  const { data: quadrant, isError } = useGetQuadrantByCoordinatesQuery(
+    hasLocation ? { lon: location.lon, lat: location.lat } : { lon: null, lat: null },
+    { skip: !hasLocation }
+  );
+
+  if (hasLocation) {
+    if (quadrant?.nombre) {
+      return quadrant.nombre;
+    }
+    if (isError) {
+      return `${location.lon}, ${location.lat}`;
+    }
+    return loadingLabel;
+  }
+
+  if (quadrantCount > 0) {
+    return `${quadrantCount} ${locale === "es" ? "cuadrantes" : "quadrants"}`;
+  }
+
+  return '-';
+}
 
 export default function EmergencyDataGrid() {
   const token = useSelector(selectToken);
@@ -98,14 +124,16 @@ export default function EmergencyDataGrid() {
       {
         field: "description",
         headerName: t("emergency-description"),
-        minWidth: 200,
-        hide: true,
+        minWidth: 320,
+        flex: 1,
+        valueGetter: (params) => params.row?.description || '-',
       },
       {
         field: "type",
         headerName: t("emergency-type"),
         groupable: false,
-        minWidth: 140,
+        minWidth: 240,
+        flex: 1,
         aggregable: false,
         // valueGetter provides the plain string used for sorting/filtering
         valueGetter: (params) => {
@@ -118,41 +146,54 @@ export default function EmergencyDataGrid() {
         },
       },
       {
+        field: "locationSummary",
+        headerName: t("emergency-location"),
+        minWidth: 220,
+        flex: 1,
+        aggregable: false,
+        renderCell: (params) => {
+          const row = params.row || {};
+          const quadrantCount = Array.isArray(row.quadrantInfo) ? row.quadrantInfo.length : 0;
+          return (
+            <LocationSummaryCell
+              location={row.location}
+              quadrantCount={quadrantCount}
+              locale={locale}
+              loadingLabel={t('loading', 'Loading')}
+            />
+          );
+        },
+      },
+      {
         field: "emergencyIndex",
         headerName: t("emergency-index"),
         groupable: false,
-        minWidth: 150,
+        minWidth: 160,
         aggregable: false,
       },
 
       {
         field: "createdAt",
         headerName: t("emergency-created-at"),
-        minWidth: 200,
+        minWidth: 190,
+        flex: 1,
         aggregable: false,
         valueGetter: (params) => {
           const v = params.row ? params.row.createdAt : null;
           if (!v) return "";
-          try {
-            return formatDate(v, locale);
-          } catch (e) {
-            return v;
-          }
+          return formatDate(v, locale);
         },
       },
       {
         field: "resolvedAt",
         headerName: t("emergency-resolved-at"),
-        minWidth: 200,
+        minWidth: 190,
+        flex: 1,
         aggregable: false,
         valueGetter: (params) => {
           const v = params.row ? params.row.resolvedAt : null;
           if (!v) return "";
-          try {
-            return formatDate(v, locale);
-          } catch (e) {
-            return v;
-          }
+          return formatDate(v, locale);
         },
       },
     ],
@@ -270,7 +311,7 @@ export default function EmergencyDataGrid() {
   };
 
   return (
-    <Box style={{ height: 600 }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
       {error ? (
         <h1>{t("generic-error")}</h1>
       ) : isLoading ? (
@@ -278,8 +319,11 @@ export default function EmergencyDataGrid() {
       ) : emergencies ? (
         <Box
           sx={{
-            height: 490,
+            flex: 1,
+            minHeight: 0,
             width: "100%",
+            display: 'flex',
+            flexDirection: 'column',
             "& .extinguido": {
               backgroundColor: "lightgrey",
               "&:hover": {
@@ -352,9 +396,10 @@ export default function EmergencyDataGrid() {
                 ? handleDisabledRowClick(e.row)
                 : handleRowClick(e.row)
             }
+            sx={{ flex: 1, minHeight: 0 }}
           />
           {userRole === "COORDINATOR" && (
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', m: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, flexShrink: 0 }}>
               <Button variant="contained" color="secondary" onClick={handleClickOpen}>{t('create-emergency','Create emergency')}</Button>
             </Box>
           )}

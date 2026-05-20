@@ -224,6 +224,7 @@
   "status": "Estado",
   "accepted": "Aceptada",
   "pending": "Pendiente",
+  "released": "Liberada",
   "completed": "Completada",
   "team": "Equipo",
   "vehicle": "Vehículo",

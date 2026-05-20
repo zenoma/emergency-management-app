@@ -272,6 +272,15 @@ public class EmergencyManagementServiceImpl implements EmergencyManagementServic
                 } catch (Exception ignored) {
                 }
               }
+            } else if (a.getStatus() == AssignmentStatus.RELEASED) {
+              a.setCompletedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+              assignmentRepository.save(a);
+              assignmentNotificationService.notifyTeamAssignmentStatusChanged(a, AssignmentStatus.RELEASED);
+              try {
+                logManagementService.registerAssignmentEvent(a, GeneralLogEventType.ASSIGNMENT_RELEASED,
+                    "Assignment released before emergency resolved");
+              } catch (Exception ignored) {
+              }
             }
           } else {
             // For assignments that were not accepted (e.g. PENDING), perform a soft delete

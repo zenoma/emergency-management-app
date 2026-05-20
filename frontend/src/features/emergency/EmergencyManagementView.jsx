@@ -6,9 +6,13 @@ export default function EmergencyManagementView() {
   return (
     <Paper
       sx={{
-        display: "inline-block",
+        display: "flex",
+        flexDirection: "column",
         padding: "10px",
         minWidth: "1000px",
+        height: "calc(100vh - 120px)",
+        boxSizing: "border-box",
+        overflow: "hidden",
       }}
     >
       <EmergencyDataGrid />

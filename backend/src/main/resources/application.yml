@@ -28,5 +28,5 @@ project:
     expirationMinutes: ${JWT_EXPIRATION_MINUTES:1440}
 
 firebase:
-  service-account-path: ${FIREBASE_SERVICE_ACCOUNT_PATH:src/main/resources/emergency-kotlin-app-firebase-adminsdk-fbsvc-6fb4dc3c22.json}
+  service-account-path: ${FIREBASE_SERVICE_ACCOUNT_PATH:src/main/resources/emergency-kotlin-app-firebase-adminsdk-fbsvc-a4eb1db868.json}
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, Paper, Button } from '@mui/material';
 import { DataGrid, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarDensitySelector, GridToolbarFilterButton, esES } from '@mui/x-data-grid';
 import formatDate from '../../utils/formatDate';
@@ -138,9 +138,6 @@ export default function AssignmentListView() {
       renderCell: (params) => {
         const s = params.value;
         if (!s) return '-';
-        if (s === 'ACCEPTED') {
-          return <span style={{ color: theme.palette.status.accepted.main, fontWeight: 600 }}>{t(String(s).toLowerCase(), s)}</span>;
-        }
         return <span>{t(String(s).toLowerCase(), s)}</span>;
       },
     },
@@ -149,37 +146,42 @@ export default function AssignmentListView() {
   const localeText = locale === 'es' ? esES.components.MuiDataGrid.defaultProps.localeText : undefined;
 
   return (
-    <Box p={2}>
-      <Typography variant="h4" margin={1} sx={{ fontWeight: 'bold', color: 'primary.light' }}>{t('assignment-list', 'Assignments')}</Typography>
+    <Paper sx={{ display: 'flex', flexDirection: 'column', padding: '10px', minWidth: '1000px', height: 'calc(100vh - 120px)', boxSizing: 'border-box', overflow: 'hidden' }}>
+      <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold', color: 'primary.light' }}>{t('assignment-list', 'Assignments')}</Typography>
 
-      <Box sx={{ height: 490, width: '100%', '& .accepted': { backgroundColor: '#e8f5e9', '&:hover': { backgroundColor: '#c8e6c9' } }, '& .pending': { backgroundColor: '#fff8e1' }, '& .completed': { backgroundColor: '#eceff1' } }}>
-        <DataGrid
-          rows={(pendingOnly ? (assignments || []).filter(a => a.status === 'PENDING') : (assignments || []))}
-          columns={columns}
-          loading={isLoading}
-          pageSize={pageSize}
-          onPageSizeChange={(newSize) => setPageSize(newSize)}
-          rowsPerPageOptions={[10, 25, 50]}
-          pagination
-          components={{ Toolbar: CustomToolbar }}
-          componentsProps={{ pagination: { labelRowsPerPage: t('rows-per-page') } }}
-          localeText={localeText}
-          getRowId={(row) => row.id}
-          onRowClick={(params) => navigate(`/assignments/${params.id}`)}
-          getRowClassName={(params) => {
-            const status = params.row ? params.row.status : null;
-            if (!status) return '';
-            if (status === 'ACCEPTED') return 'accepted';
-            if (status === 'PENDING' || status === 'CREATED') return 'pending';
-            if (status === 'COMPLETED') return 'completed';
-            return '';
-          }}
-        />
-        <Box sx={{ mt: 2 }}>
-          <Button variant="contained" color="secondary" sx={{ ml: 'auto' }} onClick={() => navigate('/assignment-management')}>{t('create-assignment', 'Create assignment')}</Button>
+      <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', width: '100%', '& .accepted': { backgroundColor: '#e8f5e9', '&:hover': { backgroundColor: '#c8e6c9' } }, '& .pending': { backgroundColor: '#fff8e1', '&:hover': { backgroundColor: '#ffecb3' } }, '& .released': { backgroundColor: '#ffe0b2', '&:hover': { backgroundColor: '#ffcc80' } }, '& .completed': { backgroundColor: '#eceff1', '&:hover': { backgroundColor: '#cfd8dc' } } }}>
+        <Box sx={{ flex: 1, minHeight: 0, width: '100%' }}>
+          <DataGrid
+            rows={(pendingOnly ? (assignments || []).filter(a => a.status === 'PENDING') : (assignments || []))}
+            columns={columns}
+            loading={isLoading}
+            pageSize={pageSize}
+            onPageSizeChange={(newSize) => setPageSize(newSize)}
+            rowsPerPageOptions={[10, 25, 50]}
+            pagination
+            components={{ Toolbar: CustomToolbar }}
+            componentsProps={{ pagination: { labelRowsPerPage: t('rows-per-page') } }}
+            localeText={localeText}
+            getRowId={(row) => row.id}
+            onRowClick={(params) => navigate(`/assignments/${params.id}`)}
+            getRowClassName={(params) => {
+              const status = params.row ? params.row.status : null;
+              if (!status) return '';
+              if (status === 'ACCEPTED') return 'accepted';
+              if (status === 'PENDING' || status === 'CREATED') return 'pending';
+              if (status === 'RELEASED') return 'released';
+              if (status === 'COMPLETED') return 'completed';
+              return '';
+            }}
+            sx={{ height: '100%' }}
+          />
+        </Box>
+
+        <Box sx={{ mt: 1, flexShrink: 0, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button variant="contained" color="secondary" onClick={() => navigate('/assignment-management')}>{t('create-assignment', 'Create assignment')}</Button>
         </Box>
       </Box>
 
-    </Box>
+    </Paper>
   );
 }
