@@ -25,13 +25,13 @@ En este proyecto se han identificado los siguientes actores:
     \item \textbf{Usuario no autenticado (ACT01)}: puede consultar el mapa general y crear un aviso de emergencia sin necesidad de iniciar sesión.
     \item \textbf{Usuario registrado (ACT02)}: además de las funciones básicas, puede consultar sus propios avisos y acceder al mapa y a las notificaciones personales.
     \item \textbf{Miembro de equipo (ACT03)}: dispone de acceso a la información operativa de su equipo, a las emergencias activas y a las asignaciones asociadas.
-    \item \textbf{Responsable de equipo o gestor de recursos (ACT04)}: puede gestionar equipos y vehículos, asignar y retirar recursos, y operar sobre emergencias activas dentro de su ámbito de responsabilidad.
+    \item \textbf{Responsable de equipo (ACT04)}: puede gestionar equipos y vehículos, asignar y retirar recursos, y operar sobre emergencias activas dentro de su ámbito de responsabilidad.
     \item \textbf{Coordinador (ACT05)}: asume el mayor nivel de permisos y gestiona usuarios, organizaciones, avisos, emergencias, asignaciones y reglas de recomendación.
 \end{itemize}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\textwidth]{imaxes/diagrama-actores.png}
+  \includegraphics[width=1\textwidth]{imaxes/diagramas-caso-uso/diagrama-actores.png}
   \caption{Diagrama de la jerarquía de actores del sistema}
   \label{fig:actores-sistema}
 \end{figure}
@@ -40,20 +40,220 @@ Además, los permisos siguen una jerarquía acumulativa, como se muestra en la f
 
 \section{Casos de uso}
 
-{ \color{red} Aspectos a considerar
-    \begin{itemize}
-      \item Agrupar casos de uso (servirá de base para agruparlos en servicios posteriormente en la sección de diseño).
-      \item Definición concreta /detallada de cada caso de uso (precondiciones ...)
-    \end{itemize}
-}
+En esta sección se recogen todos los casos de uso definidos en el \acrshort{tfg} y se indica su estado en el \acrshort{tfm}. Se mantiene la numeración original para facilitar la trazabilidad entre ambos trabajos, distinguiendo entre casos heredados, casos actualizados por la ampliación funcional y casos eliminados porque su funcionalidad pasó a resolverse mediante nuevos flujos del sistema.
+
+Los casos de uso que han marcado como actualizados reflejan que se han adaptado para cubrir el nuevo ámbito multi-riesgo. Los cambios que se han realizado en estos casos de uso se centran principalmente en la sustitución de las palabras sobre incendios forestales por términos más generales relacionados con emergencias. No se han modificado los alcances, ni las secuencias de flujo, ni los actores implicados ni las precondiciones o postcondiciones.
+
+Los casos \textbf{CU-25} a \textbf{CU-28} conservan la numeración antigua con estado \emph{eliminado} para dejar constancia de que su funcionalidad quedó absorbida por la nueva gestión de asignaciones.
+
+Además de estos casos heredados, la solución cuenta con una ampliación funcional que deriva en nuevos casos de uso relacionados con la creación y seguimiento de asignaciones, la configuración de reglas de recomendación, la generación de recomendaciones de recursos y la recepción de notificaciones móviles. Estos nuevos casos se describen siguiendo la definición formal de casos de uso.
+
+\subsection{Gestión de usuarios}
+La figura \ref{fig:diagrama-gestion-usuarios} muestra los actores que disparan los casos de uso englobados en el subsistema de gestión de usuarios. Estos casos de uso permiten registrar una cuenta, identificarse en la aplicación y consultar o modificar la información básica del perfil.
+
+
+En este bloque de gestión de usuarios se recogen los casos de uso que permiten registrar una cuenta, autenticarse y consultar o actualizar el perfil personal. Son las acciones básicas de entrada al sistema y el punto de partida para el resto de funcionalidades.
+
+
+\input{contido/taboas/casos-uso-gestion-usuarios}
+
+\subsection{Gestión de organizaciones}
+La figura \ref{fig:diagrama-gestion-organizaciones} presenta los actores vinculados a la administración de organizaciones. En este bloque se agrupan las acciones de alta, baja y edición de organizaciones, que sirven de soporte para el resto de la estructura operativa.
+
+
+En la gestión de organizaciones se agrupan los casos de uso orientados a administrar las entidades sobre las que se organiza la operativa. En concreto, se contempla el alta, la baja y la edición de organizaciones, que sirven como base para el reparto de equipos y vehículos.
+
+
+\input{contido/taboas/casos-uso-gestion-organizaciones}
+
+\subsection{Gestión de recursos}
+La figura \ref{fig:diagrama-gestion-recursos} resume los actores que intervienen en la gestión de equipos y vehículos. A través de este subsistema se contempla el alta, la baja, la edición y la vinculación de usuarios a los recursos operativos.
+
+
+Este bloque recoge los casos de uso que permiten administrar los recursos operativos del sistema. Aquí se incluyen las operaciones sobre equipos y vehículos, desde su alta y baja hasta la modificación de sus datos o la gestión de los usuarios asociados a cada equipo.
+
+
+\input{contido/taboas/casos-uso-gestion-recursos}
+
+\subsection{Gestión de emergencias}
+La figura \ref{fig:diagrama-gestion-emergencias} recoge los actores que activan los casos de uso del núcleo operativo del sistema. Estos casos permiten crear, consultar, actualizar y resolver emergencias, además de asociarlas o desvincularlas de sus cuadrantes.
+
+
+En esta subsección se describen los casos de uso que articulan la gestión central del sistema. Se incluyen la creación, actualización, consulta y resolución de emergencias, junto con la vinculación y retirada de cuadrantes, que permiten representar con precisión el alcance territorial del incidente.
+
+
+\input{contido/taboas/casos-uso-gestion-emergencias}
+
+\subsection{Gestión de avisos}
+La figura \ref{fig:diagrama-gestion-avisos} muestra los actores que participan en la entrada y revisión de avisos. En este bloque se incluyen los casos de uso para crear avisos, listarlos, validarlos o denegarlos y, cuando sea necesario, eliminarlos.
+
+
+En este bloque de gestión de avisos se han definido los casos de uso que permiten crear avisos, listarlos para su consulta posterior, validarlos o denegarlos y, cuando procede, eliminarlos. Constituye el punto de entrada de la información ciudadana hacia el flujo operativo del sistema.
+
+
+\input{contido/taboas/casos-uso-gestion-avisos}
+
+\subsection{Información meteorológica y registros}
+La figura \ref{fig:diagrama-meteo-info} representa los actores que acceden a la información complementaria de una emergencia. Este subsistema permite consultar el contexto meteorológico, revisar históricos y recuperar registros y estadísticas de emergencias ya extinguidas.
+
+
+La gestión de información meteorológica y registros agrupa los casos de uso que permiten consultar el contexto asociado a una emergencia ya iniciada o finalizada. En particular, se contempla la visualización del parte meteorológico, así como el acceso al histórico y a las estadísticas de emergencias extinguidas.
+
+
+\input{contido/taboas/casos-uso-informacion-meteorologia-registros}
+
+\subsection{Gestión de asignaciones}
+La figura \ref{fig:diagrama-gestion-asignaciones} recoge los actores que desencadenan los casos de uso de asignación de recursos. Aquí se agrupan las acciones de crear, consultar, aceptar, liberar, completar y eliminar asignaciones asociadas a una emergencia.
+
+
+En este bloque de gestión de asignaciones, se concentran los casos de uso que conectan la emergencia con los recursos desplegados sobre el terreno. En concreto, se contempla crear una asignación de recurso \ref{tab:CU-36}, consultar y filtrar asignaciones \ref{tab:CU-37}, aceptar una asignación de equipo \ref{tab:CU-38}, liberar una asignación activa \ref{tab:CU-39}, completar una asignación \ref{tab:CU-40} y eliminar una asignación pendiente \ref{tab:CU-41}.
+
+
+\input{contido/taboas/casos-uso-gestion-asignaciones}
+
+\subsection{Gestión de reglas de recomendación}
+La figura \ref{fig:diagrama-gestion-reglas} muestra los actores que intervienen en la configuración de las reglas de recomendación. Estos casos de uso permiten consultar y modificar la lógica que define cómo se generan las propuestas automáticas de recursos.
+
+
+La gestión de reglas de recomendación, agrupa los casos de uso que permiten consultar y modificar la lógica que alimenta las propuestas automáticas del sistema. En este apartado el coordinador puede consultar reglas de recomendación \ref{tab:CU-42}, modificar una regla \ref{tab:CU-43}, modificar su prioridad \ref{tab:CU-44} y consultar las reglas por tipología de emergencia \ref{tab:CU-45}.
+
+
+\input{contido/taboas/casos-uso-gestion-reglas-recomendacion}
+
+\subsection{Recomendación de recursos}
+La figura \ref{fig:diagrama-recomendacion-recursos} presenta los actores que hacen uso de la recomendación automática de medios. En este bloque se contemplan la consulta de recursos sugeridos, la generación de recomendaciones y la creación de asignaciones a partir de ellas.
+
+
+En la recomendación de recursos, se incluyen los casos de uso que explotan la configuración anterior para ofrecer una propuesta concreta de medios disponibles. Así, el sistema permite consultar recomendaciones de recursos para una emergencia \ref{tab:CU-46}, generar recomendaciones con criterios operativos \ref{tab:CU-47} y crear una asignación desde una recomendación \ref{tab:CU-48}.
+
+
+\input{contido/taboas/casos-uso-recomendacion-recursos}
+
+\subsection{Notificaciones}
+La figura \ref{fig:diagrama-notificaciones} muestra los actores que reciben los avisos emitidos por el sistema. Este último subsistema recoge las notificaciones de nuevas asignaciones, de cambios de estado y de posibles reasignaciones operativas.
+
+
+En el bloque de notificaciones, se recogen los casos de uso que informan al personal operativo sobre los cambios relevantes del sistema. En particular, se contempla recibir notificación de nueva asignación \ref{tab:CU-49}, recibir notificación por cambio de estado de una asignación \ref{tab:CU-50} y recibir notificación de reasignación operativa \ref{tab:CU-51}.
+
+\input{contido/taboas/casos-uso-notificaciones}
+
+
 
 \section{Modelo de casos de uso}
 
-{ \color{red} Aspectos a considerar
-    \begin{itemize}
-      \item Diagrama de casos de uso incluyendo actores y relaciones entre casos
-    \end{itemize}
-}
+A continuación se muestran los diagramas que contienen los casos de usos identificados
+en el proyecto junto con los actores del proyecto. Se han dividido en subsistemas para que la visualización de los diagramas sea más clara.
+
+\subsection{Gestión de usuarios}
+
+En la imagen \ref{fig:diagrama-gestion-usuarios} se identifican los actores que activan los casos de uso del subsistema de gestión de usuarios. A través de ellos se lleva a cabo el registro, la autenticación y la modificación de los datos y permisos de cada usuario.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.3\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-usuarios.png}
+  \caption{Diagrama de casos de uso para la gestión de usuarios}
+  \label{fig:diagrama-gestion-usuarios}
+\end{figure}
+
+\subsection{Gestión de organizaciones}
+
+La figura \ref{fig:diagrama-gestion-organizaciones} sitúa a los actores que intervienen en la gestión de organizaciones. Este bloque concentra las operaciones de alta, baja y edición de organizaciones, que constituyen la base de la estructura operativa del sistema.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-organizaciones.png}
+  \caption{Diagrama de casos de uso para la gestión de organizaciones}
+  \label{fig:diagrama-gestion-organizaciones}
+\end{figure}
+
+\subsection{Gestión de recursos}
+
+En el diagrama \ref{fig:diagrama-gestion-recursos} aparecen los actores relacionados con la administración de recursos. El subsistema reúne las tareas de alta, baja y modificación de equipos y vehículos, además de la gestión de los usuarios vinculados a cada equipo.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-recursos.png}
+  \caption{Diagrama de casos de uso para la gestión de recursos}
+  \label{fig:diagrama-gestion-recursos}
+\end{figure}
+
+\subsection{Gestión de emergencias}
+
+El diagrama \ref{fig:diagrama-gestion-emergencias} recoge a los actores que disparan los casos de uso de este subsistema. En él se agrupan las acciones de creación, actualización, consulta y resolución de emergencias, junto con la vinculación y retirada de cuadrantes.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-emergencias.png}
+  \caption{Diagrama de casos de uso para la gestión de emergencias}
+  \label{fig:diagrama-gestion-emergencias}
+\end{figure}
+
+\subsection{Gestión de avisos}
+
+La figura \ref{fig:diagrama-gestion-avisos} muestra los actores implicados en la entrada y revisión de avisos. Este conjunto de casos de uso cubre la creación, el listado, la validación o denegación y la eliminación de avisos cuando procede.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-avisos.png}
+  \caption{Diagrama de casos de uso para la gestión de avisos}
+  \label{fig:diagrama-gestion-avisos}
+\end{figure}
+
+\subsection{Información meteorológica y registros}
+
+En el diagrama \ref{fig:diagrama-meteo-info} se representan los actores que acceden a la información complementaria del sistema. Los casos de uso de este bloque permiten consultar el contexto meteorológico de una emergencia y recuperar históricos y estadísticas de emergencias ya extinguidas.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-meteo-info.png}
+  \caption{Diagrama de casos de uso para la gestión de información meteorológica y registros}
+  \label{fig:diagrama-meteo-info}
+\end{figure}
+
+\subsection{Gestión de asignaciones}
+
+La figura \ref{fig:diagrama-gestion-asignaciones} pone de manifiesto los actores que activan el bloque de asignaciones. Aquí se concentran las operaciones de creación, consulta, aceptación, liberación, cierre y eliminación de asignaciones asociadas a una emergencia.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-asignaciones.png}
+  \caption{Diagrama de casos de uso para la gestión de asignaciones}
+  \label{fig:diagrama-gestion-asignaciones}
+\end{figure}
+
+\subsection{Gestión de reglas de recomendación}
+
+El diagrama \ref{fig:diagrama-gestion-reglas} identifica a los actores que intervienen en la configuración de las reglas de recomendación. Este subsistema reúne los casos de uso necesarios para consultar y ajustar la lógica que emplea el sistema al generar recomendaciones de recursos.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-reglas.png}
+  \caption{Diagrama de casos de uso para la gestión de reglas de recomendación}
+  \label{fig:diagrama-gestion-reglas}
+\end{figure}
+
+\subsection{Recomendación de recursos}
+
+La figura \ref{fig:diagrama-recomendacion-recursos} recoge los actores vinculados a la recomendación automática de medios. Sobre este bloque descansan tanto la consulta de propuestas de recursos como su transformación en asignaciones operativas.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-recomendacion.png}
+  \caption{Diagrama de casos de uso para la recomendación de recursos}
+  \label{fig:diagrama-recomendacion-recursos}
+\end{figure}
+
+\subsection{Notificaciones}
+
+Por último, el diagrama \ref{fig:diagrama-notificaciones} muestra los actores que reciben los avisos emitidos por el sistema. Los casos de uso asociados permiten notificar nuevas asignaciones, cambios de estado y posibles reasignaciones operativas.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-notificaciones.png}
+  \caption{Diagrama de casos de uso para la gestión de notificaciones}
+  \label{fig:diagrama-notificaciones}
+\end{figure}
 
 \section{Prototipado de interfaz}
 

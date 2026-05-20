@@ -1,0 +1,30 @@
+\rowcolors{2}{white}{udcgray!25}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{ p{2cm}| p{3cm}| p{2cm}| p{5.5cm} }
+  \caption{Casos de uso de gestión de emergencias}
+  \label{tab:cu-gestion-emergencias} \\
+
+  \rowcolor{udcpink!25}
+  \textbf{Identificador} & \textbf{Caso de uso} & \textbf{Estado} & \textbf{Descripción} \\\hline
+  \endfirsthead
+  \multicolumn{4}{c}{\tablename\ \thetable{} -- {\small \textit{(vén da páxina anterior)}}} \\
+  \rowcolor{udcpink!25}
+  \textbf{Identificador} & \textbf{Caso de uso} & \textbf{Estado} & \textbf{Descripción} \\\hline
+  \endhead
+  \multicolumn{4}{c}{\dotfill{\small \textit{(continúa na páxina seguinte)}}\dotfill} \\
+  \endfoot
+  \endlastfoot
+
+  CU-18 & Dar de alta una emergencia & Actualizado & Un coordinador podrá crear una nueva emergencia a partir de la información validada de los avisos. \\
+  CU-19 & Resolver una emergencia & Actualizado & Un coordinador podrá marcar una emergencia como resuelta cuando la intervención haya finalizado. \\
+  CU-20 & Actualizar los datos de una emergencia & Actualizado & Un coordinador podrá modificar la información básica de una emergencia existente. \\
+  CU-21 & Listar todas las emergencias & Actualizado & Un coordinador o un responsable de equipo podrá consultar y filtrar las emergencias registradas. \\
+  CU-22 & Cambiar índice de emergencia & Actualizado & Un coordinador podrá cambiar el índice de prioridad de una emergencia. \\
+  CU-23 & Vincular una emergencia a cuadrantes & Actualizado & Un coordinador podrá asociar a una emergencia uno o varios cuadrantes afectados. \\
+  CU-24 & Retirar un cuadrante de una emergencia & Actualizado & Un coordinador podrá desvincular un cuadrante de una emergencia activa. \\
+  CU-25 & Desplegar un equipo en un cuadrante & Eliminado & En el \acrshort{tfm}, esta funcionalidad se resuelve mediante la gestión de asignaciones y notificaciones al recurso correspondiente. \\
+  CU-26 & Retirar un equipo de un cuadrante & Eliminado & En el \acrshort{tfm}, esta funcionalidad se resuelve mediante la gestión de asignaciones y la retirada del recurso. \\
+  CU-27 & Desplegar un vehículo en un cuadrante & Eliminado & En el \acrshort{tfm}, esta funcionalidad se resuelve mediante la gestión de asignaciones y la activación automática del vehículo. \\
+  CU-28 & Retirar un vehículo de un cuadrante & Eliminado & En el \acrshort{tfm}, esta funcionalidad se resuelve mediante la gestión de asignaciones y la liberación del recurso. \\
+\end{longtable}

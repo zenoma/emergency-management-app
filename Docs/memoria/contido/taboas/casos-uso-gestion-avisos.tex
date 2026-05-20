@@ -1,0 +1,23 @@
+\rowcolors{2}{white}{udcgray!25}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{ p{2cm}| p{3cm}| p{2cm}| p{5.5cm} }
+  \caption{Casos de uso de gestión de avisos}
+  \label{tab:cu-gestion-avisos} \\
+
+  \rowcolor{udcpink!25}
+  \textbf{Identificador} & \textbf{Caso de uso} & \textbf{Estado} & \textbf{Descripción} \\\hline
+  \endfirsthead
+  \multicolumn{4}{c}{\tablename\ \thetable{} -- {\small \textit{(vén da páxina anterior)}}} \\
+  \rowcolor{udcpink!25}
+  \textbf{Identificador} & \textbf{Caso de uso} & \textbf{Estado} & \textbf{Descripción} \\\hline
+  \endhead
+  \multicolumn{4}{c}{\dotfill{\small \textit{(continúa na páxina seguinte)}}\dotfill} \\
+  \endfoot
+  \endlastfoot
+
+  CU-29 & Crear un aviso de emergencia & Actualizado & Cualquier usuario, autenticado o no, podrá crear un aviso sobre una emergencia desde la localización en la que se encuentra y, opcionalmente, añadir imágenes. \\
+  CU-30 & Listar avisos & Actualizado & Un usuario registrado podrá visualizar los avisos creados. \\
+  CU-31 & Validar o denegar aviso & Actualizado & Un coordinador podrá aceptar o rechazar los avisos recibidos antes de convertirlos en emergencias. \\
+  CU-32 & Eliminar aviso & Actualizado & Un coordinador podrá eliminar avisos que no hayan sido validados. \\
+\end{longtable}
