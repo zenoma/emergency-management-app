@@ -4,4 +4,4 @@ required:
 properties:
   status:
     type: string
-    enum: [ PENDING, ACCEPTED, COMPLETED ]
+    enum: [ PENDING, ACCEPTED, RELEASED, COMPLETED ]

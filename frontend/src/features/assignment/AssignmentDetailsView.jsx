@@ -21,6 +21,7 @@ export default function AssignmentDetailsView() {
   const [deleteAssignment, { isLoading: deleting }] = useDeleteAssignmentMutation();
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [confirmAcceptOpen, setConfirmAcceptOpen] = React.useState(false);
+  const [confirmReleaseOpen, setConfirmReleaseOpen] = React.useState(false);
   const [updateStatus, { isLoading: updating }] = useUpdateAssignmentStatusMutation();
 
   if (isLoading || isFetching) {
@@ -60,7 +61,7 @@ export default function AssignmentDetailsView() {
       <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
         <Typography variant="h4">{t('assignment-details', 'Assignment details')} #{assignment.id}</Typography>
         <Box>
-          <Chip label={assignment.status} color={assignment.status === 'ACCEPTED' ? 'success' : assignment.status === 'PENDING' ? 'warning' : 'default'} sx={{ mr: 1, fontWeight: 600 }} />
+          <Chip label={assignment.status} color={assignment.status === 'ACCEPTED' ? 'success' : assignment.status === 'PENDING' ? 'warning' : assignment.status === 'RELEASED' ? 'info' : 'default'} sx={{ mr: 1, fontWeight: 600 }} />
         </Box>
       </Box>
 
@@ -112,11 +113,14 @@ export default function AssignmentDetailsView() {
             </Grid>
             <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
               <Button variant="outlined" onClick={() => navigate(-1)}>{t('back', 'Back')}</Button>
-          {assignment.status === 'PENDING' && (
+           {assignment.status === 'PENDING' && (
             <>
               <Button color="success" variant="contained" sx={{ ml: 1 }} disabled={updating} onClick={() => setConfirmAcceptOpen(true)}>{t('accept-assignment', 'Accept')}</Button>
               <Button color="error" variant="contained" sx={{ ml: 1 }} onClick={() => setConfirmOpen(true)}>{t('delete-assignment', 'Delete')}</Button>
             </>
+          )}
+          {assignment.status === 'ACCEPTED' && (
+            <Button color="warning" variant="contained" sx={{ ml: 1 }} disabled={updating} onClick={() => setConfirmReleaseOpen(true)}>{t('release-assignment', 'Release')}</Button>
           )}
             </Box>
           </Paper>
@@ -165,6 +169,27 @@ export default function AssignmentDetailsView() {
               setConfirmAcceptOpen(false);
             }
           }}>{t('accept', 'Accept')}</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={confirmReleaseOpen} onClose={() => setConfirmReleaseOpen(false)}>
+        <DialogTitle>{t('confirm-release', 'Confirm release')}</DialogTitle>
+        <DialogContent>
+          <Typography>{t('confirm-release-msg', 'Are you sure you want to release this assignment? The resource will become available again.')}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmReleaseOpen(false)}>{t('cancel', 'Cancel')}</Button>
+          <Button color="warning" variant="contained" onClick={async () => {
+            try {
+              await updateStatus({ id: assignment.id, status: 'RELEASED', token, locale }).unwrap();
+              setConfirmReleaseOpen(false);
+              toast.success(t('assignment-released', 'Assignment released'));
+            } catch (err) {
+              console.error('release failed', err);
+              toast.error(t('assignment-release-failed', 'Failed to release assignment'));
+              setConfirmReleaseOpen(false);
+            }
+          }}>{t('release', 'Release')}</Button>
         </DialogActions>
       </Dialog>
     </Box>

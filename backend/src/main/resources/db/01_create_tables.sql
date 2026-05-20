@@ -288,7 +288,7 @@ CREATE INDEX idx_assignment_emergency ON assignment (emergency_id);
 -- Constraints para status enums (representados como VARCHAR en la DB)
 ALTER TABLE assignment
     ADD CONSTRAINT chk_assignment_status
-        CHECK (status IN ('PENDING','ACCEPTED','COMPLETED'));
+        CHECK (status IN ('PENDING','ACCEPTED','RELEASED','COMPLETED'));
 
 -- Resource status constraint (applies to all resource subtypes)
 ALTER TABLE resource

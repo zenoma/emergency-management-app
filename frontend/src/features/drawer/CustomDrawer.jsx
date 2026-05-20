@@ -10,6 +10,7 @@ import GroupWorkIcon from "@mui/icons-material/GroupWork";
 import HomeIcon from "@mui/icons-material/Home";
 import MenuIcon from "@mui/icons-material/Menu";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
+import TuneIcon from "@mui/icons-material/Tune";
 import People from "@mui/icons-material/People";
 import MuiAppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -73,6 +74,11 @@ const pages = [
   {
     name: "notice-management",
     icon: <ArticleIcon />,
+    role: ["COORDINATOR"],
+  },
+  {
+    name: "recommendation-rules",
+    icon: <TuneIcon />,
     role: ["COORDINATOR"],
   },
 ];
@@ -147,6 +153,9 @@ export default function PersistentDrawerLeft() {
       case "notice-management":
         navigate("/notice-management");
         break;
+      case "recommendation-rules":
+        navigate("/recommendation-rules");
+        break;
       case "assignment-management":
         navigate("/assignments");
         break;
@@ -185,6 +194,8 @@ export default function PersistentDrawerLeft() {
         return pathname.startsWith("/user-management");
       case "notice-management":
         return pathname.startsWith("/notice-management");
+      case "recommendation-rules":
+        return pathname.startsWith("/recommendation-rules");
       default:
         return false;
     }
@@ -197,6 +208,7 @@ export default function PersistentDrawerLeft() {
     "user-management",
     "notice-management",
     "assignment-management",
+    "recommendation-rules",
   ];
 
   const availablePages = pages.filter((item) => item.role.includes(userRole));

@@ -78,6 +78,10 @@ paths:
     $ref: './emergencies/emergencies_$id$_recommendations.yml'
   /emergencies/active:
     $ref: './emergencies/emergencies_active.yml'
+  /recommendation-rules:
+    $ref: './recommendationRules/recommendationRules.yml'
+  /recommendation-rules/{id}:
+    $ref: './recommendationRules/recommendationRules_$id$.yml'
 
   /organizations:
     $ref: './organizations/organizations.yml'

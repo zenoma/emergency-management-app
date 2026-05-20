@@ -17,6 +17,27 @@ La principal ampliación funcional respecto al \acrshort{tfg} es la introducció
 
 \section{Actores}
 
+En el contexto de una plataforma de coordinación de emergencias, resulta fundamental definir con claridad los actores que interactúan con el sistema. Cada actor representa un perfil de usuario con un conjunto concreto de capacidades, un nivel de acceso determinado y unas responsabilidades asociadas a la gestión de avisos, emergencias, recursos y asignaciones.
+
+En este proyecto se han identificado los siguientes actores:
+
+\begin{itemize}
+    \item \textbf{Usuario no autenticado (ACT01)}: puede consultar el mapa general y crear un aviso de emergencia sin necesidad de iniciar sesión.
+    \item \textbf{Usuario registrado (ACT02)}: además de las funciones básicas, puede consultar sus propios avisos y acceder al mapa y a las notificaciones personales.
+    \item \textbf{Miembro de equipo (ACT03)}: dispone de acceso a la información operativa de su equipo, a las emergencias activas y a las asignaciones asociadas.
+    \item \textbf{Responsable de equipo o gestor de recursos (ACT04)}: puede gestionar equipos y vehículos, asignar y retirar recursos, y operar sobre emergencias activas dentro de su ámbito de responsabilidad.
+    \item \textbf{Coordinador (ACT05)}: asume el mayor nivel de permisos y gestiona usuarios, organizaciones, avisos, emergencias, asignaciones y reglas de recomendación.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{imaxes/diagrama-actores.png}
+  \caption{Diagrama de la jerarquía de actores del sistema}
+  \label{fig:actores-sistema}
+\end{figure}
+
+Además, los permisos siguen una jerarquía acumulativa, como se muestra en la figura \ref{fig:actores-sistema}. Esto significa que cada actor superior hereda las capacidades del nivel anterior y añade nuevas funcionalidades. De este modo, el usuario no autenticado posee las capacidades más limitadas, entre ellas se encuentra la visualización del mapa de emergencias y la creación de avisos, mientras que el coordinador, a mayores de las funcionalidades de los roles anteriores cuenta con la capacidad de gestionar usuarios, organizaciones, emergencias y asignaciones, así como de configurar las reglas de recomendación para la asignación automática de recursos. Esta estructura jerárquica facilita la gestión de permisos y asegura que cada usuario tenga acceso únicamente a las funciones necesarias para su rol específico dentro del sistema.
+
 \section{Casos de uso}
 
 { \color{red} Aspectos a considerar

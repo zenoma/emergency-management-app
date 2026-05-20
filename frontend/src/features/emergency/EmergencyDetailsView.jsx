@@ -69,8 +69,19 @@ function AssignmentSummaryCard({ emergencyId, quadrantId, token, locale, t }) {
     { skip: !emergencyId, refetchOnMountOrArgChange: true }
   );
 
-  const teams = assignments.filter((item) => item.teamInfo);
-  const vehicles = assignments.filter((item) => item.vehicleInfo);
+  const uniqueByResource = (items) => {
+    const seen = new Set();
+    return items.filter((item) => {
+      const key = item.resourceId ?? item.teamInfo?.id ?? item.vehicleInfo?.id;
+      if (key == null || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+
+  const acceptedAssignments = assignments.filter((item) => item.status === 'ACCEPTED');
+  const teams = uniqueByResource(acceptedAssignments.filter((item) => item.teamInfo));
+  const vehicles = uniqueByResource(acceptedAssignments.filter((item) => item.vehicleInfo));
 
   const locationLabel = (() => {
     const first = assignments[0];

@@ -1,0 +1,23 @@
+get:
+  summary: List recommendation rules for an emergency type
+  operationId: getRecommendationRules
+  tags:
+    - EmergencyManagement
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - in: query
+      name: emergencyTypeId
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: './schemas/responses/RecommendationRuleDto.yml'

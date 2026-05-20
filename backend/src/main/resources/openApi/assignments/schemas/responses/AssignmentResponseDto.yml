@@ -16,7 +16,7 @@ properties:
     format: int64
   status:
     type: string
-    enum: [ PENDING, ACCEPTED, COMPLETED ]
+    enum: [ PENDING, ACCEPTED, RELEASED, COMPLETED ]
   notes:
     type: string
   assignedAt:

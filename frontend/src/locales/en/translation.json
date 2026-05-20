@@ -224,6 +224,7 @@
   "status": "Status",
   "accepted": "Accepted",
   "pending": "Pending",
+  "released": "Released",
   "completed": "Completed",
   "assigned-at": "Assigned at",
   "organization": "Organization",

@@ -53,6 +53,8 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/emergencies/{id}/removeQuadrant")
             .hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.PUT, "/emergencies/{id}").hasAnyRole(COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.GET, "/recommendation-rules").hasAnyRole(COORDINATOR_ROLE)
+            .requestMatchers(HttpMethod.PUT, "/recommendation-rules/{id}").hasAnyRole(COORDINATOR_ROLE)
 
             .requestMatchers(HttpMethod.GET, "/logs/emergencies").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)
             .requestMatchers(HttpMethod.GET, "/logs/emergencies/{id}").hasAnyRole(MANAGER_ROLE, COORDINATOR_ROLE)

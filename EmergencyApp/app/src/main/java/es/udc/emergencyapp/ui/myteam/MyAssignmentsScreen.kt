@@ -65,7 +65,8 @@ fun MyAssignmentsScreen(teamId: Long) {
                     val list = mutableListOf<JSONObject>()
                     for (i in 0 until arr.length()) {
                         val item = arr.getJSONObject(i)
-                        if (item.optString("status").uppercase() != "COMPLETED") {
+                        val status = item.optString("status").uppercase()
+                        if (status != "COMPLETED" && status != "RELEASED") {
                             list.add(item)
                         }
                     }
@@ -123,7 +124,10 @@ fun MyAssignmentsScreen(teamId: Long) {
                                                 -1L
                                             ) == assignmentId
                                         ) updated else current
-                                    }.filter { it.optString("status").uppercase() != "COMPLETED" }
+                                    }.filter {
+                                        val status = it.optString("status").uppercase()
+                                        status != "COMPLETED" && status != "RELEASED"
+                                    }
                                     DrawerBadgeState.refreshTrigger++
                                     (context as? MainActivity)?.refreshDrawerAssignments()
                                 } else {
