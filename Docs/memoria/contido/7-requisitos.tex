@@ -257,4 +257,77 @@ Por último, el diagrama \ref{fig:diagrama-notificaciones} muestra los actores q
 
 \section{Prototipado de interfaz}
 
-{ \color{red} Es interesante hacer el esfuerzo en este momento de prototipar las principales pantallas de la interfaz (y añadirlas en la memoria), como parte del análisis de requisitos, así como de aspectos de usabilidad de las mismas. }
+En lo relativo al frontend, la interfaz respecto al \acrshort{tfg} no ha sufrido variaciones significativas, a pesar de los cambios introducidos en el backend. La estructura interna del servidor se ha reorganizado en torno a recursos, los históricos se encuentran agrupados y pasan a depender de las asignaciones, y aunque las funcionalidades se han ampliado, la experiencia de usuario general se mantiene en una línea muy similar. En este proceso se han incorporado algunas interfaces nuevas, que se comentan a continuación.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{imaxes/wireframes/asignaciones.png}
+    \caption{Prototipo de la vista de asignación de recursos}
+    \label{fig:wireframe-assignments}
+\end{figure}
+
+En la parte del frontend, ha sido necesario incorporar nuevas vistas. La figura \ref{fig:wireframe-assignments} muestra la pantalla de asignación, que permite vincular recursos, emergencias y cuadrantes, de modo que quede reflejado el uso de recursos durante la resolución de cada incidencia. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{imaxes/wireframes/regla-recomendacion.png}
+    \caption{Prototipo de la edición de reglas de recomendación}
+    \label{fig:wireframe-recommendation-rules}
+\end{figure}
+
+Por otra parte, la figura \ref{fig:wireframe-recommendation-rules} corresponde a la edición de las reglas de recomendación, una funcionalidad añadida para permitir a los coordinadores ajustar los valores del motor de propuestas semiautomáticas y mejorar así su capacidad de sugerencia.
+
+Además, al incorporar una aplicación móvil ha sido necesario realizar el prototipado de las interfaces Android. Por este motivo, a continuación se describen también las principales pantallas previstas para dicha aplicación, con el objetivo de dejar recogidas en la memoria las decisiones de diseño asociadas a ambos entornos.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imaxes/wireframes/Login.png}
+  \caption{Prototipo de la vista de acceso a la aplicación}
+  \label{fig:wireframe-login}
+\end{figure}
+
+En la figura \ref{fig:wireframe-login} se representan los casos de uso de registro, consulta del perfil y acceso al menú principal disponible para un usuario registrado. Esta vista constituye el punto de entrada al sistema una vez autenticado el usuario, y centraliza las opciones a las que puede acceder según su perfil.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imaxes/wireframes/No Login.png}
+  \caption{Prototipo de la vista mostrada sin autenticación}
+  \label{fig:wireframe-no-login}
+\end{figure}
+
+
+En la primera imagen \ref{fig:wireframe-login} se muestran los casos de uso de registro, consulta del perfil y acceso al menú principal que puede utilizar un usuario autenticado. Esta vista representa el punto de entrada al sistema para los usuarios registrados y concentra las opciones disponibles una vez iniciada la sesión.
+
+De forma general, en este conjunto de wireframes se agrupan las pantallas que permiten la visualización de un mapa con emergencias y sus tipos, la creación de avisos con sus mensajes e imágenes, y el listado de esos avisos con sus imágenes, información relevante y su estado.
+
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imaxes/wireframes/Organization Management.png}
+    \caption{Prototipo de la vista de gestión de organizaciones}
+    \label{fig:wireframe-organization-management}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=0.48\textwidth]{imaxes/wireframes/My team.png}
+    \caption{Prototipo de la vista del equipo propio}
+    \label{fig:wireframe-my-team}
+  \end{minipage}
+\end{figure}
+
+En las figuras \ref{fig:wireframe-organization-management} y \ref{fig:wireframe-my-team} se agrupan, por un lado, los casos de uso que permiten consultar las organizaciones creadas junto con los recursos asociados, así como su información de disponibilidad y otros datos complementarios. Por otro lado, se representa la vista que muestra la información del equipo del usuario autenticado, incluyendo su estado y los usuarios que pertenecen al mismo.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imaxes/wireframes/Emergency Management.png}
+  \caption{Prototipo de la vista de gestión de emergencias}
+  \label{fig:wireframe-emergency-management}
+\end{figure}
+
+En la figura \ref{fig:wireframe-emergency-management} se representa la vista más relevante de este bloque, en la que se muestra la información asociada a las emergencias, así como los cuadrantes o puntos afectados. Desde esta pantalla también es posible consultar los recursos asignados a cada emergencia, tanto equipos como vehículos, lo que permite una visión global del estado operativo en cada momento.
+
+
