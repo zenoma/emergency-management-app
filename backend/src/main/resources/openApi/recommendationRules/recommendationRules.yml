@@ -2,7 +2,7 @@ get:
   summary: List recommendation rules for an emergency type
   operationId: getRecommendationRules
   tags:
-    - EmergencyManagement
+    - RecommendationRulesManagement
   security:
     - bearerAuth: [ ]
   parameters:

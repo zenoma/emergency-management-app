@@ -32,6 +32,8 @@ tags:
     description: Operations related to logs management
   - name: NoticeManagement
     description: Operations related to notices management
+  - name: RecommendationRulesManagement
+    description: Operations related to recommendation rules management
 
 paths:
   /users:
