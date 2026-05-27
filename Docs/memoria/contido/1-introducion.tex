@@ -9,54 +9,64 @@ Este \acrfull{tfm} se apoya y amplía el trabajo previo desarrollado en el \acrf
 \label{sec:actual}
 
 
-La situación actual combina capacidades consolidadas de detección, alerta y despliegue con limitaciones de integración entre sistemas y organizaciones. En el ámbito forestal, existen estadísticas nacionales y autonómicas que permiten caracterizar la magnitud del problema \cite{EGIFMITECO}. Galicia dispone además de una estructura operativa asentada en torno a \acrfull{axega} y cuenta con planes de emergencia por tipología de riesgo a nivel autonómico \cite{AxegaPortal,PlansEmerxenciaGalicia}.
+La situación actual en gestión de emergencias combina capacidades consolidadas de detección, alerta y despliegue con limitaciones de integración entre sistemas y organizaciones. En el ámbito forestal, existen estadísticas nacionales y autonómicas que permiten caracterizar la magnitud del problema \cite{EGIFMITECO}. Galicia dispone además de una estructura operativa asentada en torno a \acrfull{axega} y cuenta con planes de emergencia por tipología de riesgo a nivel autonómico \cite{AxegaPortal,PlansEmerxenciaGalicia}.
 
 Galicia dispone de una organización y planificación detallada para distintas tipologías de riesgo, por ejemplo, \acrfull{pladiga} para riesgos forestales. La Consellería de Presidencia centraliza catálogos, protocolos y guías municipales, la Consellería de Medio Rural publica documentación técnica y memorias sobre defensa del monte, y \acrshort{axega} mantiene boletines e instrumentos operativos. Sin embargo, estos planes y protocolos están dispersos entre distintos organismos y repositorios, y no están unificados en una solución digital compartida y accesible tanto para los equipos de gestión de emergencias como para la ciudadanía común \cite{PlansEmerxenciaGalicia,PladigaXunta2026,AxegaPortal}.
 
-No obstante, persisten dificultades operativas que limitan la eficacia conjunta. La fragmentación de la información hace que avisos ciudadanos, información meteorológica, mapas de emergencias y estado de recursos residan en sistemas segregados. A ello se suma la heterogeneidad organizativa, ya que organismos y equipos tienen procedimientos y necesidades distintas, desde la coordinación estratégica hasta el mando táctico y la intervención en campo. También destaca la variabilidad del riesgo y la concurrencia de eventos, porque no es realista tratar las emergencias de forma aislada y algunas suelen estar relacionadas con otras, lo que exige un modelo multi-riesgo \cite{PlansEmerxenciaGalicia,AxegaAlertaChuvia2026}. Por último, la presión temporal y la trazabilidad obligan a disponer de actualización en tiempo real y de un registro de actuaciones para análisis posteriores.
+Por tanto, persisten dificultades operativas que limitan la eficacia conjunta. La fragmentación de la información hace que avisos ciudadanos, información meteorológica, mapas de emergencias y estado de recursos residan en sistemas segregados. A ello se suma la heterogeneidad organizativa, ya que organismos y equipos tienen procedimientos y necesidades distintas, desde la coordinación estratégica hasta el mando táctico y la intervención en campo. También destaca la variabilidad del riesgo y la concurrencia de eventos, porque no es realista tratar las emergencias de forma aislada y algunas suelen estar relacionadas con otras, lo que exige un modelo multi-riesgo \cite{PlansEmerxenciaGalicia,AxegaAlertaChuvia2026}. Por último, la presión temporal y la trazabilidad obligan a disponer de actualización en tiempo real y de un registro de actuaciones para análisis posteriores.
 
 El análisis realizado en el \acrshort{tfg} muestra que estas limitaciones no son debidas a la ausencia de medios, sino a falta de cohesión operativa digital. Por ello, este \acrshort{tfm} propone una evolución del sistema desarrollado en el \acrshort{tfg} hacia una plataforma de coordinación que mejore la integración, la trazabilidad y el soporte a la decisión en contextos multi-riesgo.
 
 \section{Alcance y objetivos}
 \label{sec:objetivos}
 
-El alcance de este \acrshort{tfm} es evolucionar la solución técnica y los modelos operativos desarrollados en el \acrshort{tfg} hacia una plataforma de coordinación de emergencias multi-riesgo para Galicia, con dos componentes principales: una plataforma web para gestión y coordinación, y una aplicación móvil nativa para uso en campo y participación ciudadana. Este \acrshort{tfm} parte explícitamente del trabajo técnico y de campo documentado en el \acrshort{tfg} \cite{TFGAdrianGarcia2025}.
+El objetivo de este \acrshort{tfm} consiste en desarrollar una plataforma para la gestión integrada de diferentes tipos de emergencias, con un despliegue particular centrado en Galicia. La solución parte de la base del \acrshort{tfg} en su componente web y se completa con una aplicación móvil creada desde cero. De este modo, la plataforma combina un entorno web para la coordinación y una app móvil para la participación ciudadana y el trabajo en campo.
+
+La solución tecnológica se orienta a la gestión de alertas ciudadanas en tiempo real, permitiendo reportar incidentes mediante fotografías geolocalizadas para facilitar su verificación y priorización. También incorpora la ejecución de planes de actuación semiautomatizados en función del tipo y nivel de riesgo detectado, con el objetivo de optimizar la respuesta inicial. A ello se suma la coordinación de recursos de múltiples organizaciones mediante un inventario dinámico que refleje disponibilidad, ubicación y estado operativo.
+
+Una vez ampliada la parte web para dar soporte a estas funcionalidades, se desarrolla una aplicación móvil nativa en Kotlin para profesionales y ciudadanía, con notificaciones push, visualización de mapas con cuadrantes activos y seguimiento en tiempo real de los recursos desplegados. A mayores, se generan registros pensados para un posible análisis post-emergencia, con métricas como tiempos de respuesta, recursos utilizados y eficacia de las actuaciones.
 
 La solución propuesta se alinea con el trabajo realizado por protección civil y otros organismos de respuesta a emergencias, priorizando la interoperabilidad entre estos organismos, sin pretender sustituir sistemas institucionales existentes, sino complementarlos aportando una capa unificada de gestión, visualización y soporte a la decisión \cite{LeySNPC17_2015,NormaBasicaPC2023}.
 
+En las siguientes secciones se enumeran los objetivos principales y concretos que guían el desarrollo de la plataforma propuesta. Los objetivos complementarios incorporados durante el desarrollo se mantienen al final de cada bloque para reflejar la evolución del trabajo respecto al planteamiento inicial.
+
 \subsection{Objetivos principales}
 
-A continuación se enumeran los principales objetivos que debe cumplir la aplicación a
-desarrollar en este trabajo:
+A continuación se enumeran los principales objetivos que debe cumplir la aplicación a desarrollar en este trabajo:
 
 \begin{enumerate}
-    \item Extender el dominio funcional del \acrshort{tfg} hacia un enfoque multi-riesgo (incendios, inundaciones, derrumbes y riesgos industriales) acorde con los planes autonómicos.
-    \item Ampliar funcionalidades de la plataforma web existente que centraliza la gestión de alertas, emergencias, recursos y despliegues operativos.
-    \item Diseñar e implementar una aplicación móvil nativa en Kotlin para reporte ciudadano y soporte a la intervención en campo.
-    \item Mejorar la coordinación multi-organizativa, integrando en un mismo flujo de trabajo a coordinadores, brigadas, protección civil y ciudadanía.
-    \item Reforzar la trazabilidad y el análisis post-emergencia mediante históricos e indicadores operativos.
+    \item Desarrollar una plataforma para la gestión integrada de diferentes tipos de emergencias, centrada en el ámbito de Galicia.
+    \item Construir dos artefactos principales: una plataforma web, partiendo de la base del \acrshort{tfg}, y una aplicación móvil creada desde cero.
+    \item Centrar la solución en la gestión de alertas ciudadanas en tiempo real mediante fotografías geolocalizadas.
+    \item Permitir la recomendación de planes de actuación semiautomatizados según el tipo y nivel de riesgo detectado.
+    \item Coordinar recursos de múltiples organizaciones mediante un inventario dinámico que refleje disponibilidad, ubicación y estado operativo.
+    \item Reforzar el análisis post-emergencia mediante registros detallados de tiempos de respuesta, recursos utilizados y eficacia de las actuaciones.
 \end{enumerate}
 
 
 \subsection{Objetivos concretos}
 
-\begin{enumerate}
-    \item Contextualización: esclarecer el valor aportado por el \acrshort{tfm} y definir el nuevo dominio multi-riesgo.
-    \item Definir la arquitectura de la aplicación móvil y entregar un esqueleto que permita añadir funcionalidades progresivamente.
-    \item Introducir un modelo unificado de recursos y organizaciones y definir sus capacidades y área operativa.
-    \item Permitir la creación y edición de emergencias (por punto o por cuadrante) y la creación o propuesta manual de asignaciones.
-    \item Introducir un registro de logs operativos de las emergencias y de las asignaciones de recursos que permita el análisis posterior de las emergencias y la generación de indicadores. 
-    \item Integrar notificaciones móviles mediante \acrfull{fcm}, registrar dispositivos y definir el flujo de notificación y aceptación de asignaciones.
-    \item Implementar el almacenamiento de reglas basándose en los protocolos actuales y un motor de reglas que sea capaz de generar propuestas de asignación automáticamente.
-\end{enumerate}
+A continuación se detallan los objetivos concretos que permiten alcanzar los objetivos principales:
 
+\begin{enumerate}
+    \item Crear una nueva aplicación móvil con notificaciones push para la comunicación de emergencias y avisos.
+    \begin{enumerate}
+        \item Incorporar un mapa con cuadrantes, eventos y recursos asignados en tiempo real.
+        \item Permitir la subida de imágenes para los avisos de la ciudadanía.
+    \end{enumerate}
+    \item Actualizar la plataforma web para gestionar nuevas organizaciones y nuevos tipos de emergencias.
+    \item Mostrar en la web un mapa interactivo con las nuevas emergencias, los recursos asignados y su estado.
+    \item Implementar la recomendación semiautomática de planes de emergencia según el tipo de emergencia y su nivel de alerta.
+    \item Garantizar un modelo flexible para nuevas organizaciones manteniendo el soporte al trabajo previo \cite{TFGAdrianGarcia2025} sobre brigadas forestales y su organigrama.
+    \item Actualizar la gestión de históricos del trabajo previo \cite{TFGAdrianGarcia2025} para dar soporte a los registros de las nuevas funcionalidades.
+\end{enumerate}
 
 \section{Estructura de la memoria}
 \label{sec:estructura}
 
 La memoria se organiza en once capítulos y anexos. A continuación se ofrece un resumen del contenido de cada capítulo:
 
-\begin{enumerate}
+\begin{itemize}
     \item Capítulo 1: Presenta el contexto general, describe la situación actual en Galicia, expone las motivaciones del trabajo y enuncia los objetivos generales y concretos del proyecto.
     \item Capítulo \ref{chap:basetecnoloxica}: Detalla la base tecnológica empleada: componentes de backend y frontend, bases de datos, servicios y librerías relevantes, y las decisiones arquitectónicas que sustentan la implementación.
     \item Capítulo \ref{chap:estadoarte}: Revisa el estado del arte, compara soluciones existentes y extrae lecciones aplicables al diseño de la plataforma propuesta.
@@ -68,4 +78,4 @@ La memoria se organiza en once capítulos y anexos. A continuación se ofrece un
     \item Capítulo \ref{chap:implementacion}: Detalla la implementación: estructura de código, despliegue, configuraciones y ejemplos de componentes desarrollados.
     \item Capítulo \ref{chap:probas}: Documenta las pruebas realizadas (unitarias, de integración y de aceptación), su cobertura y los resultados obtenidos.
     \item Capítulo \ref{chap:conclusions}: Resume las conclusiones, las aportaciones del trabajo y propone líneas futuras de mejora y continuidad.
-\end{enumerate}
+\end{itemize}

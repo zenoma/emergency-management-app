@@ -1,19 +1,19 @@
 \chapter{Requisitos del sistema}
 \label{chap:requisitos}
 
-\lettrine{E}{n} este capítulo se describen los requisitos funcionales y los actores principales del sistema. La solución evoluciona respecto al \acrshort{tfg} ampliando el alcance desde la coordinación centrada en incendios forestales hacia una plataforma multi-riesgo, con un flujo más completo de aviso, validación, creación de emergencias y asignación de recursos.
+\lettrine{E}{n} este capítulo se describen los requisitos funcionales y los actores principales del sistema. La solución evoluciona respecto al trabajo previo \cite{TFGAdrianGarcia2025} ampliando el alcance desde la coordinación centrada en incendios forestales hacia una plataforma multi-riesgo, con un flujo más completo de aviso, validación, creación de emergencias y asignación de recursos.
 
 \section{Introducción}
 
-Los tres pilares funcionales de la aplicación siguen siendo la gestión de avisos, la gestión de emergencias y la gestión de personal y recursos, pero en este \acrshort{tfm} se redefinen para cubrir un dominio más amplio. Los usuarios no autenticados o ciudadanos pueden registrar avisos sobre emergencias con sus imágenes adjuntas y consultar posteriormente el estado de dichos avisos.
+Los requisitos funcionales del sistema se articulan en torno a cuatro bloques principales: \textbf{gestión de avisos}, \textbf{gestión de emergencias}, \textbf{gestión de recursos y asignaciones}, y \textbf{soporte a la recomendación y notificación operativa}. En conjunto, estos bloques describen el flujo completo desde que un ciudadano informa de un incidente hasta que el coordinador valida la información, crea la emergencia y despliega los recursos necesarios.
 
-Sobre esos avisos actúa un administrador o coordinador, que revisa la información recibida y decide si procede crear una emergencia. A diferencia del \acrshort{tfg}, donde el foco estaba más ligado al incendio forestal y a una organización más estática de equipos, en este trabajo la emergencia puede vincularse a unas coordenadas en concreto, cuando el incidente está localizado con precisión, o como una colección de cuadrantes, cuando este afecta a una zona más amplia. 
+En la parte de entrada de información, los usuarios no autenticados o ciudadanos pueden registrar avisos con texto, localización e imágenes adjuntas, consultar el mapa general y revisar el estado de sus propios avisos. El sistema debe permitir que esos avisos sean validados, denegados o eliminados por los perfiles con permisos de gestión, de forma que solo la información útil se convierta en una emergencia.
 
-Una vez creada la emergencia, el administrador puede seguir los protocolos estipulados y realizar una asignación manual de los recursos, pero ahora el sistema ofrece una propuesta de asignación de recursos a dicho coordinador. Este mecanismo filtra candidatos en función de la organización a la que pertenecen, de su estado operativo y de su distancia a la emergencia. 
+En la gestión de emergencias, el coordinador puede crear, consultar, actualizar y resolver emergencias, asignarles un tipo y vincularlas a una localización concreta o a una colección de cuadrantes. Esta dualidad permite representar tanto incidentes puntuales como afecciones territoriales más amplias. Además, el sistema debe impedir incoherencias como asociar un cuadrante que no pertenezca a la emergencia o modificar una emergencia ya resuelta.
 
-El flujo operativo se completa con el envío de notificaciones a los usuarios de los equipos asignados, de forma que el jefe de equipo pueda aceptar la emergencia y se actualice el estado del recurso a ocupado o desplegado. En el caso de los vehículos, la aceptación se resuelve de forma automática. Finalmente, cuando la emergencia se completa, el recurso pasa de nuevo a estado disponible.
+La gestión de recursos exige mantener organizados equipos, vehículos, usuarios y organizaciones, con capacidad para dar de alta, modificar y retirar esos elementos. Sobre esa base, el sistema debe permitir crear asignaciones, consultar su estado, aceptar o rechazar la activación, completar su ciclo de vida y liberar el recurso cuando la emergencia finaliza. En el caso de los equipos, la aceptación de una asignación requiere confirmación por parte del jefe de equipo; en el caso de los vehículos, la activación se resuelve de forma más automática.
 
-La principal ampliación funcional respecto al \acrshort{tfg} es la introducción de un rol adicional de miembro de equipo. Así, el sistema distingue ahora entre ciudadano, miembro de equipo, manager y coordinador. El ciudadano conserva un perfil muy reducido, centrado en crear avisos y consultar el estado de sus notificaciones. El miembro de equipo accede al seguimiento de sus asignaciones, el manager mantiene funciones de organización y gestión operativa, y el coordinador conserva las capacidades de validación, creación de emergencias y supervisión global del sistema.
+Finalmente, el sistema incorpora funciones de apoyo a la coordinación: generación de recomendaciones de recursos a partir de reglas configurables, notificaciones móviles sobre nuevas asignaciones o cambios de estado, consulta de información meteorológica asociada a la emergencia y acceso a históricos y registros operativos. La principal ampliación funcional respecto  a los actores es la introducción de un rol adicional de miembro de equipo, junto con una separación más clara entre ciudadano, miembro de equipo, jefe de equipo y coordinador, cada uno con capacidades diferenciadas según su responsabilidad dentro del sistema.
 
 \section{Actores}
 
@@ -40,13 +40,13 @@ Además, los permisos siguen una jerarquía acumulativa, como se muestra en la f
 
 \section{Casos de uso}
 
-En esta sección se recogen todos los casos de uso definidos en el \acrshort{tfg} y se indica su estado en el \acrshort{tfm}. Se mantiene la numeración original para facilitar la trazabilidad entre ambos trabajos, distinguiendo entre casos heredados, casos actualizados por la ampliación funcional y casos eliminados porque su funcionalidad pasó a resolverse mediante nuevos flujos del sistema.
+En esta sección se recogen todos los casos de uso definidos en el trabajo previo y se indica su estado en esta etapa. Se mantiene la numeración original para facilitar la trazabilidad entre ambas versiones, distinguiendo entre casos heredados, casos actualizados por la ampliación funcional y casos eliminados porque su funcionalidad pasó a resolverse mediante nuevos flujos del sistema.
 
-Los casos de uso que han marcado como actualizados reflejan que se han adaptado para cubrir el nuevo ámbito multi-riesgo. Los cambios que se han realizado en estos casos de uso se centran principalmente en la sustitución de las palabras sobre incendios forestales por términos más generales relacionados con emergencias. No se han modificado los alcances, ni las secuencias de flujo, ni los actores implicados ni las precondiciones o postcondiciones.
+Los casos de uso que se han marcado como actualizados reflejan que se han adaptado para cubrir el nuevo ámbito multi-riesgo. Los cambios que se han realizado en estos casos de uso se centran principalmente en la sustitución de las palabras sobre incendios forestales por términos más generales relacionados con emergencias. No se han modificado los alcances, ni las secuencias de flujo, ni los actores implicados ni las precondiciones o postcondiciones.
 
 Los casos \textbf{CU-25} a \textbf{CU-28} conservan la numeración antigua con estado \emph{eliminado} para dejar constancia de que su funcionalidad quedó absorbida por la nueva gestión de asignaciones.
 
-Además de estos casos heredados, la solución cuenta con una ampliación funcional que deriva en nuevos casos de uso relacionados con la creación y seguimiento de asignaciones, la configuración de reglas de recomendación, la generación de recomendaciones de recursos y la recepción de notificaciones móviles. Estos nuevos casos se describen siguiendo la definición formal de casos de uso.
+Además de estos casos, la solución cuenta con una ampliación funcional que deriva en nuevos casos de uso relacionados con la creación y seguimiento de asignaciones, la configuración de reglas de recomendación, la generación de recomendaciones de recursos y la recepción de notificaciones móviles. En concreto, estos nuevos casos de uso corresponden a los casos \textbf{CU-36} a \textbf{CU-51}.
 
 \subsection{Gestión de usuarios}
 La figura \ref{fig:diagrama-gestion-usuarios} muestra los actores que disparan los casos de uso englobados en el subsistema de gestión de usuarios. Estos casos de uso permiten registrar una cuenta, identificarse en la aplicación y consultar o modificar la información básica del perfil.
@@ -257,7 +257,7 @@ Por último, el diagrama \ref{fig:diagrama-notificaciones} muestra los actores q
 
 \section{Prototipado de interfaz}
 
-En lo relativo al frontend, la interfaz respecto al \acrshort{tfg} no ha sufrido variaciones significativas, a pesar de los cambios introducidos en el backend. La estructura interna del servidor se ha reorganizado en torno a recursos, los históricos se encuentran agrupados y pasan a depender de las asignaciones, y aunque las funcionalidades se han ampliado, la experiencia de usuario general se mantiene en una línea muy similar. En este proceso se han incorporado algunas interfaces nuevas, que se comentan a continuación.
+En lo relativo al frontend, la interfaz respecto al trabajo previo no ha sufrido variaciones significativas, a pesar de los cambios introducidos en el backend. La estructura interna del servidor se ha reorganizado en torno a recursos, los históricos se encuentran agrupados y pasan a depender de las asignaciones, y aunque las funcionalidades se han ampliado, la experiencia de usuario general se mantiene en una línea muy similar. En este proceso se han incorporado algunas interfaces nuevas, que se comentan a continuación.
 
 
 \begin{figure}[H]
