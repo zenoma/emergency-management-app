@@ -149,23 +149,23 @@ En el bloque de notificaciones, se recogen los casos de uso que informan al pers
 \section{Modelo de casos de uso}
 
 A continuación se muestran los diagramas que contienen los casos de usos identificados
-en el proyecto junto con los actores del proyecto. Se han dividido en subsistemas para que la visualización de los diagramas sea más clara.
+en el proyecto junto con los actores del proyecto. Se han dividido en subsistemas para que la visualización de los diagramas sea más clara. Cada diagrama recoge los casos de uso relacionados con un bloque funcional concreto, pero para destacar los nuevos casos de uso que se han introducido se ha usado un color diferente. 
 
 \subsection{Gestión de usuarios}
 
-En la imagen \ref{fig:diagrama-gestion-usuarios} se identifican los actores que activan los casos de uso del subsistema de gestión de usuarios. A través de ellos se lleva a cabo el registro, la autenticación y la modificación de los datos y permisos de cada usuario.
+En la imagen \ref{fig:diagrama-gestion-usuarios} se identifican los actores que activan los casos de uso del subsistema de gestión de usuarios. A través de ellos se lleva a cabo el registro, la autenticación y la modificación de los datos y permisos de cada usuario. Estos casos de uso son el punto de entrada a la aplicación y a los demás casos de uso, por lo que resultan fundamentales para el funcionamiento general del sistema.
 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.3\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-usuarios.png}
+  \includegraphics[width=0.8\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-usuarios.png}
   \caption{Diagrama de casos de uso para la gestión de usuarios}
   \label{fig:diagrama-gestion-usuarios}
 \end{figure}
 
 \subsection{Gestión de organizaciones}
 
-La figura \ref{fig:diagrama-gestion-organizaciones} sitúa a los actores que intervienen en la gestión de organizaciones. Este bloque concentra las operaciones de alta, baja y edición de organizaciones, que constituyen la base de la estructura operativa del sistema.
+La figura \ref{fig:diagrama-gestion-organizaciones} sitúa a los actores que intervienen en la gestión de organizaciones. Este bloque concentra las operaciones de alta, baja y edición de organizaciones, que constituyen la base de la estructura operativa del sistema. Estos casos de uso permiten administrar las jerarquía de las organizaciones, lo que es necesario para poder representar la estructura de equipos y recursos que se despliegan en cada emergencia.
 
 \begin{figure}[H]
   \centering
@@ -176,7 +176,7 @@ La figura \ref{fig:diagrama-gestion-organizaciones} sitúa a los actores que int
 
 \subsection{Gestión de recursos}
 
-En el diagrama \ref{fig:diagrama-gestion-recursos} aparecen los actores relacionados con la administración de recursos. El subsistema reúne las tareas de alta, baja y modificación de equipos y vehículos, además de la gestión de los usuarios vinculados a cada equipo.
+En el diagrama \ref{fig:diagrama-gestion-recursos} aparecen los actores relacionados con la administración de recursos. El subsistema reúne las tareas de alta, baja y modificación de equipos y vehículos, además de la gestión de los usuarios vinculados a cada equipo. Estos casos de uso están relacionados con la gestión de organizaciones, pues los recursos se asignan a cada organización y, a su vez, las emergencias se vinculan a organizaciones concretas, lo que permite una gestión más realista de la emergencia. 
 
 \begin{figure}[H]
   \centering
@@ -187,29 +187,32 @@ En el diagrama \ref{fig:diagrama-gestion-recursos} aparecen los actores relacion
 
 \subsection{Gestión de emergencias}
 
-El diagrama \ref{fig:diagrama-gestion-emergencias} recoge a los actores que disparan los casos de uso de este subsistema. En él se agrupan las acciones de creación, actualización, consulta y resolución de emergencias, junto con la vinculación y retirada de cuadrantes.
+El diagrama \ref{fig:diagrama-gestion-emergencias} recoge los actores que activan los casos de uso relacionados con la gestión de emergencias. En este bloque se agrupan las acciones de creación, actualización, consulta y resolución de emergencias, junto con la vinculación y retirada de cuadrantes. Este es el bloque central del sistema, pues en torno a la gestión de emergencias se orquestan la mayoría de las funcionalidades. Este bloque está interconectado con los demás subsistemas.
+
+Un aviso validado se convierte en una emergencia gracias a un coordinador, que a su vez puede vincular esa emergencia a una organización concreta. A partir de ahí, el coordinador puede asignar recursos a la emergencia, ya sea de forma manual o a través de recomendaciones automáticas, y gestionar el despliegue operativo sobre el terreno. Además, la información meteorológica y los registros históricos se asocian a cada emergencia para contextualizar su evolución y facilitar la toma de decisiones. Con cada acción de vinculación o asignación se generan notificaciones para mantener informados a los usuarios implicados, lo que refuerza la coordinación y el seguimiento de cada incidente. 
+
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-emergencias.png}
+  \includegraphics[width=0.8\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-emergencias.png}
   \caption{Diagrama de casos de uso para la gestión de emergencias}
   \label{fig:diagrama-gestion-emergencias}
 \end{figure}
 
 \subsection{Gestión de avisos}
 
-La figura \ref{fig:diagrama-gestion-avisos} muestra los actores implicados en la entrada y revisión de avisos. Este conjunto de casos de uso cubre la creación, el listado, la validación o denegación y la eliminación de avisos cuando procede.
+La figura \ref{fig:diagrama-gestion-avisos} muestra los actores implicados en la entrada y revisión de avisos. Este conjunto de casos de uso cubre la creación, el listado, la validación o denegación y la eliminación de avisos cuando procede. Este bloque es el punto de entrada de la ciudadanía al sistema, pues permite que cualquier persona pueda registrar un aviso de emergencia sin necesidad de autenticarse. A partir de ese aviso, un coordinador puede validarlo y convertirlo en una emergencia, lo que pone en marcha el resto de funcionalidades del sistema para gestionar la respuesta operativa. Por tanto, aunque este bloque se centra en la gestión de avisos, su impacto se extiende a todo el flujo operativo del sistema. 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-avisos.png}
+  \includegraphics[width=0.4\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-avisos.png}
   \caption{Diagrama de casos de uso para la gestión de avisos}
   \label{fig:diagrama-gestion-avisos}
 \end{figure}
 
 \subsection{Información meteorológica y registros}
 
-En el diagrama \ref{fig:diagrama-meteo-info} se representan los actores que acceden a la información complementaria del sistema. Los casos de uso de este bloque permiten consultar el contexto meteorológico de una emergencia y recuperar históricos y estadísticas de emergencias ya extinguidas.
+En el diagrama \ref{fig:diagrama-meteo-info} se representan los actores que acceden a la información complementaria del sistema. Los casos de uso de este bloque permiten consultar el contexto meteorológico de una emergencia y recuperar históricos y estadísticas de emergencias ya extinguidas. Esta información resulta fundamental para contextualizar cada emergencia, entender su evolución y tomar decisiones informadas sobre la asignación de recursos.
 
 \begin{figure}[H]
   \centering
@@ -220,7 +223,7 @@ En el diagrama \ref{fig:diagrama-meteo-info} se representan los actores que acce
 
 \subsection{Gestión de asignaciones}
 
-La figura \ref{fig:diagrama-gestion-asignaciones} pone de manifiesto los actores que activan el bloque de asignaciones. Aquí se concentran las operaciones de creación, consulta, aceptación, liberación, cierre y eliminación de asignaciones asociadas a una emergencia.
+La figura \ref{fig:diagrama-gestion-asignaciones} muestra la gestión de asignaciones, que conecta la emergencia con los recursos desplegados sobre el terreno. A través de estos casos de uso, el coordinador puede crear una asignación de recurso, consultar y filtrar las asignaciones existentes, aceptar una asignación de equipo, liberar una asignación activa, completar una asignación y eliminar una asignación pendiente. Este bloque es fundamental para la operativa del sistema, pues es el punto en el que se materializa la respuesta a cada emergencia a través del despliegue de recursos específicos.
 
 \begin{figure}[H]
   \centering
@@ -233,6 +236,8 @@ La figura \ref{fig:diagrama-gestion-asignaciones} pone de manifiesto los actores
 
 El diagrama \ref{fig:diagrama-gestion-reglas} identifica a los actores que intervienen en la configuración de las reglas de recomendación. Este subsistema reúne los casos de uso necesarios para consultar y ajustar la lógica que emplea el sistema al generar recomendaciones de recursos.
 
+Gracias a este subsistema, el coordinador puede configurar las reglas que alimentan el motor de recomendaciones automáticas. Esto permite adaptar la lógica de generación de propuestas a las necesidades operativas concretas de cada emergencia, mejorando así la capacidad del sistema para sugerir mejores recomendaciones. Por ejemplo, el coordinador puede modificar una regla para priorizar ciertos tipos de recursos en función del tipo de emergencia o del contexto operativo.
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-reglas.png}
@@ -242,11 +247,11 @@ El diagrama \ref{fig:diagrama-gestion-reglas} identifica a los actores que inter
 
 \subsection{Recomendación de recursos}
 
-La figura \ref{fig:diagrama-recomendacion-recursos} recoge los actores vinculados a la recomendación automática de medios. Sobre este bloque descansan tanto la consulta de propuestas de recursos como su transformación en asignaciones operativas.
+La figura \ref{fig:diagrama-recomendacion-recursos} recoge los actores vinculados a la recomendación automática de medios. Sobre este bloque descansan tanto la consulta de propuestas de recursos como su transformación en asignaciones operativas. Este subsitema es la consecuencia lógica de las reglas de recomendación, pues es el encargado de generar propuestas concretas de recursos disponibles para cada emergencia, basándose en la configuración establecida previamente. Además, permite convertir esas recomendaciones en asignaciones concretas, lo que facilita la operativa y agiliza la respuesta a cada incidente. Este bloque es especialmente relevante para mejorar la eficiencia del sistema y apoyar al coordinador en la toma de decisiones sobre el despliegue de recursos.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-recomendacion.png}
+  \includegraphics[width=0.4\textwidth]{imaxes/diagramas-caso-uso/diagrama-recomendacion.png}
   \caption{Diagrama de casos de uso para la recomendación de recursos}
   \label{fig:diagrama-recomendacion-recursos}
 \end{figure}
@@ -254,6 +259,8 @@ La figura \ref{fig:diagrama-recomendacion-recursos} recoge los actores vinculado
 \subsection{Notificaciones}
 
 Por último, el diagrama \ref{fig:diagrama-notificaciones} muestra los actores que reciben los avisos emitidos por el sistema. Los casos de uso asociados permiten notificar nuevas asignaciones, cambios de estado y posibles reasignaciones operativas.
+
+Gracias a este bloque funcional de notificaciones, el sistema puede mantener informados a los usuarios implicados sobre los cambios relevantes en la gestión de emergencias. Por ejemplo, cuando se crea una nueva asignación, los usuarios afectados reciben una notificación para que estén al tanto de su participación en la respuesta operativa. De igual modo, si hay un cambio de estado en una asignación o si se produce una reasignación operativa, los usuarios reciben avisos para que puedan adaptarse a las nuevas circunstancias. Este subsistema es clave para reforzar la coordinación y el seguimiento de cada incidente, asegurando que todos los actores estén informados y puedan actuar en consecuencia.
 
 \begin{figure}[H]
   \centering
