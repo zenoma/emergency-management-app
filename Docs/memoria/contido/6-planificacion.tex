@@ -40,7 +40,7 @@ En esta fase inicial se realizó la contextualización del dominio y la justific
 \end{table}
 
 \subsection{Sprint 1: Esqueleto y arquitectura base de aplicación móvil}
-Se creó el esqueleto del proyecto móvil y se definieron las dependencias y la arquitectura base (estructura de paquetes, patrones de navegación, y la configuración inicial de Jetpack Compose). Además se implementaron los módulos iniciales de autenticación y sincronización con el Backend (endpoints básicos) para poder iterar sobre funcionalidades reales.
+Se creó el esqueleto del proyecto móvil y se definieron las dependencias y la arquitectura base (estructura de paquetes, patrones de navegación, y la configuración inicial de Jetpack Compose). Además se implementaron los módulos iniciales de autenticación y sincronización con el Backend (endpoints básicos) para poder iterar sobre funcionalidades reales. Como se puede observar en la tabla \ref{tab:sprint1}, el esfuerzo real fue ligeramente inferior al previsto, lo que se atribuye a que ya se disponía de ejemplos y referencias para la configuración inicial de la aplicación móvil, lo que facilitó la implementación de esta fase.
 
 \begin{table}[H]
   \centering
@@ -56,7 +56,7 @@ Se creó el esqueleto del proyecto móvil y se definieron las dependencias y la 
 \end{table}
 
 \subsection{Sprint 2: Actualizar la organización de recursos}
-Se consolidó el modelo unificado de recursos y organizaciones, preservando la compatibilidad con las entidades heredadas de equipo y vehículo. El trabajo se centró en completar la estructura de datos, las relaciones operativas con cuadrantes y la adaptación de los flujos de gestión para que el sistema pudiera organizar recursos y organizaciones con coherencia funcional.
+Se consolidó el modelo unificado de recursos y organizaciones, preservando la compatibilidad con las entidades heredadas de equipo y vehículo. El trabajo se centró en completar la estructura de datos, las relaciones operativas con cuadrantes y la adaptación de los flujos de gestión para que el sistema pudiera organizar recursos y organizaciones con coherencia funcional. En este caso, como se puede observar en la tabla \ref{tab:sprint2}, el esfuerzo real fue superior al previsto, lo que se atribuye a la complejidad de consolidar el modelo unificado y a la necesidad de realizar ajustes adicionales para garantizar la compatibilidad con las entidades heredadas. Este proceso implicó una mayor dedicación para resolver problemas de integración con el sistema de registros y cuadrantes, lo que llevó a un incremento en el tiempo dedicado a esta fase.
 
 \begin{table}[H]
   \centering
@@ -105,7 +105,7 @@ Se definió un nuevo esquema para los logs operativos, ahora centralizados en la
 \end{table}
 
 \subsection{Sprint 5: Notificaciones en Android y aceptación de asignaciones}
-Se integró Firebase Cloud Messaging (\acrshort{fcm}) en la aplicación Android: registro de MobileDevice, manejo de tokens y recepción de notificaciones. Se implementó el flujo de envío de notificaciones desde el Backend y la experiencia de usuario en la app para aceptar o rechazar asignaciones recibidas.
+Se integró Firebase Cloud Messaging (\acrshort{fcm}) en la aplicación Android: registro de MobileDevice, manejo de tokens y recepción de notificaciones. Se implementó el flujo de envío de notificaciones desde el Backend y la experiencia de usuario en la app para aceptar o rechazar asignaciones recibidas. En este caso, como se puede observar en la tabla \ref{tab:sprint5}, el esfuerzo real fue superior al previsto, lo que se atribuye a la complejidad de integrar \acrshort{fcm} en la aplicación Android y a los ajustes necesarios para garantizar una experiencia de usuario fluida al aceptar o rechazar asignaciones. Al ser la primera vez que se trabajaba con esta tecnología, se requirió un tiempo adicional para familiarizarse con la documentación, configurar correctamente los servicios y resolver problemas de compatibilidad, lo que llevó a un incremento en el tiempo dedicado a esta fase. Además, la implementación de la lógica de notificaciones y la gestión de tokens de registro implicó una mayor dedicación para asegurar que las notificaciones se recibieran y procesaran adecuadamente en la aplicación, lo que también contribuyó al aumento del esfuerzo requerido para completar esta iteración.
 
 \begin{table}[H]
   \centering
@@ -121,7 +121,7 @@ Se integró Firebase Cloud Messaging (\acrshort{fcm}) en la aplicación Android:
 \end{table}
 
 \subsection{Sprint 6: Protocolos semiautomáticos (motor de reglas simple)}
-Se introdujo la capacidad de definir Protocolos almacenados en \acrshort{jsonb} y un motor de reglas ligero que permite generar propuestas de Asignaciones de forma semiautomática en el frontend. Esto incluyó la definición del formato JSON para los protocolos, la implementación de un evaluador simple y la integración con el pipeline de creación de propuestas.
+Se introdujo la capacidad de definir Protocolos almacenados en \acrshort{jsonb} y un motor de reglas ligero que permite generar propuestas de Asignaciones de forma semiautomática en el frontend. Esto incluyó la definición del formato JSON para los protocolos, la implementación de un evaluador simple y la integración con el pipeline de creación de propuestas. En este sprint, el esfuerzo real fue superior al previsto, lo que se atribuye a la complejidad de diseñar e implementar un motor de reglas simple para generar propuestas de Asignaciones de forma semiautomática. La definición del formato JSON para los protocolos y la implementación de las clases evaluadoras  de esas reglas requirieron una mayor dedicación para asegurar que el sistema pudiera procesar correctamente las reglas y generar propuestas coherentes. Además, se añadieron unos endpoints adicionales para gestionar los protocolos y se realizaron pruebas de integración para validar el funcionamiento del motor de reglas, lo que también contribuyó al aumento del esfuerzo requerido para completar esta iteración. 
 
 \begin{table}[H]
   \centering
@@ -137,8 +137,7 @@ Se introdujo la capacidad de definir Protocolos almacenados en \acrshort{jsonb} 
 \end{table}
 
 \subsection{Sprint 7: Finalización y estabilización}
-Las iteraciones finales se dedicaron a la estabilización del sistema: pruebas end-to-end, ajuste de UX tanto del frontal como de la aplicación Android, corrección de errores y poblamiento de datos de ejemplo.
-
+Las iteraciones finales se dedicaron a la estabilización del sistema: pruebas end-to-end, ajuste de UX tanto del frontal como de la aplicación Android, corrección de errores y poblamiento de datos de ejemplo. En este sprint, el esfuerzo real fue inferior al previsto, pues la corrección de errores y ajustes de UX resultaron ser menos complejos de lo esperado.
 \begin{table}[H]
   \centering
   \rowcolors{2}{white}{udcgray!15}
@@ -153,7 +152,7 @@ Las iteraciones finales se dedicaron a la estabilización del sistema: pruebas e
 \end{table}
 
 \subsection{Sprint 8: Despliegue y documentación}
-La última iteración se dedicó a la preparación de artefactos de despliegue, la revisión final del sistema y el cierre documental del proyecto. También se terminaron los ajustes necesarios en los contenedores y en la organización de los materiales de entrega.
+La última iteración se dedicó a la preparación de artefactos de despliegue, la revisión final del sistema y el cierre documental del proyecto. También se terminaron los ajustes necesarios en los contenedores y en la organización de los materiales de entrega. En esta parte final, el esfuerzo real fue inferior al previsto, ya que la preparación de artefactos de despliegue y la revisión final del sistema resultaron ser más eficientes de lo esperado, gracias a la utilización de docker.  Además, la documentación se fue abordando de forma progresiva durante el desarrollo, lo que permitió que la fase de cierre documental fuera más ágil y menos laboriosa de lo previsto.
 
 \begin{table}[H]
   \centering
@@ -171,7 +170,7 @@ La última iteración se dedicó a la preparación de artefactos de despliegue, 
 \section{Seguimiento}
 \label{sec:seguimiento}
 
-El seguimiento se llevó a cabo mediante reuniones mensuales con el tutor y el uso de un tablero Kanban de tareas que permitía visualizar el estado de ellas. En cada revisión se presentaron artefactos funcionales (pantallas, endpoints, wireframes).
+El seguimiento del proyecto se realizó mediante reuniones periódicas con el tutor, donde se revisaban los avances, se analizaban los prototipos, se discutían los obstáculos encontrados y se ajustaba la planificación si era necesario. Además, se utilizó un tablero Kanban para gestionar las tareas de cada sprint, lo que permitió visualizar el estado de las mismas (pendiente, en progreso, completada) y facilitar la coordinación del trabajo.
 
 En el ámbito temporal, el proyecto pasó de una estimación inicial de 405 horas a un esfuerzo final aproximado de 425 horas, lo que supone una desviación de 20 horas y un incremento del 4,94\%. Esta variación se considera esperable y asumible en un desarrollo de estas características, ya que las tareas de codificación de funcionalidades complejtas y ajustes generarles suelen requerir un esfuerzo superior al previsto en la planificación inicial.
 

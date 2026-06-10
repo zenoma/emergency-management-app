@@ -47,7 +47,9 @@ Hibernate \cite{hibernate} sigue siendo la implementación de referencia para el
 \acrfull{jdbc} \cite{jdbc} se conserva como soporte de bajo nivel cuando se necesita acceso directo a la base de datos.
 
 \subsection{OpenAPI}
-OpenAPI \cite{OpenAPI} es una de las incorporaciones más relevantes de este trabajo. Se utiliza para definir primero el contrato de la API en YAML y generar a partir de él controladores y DTOs. Este enfoque \textit{API-first} permite que la documentación, el backend, el frontend y Android compartan una misma definición de los servicios, reduciendo desajustes entre implementación y consumo.
+OpenAPI \cite{OpenAPI} es una de las incorporaciones más relevantes de este trabajo. Se utiliza para definir primero el contrato de la API en YAML y generar a partir de él controladores y DTOs. Este estándar se basa en la idea de diseñar mediante documentos que describen los endpoints, los parámetros, las respuestas y la estructura de los datos, antes de escribir cualquier línea de código. Esto es beneficioso porque permite una visión clara y compartida de cómo debe ser la API, facilitando la colaboración entre los desarrolladores del backend, los del frontend y los de la app móvil.
+
+Gracias a esta aproximación, se garantiza que la API esté bien documentada y que la implementación se ajuste exactamente a lo definido, evitando desajustes entre lo que el backend expone y lo que el frontend o la app móvil consumen. Además, esta definición centralizada facilita la evolución de la API, ya que cualquier cambio se refleja automáticamente en la documentación y en las implementaciones generadas. Este enfoque se denomina \textit{API-first}.
 
 \section{Frameworks y librerías web}
 
@@ -65,12 +67,14 @@ Material UI \cite{materialui} continúa proporcionando los componentes visuales 
 
 \subsection{React Map GL}
 React Map GL \cite{reactmapgl} se elimina como dependencia explícita porque la integración cartográfica se centraliza sobre MapLibre \cite{maplibre}. Esta sustitución reduce dependencia de una capa anterior y unifica el tratamiento del mapa sobre una tecnología más abierta y alineada con el resto del proyecto.
+La razón principal de esta eliminación es que React Map GL es una capa de abstracción sobre Mapbox GL, y dado que se ha decidido no usar Mapbox como proveedor de mapas, sino optar por MapLibre, resulta más coherente trabajar directamente con esta última. Esto simplifica la arquitectura y evita depender de una librería que está diseñada específicamente para Mapbox, lo que podría generar incompatibilidades o limitaciones al usar MapLibre.
 
 \subsection{Open Weather Map}
 Open Weather Map \cite{openweathermap} se mantiene como fuente externa de información meteorológica útil en el contexto de emergencias.
 
 \subsection{Mapbox}
 Mapbox \cite{mapbox} se descarta como solución principal para reducir la dependencia de claves API y de planes de prueba o gratuitos. En este trabajo, la visualización geográfica se apoya en MapLibre, que se adapta mejor al enfoque abierto del proyecto.
+La causa de esta eliminación es que Mapbox, aunque es una plataforma potente y con muchas funcionalidades, requiere una clave API para su uso, lo que puede generar limitaciones en el desarrollo y despliegue de la aplicación, especialmente si se busca un enfoque más abierto y sin restricciones. MapLibre, por otro lado, es una bifurcación de Mapbox GL que se mantiene como proyecto de código abierto y no requiere claves API para su uso básico.
 
 \section{Pruebas}
 
@@ -112,6 +116,7 @@ Create React App \cite{create-react-app} permanece como base de arranque del pro
 
 \subsection{H2}
 H2 \cite{h2} se elimina como base de datos principal porque en este trabajo se trabaja directamente sobre PostgreSQL y PostGIS para acercar el entorno de desarrollo al de ejecución real. En el trabajo previo era útil para pruebas rápidas y desarrollo local, pero ahora resulta más coherente usar la misma base de datos que la aplicación final.
+Esta eliminación se debe a que H2, aunque es una base de datos ligera y fácil de configurar, no ofrece las mismas capacidades geoespaciales ni el mismo rendimiento que PostgreSQL con PostGIS. Al trabajar directamente con PostgreSQL y Testcontainers, se garantiza que las pruebas de integración se realicen en un entorno más representativo del entorno de producción, lo que mejora la fiabilidad de las pruebas y reduce la posibilidad de encontrar problemas relacionados con diferencias entre bases de datos.
 
 \subsection{PostgreSQL}
 PostgreSQL \cite{postgresql} se mantiene como sistema de gestión principal por su estabilidad y su integración con el resto de componentes.
@@ -134,24 +139,26 @@ Serve \cite{serve} se conserva como herramienta sencilla para servir la versión
 
 \subsection{Kotlin}
 Kotlin \cite{kotlin} se incorpora como lenguaje principal de la aplicación Android por su concisión, su interoperabilidad con Java y su buena integración con el ecosistema Android.
+Este lenguaje se elige por su capacidad para reducir la cantidad de código redundante, lo que facilita el desarrollo y mantenimiento de la aplicación móvil. Además, Kotlin es totalmente interoperable con Java, lo que permite reutilizar parte del código del backend o compartir modelos de datos si es necesario. También, Kotlin tiene un fuerte soporte por parte de Google para el desarrollo de Android, lo que garantiza acceso a las últimas funcionalidades y mejoras en la plataforma móvil.
 
 \subsection{Gradle}
-Gradle \cite{gradle} se añade como sistema de construcción habitual en Android, ya que facilita la gestión de módulos, dependencias y variantes de compilación.
+Gradle \cite{gradle} se añade como sistema de construcción habitual en Android, ya que facilita la gestión de módulos, dependencias y variantes de compilación. Al igual que Maven, Gradle permite definir tareas personalizadas para compilar, probar y empaquetar la aplicación móvil, lo que es esencial para un proyecto con múltiples componentes y dependencias. Esta herramienta de construcción es un estándar en el desarrollo de Android y se integra perfectamente con Android Studio, lo que mejora la eficiencia del desarrollo y la gestión de dependencias.
 
 \subsection{Jetpack Compose}
-\acrfull{compose} \cite{jetpack_compose} se incorpora para crear interfaces Android de forma declarativa y más mantenible, adaptándose mejor a una aplicación con múltiples pantallas y navegación compleja.
+\acrfull{compose} \cite{jetpack_compose} se incorpora para crear interfaces Android de forma declarativa y más mantenible, adaptándose mejor a una aplicación con múltiples pantallas y navegación compleja. Jetpack Compose permite construir la interfaz de usuario de manera más intuitiva y reactiva, lo que es especialmente útil en una aplicación móvil que requiere una experiencia de usuario fluida y moderna. Además, al ser parte de Jetpack, se integra bien con otras bibliotecas y componentes de Android, facilitando la gestión del ciclo de vida, la navegación y el estado de la aplicación.
 
 \subsection{Material Design}
-\acrfull{mat} \cite{material_design} se incorpora como guía visual para la app móvil, con el objetivo de mantener una experiencia de usuario coherente y reconocible.
+\acrfull{mat} \cite{material_design} se incorpora como guía visual para la app móvil, con el objetivo de mantener una experiencia de usuario coherente y reconocible. Esta guía de diseño proporciona un conjunto de principios, componentes y patrones que ayudan a crear interfaces atractivas y funcionales, lo que es crucial para una aplicación móvil que busca ser intuitiva y fácil de usar para profesionales y ciudadanos.
 
 \subsection{HttpClient}
-HttpClient \cite{httpclient} se añade como biblioteca para realizar peticiones HTTP desde Android y centralizar el acceso a los servicios del backend.
+HttpClient \cite{httpclient} se añade como biblioteca para realizar peticiones HTTP desde Android y centralizar el acceso a los servicios del backend. 
 
 \subsection{Firebase Cloud Messaging}
-\acrfull{fcm} \cite{firebase} se incorpora para el envío de notificaciones push, que es una funcionalidad clave en el contexto móvil de la plataforma.
+\acrfull{fcm} \cite{firebase} se incorpora para el envío de notificaciones push, que es una funcionalidad clave en el contexto móvil de la plataforma. \acrshort{fcm} ofrece una integración sencilla con Android, lo que facilita su implementación y gestión dentro de la aplicación móvil. En concreto, se utiliza para enviar alertas y actualizaciones en tiempo real a los usuarios, lo que es esencial para mantenerlos informados sobre emergencias o cambios en la situación de las emergencias y los recursos.
 
 \subsection{Firebase Messaging Service}
-\acrfull{fms} \cite{firebase_messaging_service} se añade para gestionar la recepción de mensajes procedentes de \acrshort{fcm} y reaccionar a notificaciones o eventos remotos.
+\acrfull{fms} \cite{firebase_messaging_service} se añade para gestionar la recepción de mensajes procedentes de \acrshort{fcm} y reaccionar a notificaciones o eventos remotos. Esta tecnología permite que la aplicación móvil pueda recibir y procesar notificaciones push incluso cuando no está en primer plano, lo que es crucial para garantizar que los usuarios reciban información importante de manera oportuna. \acrshort{fms} se encarga de manejar la lógica de recepción de mensajes, permitiendo mostrar notificaciones, actualizar la interfaz de usuario o realizar acciones específicas en función del contenido del mensaje recibido.
 
 \subsection{Testcontainers}
 \acrfull{testcontainers} \cite{testcontainers} se incorpora para ejecutar pruebas de integración sobre una base de datos aislada y reproducible. Esta tecnología está basada en Docker \cite{docker} y permite levantar contenedores específicos para cada prueba o conjunto de pruebas, garantizando un entorno controlado y evitando interferencias entre pruebas.
+Gracias a esta herramienta, se eliminan las diferencias que existían entre H2 y la base de datos PostgreSQL, lo que mejora la fiabilidad de las pruebas de integración. Además, Testcontainers facilita la configuración y el mantenimiento de entornos de prueba, ya que se pueden definir en código y se ejecutan de manera automática durante el ciclo de pruebas. Esto es especialmente útil para pruebas que requieren una base de datos con características específicas, como PostGIS para operaciones geoespaciales, lo que es fundamental en este proyecto. Una ventaja muy grande es que al estar basado en Docker, se puede garantizar que el entorno de pruebas sea idéntico al de producción, lo que reduce la posibilidad de encontrar problemas relacionados con diferencias entre entornos.

@@ -1,19 +1,24 @@
 \chapter{Requisitos del sistema}
 \label{chap:requisitos}
 
-\lettrine{E}{n} este capítulo se describen los requisitos funcionales y los actores principales del sistema. La solución evoluciona respecto al trabajo previo \cite{TFGAdrianGarcia2025} ampliando el alcance desde la coordinación centrada en incendios forestales hacia una plataforma multi-riesgo, con un flujo más completo de aviso, validación, creación de emergencias y asignación de recursos.
+\lettrine{E}{n} este capítulo se describen los requisitos funcionales y los actores principales del sistema. Para contextualizar el análisis, primero se resume el alcance funcional ya presente en el trabajo previo \cite{TFGAdrianGarcia2025}, que servía como base para la coordinación de avisos, emergencias y recursos en el ámbito de incendios forestales.
+
+En esa versión anterior, el sistema ya contemplaba la entrada de avisos ciudadanos, la
+validación por parte de perfiles con mayor responsabilidad, la creación de emergencias y la gestión básica de recursos y despliegues. Ese punto de partida resulta útil para entender qué partes se conservan y cuáles se amplían en esta nueva etapa.
+
+En este proyecto se amplía el alcance funcional hacia una plataforma multi-riesgo, que no se limita a incendios forestales sino que puede gestionar emergencias de diversa índole. Además, se incorporan nuevas capacidades de recomendación de recursos, asignación operativa, notificación y seguimiento en campo a través de una aplicación móvil. 
 
 \section{Introducción}
 
-Los requisitos funcionales del sistema se articulan en torno a cuatro bloques principales: \textbf{gestión de avisos}, \textbf{gestión de emergencias}, \textbf{gestión de recursos y asignaciones}, y \textbf{soporte a la recomendación y notificación operativa}. En conjunto, estos bloques describen el flujo completo desde que un ciudadano informa de un incidente hasta que el coordinador valida la información, crea la emergencia y despliega los recursos necesarios.
+Los requisitos funcionales heredados del trabajo previo se organizaban en torno a tres grandes bloques: \textbf{la gestión de avisos}, \textbf{la gestión de emergencias} y \textbf{la gestión básica de recursos}. Ese núcleo ya permitía que un ciudadano registrase un aviso, que un perfil con permisos de coordinación lo validase y que, a partir de esa información, se generase una emergencia con recursos asociados.
 
-En la parte de entrada de información, los usuarios no autenticados o ciudadanos pueden registrar avisos con texto, localización e imágenes adjuntas, consultar el mapa general y revisar el estado de sus propios avisos. El sistema debe permitir que esos avisos sean validados, denegados o eliminados por los perfiles con permisos de gestión, de forma que solo la información útil se convierta en una emergencia.
+Sobre esa base, esta nueva versión amplía de forma clara el alcance funcional. La primera novedad importante es la incorporación de una aplicación móvil pensada para el trabajo en movilidad. Esta app permite consultar emergencias, revisar asignaciones, recibir notificaciones y acceder a la información operativa necesaria en campo, reforzando así la coordinación fuera del entorno web.
 
-En la gestión de emergencias, el coordinador puede crear, consultar, actualizar y resolver emergencias, asignarles un tipo y vincularlas a una localización concreta o a una colección de cuadrantes. Esta dualidad permite representar tanto incidentes puntuales como afecciones territoriales más amplias. Además, el sistema debe impedir incoherencias como asociar un cuadrante que no pertenezca a la emergencia o modificar una emergencia ya resuelta.
+La segunda ampliación relevante es la introducción de recomendaciones semiautomáticas de recursos. Frente a una asignación totalmente manual, el sistema ahora incorpora reglas que analizan el tipo de emergencia, la disponibilidad de recursos y su contexto operativo para proponer opciones de despliegue. El objetivo no es sustituir la decisión humana, sino ofrecer apoyo al coordinador para acelerar la selección de recursos adecuados.
 
-La gestión de recursos exige mantener organizados equipos, vehículos, usuarios y organizaciones, con capacidad para dar de alta, modificar y retirar esos elementos. Sobre esa base, el sistema debe permitir crear asignaciones, consultar su estado, aceptar o rechazar la activación, completar su ciclo de vida y liberar el recurso cuando la emergencia finaliza. En el caso de los equipos, la aceptación de una asignación requiere confirmación por parte del jefe de equipo; en el caso de los vehículos, la activación se resuelve de forma más automática.
+La tercera novedad afecta a la propia plataforma web, que pasa a ser un núcleo de gestión más completo. Además de validar avisos y crear emergencias, ahora integra la visualización geoespacial, la clasificación de incidentes, la gestión de asignaciones, la consulta de recursos, el mantenimiento de reglas y el acceso a históricos. En conjunto, estas mejoras convierten la web en la interfaz central de supervisión operativa del sistema.
 
-Finalmente, el sistema incorpora funciones de apoyo a la coordinación: generación de recomendaciones de recursos a partir de reglas configurables, notificaciones móviles sobre nuevas asignaciones o cambios de estado, consulta de información meteorológica asociada a la emergencia y acceso a históricos y registros operativos. La principal ampliación funcional respecto  a los actores es la introducción de un rol adicional de miembro de equipo, junto con una separación más clara entre ciudadano, miembro de equipo, jefe de equipo y coordinador, cada uno con capacidades diferenciadas según su responsabilidad dentro del sistema.
+Por tanto, aunque se mantienen los requisitos funcionales básicos del trabajo previo, esta nueva etapa introduce una serie de funcionalidades adicionales que amplían el alcance del sistema y mejoran su capacidad de apoyo a la coordinación de emergencias en un entorno multi-riesgo.
 
 \section{Actores}
 
@@ -103,6 +108,8 @@ La gestión de información meteorológica y registros agrupa los casos de uso q
 \input{contido/taboas/casos-uso-informacion-meteorologia-registros}
 
 \subsection{Gestión de asignaciones}
+A partir de esta sección se introducen casos de uso completamente nuevos, relacionados con la gestión de asignaciones, la configuración de reglas de recomendación, la generación de recomendaciones de recursos y la recepción de notificaciones. Estos casos de uso amplían el alcance funcional del sistema y permiten una gestión más completa y operativa de las emergencias.
+
 La figura \ref{fig:diagrama-gestion-asignaciones} recoge los actores que desencadenan los casos de uso de asignación de recursos. Aquí se agrupan las acciones de crear, consultar, aceptar, liberar, completar y eliminar asignaciones asociadas a una emergencia.
 
 

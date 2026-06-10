@@ -6,7 +6,7 @@
   \rowcolor{udcpink!25}
   \textbf{CU-46} & \textbf{Consultar recomendaciones de recursos para una emergencia} \\
   \hline
-  Descripción & Un coordinador consulta la propuesta de recursos sugeridos para una emergencia activa, separando equipos y vehículos para poder iniciar la asignación con mayor rapidez. \\
+  Descripción & Un coordinador consulta la propuesta de recursos sugeridos para una emergencia activa, separando equipos y vehículos para poder iniciar la asignación con mayor rapidez. Este caso se ha ampliado para mostrar el resultado del motor semiautomático. \\
   \hline
   Precondición & El coordinador debe estar autenticado y la emergencia debe tener reglas de recomendación configuradas o un motor capaz de evaluarlas. \\
   \hline
@@ -53,7 +53,7 @@
   \rowcolor{udcpink!25}
   \textbf{CU-47} & \textbf{Generar recomendaciones con criterios operativos} \\
   \hline
-  Descripción & El sistema genera recomendaciones automáticas a partir de la tipología de la emergencia, la distancia de los recursos, su estado operativo y la organización de procedencia, con el fin de priorizar los candidatos más adecuados. \\
+  Descripción & El sistema genera recomendaciones automáticas a partir de la tipología de la emergencia, la distancia de los recursos, su estado operativo y la organización de procedencia, con el fin de priorizar los candidatos más adecuados. Este caso se ha ampliado para incorporar criterios de disponibilidad y contexto. \\
   \hline
   Precondición & Debe existir una emergencia registrada y al menos una regla de recomendación aplicable. \\
   \hline
@@ -102,7 +102,7 @@
   \rowcolor{udcpink!25}
   \textbf{CU-48} & \textbf{Crear una asignación desde una recomendación} \\
   \hline
-  Descripción & Un coordinador convierte una recomendación de recurso en una asignación operativa para iniciar el despliegue de forma rápida, reutilizando el recurso sugerido y el contexto de la emergencia o del cuadrante. \\
+  Descripción & Un coordinador convierte una recomendación de recurso en una asignación operativa para iniciar el despliegue de forma rápida, reutilizando el recurso sugerido y el contexto de la emergencia o del cuadrante. Este caso se ha ampliado para cerrar el flujo de apoyo a la decisión. \\
   \hline
   Precondición & Debe existir una recomendación visible y el recurso recomendado debe seguir disponible. \\
   \hline
