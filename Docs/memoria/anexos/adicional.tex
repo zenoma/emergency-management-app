@@ -1,13 +1,201 @@
 \chapter{Material adicional}
 \label{chap:adicional}
 
-\lettrine{E}{xemplo} de capítulo con formato de apéndice, onde se pode
-incluír material adicional que non teña cabida no corpo principal do
-documento, suxeito á limitación de 80 páxinas establecida no
-regulamento de TFGs.
+\lettrine{E}{n} este apéndice se incluye el material complementario que no tiene cabida en el cuerpo principal de la memoria: la guía de instalación y puesta en producción de los tres subsistemas y el manual de usuario de la aplicación.
 
 \section{Instalación del Software}
 \label{sec:instalacion}
+
+En esta sección se describe el proceso de instalación y puesta en producción de cada uno de los tres subsistemas que componen la plataforma: backend, frontend web y aplicación Android. Se asume que el software base (Java 21, Maven 3.6+, Node.js 18+, Docker, Android Studio) ya está instalado en el sistema.
+
+\subsection{Base de datos}
+
+La base de datos se despliega mediante Docker utilizando la imagen oficial \texttt{postgis/postgis}, que incluye tanto PostgreSQL como la extensión PostGIS. El fichero \texttt{docker-compose.yaml} incluido en el proyecto ya define el servicio con la configuración necesaria:
+
+\begin{lstlisting}[language=Bash]
+cd backend/src/main/resources
+docker compose up -d
+\end{lstlisting}
+
+Este comando crea un contenedor con los siguientes parámetros:
+\begin{itemize}
+  \item Usuario: \texttt{emergencyuser}
+  \item Contraseña: \texttt{emergencypass}
+  \item Base de datos: \texttt{emergencydb}
+  \item Puerto: \texttt{5432}
+\end{itemize}
+
+Los scripts SQL de inicialización (\texttt{db/01\_create\_tables.sql}, \texttt{02\_init\_quadrants.sql}, \texttt{03\_init\_data.sql} y \texttt{04\_init\_examples.sql}) se ejecutan automáticamente al arrancar el contenedor gracias al volumen montado en \texttt{/docker-entrypoint-initdb.d}.
+
+Si se prefiere una instalación manual sin Docker, es necesario instalar PostgreSQL 14 o superior, habilitar la extensión PostGIS y ejecutar los scripts en orden:
+
+\begin{lstlisting}[language=SQL]
+CREATE DATABASE emergencydb;
+CREATE USER emergencyuser WITH PASSWORD 'emergencypass';
+GRANT ALL PRIVILEGES ON DATABASE emergencydb TO emergencyuser;
+\c emergencydb
+CREATE EXTENSION IF NOT EXISTS postgis;
+\i 01_create_tables.sql
+\i 02_init_quadrants.sql
+\i 03_init_data.sql
+\i 04_init_examples.sql
+\end{lstlisting}
+
+\subsection{Backend}
+
+El backend es una aplicación Spring Boot que se despliega como un contenedor Docker, al igual que la base de datos. Para ello es necesario crear una imagen a partir del código fuente y ejecutarla junto con la base de datos mediante Docker Compose.
+
+En primer lugar, se genera el JAR ejecutable del proyecto:
+
+\begin{lstlisting}[language=Bash]
+cd backend
+mvn -DskipTests clean package
+\end{lstlisting}
+
+A continuación, se construye la imagen Docker. Para ello se utiliza un fichero \texttt{Dockerfile} en la raíz del directorio \texttt{backend/} con el siguiente contenido:
+
+\begin{lstlisting}[language=bash]
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY target/emergency-project-backend-1.0.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+\end{lstlisting}
+
+Para construir la imagen:
+
+\begin{lstlisting}[language=Bash]
+docker build -t emergency-backend .
+\end{lstlisting}
+
+Una vez construida la imagen, se actualiza el fichero \texttt{docker-compose.yaml} para incluir el servicio del backend junto a la base de datos:
+
+\begin{lstlisting}[language=bash]
+services:
+  db:
+    image: postgis/postgis:latest
+    container_name: emergencydb
+    environment:
+      POSTGRES_USER: emergencyuser
+      POSTGRES_PASSWORD: emergencypass
+      POSTGRES_DB: emergencydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    networks:
+      - emergency-network
+
+  backend:
+    image: emergency-backend
+    container_name: emergency-backend
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/emergencydb
+      DB_USERNAME: emergencyuser
+      DB_PASSWORD: emergencypass
+      JWT_SIGN_KEY: <cambiar_por_clave_segura>
+      JWT_EXPIRATION_MINUTES: "1440"
+      FIREBASE_SERVICE_ACCOUNT_PATH: /etc/firebase/service-account.json
+    volumes:
+      - ./firebase-service-account.json:/etc/firebase/service-account.json
+    depends_on:
+      - db
+    networks:
+      - emergency-network
+
+networks:
+  emergency-network:
+    driver: bridge
+\end{lstlisting}
+
+Para arrancar todo el entorno (base de datos y backend) con un solo comando:
+
+\begin{lstlisting}[language=Bash]
+docker compose -f backend/src/main/resources/docker-compose.yaml up -d
+\end{lstlisting}
+
+La aplicación acepta las siguientes variables de entorno para su configuración:
+
+\begin{itemize}
+  \item \texttt{DB\_URL}: URL de conexión a la base de datos. En el ejemplo apunta al contenedor \texttt{db}.
+  \item \texttt{DB\_USERNAME}: usuario de la base de datos. Valor por defecto: \texttt{emergencyuser}.
+  \item \texttt{DB\_PASSWORD}: contraseña del usuario. Valor por defecto: \texttt{emergencypass}.
+  \item \texttt{JWT\_SIGN\_KEY}: clave de firma para los tokens JWT. Debe cambiarse en producción por una clave segura.
+  \item \texttt{JWT\_EXPIRATION\_MINUTES}: tiempo de expiración de los tokens JWT en minutos. Valor por defecto: \texttt{1440} (24 horas).
+  \item \texttt{FIREBASE\_SERVICE\_ACCOUNT\_PATH}: ruta al fichero JSON de la cuenta de servicio de Firebase para el envío de notificaciones push.
+\end{itemize}
+
+El backend se despliega con Tomcat embebido y escucha en el puerto 8080 por defecto. Gracias a Docker Compose, ambos contenedores comparten una misma red y el backend puede resolver el nombre del contenedor \texttt{db} para conectarse a la base de datos.
+
+\subsection{Frontend}
+
+El frontend web se construye con Vite y genera un conjunto de ficheros estáticos que pueden servirse con cualquier servidor web (Nginx, Apache, Serve, etc.).
+
+Para generar la build de producción:
+
+\begin{lstlisting}[language=Bash]
+cd frontend
+npm install
+npm run build
+\end{lstlisting}
+
+La build se genera en la carpeta \texttt{frontend/dist/}. Para servirla con un servidor estático ligero:
+
+\begin{lstlisting}[language=Bash]
+npx serve -s dist -p 5000
+\end{lstlisting}
+
+Para un despliegue más robusto, se recomienda utilizar Nginx. Un ejemplo de configuración mínima:
+
+\begin{lstlisting}[language=bash]
+server {
+    listen 80;
+    server_name emergencias.example.com;
+
+    root /var/www/emergencias;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://localhost:8080/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+\end{lstlisting}
+
+En esta configuración, Nginx sirve los ficheros estáticos del frontend y redirige las peticiones a la API del backend bajo el prefijo \texttt{/api/}. Si el backend y el frontend se despliegan en el mismo dominio, no es necesario configurar CORS.
+
+El frontend también puede integrarse dentro del propio backend Spring Boot copiando el contenido de \texttt{dist/} a \texttt{backend/src/main/resources/static/} y empaquetando de nuevo. De este modo, un único JAR sirve tanto la API como la interfaz web.
+
+\subsection{Aplicación Android}
+
+La aplicación Android se distribuye como un archivo APK que puede instalarse directamente en los dispositivos o publicarse en Google Play.
+
+Para generar la versión de depuración:
+
+\begin{lstlisting}[language=Bash]
+cd EmergencyApp
+./gradlew assembleDebug
+\end{lstlisting}
+
+Para generar la versión de producción (requiere una clave de firma configurada):
+
+\begin{lstlisting}[language=Bash]
+cd EmergencyApp
+./gradlew assembleRelease
+\end{lstlisting}
+
+El APK generado se encuentra en \texttt{EmergencyApp/app/build/outputs/apk/debug/} o \texttt{.../release/}, respectivamente.
+
+Antes de compilar, es necesario incluir el fichero \texttt{google-services.json} de Firebase en el directorio \texttt{EmergencyApp/app/}. Este fichero se obtiene desde la consola de Firebase al crear o configurar el proyecto Android. Sin este fichero, las funcionalidades de notificaciones push y autenticación no estarán disponibles.
+
+La aplicación Android está diseñada como un cliente ligero que se comunica con el backend a través de la API REST. Por tanto, es necesario configurar la URL del backend dentro de la aplicación. En el código fuente, la URL base se define en la clase \texttt{HttpClient.kt}. Para entornos de producción, debe apuntar a la dirección pública del servidor backend. Se recomienda parametrizar esta URL mediante un recurso de configuración o una variable de build para facilitar el despliegue en distintos entornos.
 
 \section{Manual de usuario}
 \label{sec:manualusuario}

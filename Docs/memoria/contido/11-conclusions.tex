@@ -1,16 +1,53 @@
 \chapter{Conclusiones y futuras líneas de trabajo}
 \label{chap:conclusions}
 
-\lettrine{D}{erradeiro} capítulo da memoria, onde se presentará a
-situación final do traballo, as leccións aprendidas, a relación coas
-competencias da titulación en xeral e a mención en particular,
-posibles liñas futuras, (no caso de este proyecto, carácter profesional del mismo)\dots
+\lettrine{E}{n} este último capítulo se ofrece una visión panorámica de los resultados alcanzados, las lecciones aprendidas, la relación con las competencias de la titulación y las posibles líneas futuras de investigación
 
 \section{Conclusiones}
 \label{sec:conclusions}
 
+El objetivo principal de este trabajo ha sido aportar una solución a la problemática existente en la gestión y coordinación de emergencias y sus recursos en el ámbito gallego. Para lograrlo, se ha utilizado un conjunto de tecnologías comunes en el desarrollo de aplicaciones web y móviles, como Java con Spring Boot, JavaScript con React y Kotlin con Jetpack Compose para Android.
+
+Este proyecto ha cumplido con éxito los objetivos y requisitos establecidos previamente. Se ha logrado implementar una plataforma que permite a cualquier usuario, ya sea profesional o particular anónimo, notificar emergencias de manera ágil y detallada, proporcionando información precisa sobre la ubicación y el estado actual mediante el uso de imágenes geolocalizadas. Además, se ha conseguido una gestión eficiente de los equipos y vehículos de las organizaciones gallegas, vinculando de manera efectiva a las personas con dichos equipos. La representación del área afectada por las emergencias a través de cuadrantes en el mapa de Galicia facilita el despliegue y retirada de los recursos utilizados. Esta representación se ha logrado mediante un mapa geográfico basado en MapLibre que aporta visibilidad y funcionalidad a la hora de la coordinación de recursos. Asimismo, se ha logrado almacenar información sobre las emergencias para realizar un seguimiento de su evolución, identificando los cuadrantes afectados y los recursos empleados en su resolución. Por último, en la aplicación se muestra información meteorológica que ayuda enormemente a la toma de decisiones en la gestión de las emergencias.
+
+En el plano técnico, el backend ha evolucionado hacia una arquitectura API-first basada en OpenAPI, lo que ha permitido definir el contrato de la API de forma centralizada y generar automáticamente los controladores y DTOs, reduciendo la desalineación entre la especificación y la implementación. La aplicación Android, creada desde cero, ha demostrado que es posible ofrecer una experiencia móvil funcional delegando la lógica de negocio en el backend, y la integración con Firebase Cloud Messaging ha permitido cerrar el ciclo de notificaciones push en tiempo real. Se ha implementado un motor de recomendación semiautomático basado en reglas en formato JSONB y pruebas de integración con Testcontainers sobre PostgreSQL y PostGIS, mejorando la fiabilidad respecto al trabajo previo.
+
+Se han encontrado dificultades a la hora de alcanzar esta solución, como el diseño correcto de la base de datos para albergar el dominio de la aplicación, la geolocalización de las emergencias con sus cuadrantes y la representación geográfica de estos. Pero a pesar de estas dificultados, se ha conseguido implementar una solución funcional y escalable que cumple con los requisitos establecidos y que puede ser ampliada en el futuro para incorporar nuevas funcionalidades y mejoras.
+
 \section{Aprendizajes}
 \label{sec:aprendizajes}
 
+Durante el desarrollo de este proyecto se han identificado varias lecciones que han resultado fundamentales para el éxito de la aplicación y su implementación. En primer lugar, se ha aprendido la importancia de una estructuración clara y sistemática del trabajo; gracias a la utilización de una metodología definida se ha podido dividir el trabajo en tareas asequibles y sencillas. Además, se ha comprendido la necesidad del análisis y diseño antes de comenzar la implementación del proyecto. Es de suma importancia conocer el dominio del problema, los actores que intervienen y los requisitos funcionales y no funcionales que se exigen antes de comenzar a implementar la solución.
+
+En el plano técnico, el desarrollo ha permitido profundizar en el ecosistema Spring Boot y en la integración de OpenAPI con generación de código, una práctica especialmente valiosa en entornos donde coexisten múltiples clientes consumiendo la misma API. También ha supuesto el primer contacto con el desarrollo Android nativo utilizando Kotlin y Jetpack Compose, evidenciando tanto la potencia del modelo declarativo como la complejidad de integrar servicios externos como Firebase Cloud Messaging. La adopción de un enfoque API-first ha cambiado la forma de abordar el diseño: definir primero el contrato y generar después el código ha obligado a pensar en la interfaz pública antes de escribir la implementación, reduciendo las correcciones tardías y mejorando la coherencia entre subsistemas.
+
+En el plano organizativo, la planificación iterativa con sprints cortos y reuniones de revisión mensuales ha permitido absorber cambios de alcance sin desviaciones graves, aunque algunas iteraciones requirieron ajustes significativos debido a la complejidad técnica de las integraciones. La experiencia confirma que, en proyectos con múltiples tecnologías y subsistemas, es aconsejable reservar márgenes de contingencia más amplios para las fases de integración.
+
+Por último, se ha valorado la importancia de la formación obtenida a lo largo del Máster Universitario en Ingeniería Informática en la realización de este proyecto, incluyendo los conocimientos adquiridos en áreas como la programación, el diseño y la arquitectura de software, la gestión de proyectos, así como la validación y creación de pruebas. Estos conocimientos han sido fundamentales para abordar de manera efectiva los desafíos técnicos y organizativos que surgieron durante el desarrollo de la aplicación.
+
 \section{Futuras líneas de trabajo}
 \label{sec:futuro}
+
+El trabajo realizado abre varias vías de mejora y ampliación que no han podido abordarse en el alcance de este proyecto. A continuación se describen las líneas futuras más relevantes.
+
+\subsection{Incorporación de inteligencia artificial generativa}
+
+El motor de recomendación actual se basa en reglas definidas manualmente en formato JSONB y evaluadas mediante una cadena de responsabilidad. Esta aproximación resulta adecuada para un conjunto de reglas predecibles, pero su capacidad de adaptación es limitada. Una evolución natural consistiría en incorporar inteligencia artificial generativa que permita, por un lado, generar dinámicamente las reglas de recomendación a partir del análisis histórico de emergencias y asignaciones previas, y por otro, asistir en la configuración inicial de la plataforma (definición de tipos de emergencia, perfiles de organización, umbrales de activación, etc.) mediante lenguaje natural. De este modo, un coordinador podría describir una situación y el sistema propondría una configuración o un plan de actuación adaptado al contexto, reduciendo la carga de definición manual y mejorando la capacidad de respuesta ante escenarios no contemplados inicialmente.
+
+Además, la inteligencia artificial podría aplicarse al análisis de los avisos ciudadanos: clasificación automática del tipo de emergencia a partir de la imagen y la descripción proporcionada, detección de anomalías en la localización de los recursos o predicción de la evolución de una emergencia en función de variables meteorológicas y del terreno.
+
+\subsection{Seguimiento preciso de recursos mediante dispositivos móviles}
+
+En la implementación actual, el despliegue y la retirada de equipos y vehículos se registran mediante cambios de estado en el backend, pero no se dispone de un mecanismo de seguimiento continuo de la posición de los recursos una vez desplegados. Los dispositivos móviles asociados a los usuarios de campo podrían utilizarse para enviar periódicamente su geolocalización al backend, permitiendo visualizar en tiempo real la posición de los equipos y vehículos sobre el mapa, tanto en la web como en la aplicación Android.
+
+Esta funcionalidad no solo mejoraría la conciencia situacional de los coordinadores, sino que también permitiría detectar desviaciones respecto a la ruta prevista, estimar tiempos de llegada a la zona de la emergencia y registrar trayectorias completas para su posterior análisis. Desde el punto de vista técnico, implicaría extender el modelo de datos con entidades de seguimiento de posición, implementar un servicio de geolocalización periódica en la aplicación Android (gestionando adecuadamente el consumo de batería y los permisos de localización en segundo plano), y añadir una capa de visualización cartográfica con marcadores dinámicos en el frontend web.
+
+\subsection{Ampliación del dominio y nuevos protocolos de emergencia}
+
+El modelo multi-riesgo implementado cubre los tipos de emergencia más habituales en Galicia, pero existen numerosos protocolos y variantes que no han sido incorporados. Sería interesante ampliar el dominio para dar soporte a fenómenos como los temporales costeros, los riesgos sísmicos, las emergencias sanitarias (como pandemias o brotes), los episodios de contaminación ambiental o los accidentes en infraestructuras críticas (presas, túneles, centrales eléctricas). Cada uno de estos tipos de emergencia tiene sus propios protocolos, actores implicados y necesidades de información, por lo que su incorporación requeriría extender el modelo de datos, el motor de reglas de recomendación y las vistas de la interfaz.
+
+Además, el sistema podría beneficiarse de la integración con fuentes de datos oficiales adicionales: alertas meteorológicas de la Agencia Estatal de Meteorología, datos de calidad del aire, información sísmica del Instituto Geográfico Nacional, o planes de emergencia municipales y autonómicos. Esta integración enriquecería la información disponible para la toma de decisiones y permitiría una activación más temprana de los protocolos de respuesta.
+
+\subsection{Otras líneas de mejora}
+
+Junto a las líneas anteriores, existen otras mejoras que podrían abordarse en iteraciones futuras. La aplicación Android podría beneficiarse de un modo offline que permita la creación de avisos y la consulta de información básica cuando no haya conectividad, almacenando localmente los datos pendientes de sincronización y enviándolos cuando se restablezca la conexión. Y por último, otra línea de mejora sería en el backend mediante la realización de un análisis de rendimiento y escalabilidad más completo, incluyendo pruebas de carga que permitan dimensionar correctamente la infraestructura necesaria para un despliegue real. 
