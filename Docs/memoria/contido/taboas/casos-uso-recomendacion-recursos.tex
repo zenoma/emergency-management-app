@@ -1,0 +1,142 @@
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{12.1cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  \textbf{CU-46} & \textbf{Consultar recomendaciones de recursos para una emergencia} \\
+  \hline
+  Descripción & Un coordinador consulta la propuesta de recursos sugeridos para una emergencia activa, separando equipos y vehículos para poder iniciar la asignación con mayor rapidez. Este caso se ha ampliado para mostrar el resultado del motor semiautomático. \\
+  \hline
+  Precondición & El coordinador debe estar autenticado y la emergencia debe tener reglas de recomendación configuradas o un motor capaz de evaluarlas. \\
+  \hline
+  Secuencia normal &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  1 & El coordinador abre el detalle de una emergencia. \\
+  \hline
+  2 & El sistema calcula o recupera la propuesta de recursos recomendados. \\
+  \hline
+  3 & El sistema separa los recursos sugeridos en equipos y vehículos. \\
+  \hline
+  4 & El sistema muestra la información necesaria para decidir la asignación. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  Postcondición & El coordinador conoce qué recursos son los más adecuados para desplegar sobre la emergencia. \\
+  \hline
+  Excepciones &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  2 & Si no existe una regla aplicable, el sistema devuelve una lista vacía o una propuesta sin candidatos. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  \end{tabular}
+  \caption{Tabla caso de uso 46}
+  \label{tab:CU-46}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{12.1cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  \textbf{CU-47} & \textbf{Generar recomendaciones con criterios operativos} \\
+  \hline
+  Descripción & El sistema genera recomendaciones automáticas a partir de la tipología de la emergencia, la distancia de los recursos, su estado operativo y la organización de procedencia, con el fin de priorizar los candidatos más adecuados. Este caso se ha ampliado para incorporar criterios de disponibilidad y contexto. \\
+  \hline
+  Precondición & Debe existir una emergencia registrada y al menos una regla de recomendación aplicable. \\
+  \hline
+  Secuencia normal &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  1 & El sistema toma la tipología y la localización de la emergencia. \\
+  \hline
+  2 & El sistema busca recursos operativos compatibles. \\
+  \hline
+  3 & El sistema calcula la distancia hasta cada candidato. \\
+  \hline
+  4 & El sistema aplica los criterios de la regla de recomendación. \\
+  \hline
+  5 & El sistema construye el listado ordenado de candidatos recomendados. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  Postcondición & La emergencia dispone de una propuesta de recursos clasificada y priorizada. \\
+  \hline
+  Excepciones &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  4 & Si el motor no puede evaluar la regla, el sistema devuelve una recomendación vacía o un resultado neutro. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  \end{tabular}
+  \caption{Tabla caso de uso 47}
+  \label{tab:CU-47}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{12.1cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  \textbf{CU-48} & \textbf{Crear una asignación desde una recomendación} \\
+  \hline
+  Descripción & Un coordinador convierte una recomendación de recurso en una asignación operativa para iniciar el despliegue de forma rápida, reutilizando el recurso sugerido y el contexto de la emergencia o del cuadrante. Este caso se ha ampliado para cerrar el flujo de apoyo a la decisión. \\
+  \hline
+  Precondición & Debe existir una recomendación visible y el recurso recomendado debe seguir disponible. \\
+  \hline
+  Secuencia normal &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  1 & El coordinador selecciona una recomendación concreta. \\
+  \hline
+  2 & El coordinador confirma la creación de la asignación. \\
+  \hline
+  3 & El sistema genera la asignación con los datos recomendados. \\
+  \hline
+  4 & El sistema notifica la nueva asignación a los destinatarios móviles. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  Postcondición & La recomendación queda transformada en una asignación operativa. \\
+  \hline
+  Excepciones &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  3 & Si el recurso ya no está disponible, el sistema no crea la asignación. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  \end{tabular}
+  \caption{Tabla caso de uso 48}
+  \label{tab:CU-48}
+\end{table}

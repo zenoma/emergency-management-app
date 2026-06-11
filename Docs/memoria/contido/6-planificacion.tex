@@ -1,64 +1,22 @@
 \chapter{Planificación y análisis de costes}
 \label{chap:planificacionycostes}
 
-\lettrine{E}{n} este capítulo se presenta la planificación aplicada durante el desarrollo del proyecto y un análisis de los costes asociados. Se describe la planificación inicial, las sprints que han estructurado el trabajo y las desviaciones observadas en el seguimiento.
+\lettrine{E}{n} este capítulo se presenta la planificación aplicada durante el desarrollo del proyecto y un análisis de los costes asociados. Se describe la planificación inicial, los sprints que han estructurado el trabajo y el seguimiento realizado durante la ejecución.
 
 \section{Planificación}
 \label{sec:planificacion}
 
-La planificación inicial se definió en 9 sprints, cada una organizada internamente siguiendo el modelo clásico de cuatro fases: análisis, diseño, implementación y pruebas. En este trabajo se considera que cada sprint equivale a un bloque de dos semanas, lo que facilita agrupar el esfuerzo y revisar avances de forma periódica. La estimación de esfuerzo inicial se basó en jornadas de 6 horas diarias y en una duración prevista del proyecto de cuatro meses. No obstante, las complejidades técnicas y errores imprevistos motivaron desviaciones en varias iteraciones, tal y como se comenta en la sección de seguimiento.
+La planificación del proyecto se diseñó con un enfoque iterativo e incremental, estructurando el trabajo en sprints. Este modelo permitió abordar el desarrollo de forma progresiva y facilitó la adaptación a cambios y la incorporación de \textit{feedback} continuo. En concreto, se optó por una planificación ágil que permitió compaginar el trabajo del autor con las responsabilidades académicas. Esto hizo necesario establecer una planificación flexible, pero con objetivos claros para asegurar el avance constante del proyecto.
 
-\begin{table}[H]
-  \centering
-  \resizebox{\textwidth}{!}{
-    \rowcolors{2}{white}{udcgray!25}
-    \begin{tabular}{l|c|c|c}
-      \rowcolor{udcpink!25}
-      \textbf{Tarea} & \textbf{Fecha inicio} & \textbf{Días estimados} & \textbf{Días reales} \\
+La planificación inicial se definió en 9 sprints, cada uno organizado internamente siguiendo el modelo clásico de cuatro fases: análisis, diseño, implementación y pruebas. En este trabajo se considera que cada sprint equivale a un bloque de dos semanas, lo que facilita agrupar el esfuerzo y revisar avances de forma periódica. La estimación global se planteó con una dedicación media de unas 45 horas por sprint, manteniendo una desviación moderada entre lo previsto y lo realmente ejecutado.
 
-      Definición tipos Emergency & 04/03 & 0.5 & 0.5 \\
-      Definición modelo Assignment & 04/03 & 0.5 & 0.5 \\
-      Definición contratos OpenApi & 04/03 & 1 & 1 \\
-      Diseño entidades JPA & 05/03 & 0.5 & 0.5 \\
 
-      Implementación entidad Emergency & 06/03 & 0.5 & 0.5 \\
-      Implementación entidad Assignment & 06/03 & 0.5 & 0.5 \\
-      Implementación repositorios & 06/03 & 0.5 & 0.5 \\
-
-      UseCase Emergency & 08/03 & 0.5 & 0.5 \\
-      UseCase Assignment & 08/03 & 0.5 & 0.5 \\
-
-      Endpoints /emergencies & 09/03 & 0.5 & 0.5 \\
-      Endpoints /assignments & 09/03 & 0.5 & 0.5 \\
-
-      Tests unitarios backend & 11/03 & 1 & 1 \\
-      Tests integración backend & 11/03 & 1 & 1 \\
-
-      Consumir Api desde frontend & 10/03 & 0.5 & 0.5 \\
-      Vista mapa (crear Emergency) & 11/03 & 1 & 1 \\
-      Formulario Emergency & 11/03 & 0.5 & 0.5 \\
-      Listado Emergencies & 12/03 & 0.5 & 0.5 \\
-      Actualización UI Assignment & 12/03 & 1 & 1 \\
-      Listado Assignments & 13/03 & 0.5 & 0.5 \\
-
-      Consumir Api desde Android & 07/03 & 0.5 & 0.5 \\
-      Lista Assignments Android & 12/03 & 1 & 1 \\
-      Detalle Assignment Android & 13/03 & 0.5 & 0.5 \\
-      Corrección bugs & 15/03 & 1 & 1 \\
-
-    \end{tabular}
-  }
-  \caption{Planificación del Sprint 3: Emergencias y asignaciones básicas}
-  \label{tab:sprint3}
-\end{table}
-
-En la tabla~\ref{tab:sprint3} se puede observar un desglose del sprint 3, que se centró en la implementación de la gestión de emergencias y asignaciones básicas. Cada tarea se estimó inicialmente en función de su complejidad, esto sirvió para poder observar desviaciones y ajustar la planificación de los siguientes sprints. En este caso, el sprint se completó dentro del plazo previsto, lo que permitió mantener el ritmo de desarrollo planificado.
-
+El detalle de cada sprint se presenta en la sección siguiente, donde se resume el alcance abordado, la duración prevista y la duración finalmente dedicada.
 
 \section{Sprints}
 \label{sec:sprints}
 
-El proyecto se estructuró en una sucesión de sprints, con una duración de dos semanas para cada uno de los cuales incrementaba la funcionalidad de los artefactos entregados. A continuación se detalla cada sprint con sus objetivos y resultados principales.
+El proyecto se estructuró en una sucesión de sprints, con un seguimiento periódico de las tareas realizadas y de los hitos alcanzados. En cada sprint se incluyen una referencia temporal aproximada y un resumen breve del trabajo desarrollado.
 
 \begin{figure}[H]
   \centering
@@ -68,67 +26,192 @@ El proyecto se estructuró en una sucesión de sprints, con una duración de dos
 \end{figure}
 
 \subsection{Sprint 0: Contextualización}
-En esta fase inicial se realizó la contextualización del dominio y la justificación del valor del \acrshort{tfm}. Se investigaron fuentes, alternativas a la aplicación y tecnologías potenciales (mapas, sistema de notificaciones android, sistema de recomendación y reglas básico). El objetivo fue delimitar el alcance y dominio del proyecto para que este sea viable en un espacio temporal acotado.
+En esta fase inicial se realizó la contextualización del dominio y la justificación del valor del proyecto. Se investigaron fuentes, alternativas a la aplicación y tecnologías potenciales (mapas, sistema de notificaciones Android, sistema de recomendación y reglas básico). El objetivo fue delimitar el alcance y el dominio para que fuera viable en un espacio temporal acotado.
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!15}
+  \begin{tabular}{l|c|c}
+    \rowcolor{udcpink!25}
+    \textbf{} & \textbf{Previsto} & \textbf{Real} \\
+    Fechas & 03/03--14/03 & 04/03--16/03 \\
+    Esfuerzo & 45 h & 45 h \\
+  \end{tabular}
+  \caption{Resumen del Sprint 0}
+  \label{tab:sprint0}
+\end{table}
 
 \subsection{Sprint 1: Esqueleto y arquitectura base de aplicación móvil}
-Se creó el esqueleto del proyecto móvil y se definieron las dependencias y la arquitectura base (estructura de paquetes, patrones de navegación, y la configuración inicial de Jetpack Compose). Además se implementaron los módulos iniciales de autenticación y sincronización con el Backend (endpoints básicos) para poder iterar sobre funcionalidades reales.
+Se creó el esqueleto del proyecto móvil y se definieron las dependencias y la arquitectura base: estructura de paquetes, patrones de navegación y configuración inicial de Jetpack Compose. Además, se implementaron los módulos iniciales de autenticación y sincronización con el backend mediante endpoints básicos para poder iterar sobre funcionalidades reales. Como se puede observar en la tabla \ref{tab:sprint1}, el esfuerzo real fue ligeramente inferior al previsto. Esto se atribuye a que ya se disponía de ejemplos y referencias para la configuración inicial de la aplicación móvil.
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!15}
+  \begin{tabular}{l|c|c}
+    \rowcolor{udcpink!25}
+    \textbf{} & \textbf{Previsto} & \textbf{Real} \\
+    Fechas & 17/03--28/03 & 18/03--30/03 \\
+    Esfuerzo & 45 h & 39 h \\
+  \end{tabular}
+  \caption{Resumen del Sprint 1}
+  \label{tab:sprint1}
+\end{table}
 
 \subsection{Sprint 2: Actualizar la organización de recursos}
-Se introdujo el modelo unificado de recursos y organizaciones preservando la compatibilidad con las entidades Legacy (Equipo y Vehículo). Esto incluyó definir atributos de capacidad, áreas operativas (cuadrantes) y las relaciones necesarias a nivel de base de datos y DTOs. Se arreglaron los endpoints antiguos y DTO's parara la gestión CRUD de organizaciones y sus recursos.
+Se consolidó el modelo unificado de recursos y organizaciones, preservando la compatibilidad con las entidades heredadas de equipo y vehículo. El trabajo se centró en completar la estructura de datos, las relaciones operativas con cuadrantes y la adaptación de los flujos de gestión para que el sistema pudiera organizar recursos y organizaciones con coherencia funcional. En este caso, como se puede observar en la tabla \ref{tab:sprint2}, el esfuerzo real fue superior al previsto, lo que se atribuye a la complejidad de consolidar el modelo unificado y a la necesidad de realizar ajustes adicionales para garantizar la compatibilidad con las entidades heredadas. Este proceso implicó una mayor dedicación para resolver problemas de integración con el sistema de registros y cuadrantes, lo que llevó a un incremento en el tiempo dedicado a esta fase.
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!15}
+  \begin{tabular}{l|c|c}
+    \rowcolor{udcpink!25}
+    \textbf{} & \textbf{Previsto} & \textbf{Real} \\
+    Fechas & 31/03--11/04 & 01/04--16/04 \\
+    Esfuerzo & 45 h & 58 h \\
+  \end{tabular}
+  \caption{Resumen del Sprint 2}
+  \label{tab:sprint2}
+\end{table}
 
 \subsection{Sprint 3: Emergencias y asignaciones básicas}
-Se implementó la gestión de emergencias con soporte para dos tipos de localización: punto y cuadrante. Se añadió la creación y edición de Emergencias, la definición de cuadrantes y una primera versión del flujo de creación de Asignaciones. Esta iteración incluyó validaciones de consistencia (ej. comprobar que un cuadrante pertenece a una emergencia) y pruebas de integración explicitas para el servicio de Asignaciones.
+Se implementó la gestión de emergencias con soporte para dos tipos de localización: punto y cuadrante. Se añadió la creación y edición de emergencias, la definición de cuadrantes y una primera versión del flujo de creación de asignaciones. Esta iteración incluyó validaciones de consistencia, como comprobar que un cuadrante pertenece a una emergencia, y pruebas de integración explícitas para el servicio de asignaciones.
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!15}
+  \begin{tabular}{l|c|c}
+    \rowcolor{udcpink!25}
+    \textbf{} & \textbf{Previsto} & \textbf{Real} \\
+    Fechas & 16/04--25/04 & 16/04--26/04 \\
+    Esfuerzo & 45 h & 45 h \\
+  \end{tabular}
+  \caption{Resumen del Sprint 3}
+  \label{tab:sprint3}
+\end{table}
 
 \subsection{Sprint 4: Nuevo sistema de logs operativos}
 
 Se definió un nuevo esquema para los logs operativos, ahora centralizados en las Asignaciones de recursos en las emergencias. El trabajo abarcó el nuevo modelado y la persistencia que permiten conservar el histórico.
 
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!15}
+  \begin{tabular}{l|c|c}
+    \rowcolor{udcpink!25}
+    \textbf{} & \textbf{Previsto} & \textbf{Real} \\
+    Fechas & 28/04--09/05 & 29/04--10/05 \\
+    Esfuerzo & 45 h & 45 h \\
+  \end{tabular}
+  \caption{Resumen del Sprint 4}
+  \label{tab:sprint4}
+\end{table}
+
 \subsection{Sprint 5: Notificaciones en Android y aceptación de asignaciones}
-Se integró Firebase Cloud Messaging (\acrshort{fcm}) en la aplicación Android: registro de MobileDevice, manejo de tokens y recepción de notificaciones. Se implementó el flujo de envío de notificaciones desde el Backend y la experiencia de usuario en la app para aceptar o rechazar asignaciones recibidas.
+Se integró Firebase Cloud Messaging (\acrshort{fcm}) en la aplicación Android: registro de los tokens en la entidad \textit{MobileDevice} y recepción de notificaciones. También se implementó el flujo de envío de notificaciones desde el backend y la experiencia de usuario en la app para aceptar o rechazar asignaciones recibidas.
+
+En este caso, como se puede observar en la tabla \ref{tab:sprint5}, el esfuerzo real fue superior al previsto. Esto se atribuye a la complejidad de integrar \acrshort{fcm} en la aplicación Android y a los ajustes necesarios para garantizar una experiencia de usuario fluida. Al ser la primera vez que se trabajaba con esta tecnología, se requirió tiempo adicional para familiarizarse con la documentación, configurar correctamente los servicios y resolver problemas de compatibilidad.
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!15}
+  \begin{tabular}{l|c|c}
+    \rowcolor{udcpink!25}
+    \textbf{} & \textbf{Previsto} & \textbf{Real} \\
+    Fechas & 12/05--23/05 & 12/05--25/05 \\
+    Esfuerzo & 45 h & 60 h \\
+  \end{tabular}
+  \caption{Resumen del Sprint 5}
+  \label{tab:sprint5}
+\end{table}
 
 \subsection{Sprint 6: Protocolos semiautomáticos (motor de reglas simple)}
-Se introdujo la capacidad de definir Protocolos almacenados en \acrshort{jsonb} y un motor de reglas ligero que permite generar propuestas de Asignaciones de forma semiautomática en el frontend. Esto incluyó la definición del formato JSON para los protocolos, la implementación de un evaluador simple y la integración con el pipeline de creación de propuestas.
+Se introdujo la capacidad de definir protocolos almacenados en \acrshort{jsonb} y un motor de reglas ligero que permite generar propuestas de asignaciones de forma semiautomática en el frontend. Esto incluyó la definición del formato JSON para los protocolos, la implementación de un evaluador simple y la integración con el pipeline de creación de reglas.
 
-\subsection{Sprint 7 y 8: Finalización, pruebas y despliegue}
-Las iteraciones finales se dedicaron a la estabilización: pruebas end-to-end, ajuste de UX tanto del frontal como de la aplicación Android, corrección de errores, poblamiento de datos de ejemplo y preparación de artefactos de despliegue (contenedores Docker para BBDD y servicio). También incluyeron la redacción y revisión de la memoria y la generación de la documentación.
+En este sprint, el esfuerzo real fue superior al previsto. La causa principal fue la complejidad de diseñar e implementar un motor de reglas simple para generar propuestas coherentes. También se añadieron endpoints adicionales para gestionar los protocolos y se realizaron pruebas de integración para validar el funcionamiento del motor.
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!15}
+  \begin{tabular}{l|c|c}
+    \rowcolor{udcpink!25}
+    \textbf{} & \textbf{Previsto} & \textbf{Real} \\
+    Fechas & 26/05--06/06 & 26/05--08/06 \\
+    Esfuerzo & 45 h & 60 h \\
+  \end{tabular}
+  \caption{Resumen del Sprint 6}
+  \label{tab:sprint6}
+\end{table}
+
+\subsection{Sprint 7: Finalización y estabilización}
+Las iteraciones finales se dedicaron a la estabilización del sistema: pruebas end-to-end, ajuste de UX tanto del frontend como de la aplicación Android, corrección de errores y poblamiento de datos de ejemplo. En este sprint, el esfuerzo real fue inferior al previsto, pues la corrección de errores y los ajustes de UX resultaron ser menos complejos de lo esperado.
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!15}
+  \begin{tabular}{l|c|c}
+    \rowcolor{udcpink!25}
+    \textbf{} & \textbf{Previsto} & \textbf{Real} \\
+    Fechas & 09/06--20/06 & 10/06--21/06 \\
+    Esfuerzo & 45 h & 39 h \\
+  \end{tabular}
+  \caption{Resumen del Sprint 7}
+  \label{tab:sprint7}
+\end{table}
+
+\subsection{Sprint 8: Despliegue y documentación}
+La última iteración se dedicó a la preparación de artefactos de despliegue, la revisión final del sistema y el cierre documental del proyecto. También se terminaron los ajustes necesarios en los contenedores y en la organización de los materiales de entrega.
+
+En esta parte final, el esfuerzo real fue inferior al previsto, ya que la preparación de artefactos de despliegue y la revisión final del sistema resultaron ser más eficientes de lo esperado, gracias a la utilización de Docker. Además, la documentación se fue abordando de forma progresiva durante el desarrollo, lo que permitió que la fase de cierre documental fuera más ágil y menos laboriosa de lo previsto.
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!15}
+  \begin{tabular}{l|c|c}
+    \rowcolor{udcpink!25}
+    \textbf{} & \textbf{Previsto} & \textbf{Real} \\
+    Fechas & 23/06--04/07 & 24/06--05/07 \\
+    Esfuerzo & 45 h & 37 h \\
+  \end{tabular}
+  \caption{Resumen del Sprint 8}
+  \label{tab:sprint8}
+\end{table}
 
 \section{Seguimiento}
 \label{sec:seguimiento}
 
-El seguimiento se llevó a cabo mediante reuniones mensuales con el tutor y el uso de un tablero Kanban de tareas que permitía visualizar el estado de ellas. En cada revisión se presentaron artefactos funcionales (pantallas, endpoints, wireframes).
+El seguimiento del proyecto se realizó mediante reuniones periódicas con el tutor, donde se revisaban los avances, se analizaban los prototipos, se discutían los obstáculos encontrados y se ajustaba la planificación si era necesario. Además, se utilizó un tablero Kanban para gestionar las tareas de cada sprint, lo que permitió visualizar el estado de las mismas (pendiente, en progreso, completada) y facilitar la coordinación del trabajo.
 
-Las desviaciones más relevantes provinieron de problemas técnicos con la representación de cuadrantes en el mapa, de la configuración de la aplicación Android y, especialmente, de la integración del backend con Firebase Cloud Messaging (\acrshort{fcm}) y del motor de reglas básico para los protocolos. En el primer caso fue necesario revisar documentación oficial y ejemplos de proyectos similares para ajustar correctamente la configuración de notificaciones y el envío de mensajes. En el segundo, al tratarse de una tecnología y un enfoque de diseño que el autor no había implementado previamente, se dedicó tiempo adicional a comprender el patrón y a validar su encaje en el flujo de propuestas, lo que retrasó parcialmente algunas entregas.
+En el ámbito temporal, el proyecto pasó de una estimación inicial de 405 horas a un esfuerzo final aproximado de 425 horas, lo que supone una desviación de 20 horas y un incremento del 4,94\%. Esta variación se considera esperable y asumible en un desarrollo de estas características, ya que las tareas de codificación de funcionalidades complejas y ajustes generales suelen requerir un esfuerzo superior al previsto en la planificación inicial.
+
+Las desviaciones más relevantes se concentraron en la representación de cuadrantes en el mapa, en la configuración de la aplicación Android y en la integración del backend con Firebase Cloud Messaging (\acrshort{fcm}) y con el motor de reglas para las recomendaciones. En conjunto, estas incidencias provocaron pequeños ajustes en la duración prevista de algunas iteraciones, pero sin alterar de forma sustancial la planificación global. 
 
 \section{Análisis de costes}
 \label{sec:costes}
 
-El análisis de costes se ha planteado distinguiendo entre costes directos de personal, costes indirectos de infraestructura y un margen de contingencia para imprevistos. Para la valoración económica del esfuerzo se han tomado como referencia salarios publicados por Talent.com para España, donde un perfil de \textit{Programador} se sitúa en 27.500~\euro/año (14,10~\euro/h)  \cite{salario_programador}y un perfil de \textit{Analista programador} en 29.120~\euro/año (14,93~\euro/h)~\cite{salario_analista_programador}. Estos valores resultan razonables para un TFM técnico con tareas de análisis, desarrollo, pruebas e integración.
+El análisis de costes se ha planteado distinguiendo entre costes directos de personal, costes indirectos de infraestructura y un margen de contingencia para imprevistos. Para la valoración económica del esfuerzo se han tomado como referencia salarios publicados por Talent.com para España, donde un perfil de \textit{Programador} se sitúa en 27.500~\euro/año (14,10~\euro/h)~\cite{salario_programador} y un perfil de \textit{Analista programador} en 29.120~\euro/año (14,93~\euro/h)~\cite{salario_analista_programador}. Estos valores resultan razonables para un trabajo técnico con tareas de análisis, desarrollo, pruebas e integración.
 
 \subsection{Estimación del esfuerzo}
 
-La planificación se ha estructurado en 7 sprints. Si se asume una duración media de 2 semanas por sprint, el proyecto cubre aproximadamente 14 semanas de trabajo efectivo. Considerando una dedicación máxima de 6 horas al día y trabajo únicamente de lunes a viernes, el esfuerzo total estimado se calcula como sigue:
+La planificación se ha estructurado en 9 sprints. Si se asume una duración media de 2 semanas por sprint, el proyecto cubre aproximadamente 18 semanas de trabajo efectivo. Considerando una dedicación media de 4,5 horas al día y trabajo únicamente de lunes a viernes, el esfuerzo total estimado se calcula como sigue:
 
 \[
-7\ \text{sprints} \times 2\ \text{semanas/sprint} \times 5\ \text{días/semana} \times 6\ \text{h/día} = 420\ \text{horas}
+9\ \text{sprints} \times 2\ \text{semanas/sprint} \times 5\ \text{días/semana} \times 4,5\ \text{h/día} = 405\ \text{horas}
 \]
 
-Este valor representa una estimación prudente del esfuerzo total del proyecto. La distribución del tiempo no es homogénea entre sprints, ya que las primeras iteraciones requieren más análisis y diseño, mientras que las finales concentran más trabajo de integración, pruebas, corrección de errores y documentación.
 
 \subsection{Costes directos de personal}
 
-Para la valoración del trabajo se ha tomado como base el perfil de \textit{Analista programador}, al ser el que mejor refleja un proyecto de estas características, donde una misma persona asume tareas de definición funcional, implementación y validación. Con la tarifa media indicada por la fuente utilizada, el coste directo estimado es:
+Para la valoración del trabajo se ha tomado como referencia un reparto mixto del esfuerzo, asignando un 20\% al perfil de \textit{Analista programador} y un 80\% al perfil de \textit{Programador}. Tomando como base el esfuerzo final aproximado de 425 horas, la distribución queda en 85 horas para el perfil de analista programador y 340 horas para el perfil de programador.
 
 \[
-420\ \text{h} \times 14,93\ \text{\euro/h} = 6.270,60\ \text{\euro}
+85\ \text{h} \times 14,93\ \text{\euro/h} = 1.269,05\ \text{\euro}
 \]
-
-De forma complementaria, si se valorase el trabajo con el perfil de \textit{Programador}, el coste sería:
 
 \[
-420\ \text{h} \times 14,10\ \text{\euro/h} = 5.922,00\ \text{\euro}
+340\ \text{h} \times 14,10\ \text{\euro/h} = 4.794,00\ \text{\euro}
 \]
 
-Para reflejar ambas referencias, se adopta como coste base del proyecto el punto medio entre ambos perfiles, es decir, \textbf{6.096,30~\euro}, que representa mejor la mezcla de tareas de programación y análisis realizada durante el desarrollo.
+De esta forma, el coste directo total estimado asciende a \textbf{6.063,05~\euro}, sin recurrir a una media entre perfiles y reflejando mejor la distribución real del esfuerzo.
 
 \subsection{Costes indirectos}
 
@@ -144,25 +227,25 @@ A los costes de personal se añaden los costes indirectos de ejecución. Para es
 \begin{table}[H]
   \centering
   \rowcolors{2}{white}{udcgray!25}
-  \resizebox{1\textwidth}{!}{%
-    \begin{tabular}{c|c|c|c|c}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{l|c|l|c}
       \rowcolor{udcpink!25}
-    Concepto & Importe estimado (\euro) & Observaciones \\
-    Coste directo de personal & 6.096,30 & Media entre programador y analista programador \\
-    Amortización de hardware & 66,00 & Portátil de desarrollo imputado al proyecto \\
-    Conectividad y suministros & 245,00 & Internet y electricidad proporcionales \\
-    \hline
-    \textbf{Total estimado} & \textbf{6.407,3} & \\
-    \hline
-   \end{tabular}%
+      \textbf{Concepto} & \textbf{Horas} & \textbf{Observaciones} & \textbf{Importe (\euro)} \\
+      Analista programador & 85 & 20\% del esfuerzo total & 1.269,05 \\
+      Programador & 340 & 80\% del esfuerzo total & 4.794,00 \\
+      Amortización de hardware & -- & Portátil de desarrollo & 66,00 \\
+      Conectividad y suministros & -- & Internet y electricidad proporcionales & 245,00 \\
+      \hline
+      \textbf{Total estimado} & -- & -- & \textbf{6.374,05} \\
+    \end{tabular}%
   }
   \caption{Desglose de costes estimados del proyecto}
   \label{tab:costes_resumen}
 \end{table}
 
-La tabla~\ref{tab:costes_resumen} muestra que el mayor peso del presupuesto corresponde al trabajo humano, seguido por los costes de infraestructura y suministros. Esto es coherente con un proyecto de software de ámbito académico, donde la inversión principal no está en equipamiento especializado sino en la dedicación de horas de desarrollo, integración y validación.
+La tabla \ref{tab:costes_resumen} muestra que el mayor peso del presupuesto corresponde al trabajo humano, seguido por los costes de infraestructura y suministros. Esto es coherente con un proyecto de software de ámbito académico, donde la inversión principal no está en equipamiento especializado sino en la dedicación de horas de desarrollo, integración y validación.
 
 
 \subsection{Conclusión del análisis de costes}
 
-El coste final del proyecto asciende a \textbf{6.407,3\euro} con una dedicación total de \textbf{420 horas}. Estas cifras reflejan el alcance y la coste del \acrshort{tfm}, considerando tanto el esfuerzo humano como los recursos materiales necesarios para su ejecución. Es importante destacar que esta estimación se ha realizado con criterios prudentes y basándose en datos salariales reales, lo que aporta una visión más ajustada del valor económico del trabajo realizado en este proyecto.
+El coste final del proyecto asciende a \textbf{6.374,05\euro} con una dedicación total aproximada de \textbf{425 horas}. Estas cifras reflejan el alcance y el coste del proyecto, considerando tanto el esfuerzo humano como los recursos materiales necesarios para su ejecución. Es importante destacar que esta estimación se ha realizado con criterios prudentes y basándose en datos salariales reales, lo que aporta una visión más ajustada del valor económico del trabajo realizado en este proyecto.

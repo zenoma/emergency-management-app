@@ -3,32 +3,38 @@
 
 \section{Introducción}
 
+\lettrine{E}{n} este capítulo se presenta una visión general del desarrollo realizado, con especial atención a la arquitectura de la solución, las tecnologías empleadas y la forma en la que se ha organizado el trabajo. El objetivo es situar al lector en el contexto técnico del proyecto antes de detallar la planificación y las iteraciones en el capítulo correspondiente.
 
-\lettrine{E}{n} este capítulo se presenta una descripción del desarrollo realizado, los objetivos perseguidos y la metodología aplicada durante la implementación. El propósito es ofrecer un vistazo general de los artefactos construidos y de las decisiones más relevantes tomadas durante el desarrollo del proyecto.
+En esta fase del trabajo se ha partido de la base funcional y tecnológica ya existente en el trabajo previo \cite{TFGAdrianGarcia2025}, sobre la que se han incorporado nuevas capacidades orientadas a la coordinación operativa. En particular, la evolución se centra en la ampliación del modelo de emergencias, la gestión de asignaciones y la incorporación de recomendaciones basadas en reglas, además de la adaptación del sistema a una aplicación móvil.
 
-\section{Metodología e iteraciones}
-
-El proceso de desarrollo se organizó mediante iteraciones cortas con objetivos funcionales concretos, siguiendo las ideas de Scrum adaptadas al contexto de trabajo individual. Aunque no se aplicó una implementación completa y formal de Scrum (debido al tamaño reducido del equipo), se adoptaron sus pilares fundamentales: planificación por sprints, revisiones y \emph{feedback} continuo.
-
-En cuanto a roles, el autor del \acrshort{tfm} asumió las responsabilidades de desarrollo y encargado de definición funcional, mientras que el tutor actuó como responsable de supervisión y de aceptación.
-
-Se establecieron reuniones de revisión mensuales con el tutor en las que se presentaron los artefactos construidos (prototipos, endpoints, pantallas, pruebas y documentación). Estas sesiones sirvieron para validar funcionalidades, priorizar tareas y ajustar el dominio del \acrshort{tfm} y el alcance de las siguientes iteraciones.
-
-Para la planificación y el detalle de cada sprint se describen con mayor extensión en el capítulo de planificación (capítulo \ref{sec:sprints}).
 
 \section{Arquitectura de la Solución}
 
-\vspace{1em}
+La figura \ref{fig:Arquitectura} resume la arquitectura general de la solución y permite ver cómo se comunican las distintas capas del sistema. A partir de esa base, el proyecto mantiene la estructura cliente-servidor del trabajo previo, pero amplía su alcance para cubrir un escenario multi-dispositivo más completo.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\textwidth]{imaxes/diagrama-arquitectura.png}
+  \includegraphics[width=1.1\textwidth]{imaxes/diagrama-arquitectura.png}
   \caption{Arquitectura de la solución}
   \label{fig:Arquitectura}
 \end{figure}
 
-La solución mantiene la base cliente-servidor ya empleada en el \acrshort{tfg}, en el que la arquitectura se concentraba en un backend encargado de la lógica de negocio y un frontend web orientado a la interacción con el usuario. En este \acrshort{tfm}, esa base se amplía para dar soporte a una plataforma multi-dispositivo más completa.
+La solución mantiene la base cliente-servidor ya empleada en el trabajo previo \cite{TFGAdrianGarcia2025}, en el que la arquitectura se concentraba en un backend encargado de la lógica de negocio y un frontend web orientado a la interacción con el usuario. En este proyecto, esa base se amplía para dar soporte a una plataforma multi-dispositivo más completa, tal y como se aprecia en la figura \ref{fig:Arquitectura}.
 
-En la parte web, el frontend sigue actuando como capa de interacción principal y está construido sobre React y Redux, con RTK Query como mecanismo de acceso a la \acrshort{api}. El backend centraliza la lógica de negocio con Spring Boot y las capas de persistencia con Spring Data, Hibernate y \acrshort{jpa}, mientras que la base de datos se apoya en PostgreSQL y PostGIS. La solución se despliega con Docker para facilitar la reproducción del entorno, y el frontend complementa la visualización con MapLibre y el consumo de información meteorológica de OpenWeatherMap.
+En la capa web, el frontend sigue actuando como interfaz principal de gestión y está construido sobre React y Redux, con RTK Query como mecanismo de acceso a la \acrshort{api}. Aquí se concentran las funcionalidades nuevas más relevantes: la visualización de las nuevas emergencias y su clasificación, la gestión de asignaciones y la generación de recomendaciones de asignaciones mediante reglas. Además, el frontend incorpora la representación cartográfica con MapLibre, el proveedor de estilos MapTiler y la consulta de información meteorológica con OpenWeatherMap para enriquecer la toma de decisiones.
 
-Como ampliación respecto al \acrshort{tfg}, el \acrshort{tfm} incorpora una aplicación Android desarrollada en Kotlin y Jetpack Compose, que reutiliza la misma \acrshort{api} para consultar emergencias, asignaciones y recursos. Además, la mensajería con Firebase Cloud Messaging permite que el backend notifique eventos relevantes a los dispositivos móviles, cerrando el flujo de comunicación entre la capa de gestión y la app de campo.
+El backend centraliza la lógica de negocio con Spring Boot y las capas de persistencia con Spring Data, Hibernate y \acrfull{jpa}. Sobre él se apoyan también los procesos de validación, recomendación y trazabilidad operativa. La base de datos se implementa con PostgreSQL y PostGIS para dar soporte a la información relacional y geoespacial, mientras que Docker se utiliza para facilitar el despliegue y la reproducción del entorno.
+
+Como ampliación se incorpora una aplicación Android desarrollada en Kotlin y Jetpack Compose, que reutiliza la misma \acrshort{api} para consultar emergencias, asignaciones y recursos. Además, la mensajería con \acrfull{fcm} permite que el backend notifique eventos relevantes a los dispositivos móviles, cerrando el flujo de comunicación entre la capa de gestión y la app de campo. La comunicación entre el backend y el frontend web se realiza a través de una \acrshort{api} REST, mientras que la comunicación con la aplicación Android se apoya en una combinación de REST para consultas y \acrshort{fcm} para notificaciones asíncronas.
+
+Esta arquitectura distribuida permite que cada tecnología cumpla un papel concreto: el backend concentra la lógica de negocio y la gestión de datos, la base de datos asegura la persistencia y el soporte geoespacial, el frontend web ofrece una gestión centralizada y visualización avanzada, y la aplicación Android proporciona acceso rápido a las funcionalidades clave para los usuarios de campo. Gracias a esta segregación de responsabilidades, el sistema es capaz de evolucionar y adaptarse a nuevas necesidades sin comprometer la estabilidad ni la escalabilidad de la solución.
+
+
+\section{Metodología e iteraciones}
+
+El proceso de desarrollo se organizó con un enfoque iterativo, estructurado en sprints cortos con objetivos funcionales concretos. Aunque no se aplicó una implementación formal completa de Scrum, sí se asumieron sus ideas principales: planificación por incrementos, validación periódica y mejora continua a partir del \emph{feedback} recibido.
+
+En cuanto a roles, el autor asumió las responsabilidades de desarrollo y encargado de definición funcional, mientras que el tutor actuó como responsable de supervisión y de aceptación.
+
+Se establecieron reuniones de revisión mensuales con el tutor en las que se presentaron los artefactos construidos (prototipos, endpoints, pantallas, pruebas y documentación). Estas sesiones sirvieron para validar funcionalidades, priorizar tareas y ajustar el dominio del proyecto y el alcance de las siguientes iteraciones.
+
+La secuenciación concreta de cada sprint, junto con su planificación y seguimiento, se describe con mayor detalle en el capítulo de planificación (capítulo \ref{sec:sprints}).

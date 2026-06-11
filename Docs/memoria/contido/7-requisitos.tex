@@ -1,19 +1,23 @@
 \chapter{Requisitos del sistema}
 \label{chap:requisitos}
 
-\lettrine{E}{n} este capítulo se describen los requisitos funcionales y los actores principales del sistema. La solución evoluciona respecto al \acrshort{tfg} ampliando el alcance desde la coordinación centrada en incendios forestales hacia una plataforma multi-riesgo, con un flujo más completo de aviso, validación, creación de emergencias y asignación de recursos.
+\lettrine{E}{n} este capítulo se describen los requisitos funcionales y los actores principales del sistema. Para contextualizar el análisis, primero se resume el alcance funcional ya presente en el trabajo previo \cite{TFGAdrianGarcia2025}, que servía como base para la coordinación de avisos, emergencias y recursos en el ámbito de incendios forestales.
+
+En esa versión anterior, el sistema ya contemplaba la entrada de avisos ciudadanos, la validación por parte de perfiles con mayor responsabilidad, la creación de emergencias y la gestión básica de recursos y despliegues. Ese punto de partida resulta útil para entender qué partes se conservan y cuáles se amplían en esta nueva etapa.
+
+En este proyecto se amplía el alcance funcional hacia una plataforma multi-riesgo, que no se limita a incendios forestales sino que puede gestionar emergencias de diversa índole. Además, se incorporan nuevas capacidades de recomendación de recursos, asignación operativa, notificación y seguimiento en campo a través de una aplicación móvil. La gestión básica de recursos se mantiene, pero en la práctica el núcleo operativo pasa a articularse en torno a las asignaciones.
 
 \section{Introducción}
 
-Los tres pilares funcionales de la aplicación siguen siendo la gestión de avisos, la gestión de emergencias y la gestión de personal y recursos, pero en este \acrshort{tfm} se redefinen para cubrir un dominio más amplio. Los usuarios no autenticados o ciudadanos pueden registrar avisos sobre emergencias con sus imágenes adjuntas y consultar posteriormente el estado de dichos avisos.
+Los requisitos funcionales heredados del trabajo previo se organizaban en torno a tres grandes bloques: \textbf{la gestión de avisos}, \textbf{la gestión de emergencias} y \textbf{la gestión básica de recursos}. Ese núcleo ya permitía que un ciudadano registrase un aviso, que un perfil con permisos de coordinación lo validase y que, a partir de esa información, se generase una emergencia con recursos asociados.
 
-Sobre esos avisos actúa un administrador o coordinador, que revisa la información recibida y decide si procede crear una emergencia. A diferencia del \acrshort{tfg}, donde el foco estaba más ligado al incendio forestal y a una organización más estática de equipos, en este trabajo la emergencia puede vincularse a unas coordenadas en concreto, cuando el incidente está localizado con precisión, o como una colección de cuadrantes, cuando este afecta a una zona más amplia. 
+Sobre esa base, esta nueva versión amplía de forma clara el alcance funcional. La primera novedad importante es la incorporación de una aplicación móvil pensada para el trabajo en movilidad. Esta app permite consultar emergencias, revisar asignaciones, recibir notificaciones y acceder a la información operativa necesaria en campo, reforzando así la coordinación fuera del entorno web. La operativa no depende solo del frontend web: el backend centraliza la lógica y la app Android consume el mismo flujo de datos.
 
-Una vez creada la emergencia, el administrador puede seguir los protocolos estipulados y realizar una asignación manual de los recursos, pero ahora el sistema ofrece una propuesta de asignación de recursos a dicho coordinador. Este mecanismo filtra candidatos en función de la organización a la que pertenecen, de su estado operativo y de su distancia a la emergencia. 
+La segunda ampliación relevante es la introducción de recomendaciones semiautomáticas de recursos. Frente a una asignación totalmente manual, el sistema ahora incorpora reglas que analizan el tipo de emergencia, la disponibilidad de recursos y su contexto operativo para proponer opciones de despliegue. El objetivo no es sustituir la decisión humana, sino ofrecer apoyo al coordinador para acelerar la selección de recursos adecuados.
 
-El flujo operativo se completa con el envío de notificaciones a los usuarios de los equipos asignados, de forma que el jefe de equipo pueda aceptar la emergencia y se actualice el estado del recurso a ocupado o desplegado. En el caso de los vehículos, la aceptación se resuelve de forma automática. Finalmente, cuando la emergencia se completa, el recurso pasa de nuevo a estado disponible.
+La tercera novedad afecta a la propia plataforma web, que pasa a ser un núcleo de gestión más completo. Además de validar avisos y crear emergencias, ahora integra la visualización geoespacial, la clasificación de incidentes, la gestión de asignaciones, la consulta de recursos, el mantenimiento de reglas y el acceso a históricos. En conjunto, estas mejoras convierten la web en una interfaz central de supervisión operativa, pero no en el único punto de ejecución del flujo.
 
-La principal ampliación funcional respecto al \acrshort{tfg} es la introducción de un rol adicional de miembro de equipo. Así, el sistema distingue ahora entre ciudadano, miembro de equipo, manager y coordinador. El ciudadano conserva un perfil muy reducido, centrado en crear avisos y consultar el estado de sus notificaciones. El miembro de equipo accede al seguimiento de sus asignaciones, el manager mantiene funciones de organización y gestión operativa, y el coordinador conserva las capacidades de validación, creación de emergencias y supervisión global del sistema.
+Por tanto, aunque se mantienen los requisitos funcionales básicos del trabajo previo, esta nueva etapa introduce una serie de funcionalidades adicionales que amplían el alcance del sistema y mejoran su capacidad de apoyo a la coordinación de emergencias en un entorno multi-riesgo.
 
 \section{Actores}
 
@@ -23,38 +27,320 @@ En este proyecto se han identificado los siguientes actores:
 
 \begin{itemize}
     \item \textbf{Usuario no autenticado (ACT01)}: puede consultar el mapa general y crear un aviso de emergencia sin necesidad de iniciar sesión.
-    \item \textbf{Usuario registrado (ACT02)}: además de las funciones básicas, puede consultar sus propios avisos y acceder al mapa y a las notificaciones personales.
+    \item \textbf{Usuario autenticado (ACT02)}: además de las funciones básicas, puede consultar sus propios avisos y acceder al mapa y a las notificaciones personales.
     \item \textbf{Miembro de equipo (ACT03)}: dispone de acceso a la información operativa de su equipo, a las emergencias activas y a las asignaciones asociadas.
-    \item \textbf{Responsable de equipo o gestor de recursos (ACT04)}: puede gestionar equipos y vehículos, asignar y retirar recursos, y operar sobre emergencias activas dentro de su ámbito de responsabilidad.
+    \item \textbf{Responsable de equipo (ACT04)}: puede gestionar equipos y vehículos, y consultar la información operativa asociada a los recursos de su ámbito.
     \item \textbf{Coordinador (ACT05)}: asume el mayor nivel de permisos y gestiona usuarios, organizaciones, avisos, emergencias, asignaciones y reglas de recomendación.
 \end{itemize}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\textwidth]{imaxes/diagrama-actores.png}
+  \includegraphics[width=1\textwidth]{imaxes/diagramas-caso-uso/diagrama-actores.png}
   \caption{Diagrama de la jerarquía de actores del sistema}
   \label{fig:actores-sistema}
 \end{figure}
 
-Además, los permisos siguen una jerarquía acumulativa, como se muestra en la figura \ref{fig:actores-sistema}. Esto significa que cada actor superior hereda las capacidades del nivel anterior y añade nuevas funcionalidades. De este modo, el usuario no autenticado posee las capacidades más limitadas, entre ellas se encuentra la visualización del mapa de emergencias y la creación de avisos, mientras que el coordinador, a mayores de las funcionalidades de los roles anteriores cuenta con la capacidad de gestionar usuarios, organizaciones, emergencias y asignaciones, así como de configurar las reglas de recomendación para la asignación automática de recursos. Esta estructura jerárquica facilita la gestión de permisos y asegura que cada usuario tenga acceso únicamente a las funciones necesarias para su rol específico dentro del sistema.
+Además, los permisos siguen una jerarquía acumulativa, como se muestra en la figura \ref{fig:actores-sistema}. Esto significa que cada actor superior hereda las capacidades del nivel anterior y añade nuevas funcionalidades. De este modo, el usuario no autenticado posee las capacidades más limitadas, entre ellas la visualización del mapa de emergencias y la creación de avisos, mientras que el coordinador, además de las funcionalidades de los roles anteriores, cuenta con la capacidad de gestionar usuarios, organizaciones, emergencias y asignaciones, así como de configurar las reglas de recomendación para la asignación automática de recursos. Esta estructura jerárquica facilita la gestión de permisos y asegura que cada usuario tenga acceso únicamente a las funciones necesarias para su rol específico dentro del sistema.
 
 \section{Casos de uso}
 
-{ \color{red} Aspectos a considerar
-    \begin{itemize}
-      \item Agrupar casos de uso (servirá de base para agruparlos en servicios posteriormente en la sección de diseño).
-      \item Definición concreta /detallada de cada caso de uso (precondiciones ...)
-    \end{itemize}
-}
+En esta sección se recogen todos los casos de uso definidos en el trabajo previo y se indica su estado en esta etapa. Se mantiene la numeración original para facilitar la trazabilidad entre ambas versiones, distinguiendo entre casos heredados, casos actualizados por la ampliación funcional y casos eliminados porque su funcionalidad pasó a resolverse mediante nuevos flujos del sistema.
+
+Los casos de uso que se han marcado como actualizados reflejan que se han adaptado para cubrir el nuevo ámbito multi-riesgo. Los cambios que se han realizado en estos casos de uso se centran principalmente en la sustitución de las palabras sobre incendios forestales por términos más generales relacionados con emergencias. No se han modificado los alcances, ni las secuencias de flujo, ni los actores implicados ni las precondiciones o postcondiciones.
+
+Los casos \textbf{CU-25} a \textbf{CU-28} conservan la numeración antigua con estado \emph{eliminado} para dejar constancia de que su funcionalidad quedó absorbida por la nueva gestión de asignaciones.
+
+Además de estos casos, la solución cuenta con una ampliación funcional que deriva en nuevos casos de uso relacionados con la creación y seguimiento de asignaciones, la configuración de reglas de recomendación, la generación de recomendaciones de recursos y la recepción de notificaciones móviles. En concreto, estos nuevos casos de uso corresponden a los casos \textbf{CU-36} a \textbf{CU-51}.
+
+\subsection{Gestión de usuarios}
+La figura \ref{fig:diagrama-gestion-usuarios} muestra los actores que disparan los casos de uso englobados en el subsistema de gestión de usuarios. Estos casos de uso permiten registrar una cuenta, identificarse en la aplicación y consultar o modificar la información básica del perfil.
+
+
+En este bloque de gestión de usuarios se recogen los casos de uso que permiten registrar una cuenta, autenticarse y consultar o actualizar el perfil personal. Son las acciones básicas de entrada al sistema y el punto de partida para el resto de funcionalidades.
+
+
+\input{contido/taboas/casos-uso-gestion-usuarios}
+
+\subsection{Gestión de organizaciones}
+La figura \ref{fig:diagrama-gestion-organizaciones} presenta los actores vinculados a la administración de organizaciones. En este bloque se agrupan las acciones de alta, baja y edición de organizaciones, que sirven de soporte para el resto de la estructura operativa.
+
+
+En la gestión de organizaciones se agrupan los casos de uso orientados a administrar las entidades sobre las que se organiza la operativa. En concreto, se contempla el alta, la baja y la edición de organizaciones, que sirven como base para el reparto de equipos y vehículos.
+
+
+\input{contido/taboas/casos-uso-gestion-organizaciones}
+
+\subsection{Gestión de recursos}
+La figura \ref{fig:diagrama-gestion-recursos} resume los actores que intervienen en la gestión de equipos y vehículos. A través de este subsistema se contempla el alta, la baja, la edición y la vinculación de usuarios a los recursos operativos.
+
+
+Este bloque recoge los casos de uso que permiten administrar los recursos operativos del sistema. Aquí se incluyen las operaciones sobre equipos y vehículos, desde su alta y baja hasta la modificación de sus datos o la gestión de los usuarios asociados a cada equipo.
+
+
+\input{contido/taboas/casos-uso-gestion-recursos}
+
+\subsection{Gestión de emergencias}
+La figura \ref{fig:diagrama-gestion-emergencias} recoge los actores que activan los casos de uso del núcleo operativo del sistema. Estos casos permiten crear, consultar, actualizar y resolver emergencias, además de asociarlas o desvincularlas de sus cuadrantes.
+
+
+En esta subsección se describen los casos de uso que articulan la gestión central del sistema. Se incluyen la creación, actualización, consulta y resolución de emergencias, junto con la vinculación y retirada de cuadrantes, que permiten representar con precisión el alcance territorial del incidente.
+
+
+\input{contido/taboas/casos-uso-gestion-emergencias}
+
+\subsection{Gestión de avisos}
+La figura \ref{fig:diagrama-gestion-avisos} muestra los actores que participan en la entrada y revisión de avisos. En este bloque se incluyen los casos de uso para crear avisos, listarlos, validarlos o denegarlos y, cuando sea necesario, eliminarlos.
+
+
+En este bloque de gestión de avisos se han definido los casos de uso que permiten crear avisos, listarlos para su consulta posterior, validarlos o denegarlos y, cuando procede, eliminarlos. Constituye el punto de entrada de la información ciudadana hacia el flujo operativo del sistema.
+
+
+\input{contido/taboas/casos-uso-gestion-avisos}
+
+\subsection{Información meteorológica y registros}
+La figura \ref{fig:diagrama-meteo-info} representa los actores que acceden a la información complementaria de una emergencia. Este subsistema permite consultar el contexto meteorológico, revisar históricos y recuperar registros y estadísticas de emergencias ya extinguidas.
+
+
+La gestión de información meteorológica y registros agrupa los casos de uso que permiten consultar el contexto asociado a una emergencia ya iniciada o finalizada. En particular, se contempla la visualización del parte meteorológico, así como el acceso al histórico y a las estadísticas de emergencias extinguidas.
+
+
+\input{contido/taboas/casos-uso-informacion-meteorologia-registros}
+
+\subsection{Gestión de asignaciones}
+A partir de esta sección se introducen casos de uso completamente nuevos, relacionados con la gestión de asignaciones, la configuración de reglas de recomendación, la generación de recomendaciones de recursos y la recepción de notificaciones. Estos casos de uso amplían el alcance funcional del sistema y permiten una gestión más completa y operativa de las emergencias, tanto desde la web como desde la aplicación móvil.
+
+La figura \ref{fig:diagrama-gestion-asignaciones} recoge los actores que desencadenan los casos de uso de asignación de recursos. Aquí se agrupan las acciones de crear, consultar, aceptar, liberar, completar y eliminar asignaciones asociadas a una emergencia.
+
+
+En este bloque de gestión de asignaciones, se concentran los casos de uso que conectan la emergencia con los recursos desplegados sobre el terreno. En concreto, se contempla crear una asignación de recurso \ref{tab:CU-36}, consultar y filtrar asignaciones \ref{tab:CU-37}, aceptar una asignación de equipo \ref{tab:CU-38}, liberar una asignación activa \ref{tab:CU-39}, completar una asignación \ref{tab:CU-40} y eliminar una asignación pendiente \ref{tab:CU-41}. Esta parte del sistema concentra la operativa real de despliegue, por lo que no depende exclusivamente de la interfaz web.
+
+
+\input{contido/taboas/casos-uso-gestion-asignaciones}
+
+\subsection{Gestión de reglas de recomendación}
+La figura \ref{fig:diagrama-gestion-reglas} muestra los actores que intervienen en la configuración de las reglas de recomendación. Estos casos de uso permiten consultar y modificar la lógica que define cómo se generan las propuestas automáticas de recursos.
+
+
+La gestión de reglas de recomendación agrupa los casos de uso que permiten consultar y modificar la lógica que alimenta las propuestas automáticas del sistema. En este apartado el coordinador puede consultar reglas de recomendación \ref{tab:CU-42}, modificar una regla \ref{tab:CU-43}, modificar su prioridad \ref{tab:CU-44} y consultar las reglas por tipología de emergencia \ref{tab:CU-45}.
+
+
+\input{contido/taboas/casos-uso-gestion-reglas-recomendacion}
+
+\subsection{Recomendación de recursos}
+La figura \ref{fig:diagrama-recomendacion-recursos} presenta los actores que hacen uso de la recomendación automática de medios. En este bloque se contemplan la consulta de recursos sugeridos, la generación de recomendaciones y la creación de asignaciones a partir de ellas.
+
+
+En la recomendación de recursos, se incluyen los casos de uso que explotan la configuración anterior para ofrecer una propuesta concreta de medios disponibles. Así, el sistema permite consultar recomendaciones de recursos para una emergencia \ref{tab:CU-46}, generar recomendaciones con criterios operativos \ref{tab:CU-47} y crear una asignación desde una recomendación \ref{tab:CU-48}.
+
+
+\input{contido/taboas/casos-uso-recomendacion-recursos}
+
+\subsection{Notificaciones}
+La figura \ref{fig:diagrama-notificaciones} muestra los actores que reciben los avisos emitidos por el sistema. Este último subsistema recoge las notificaciones de nuevas asignaciones, de cambios de estado y de posibles reasignaciones operativas.
+
+
+En el bloque de notificaciones, se recogen los casos de uso que informan al personal operativo sobre los cambios relevantes del sistema. En particular, se contempla recibir notificación de nueva asignación \ref{tab:CU-49}, recibir notificación por cambio de estado de una asignación \ref{tab:CU-50} y recibir notificación de reasignación operativa \ref{tab:CU-51}.
+
+\input{contido/taboas/casos-uso-notificaciones}
+
+
 
 \section{Modelo de casos de uso}
 
-{ \color{red} Aspectos a considerar
-    \begin{itemize}
-      \item Diagrama de casos de uso incluyendo actores y relaciones entre casos
-    \end{itemize}
-}
+A continuación se muestran los diagramas que contienen los casos de usos identificados
+en el proyecto junto con los actores del proyecto. Se han dividido en subsistemas para que la visualización de los diagramas sea más clara. Cada diagrama recoge los casos de uso relacionados con un bloque funcional concreto, pero para destacar los nuevos casos de uso que se han introducido se ha usado un color diferente. 
+
+\subsection{Gestión de usuarios}
+
+En la imagen \ref{fig:diagrama-gestion-usuarios} se identifican los actores que activan los casos de uso del subsistema de gestión de usuarios. A través de ellos se lleva a cabo el registro, la autenticación y la modificación de los datos y permisos de cada usuario. Estos casos de uso son el punto de entrada a la aplicación y a los demás casos de uso, por lo que resultan fundamentales para el funcionamiento general del sistema.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-usuarios.png}
+  \caption{Diagrama de casos de uso para la gestión de usuarios}
+  \label{fig:diagrama-gestion-usuarios}
+\end{figure}
+
+\subsection{Gestión de organizaciones}
+
+La figura \ref{fig:diagrama-gestion-organizaciones} sitúa a los actores que intervienen en la gestión de organizaciones. Este bloque concentra las operaciones de alta, baja y edición de organizaciones, que constituyen la base de la estructura operativa del sistema. Estos casos de uso permiten administrar las jerarquía de las organizaciones, lo que es necesario para poder representar la estructura de equipos y recursos que se despliegan en cada emergencia.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-organizaciones.png}
+  \caption{Diagrama de casos de uso para la gestión de organizaciones}
+  \label{fig:diagrama-gestion-organizaciones}
+\end{figure}
+
+\subsection{Gestión de recursos}
+
+En el diagrama \ref{fig:diagrama-gestion-recursos} aparecen los actores relacionados con la administración de recursos. El subsistema reúne las tareas de alta, baja y modificación de equipos y vehículos, además de la gestión de los usuarios vinculados a cada equipo. Estos casos de uso están relacionados con la gestión de organizaciones, pues los recursos se asignan a cada organización y, a su vez, las emergencias se vinculan a organizaciones concretas, lo que permite una gestión más realista de la emergencia. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-recursos.png}
+  \caption{Diagrama de casos de uso para la gestión de recursos}
+  \label{fig:diagrama-gestion-recursos}
+\end{figure}
+
+\subsection{Gestión de emergencias}
+
+El diagrama \ref{fig:diagrama-gestion-emergencias} recoge los actores que activan los casos de uso relacionados con la gestión de emergencias. En este bloque se agrupan las acciones de creación, actualización, consulta y resolución de emergencias, junto con la vinculación y retirada de cuadrantes. Este es el bloque central del sistema, pues en torno a la gestión de emergencias se orquestan la mayoría de las funcionalidades. Este bloque está interconectado con los demás subsistemas.
+
+Un aviso validado se convierte en una emergencia gracias a un coordinador, que a su vez puede vincular esa emergencia a una organización concreta. A partir de ahí, el coordinador puede asignar recursos a la emergencia, ya sea de forma manual o a través de recomendaciones automáticas, y gestionar el despliegue operativo sobre el terreno. Además, la información meteorológica y los registros históricos se asocian a cada emergencia para contextualizar su evolución y facilitar la toma de decisiones. Con cada acción de vinculación o asignación se generan notificaciones para mantener informados a los usuarios implicados, lo que refuerza la coordinación y el seguimiento de cada incidente. 
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-emergencias.png}
+  \caption{Diagrama de casos de uso para la gestión de emergencias}
+  \label{fig:diagrama-gestion-emergencias}
+\end{figure}
+
+\subsection{Gestión de avisos}
+
+La figura \ref{fig:diagrama-gestion-avisos} muestra los actores implicados en la entrada y revisión de avisos. Este conjunto de casos de uso cubre la creación, el listado, la validación o denegación y la eliminación de avisos cuando procede. Este bloque es el punto de entrada de la ciudadanía al sistema, pues permite que cualquier persona pueda registrar un aviso de emergencia sin necesidad de autenticarse. A partir de ese aviso, un coordinador puede validarlo y convertirlo en una emergencia, lo que pone en marcha el resto de funcionalidades del sistema para gestionar la respuesta operativa. Por tanto, aunque este bloque se centra en la gestión de avisos, su impacto se extiende a todo el flujo operativo del sistema. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-avisos.png}
+  \caption{Diagrama de casos de uso para la gestión de avisos}
+  \label{fig:diagrama-gestion-avisos}
+\end{figure}
+
+\subsection{Información meteorológica y registros}
+
+En el diagrama \ref{fig:diagrama-meteo-info} se representan los actores que acceden a la información complementaria del sistema. Los casos de uso de este bloque permiten consultar el contexto meteorológico de una emergencia y recuperar históricos y estadísticas de emergencias ya extinguidas. Esta información resulta fundamental para contextualizar cada emergencia, entender su evolución y tomar decisiones informadas sobre la asignación de recursos.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-meteo-info.png}
+  \caption{Diagrama de casos de uso para la gestión de información meteorológica y registros}
+  \label{fig:diagrama-meteo-info}
+\end{figure}
+
+\subsection{Gestión de asignaciones}
+
+La figura \ref{fig:diagrama-gestion-asignaciones} muestra la gestión de asignaciones, que conecta la emergencia con los recursos desplegados sobre el terreno. A través de estos casos de uso, el coordinador puede crear una asignación de recurso, consultar y filtrar las asignaciones existentes, aceptar una asignación de equipo, liberar una asignación activa, completar una asignación y eliminar una asignación pendiente. Este bloque es fundamental para la operativa del sistema, pues es el punto en el que se materializa la respuesta a cada emergencia a través del despliegue de recursos específicos.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-asignaciones.png}
+  \caption{Diagrama de casos de uso para la gestión de asignaciones}
+  \label{fig:diagrama-gestion-asignaciones}
+\end{figure}
+
+\subsection{Gestión de reglas de recomendación}
+
+El diagrama \ref{fig:diagrama-gestion-reglas} identifica a los actores que intervienen en la configuración de las reglas de recomendación. Este subsistema reúne los casos de uso necesarios para consultar y ajustar la lógica que emplea el sistema al generar recomendaciones de recursos.
+
+Gracias a este subsistema, el coordinador puede configurar las reglas que alimentan el motor de recomendaciones automáticas. Esto permite adaptar la lógica de generación de propuestas a las necesidades operativas concretas de cada emergencia, mejorando así la capacidad del sistema para sugerir mejores recomendaciones. Por ejemplo, el coordinador puede modificar una regla para priorizar ciertos tipos de recursos en función del tipo de emergencia o del contexto operativo.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-gestion-reglas.png}
+  \caption{Diagrama de casos de uso para la gestión de reglas de recomendación}
+  \label{fig:diagrama-gestion-reglas}
+\end{figure}
+
+\subsection{Recomendación de recursos}
+
+La figura \ref{fig:diagrama-recomendacion-recursos} recoge los actores vinculados a la recomendación automática de medios. Sobre este bloque descansan tanto la consulta de propuestas de recursos como su transformación en asignaciones operativas. Este subsistema es la consecuencia lógica de las reglas de recomendación, pues es el encargado de generar propuestas concretas de recursos disponibles para cada emergencia, basándose en la configuración establecida previamente. Además, permite convertir esas recomendaciones en asignaciones concretas, lo que facilita la operativa y agiliza la respuesta a cada incidente. Este bloque es especialmente relevante para mejorar la eficiencia del sistema y apoyar al coordinador en la toma de decisiones sobre el despliegue de recursos.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{imaxes/diagramas-caso-uso/diagrama-recomendacion.png}
+  \caption{Diagrama de casos de uso para la recomendación de recursos}
+  \label{fig:diagrama-recomendacion-recursos}
+\end{figure}
+
+\subsection{Notificaciones}
+
+Por último, el diagrama \ref{fig:diagrama-notificaciones} muestra los actores que reciben los avisos emitidos por el sistema. Los casos de uso asociados permiten notificar nuevas asignaciones, cambios de estado y posibles reasignaciones operativas.
+
+Gracias a este bloque funcional de notificaciones, el sistema puede mantener informados a los usuarios implicados sobre los cambios relevantes en la gestión de emergencias. Por ejemplo, cuando se crea una nueva asignación, los usuarios afectados reciben una notificación para que estén al tanto de su participación en la respuesta operativa. De igual modo, si hay un cambio de estado en una asignación o si se produce una reasignación operativa, los usuarios reciben avisos para que puedan adaptarse a las nuevas circunstancias. Este subsistema es clave para reforzar la coordinación y el seguimiento de cada incidente, asegurando que todos los actores estén informados y puedan actuar en consecuencia.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/diagramas-caso-uso/diagrama-notificaciones.png}
+  \caption{Diagrama de casos de uso para la gestión de notificaciones}
+  \label{fig:diagrama-notificaciones}
+\end{figure}
 
 \section{Prototipado de interfaz}
 
-{ \color{red} Es interesante hacer el esfuerzo en este momento de prototipar las principales pantallas de la interfaz (y añadirlas en la memoria), como parte del análisis de requisitos, así como de aspectos de usabilidad de las mismas. }
+En lo relativo al frontend, la interfaz respecto al trabajo previo no ha sufrido variaciones significativas, a pesar de los cambios introducidos en el backend. La estructura interna del servidor se ha reorganizado en torno a recursos, los históricos se encuentran agrupados y pasan a depender de las asignaciones, y aunque las funcionalidades se han ampliado, la experiencia de usuario general se mantiene en una línea muy similar. En este proceso se han incorporado algunas interfaces nuevas, que se comentan a continuación.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{imaxes/wireframes/asignaciones.png}
+    \caption{Prototipo de la vista de asignación de recursos}
+    \label{fig:wireframe-assignments}
+\end{figure}
+
+En la parte del frontend, ha sido necesario incorporar nuevas vistas. La figura \ref{fig:wireframe-assignments} muestra la pantalla de asignación, que permite vincular recursos, emergencias y cuadrantes, de modo que quede reflejado el uso de recursos durante la resolución de cada incidencia. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{imaxes/wireframes/regla-recomendacion.png}
+    \caption{Prototipo de la edición de reglas de recomendación}
+    \label{fig:wireframe-recommendation-rules}
+\end{figure}
+
+Por otra parte, la figura \ref{fig:wireframe-recommendation-rules} corresponde a la edición de las reglas de recomendación, una funcionalidad añadida para permitir a los coordinadores ajustar los valores del motor de propuestas semiautomáticas y mejorar así su capacidad de sugerencia.
+
+Además, al incorporar una aplicación móvil ha sido necesario realizar el prototipado de las interfaces Android. Por este motivo, a continuación se describen también las principales pantallas previstas para dicha aplicación, con el objetivo de dejar recogidas en la memoria las decisiones de diseño asociadas a ambos entornos.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imaxes/wireframes/Login.png}
+  \caption{Prototipo de la vista de acceso a la aplicación}
+  \label{fig:wireframe-login}
+\end{figure}
+
+En la figura \ref{fig:wireframe-login} se representan los casos de uso de registro, consulta del perfil y acceso al menú principal disponible para un usuario registrado. Esta vista constituye el punto de entrada al sistema una vez autenticado el usuario, y centraliza las opciones a las que puede acceder según su perfil.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imaxes/wireframes/No Login.png}
+  \caption{Prototipo de la vista mostrada sin autenticación}
+  \label{fig:wireframe-no-login}
+\end{figure}
+
+
+En la primera imagen \ref{fig:wireframe-login} se muestran los casos de uso de registro, consulta del perfil y acceso al menú principal que puede utilizar un usuario autenticado. Esta vista representa el punto de entrada al sistema para los usuarios registrados y concentra las opciones disponibles una vez iniciada la sesión.
+
+De forma general, en este conjunto de wireframes se agrupan las pantallas que permiten la visualización de un mapa con emergencias y sus tipos, la creación de avisos con sus mensajes e imágenes, y el listado de esos avisos con sus imágenes, información relevante y su estado.
+
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imaxes/wireframes/Organization Management.png}
+    \caption{Prototipo de la vista de gestión de organizaciones}
+    \label{fig:wireframe-organization-management}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=0.48\textwidth]{imaxes/wireframes/My team.png}
+    \caption{Prototipo de la vista del equipo propio}
+    \label{fig:wireframe-my-team}
+  \end{minipage}
+\end{figure}
+
+En las figuras \ref{fig:wireframe-organization-management} y \ref{fig:wireframe-my-team} se agrupan, por un lado, los casos de uso que permiten consultar las organizaciones creadas junto con los recursos asociados, así como su información de disponibilidad y otros datos complementarios. Por otro lado, se representa la vista que muestra la información del equipo del usuario autenticado, incluyendo su estado y los usuarios que pertenecen al mismo.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imaxes/wireframes/Emergency Management.png}
+  \caption{Prototipo de la vista de gestión de emergencias}
+  \label{fig:wireframe-emergency-management}
+\end{figure}
+
+En la figura \ref{fig:wireframe-emergency-management} se representa la vista más relevante de este bloque, en la que se muestra la información asociada a las emergencias, así como los cuadrantes o puntos afectados. Desde esta pantalla también es posible consultar los recursos asignados a cada emergencia, tanto equipos como vehículos, lo que permite una visión global del estado operativo en cada momento.
+
+

@@ -1,52 +1,163 @@
 \chapter{Base Tecnológica}
 \label{chap:basetecnoloxica}
 
-\lettrine{A}{} continuación se presenta la base tecnológica del TFM, organizada para distinguir entre las tecnologías que se mantienen respecto al TFG, las que se han eliminado y las que se han incorporado como novedades.
+\lettrine{A}{} continuación se presenta la base tecnológica de este proyecto, manteniendo la división empleada en el trabajo previo \cite{TFGAdrianGarcia2025}. La diferencia principal es que, dentro de cada bloque, las tecnologías que ya existían se resumen de forma breve, mientras que las tecnologías nuevas o eliminadas se explican con más detalle para reflejar mejor la evolución de esta etapa.
 
-\section{Tecnologías que se mantienen}
-\label{sec:tecnoloxias-mantidas}
+\section{Lenguajes}
 
-Estas tecnologías ya estaban presentes en el TFG y se conservan porque siguen siendo adecuadas para el sistema, aportan estabilidad y permiten mantener continuidad técnica.
+\subsection{Java}
+Java \cite{java} sigue siendo el lenguaje principal del backend por su madurez, su integración natural con Spring y su adecuación al tipo de lógica que requiere la aplicación. 
 
-\begin{itemize}
-    \item \textbf{Java} \cite{java} sigue siendo el lenguaje principal del backend por su madurez y su integración natural con \acrfull{spring}.
-    \item \acrfull{sql} \cite{sql} se mantiene como base para definir y consultar los datos persistidos.
-    \item \acrfull{html} y \acrfull{css} \cite{html_css} continúan siendo la base de la estructura y presentación de la interfaz web.
-    \item \acrfull{javascript} y \acrfull{jsx} \cite{javascript,jsx} se conservan en la capa frontend por su papel en la lógica de interacción y en la construcción de componentes \acrshort{react}.
-    \item \acrfull{latex} \cite{latex} se mantiene para la redacción y composición de la memoria.
-    \item \acrfull{json} \cite{json} sigue siendo el formato de intercambio de datos entre cliente y servidor.
-    \item \acrfull{spring} \cite{spring}, \acrfull{springboot} \cite{springboot}, \acrfull{springdata} \cite{springdata}, \acrfull{jpa} \cite{jpa}, Hibernate \cite{hibernate} y \acrfull{jdbc} \cite{jdbc} permanecen como núcleo del backend por su robustez y por facilitar el acceso a datos y la lógica de negocio.
-    \item \acrfull{react} \cite{react}, \acrfull{redux} \cite{redux}, \acrfull{rtkquery} \cite{rtkquery} y Material UI \cite{materialui} se conservan como base de la interfaz web por su capacidad para construir una aplicación modular y mantenible.
-    \item Open Weather Map \cite{openweathermap} se mantiene como fuente externa de información meteorológica útil en el contexto de emergencias.
-    \item MapLibre \cite{maplibre} sigue siendo la solución cartográfica abierta utilizada para visualizar información geoespacial.
-    \item \acrfull{junit} \cite{junit} se conserva como herramienta principal de pruebas unitarias.
-    \item \acrfull{http} y \acrfull{https} \cite{http} y \acrfull{rest} \cite{rest} continúan siendo la base de la comunicación cliente-servidor.
-    \item \acrfull{ide} IntelliJ \cite{intellij}, Postman \cite{postman}, VSCode \cite{vscode}, DBeaver \cite{dbeaver}, Git \cite{git}, Apache Maven \cite{maven}, Create React App \cite{create-react-app}, PostgreSQL \cite{postgresql}, PostGIS \cite{postgis}, Tomcat \cite{tomcat}, Webpack \cite{webpack}, Serve \cite{serve} y Docker \cite{docker} se mantienen como herramientas y servicios de desarrollo y despliegue porque siguen resolviendo correctamente las necesidades del proyecto.
-\end{itemize}
+\subsection{SQL}
+\acrfull{sql} \cite{sql} se mantiene como base para definir y consultar los datos persistidos.
 
-\section{Tecnologías eliminadas}
-\label{sec:tecnoloxias-eliminadas}
+\subsection{HTML y CSS}
+\acrfull{html} y \acrfull{css} \cite{html_css} continúan siendo la base de la estructura y presentación de la interfaz web.
 
-Estas tecnologías estaban presentes en el TFG, pero en el TFM han sido sustituidas por alternativas más adecuadas.
+\subsection{JavaScript}
+\acrfull{javascript} se conserva en la capa frontend por su papel en la lógica de interacción y en la construcción de componentes de React \cite{javascript}.
 
-\begin{itemize}
-    \item Liquibase \cite{liquibase} y H2 \cite{h2} se han dejado de usar como combinación principal porque en este TFM la base de datos real se despliega mediante Docker \cite{docker} sobre PostgreSQL \cite{postgresql} y PostGIS \cite{postgis}. De este modo, el entorno de desarrollo y el de ejecución se acercan más al entorno final y se evita mantener una base de datos en memoria con una configuración distinta a la de producción. Además, la estrategia de pruebas se apoya en Testcontainers \cite{testcontainers}, que permite levantar una instancia aislada de la base de datos durante el testing y reproducir con más fidelidad el comportamiento real del sistema.
-    \item React Map GL \cite{reactmapgl} se elimina como dependencia explícita porque la integración cartográfica se centraliza sobre MapLibre \cite{maplibre}.
-    \item Mapbox \cite{mapbox} se descarta como solución principal para reducir la dependencia claves API junto con planes de prueba/gratuitos.
-\end{itemize}
+\subsection{JSX}
+\acrfull{jsx} \cite{jsx} sigue siendo el formato de escritura de los componentes de React, ya que permite combinar la estructura visual con la lógica de la interfaz de forma clara.
+
+\subsection{LaTeX}
+\acrfull{latex} \cite{latex} se mantiene para la redacción y composición de la memoria.
+
+\subsection{JSON}
+\acrfull{json} \cite{json} continúa siendo el formato de intercambio de datos entre cliente y servidor.
+
+\section{Frameworks y librerías servidor}
+
+\subsection{Spring}
+\acrfull{spring} \cite{spring} permanece como núcleo del backend por su robustez y por facilitar el acceso a datos y la lógica de negocio.
+
+\subsection{Spring Boot}
+\acrfull{springboot} \cite{springboot} sigue simplificando la configuración del backend y el despliegue de la aplicación.
+
+\subsection{Spring Data}
+\acrfull{springdata} \cite{springdata} se mantiene como capa de abstracción sobre el acceso a datos, reduciendo la necesidad de consultas manuales.
+
+\subsection{JPA}
+\acrfull{jpa} \cite{jpa} continúa modelando la persistencia de las entidades del dominio.
+
+\subsection{Hibernate}
+Hibernate \cite{hibernate} sigue siendo la implementación de referencia para el trabajo con entidades, relaciones y carga perezosa.
+
+\subsection{JDBC}
+\acrfull{jdbc} \cite{jdbc} se conserva como soporte de bajo nivel cuando se necesita acceso directo a la base de datos.
+
+\subsection{OpenAPI}
+OpenAPI \cite{OpenAPI} es una de las incorporaciones más relevantes de este trabajo. Se utiliza para definir primero el contrato de la API en YAML y generar a partir de él controladores y DTOs. Este estándar se basa en la idea de diseñar mediante documentos que describen los endpoints, los parámetros, las respuestas y la estructura de los datos, antes de escribir cualquier línea de código. Esto es beneficioso porque permite una visión clara y compartida de cómo debe ser la API, facilitando la colaboración entre los desarrolladores del backend, los del frontend y los de la app móvil.
+
+Gracias a esta aproximación, se garantiza que la API esté bien documentada y que la implementación se ajuste exactamente a lo definido, evitando desajustes entre lo que el backend expone y lo que el frontend o la app móvil consumen. Además, esta definición centralizada facilita la evolución de la API, ya que cualquier cambio se refleja automáticamente en la documentación y en las implementaciones generadas. Este enfoque se denomina \textit{API-first}.
+
+\section{Frameworks y librerías web}
+
+\subsection{React}
+\acrfull{react} \cite{react} se conserva como base de la interfaz web por su capacidad para construir una aplicación modular y mantenible.
+
+\subsection{Redux}
+\acrfull{redux} \cite{redux} sigue siendo el contenedor central del estado global de la aplicación web.
+
+\subsection{RTK Query}
+\acrfull{rtkquery} \cite{rtkquery} se mantiene como solución para el acceso a la API, al simplificar caché, consultas y mutaciones.
+
+\subsection{Material UI}
+Material UI \cite{materialui} continúa proporcionando los componentes visuales principales de la aplicación web.
+
+\subsection{React Map GL}
+React Map GL \cite{reactmapgl} sigue utilizándose en combinación con MapLibre \cite{maplibre} para integrar la cartografía en la interfaz web. Esta combinación permite mantener una capa de representación ya conocida y, al mismo tiempo, apoyarse en una solución abierta y coherente con el resto del proyecto.
+
+\subsection{MapTiler}
+MapTiler \cite{maptiler} se incorpora como proveedor del estilo cartográfico utilizado en la visualización de mapas web. Su uso permite disponer de una base visual consistente para el mapa sin depender de la infraestructura de Mapbox.
+
+\subsection{Open Weather Map}
+Open Weather Map \cite{openweathermap} se mantiene como fuente externa de información meteorológica útil en el contexto de emergencias.
+
+\subsection{Mapbox}
+Mapbox \cite{mapbox} no se utiliza como proveedor principal de mapas para reducir la dependencia de claves API y de planes de uso restringidos. En este trabajo, la visualización geográfica se apoya en MapLibre, que encaja mejor con el enfoque abierto del proyecto.
+Esta decisión evita depender de una plataforma orientada a servicios cerrados y facilita un uso más flexible de la capa cartográfica.
+
+\section{Pruebas}
+
+\subsection{JUnit}
+\acrfull{junit} \cite{junit} se conserva como herramienta principal de pruebas unitarias.
+
+\section{Protocolos}
+
+\subsection{HTTP/S}
+\acrfull{http} y \acrfull{https} \cite{http} continúan siendo la base de la comunicación cliente-servidor.
+
+\subsection{REST}
+\acrfull{rest} \cite{rest} sigue siendo el estilo principal para exponer recursos y operaciones entre cliente y servidor.
+
+\section{Herramientas de desarrollo}
+
+\subsection{IntelliJ}
+\acrfull{ide} IntelliJ \cite{intellij} sigue siendo la herramienta principal de desarrollo del backend.
+
+\subsection{Postman}
+Postman \cite{postman} se mantiene como herramienta de pruebas y exploración de endpoints.
+
+\subsection{VSCode}
+VSCode \cite{vscode} se conserva como editor de apoyo para la parte web y la documentación.
+
+\subsection{DBeaver}
+DBeaver \cite{dbeaver} continúa siendo la herramienta de consulta y administración de la base de datos.
+
+\subsection{Git}
+Git \cite{git} se mantiene como sistema de control de versiones del proyecto.
+
+\subsection{Apache Maven}
+Apache Maven \cite{maven} sigue siendo la base del ciclo de construcción del backend y también soporta la generación de OpenAPI.
+
+\section{Sistemas de gestión de base de datos}
+
+\subsection{H2}
+H2 \cite{h2} se elimina como base de datos principal porque en este trabajo se trabaja directamente sobre PostgreSQL y PostGIS para acercar el entorno de desarrollo al de ejecución real. En el trabajo previo era útil para pruebas rápidas y desarrollo local, pero ahora resulta más coherente usar la misma base de datos que la aplicación final.
+Esta eliminación se debe a que H2, aunque es una base de datos ligera y fácil de configurar, no ofrece las mismas capacidades geoespaciales ni el mismo rendimiento que PostgreSQL con PostGIS. Al trabajar directamente con PostgreSQL y Testcontainers, se garantiza que las pruebas de integración se realicen en un entorno más representativo del entorno de producción, lo que mejora la fiabilidad de las pruebas y reduce la posibilidad de encontrar problemas relacionados con diferencias entre bases de datos.
+
+\subsection{PostgreSQL}
+PostgreSQL \cite{postgresql} se mantiene como sistema de gestión principal por su estabilidad y su integración con el resto de componentes.
+
+\subsection{PostGIS}
+PostGIS \cite{postgis} sigue siendo esencial para soportar las operaciones geoespaciales del proyecto.
+
+\section{Tecnologías de alojamiento de servicios}
+
+\subsection{Tomcat}
+Tomcat \cite{tomcat} se mantiene como contenedor de ejecución del backend.
+
+\subsection{Vite}
+Vite \cite{vite} continúa formando parte de la cadena de construcción de la interfaz web.
+
+\subsection{Serve}
+Serve \cite{serve} se conserva como herramienta sencilla para servir la versión compilada del frontend durante pruebas o despliegues locales.
 
 \section{Tecnologías nuevas}
-\label{sec:tecnoloxias-novas}
 
-Estas tecnologías se incorporan específicamente en el TFM para cubrir nuevas necesidades, sobre todo en la aplicación Android y en la organización del proyecto.
+\subsection{Kotlin}
+Kotlin \cite{kotlin} se incorpora como lenguaje principal de la aplicación Android por su concisión, su interoperabilidad con Java y su buena integración con el ecosistema Android.
+Este lenguaje se elige por su capacidad para reducir la cantidad de código redundante, lo que facilita el desarrollo y mantenimiento de la aplicación móvil. Además, Kotlin es totalmente interoperable con Java, lo que permite reutilizar código y compartir modelos de datos cuando resulta conveniente. También cuenta con un fuerte soporte por parte de Google para el desarrollo de Android, lo que garantiza acceso a las últimas funcionalidades y mejoras en la plataforma móvil.
 
-\begin{itemize}
-    \item Kotlin \cite{kotlin} se añade como lenguaje principal de la aplicación Android por su concisión e interoperabilidad con Java.
-    \item Gradle \cite{gradle} se incorpora como sistema de construcción habitual en el ecosistema Android.
-    \item \acrfull{compose} \cite{jetpack_compose} se añade para crear interfaces Android de forma declarativa y más mantenible.
-    \item \acrfull{mat} \cite{material_design} se incorpora como guía visual para la app móvil.
-    \item HttpClient \cite{httpclient} se añade como biblioteca para realizar peticiones HTTP desde Android.
-    \item \acrfull{fcm} \cite{firebase} se incorpora para el envío de notificaciones push.
-    \item \acrfull{fms} \cite{firebase_messaging_service} se añade para gestionar la recepción de mensajes procedentes de \acrshort{fcm}.
-    \item \acrfull{testcontainers} \cite{testcontainers} se incorpora para ejecutar pruebas de integración sobre una base de datos aislada y reproducible. Esta tecnología está basada en Docker \cite{docker} y permite levantar contenedores específicos para cada prueba o conjunto de pruebas, garantizando un entorno controlado y evitando interferencias entre pruebas.
-\end{itemize}
+\subsection{Gradle}
+Gradle \cite{gradle} se añade como sistema de construcción habitual en Android, ya que facilita la gestión de módulos, dependencias y variantes de compilación. Al igual que Maven, Gradle permite definir tareas personalizadas para compilar, probar y empaquetar la aplicación móvil, lo que es esencial para un proyecto con múltiples componentes y dependencias. Esta herramienta de construcción es un estándar en el desarrollo de Android y se integra perfectamente con Android Studio, lo que mejora la eficiencia del desarrollo y la gestión de dependencias.
+
+\subsection{Jetpack Compose}
+\acrfull{compose} \cite{jetpack_compose} se incorpora para crear interfaces Android de forma declarativa y más mantenible, adaptándose mejor a una aplicación con múltiples pantallas y navegación compleja. Jetpack Compose permite construir la interfaz de usuario de manera más intuitiva y reactiva, lo que es especialmente útil en una aplicación móvil que requiere una experiencia de usuario fluida y moderna. Además, al ser parte de Jetpack, se integra bien con otras bibliotecas y componentes de Android, facilitando la gestión del ciclo de vida, la navegación y el estado de la aplicación.
+
+\subsection{Material Design}
+\acrfull{mat} \cite{material_design} se incorpora como guía visual para la app móvil, con el objetivo de mantener una experiencia de usuario coherente y reconocible. Esta guía de diseño proporciona un conjunto de principios, componentes y patrones que ayudan a crear interfaces atractivas y funcionales, lo que es crucial para una aplicación móvil que busca ser intuitiva y fácil de usar para profesionales y ciudadanos.
+
+\subsection{HttpClient}
+HttpClient \cite{httpclient} se añade como biblioteca para realizar peticiones HTTP desde Android y centralizar el acceso a los servicios del backend. 
+
+\subsection{Firebase Cloud Messaging}
+\acrfull{fcm} \cite{firebase} se incorpora para el envío de notificaciones push, que es una funcionalidad clave en el contexto móvil de la plataforma. \acrshort{fcm} ofrece una integración sencilla con Android, lo que facilita su implementación y gestión dentro de la aplicación móvil. En concreto, se utiliza para enviar alertas y actualizaciones en tiempo real a los usuarios, lo que es esencial para mantenerlos informados sobre emergencias o cambios en la situación de las emergencias y los recursos.
+
+\subsection{Firebase Messaging Service}
+\acrfull{fms} \cite{firebase_messaging_service} se añade para gestionar la recepción de mensajes procedentes de \acrshort{fcm} y reaccionar a notificaciones o eventos remotos. Esta tecnología permite que la aplicación móvil pueda recibir y procesar notificaciones push incluso cuando no está en primer plano, lo que es crucial para garantizar que los usuarios reciban información importante de manera oportuna. \acrshort{fms} se encarga de manejar la lógica de recepción de mensajes, permitiendo mostrar notificaciones, actualizar la interfaz de usuario o realizar acciones específicas en función del contenido del mensaje recibido.
+
+\subsection{Testcontainers}
+\acrfull{testcontainers} \cite{testcontainers} se incorpora para ejecutar pruebas de integración sobre una base de datos aislada y reproducible. Esta tecnología está basada en Docker \cite{docker} y permite levantar contenedores específicos para cada prueba o conjunto de pruebas, garantizando un entorno controlado y evitando interferencias entre pruebas.
+Gracias a esta herramienta, se eliminan las diferencias que existían entre H2 y la base de datos PostgreSQL, lo que mejora la fiabilidad de las pruebas de integración. Además, Testcontainers facilita la configuración y el mantenimiento de entornos de prueba, ya que se pueden definir en código y se ejecutan de manera automática durante el ciclo de pruebas. Esto es especialmente útil para pruebas que requieren una base de datos con características específicas, como PostGIS para operaciones geoespaciales, lo que es fundamental en este proyecto. Una ventaja muy grande es que al estar basado en Docker, se puede garantizar que el entorno de pruebas sea idéntico al de producción, lo que reduce la posibilidad de encontrar problemas relacionados con diferencias entre entornos.

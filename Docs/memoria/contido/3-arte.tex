@@ -1,54 +1,59 @@
 \chapter{Estado del arte}
 \label{chap:estadoarte}
 
-\lettrine{E}{n este capítulo} se realiza un análisis de las aplicaciones y herramientas existentes que pueden aportar soluciones para abordar la problemática comentada en este \acrshort{tfm}.
+\lettrine{E}{n este capítulo} se realiza un análisis de las aplicaciones y herramientas existentes que pueden aportar soluciones para abordar la problemática comentada en este proyecto.
 
-El objetivo no es ofrecer una revisión exhaustiva, sino separar de forma clara las alternativas ya citadas en el \acrshort{tfg} de las incorporaciones nuevas, manteniendo en ambos casos una evaluación muy breve de su utilidad para la coordinación de emergencias.
+El objetivo no es ofrecer una revisión exhaustiva, sino actualizar el estado de las alternativas ya tratadas en el trabajo previo \cite{TFGAdrianGarcia2025} y añadir otras herramientas que, por su evolución reciente o por su encaje funcional, resultan relevantes para valorar la propuesta de este proyecto.
 
-\section{Alternativas ya evaluadas en el TFG}
+\section{Aplicaciones analizadas}
 \label{sec:arte-tfg}
+El análisis del estado del arte se estructura en tres dimensiones principales: gestión de incidencias y coordinación, cartografía y monitorización, y participación ciudadana y avisos públicos. Estas dimensiones reflejan los aspectos clave que la solución propuesta busca integrar para ofrecer una plataforma completa de gestión de emergencias.
 
-Estas alternativas ya fueron analizadas en el \acrshort{tfg}, a continuación se ofrece un resumen de cada una de ellas, con especial atención a sus fortalezas y limitaciones en el contexto de coordinación de emergencias.
+Se ha revisado que las aplicaciones que ya han sido comentadas en el trabajo previo \cite{TFGAdrianGarcia2025} no han sufrido cambios significativos en su enfoque o funcionalidades. Como el alcance de la solución se ha ampliado, se han investigado nuevas herramientas que cuenten con una solución móvil, ya que es un aspecto clave en la propuesta de este proyecto y se ha reforzado en esta nueva etapa. 
 
-\subsection{Jira}
+\subsection{Gestión de incidencias y coordinación}
+
+\subsubsection{Jira}
 
 Jira \cite{jira} es una plataforma de gestión de incidencias y proyectos útil para crear, priorizar y asignar tickets. Sin embargo, no aporta representación geoespacial nativa, por lo que su encaje en emergencias es parcial.
 
-\subsection{Asana}
+\subsubsection{Asana}
 
 Asana \cite{asana} ofrece gestión de tareas, prioridades y colaboración en equipo. Su principal carencia para este caso es que no integra mapas ni soporte geográfico.
 
-\subsection{Global Forest Watch - Fires}
-
-Global Forest Watch Fires \cite{gfw_fires} aporta cartografía y alertas sobre incendios a partir de datos satelitales, pero no está pensada para coordinar recursos humanos ni para participación ciudadana.
-
-\subsection{InciWeb}
-
-InciWeb \cite{inciweb} centraliza información sobre incidentes y grandes incendios con mapas e informes, pero no incorpora avisos colaborativos ni gestión táctica de equipos.
-
-\subsection{Google Maps}
-
-Google Maps \cite{google_maps} permite mostrar alertas geoespaciales y ofrece una cartografía muy amplia, aunque no resuelve por sí mismo la gestión de despliegue ni el flujo de incidentes.
-
-\subsection{Microsoft Teams}
+\subsubsection{Microsoft Teams}
 
 Microsoft Teams \cite{microsoft_teams} ayuda a organizar equipos y comunicación, pero no ofrece geolocalización ni procesos específicos para emergencias.
 
-\subsection{Odoo}
+\subsubsection{Odoo}
 
 Odoo \cite{odoo} es flexible y modular, pero requiere personalización para ajustarse a flujos de coordinación de emergencias y a soporte geográfico.
 
-\subsection{PCAM Gestión}
+\subsection{Cartografía y monitorización}
+
+\subsubsection{Global Forest Watch - Fires}
+
+Global Forest Watch Fires \cite{gfw_fires} aporta cartografía y alertas sobre incendios a partir de datos satelitales, pero no está pensada para coordinar recursos humanos ni para participación ciudadana.
+
+\subsubsection{InciWeb}
+
+InciWeb \cite{inciweb} centraliza información sobre incidentes y grandes incendios con mapas e informes, pero no incorpora avisos colaborativos ni gestión táctica de equipos.
+
+\subsubsection{Google Maps}
+
+Google Maps \cite{google_maps} permite mostrar alertas geoespaciales y ofrece una cartografía muy amplia, aunque no resuelve por sí mismo la gestión de despliegue ni el flujo de incidentes.
+
+\subsubsection{PCAM Gestión}
 
 PCAM Gestión \cite{pcam_gestion} ofrece avisos, asignación de personal y notificaciones en el ámbito de la protección civil, aunque con capacidades geoespaciales limitadas.
 
-\subsection{XeoCode Lite}
+\subsubsection{XeoCode Lite}
+
 XeoCode Lite \cite{xeocode_lite} es una herramienta interna y privada de la Xunta de Galicia. Permite consultar el origen y evolución de incendios, recursos asignados y cartografía asociada, pero no expone información funcional al público ni permite participación ciudadana directa.
 
-\section{Nuevas alternativas del mercado}
-\label{sec:arte-nuevas}
+\subsection{Participación ciudadana y avisos públicos}
 
-\subsection{Línea Verde}
+\subsubsection{Línea Verde}
 
 \begin{figure}[H]
   \centering
@@ -59,7 +64,8 @@ XeoCode Lite \cite{xeocode_lite} es una herramienta interna y privada de la Xunt
 
 Línea Verde \cite{linea_verde} es una plataforma municipal de participación ciudadana y gestión de incidencias. Está bien orientada a comunicación con la administración, pero su foco es urbano y no operativo para emergencias.
 
-\subsection{S.O.S Emergencias}
+\subsubsection{S.O.S Emergencias}
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{imaxes/arte/sos_emergencias.png}
@@ -69,22 +75,17 @@ Línea Verde \cite{linea_verde} es una plataforma municipal de participación ci
 
 S.O.S Emergencias \cite{sos_emergencias} es una aplicación móvil orientada a la notificación y gestión básica de emergencias. Aporta una aproximación más directa al ámbito de alertas, aunque no integra una visión completa de coordinación geoespacial y despliegue de recursos.
 
-
 \section{Iniciativas públicas recientes}
 \label{sec:arte-public}
+En un comunicado, la Xunta de Galicia ha anunciado la ampliación de mecanismos de detección temprana de incendios forestales mediante la creación de una nueva app para la ciudadanía junto con el uso de cámaras de videovigilancia \cite{xunta_deteccion_incendios_2026}.
 
-\subsection{Xunta de Galicia: nueva app y ampliación de detección temprana}
+Esta aplicación combina un canal para notificaciones tempranas, sensores y cámaras para observación remota y procesamiento automatizado con IA para priorizar alertas y detectar anomalías. Todo ello ayuda a la notificación y coordinación de emergencias en tiempo real.
 
-En una comunicado, la Xunta de Galicia ha anunciado la ampliación de mecanismos de detección temprana de incendios forestales mediante la creación de una nueva app para la ciudadanía junto el uso de cámaras de videovigilancia.\cite{xunta_deteccion_incendios_2026}.
+Funcionalmente esta nueva app presenta un solapamiento funcional notable con el dominio funcional de la solución precedente \cite{TFGAdrianGarcia2025}: reportes ciudadanos, integración de sistemas de información dispares como avisos ciudadanos y meteorológicos y también cuenta con representación geoespacial; a efectos prácticos la solución de la Xunta incorpora muchas de las ideas que se prototiparon en el trabajo previo.
 
-Esta applicación combina un canal para notificaciones tempranas, sensores y cámaras para observación remota y procesamiento automatizado con IA para priorizar alertas y detectar anomalías. Todo ello para ayudar a la notificación y coordinación de emergencias en tiempo real.
+Algunas diferencias clave respecto a la solución inicial son que la aplicación añade una capa de hardware y vigilancia (cámaras/sensores) y está diseñada para integrarse en procedimientos administrativos y operativos a escala autonómica. Por otro lado, aquella primera propuesta aporta un énfasis en la coordinación táctica, como la asignación de recursos, la gestión por cuadrantes y el soporte a decisiones de despliegue en campo.
 
-Funcionalmente esta nueva app parece converger mucho con el dominio funcional del \acrshort{tfg} \cite{TFGAdrianGarcia2025}: reportes ciudadanos, integración de sistemas de información dispares como avisos ciudadanos y meteorológicos y también cuenta con representación geoespacial; a efectos prácticos la solución de la Xunta incorpora muchas de las ideas que se prototiparon en el \acrshort{tfg}.
-
-Algunas diferencias clave respecto al \acrshort{tfg} son que la applicación  añade una capa de hardware y vigilancia (cámaras/sensores) y está diseñada para integrarse en procedimientos administrativos y operativos a escala autonómica. Por otro lado, el \acrshort{tfg}  aporta un énfasis en la coordinación táctica como la asignación de recursos, gestión por cuadrantes y soporte a decisiones de despliegue en campo.
-
-Como comentario crítico, cabe destacar la coincidencia temática que resalta la relevancia del problema abordado en el \acrshort{tfg} y demuestra que las soluciones propuestas tienen aplicación real. Ambas aproximaciones son complementarias y evidencian la necesidad de soluciones integrales que aborden todo el ciclo de gestión de emergencias, desde la detección hasta la coordinación en campo. 
-
+Como comentario crítico, cabe destacar la coincidencia temática que resalta la relevancia del problema abordado en la propuesta previa y demuestra que las soluciones planteadas tienen aplicación real. Ambas aproximaciones son complementarias y evidencian la necesidad de soluciones integrales que aborden todo el ciclo de gestión de emergencias, desde la detección hasta la coordinación en campo.
 
 \section{Conclusión}
 Las aplicaciones analizadas ofrecen soluciones parciales en las tres dimensiones de interés: gestión de avisos, representación geoespacial y coordinación de equipos. Ninguna de las herramientas revisadas integra de forma nativa las tres capacidades con enfoque ciudadano-operativo y despliegue de recursos; esto evidencia el hueco funcional que aborda la propuesta de este trabajo.
@@ -119,6 +120,6 @@ La tabla comparativa 3.1 resume las funcionalidades analizadas para resaltar for
       \textit{XeoCode Lite} & \checkmark & ? & \checkmark & ? & ? & ? & ? & ? \\
       \textit{Xunta (nueva app)} & \checkmark & \checkmark &  & \checkmark &  & \checkmark &  & \checkmark \\
     \end{tabular}}    
-    \caption{Tabla de comparativa entre aplicaciones}
+    \caption{Tabla comparativa entre aplicaciones}
     \label{tab:comparativa}
 \end{table}

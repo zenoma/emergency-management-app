@@ -1,18 +1,112 @@
 \chapter{Implementación}
 \label{chap:implementacion}
 
-\lettrine{X}{xxx},\dots
+\lettrine{E}{n} este capítulo se describen los aspectos prácticos de la implementación del sistema, con el objetivo de explicar qué software se necesita para compilarlo, cómo está organizado el código fuente y qué pasos hay que seguir para ejecutarlo en desarrollo.
 
 \section{Software requerido}
 
-{ \color{red} Pre-requisitos software para poder compilar el código fuente. Respecto a la base de datos, puede referenciarse al apéndice de instrucciones de instalación, a la parte de instalación y configuración de la base de datos. } 
+Para compilar y ejecutar el proyecto en un entorno de desarrollo es necesario instalar manualmente el siguiente software. El resto de dependencias (Spring Boot, React, MapLibre, Firebase Client, etc.) se descargan automáticamente a través de Maven, npm o Gradle al construir cada subsistema.
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!15}
+  \begin{tabular}{p{0.28\textwidth}|p{0.28\textwidth}|p{0.28\textwidth}}
+    \rowcolor{udcpink!25}
+    \textbf{Backend} & \textbf{Frontend} & \textbf{Android} \\
+    Java 21 (Eclipse Temurin) & Node.js 18+ y npm & Android Studio \\
+    Apache Maven 3.6+ & Git & Android SDK 34+ \\
+    Docker y Docker Compose & -- & Git \\
+    Git & -- & Configuración local de Firebase \\
+  \end{tabular}
+  \caption{Software mínimo necesario para levantar cada subsistema}
+  \label{tab:software-requerido}
+\end{table}
+
+El backend necesita Java 21 con Maven para compilar y ejecutar el servicio. La base de datos PostgreSQL con PostGIS se levanta mediante Docker con el fichero \textit{docker-compose.yaml} incluido en el proyecto, por lo que no es necesario instalar PostgreSQL manualmente.
+
+El frontend solo requiere Node.js 18 o superior y npm para instalar las dependencias de React, Vite y las librerías asociadas.
+
+La aplicación Android necesita Android Studio con el SDK 34, y hay que añadir manualmente el fichero \textit{google-services.json} de Firebase para que las notificaciones push funcionen correctamente.
+
+En los tres casos es necesario disponer de Git para clonar el repositorio. El resto de dependencias se gestionan automáticamente al compilar cada módulo, por lo que no es necesario instalarlas manualmente.
+
+Para la puesta en producción, se recomienda configurar un entorno de despliegue con Docker para el backend y la base de datos, y utilizar servicios como Firebase Hosting para el frontend y Google Play Store para la aplicación Android. Esto viene explicado con más detalle en el apéndice \ref{sec:instalacion}, donde se incluyen las instrucciones de instalación y despliegue de cada subsistema.
 
 \section{Estructura}
 
-{ \color{red} Estructura de carpetas del código fuente. Si se utiliza maven, básicamente indicar estructura estándar de maven + casos especiales como localización de fichero de creación de datos ...}
+El repositorio se organiza en tres bloques principales: \textit{backend/}, \textit{frontend/} y \textit{EmergencyApp/}. Esta separación permite trabajar de forma independiente sobre la lógica de negocio, la interfaz web y la aplicación Android, manteniendo una frontera clara entre cada subsistema. A continuación se muestran los diagramas de estructura de cada uno de ellos.
+
+\subsection{Backend}
+
+El directorio \textit{backend/} contiene la aplicación Spring Boot y sigue la estructura habitual de Maven. El código fuente principal se encuentra en \textit{backend/src/main/java}, mientras que los recursos se localizan en \textit{backend/src/main/resources}. Dentro de esta última ruta destacan \textit{openApi/}, donde se define el contrato de la API en YAML, y \textit{db/}, donde se encuentran los scripts SQL de creación e inicialización de la base de datos. El fichero \textit{docker-compose.yaml} también forma parte de este módulo y se utiliza para arrancar la base de datos local.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{imaxes/files_backend.png}
+  \caption{Estructura de los archivos del backend}
+  \label{fig:backend-struct}
+\end{figure}
+
+La implementación backend se organiza por capas. En \textit{rest/controllers} se encuentran los controladores expuestos por la API; en \textit{rest/mappers}, los adaptadores entre entidades y DTOs; en \textit{rest/common}, la gestión global de errores; en \textit{rest/config}, la configuración de seguridad y JWT; y en \textit{model}, las entidades, repositorios, excepciones y servicios de negocio. Tras la generación de OpenAPI, los ficheros producidos se ubican en \textit{target/generated-sources/openapi}, por lo que no forman parte del código mantenido manualmente.
+
+\subsection{Frontend}
+
+El directorio \textit{frontend/} contiene la aplicación web construida con React. La carpeta \textit{src/} agrupa la lógica principal: \textit{api/} contiene la capa de acceso a datos con RTK Query, \textit{features/} organiza las pantallas por dominio funcional, \textit{app/} concentra la configuración global del almacén y de utilidades compartidas, \textit{locales/} contiene las traducciones y \textit{features/map/} reúne la lógica cartográfica. Esta estructura favorece que cada funcionalidad se mantenga encapsulada y reutilizable.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.3\textwidth]{imaxes/files_frontend.png}
+  \caption{Estructura de los archivos del frontend}
+  \label{fig:frontend-struct}
+\end{figure}
+
+\subsection{Aplicación Android}
+
+El directorio \textit{EmergencyApp/} contiene la aplicación Android. El módulo principal está en \textit{EmergencyApp/app/}, donde \textit{src/main/java} agrupa el código Kotlin, \textit{src/main/res} almacena recursos, iconos y cadenas, y \textit{AndroidManifest.xml} define la configuración básica de la aplicación. Dentro del código fuente, la organización se reparte entre \textit{ui/} para las pantallas, \textit{net/} para el cliente HTTP, \textit{messaging/} para Firebase Messaging, \textit{data/dto/} para los modelos de intercambio y \textit{util/} para utilidades específicas como el tratamiento de coordenadas o la gestión de fechas.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{imaxes/files_android.png}
+  \caption{Estructura de los archivos de la aplicación Android}
+  \label{fig:android-struct}
+\end{figure}
 
 \section{Instrucciones de compilación}
 
-{ \color{red} Instrucciones de cómo compilar el código fuente. Si se usa maven, básicamente comentar las fases principales a usar de maven. 
+\subsection{Backend}
 
-  Comentar también cómo ejecutar en desarrollo.}
+Para compilar y ejecutar el backend, primero hay que levantar la base de datos local y después generar y compilar el proyecto. El orden recomendado es el siguiente:
+
+\begin{lstlisting}[language=Bash]
+cd backend
+docker compose -f src/main/resources/docker-compose.yaml up -d
+mvn -DskipTests generate-sources compile
+mvn spring-boot:run
+\end{lstlisting}
+
+El primer comando inicia PostgreSQL con PostGIS. El segundo ejecuta la generación de OpenAPI y compila el proyecto, incluyendo las fuentes generadas. El tercero arranca la aplicación en modo desarrollo. Si se quiere ejecutar la batería de pruebas backend, el comando habitual es `mvn test`.
+
+\subsection{Frontend}
+
+Para ejecutar la interfaz web, basta con instalar las dependencias y lanzar Vite desde el directorio \textit{frontend/}:
+
+\begin{lstlisting}[language=Bash]
+cd frontend
+npm install
+npm run dev
+\end{lstlisting}
+
+Este flujo inicia el servidor de desarrollo y permite trabajar sobre la aplicación sin necesidad de generar primero una compilación final. Cuando se quiera validar el resultado de producción, puede utilizarse `npm run build`.
+
+\subsection{Aplicación Android}
+
+La aplicación Android se abre desde Android Studio a partir del directorio \textit{EmergencyApp/}. Antes de ejecutarla es necesario configurar localmente Firebase y disponer del fichero \textit{google-services.json} correspondiente. Una vez importado el proyecto, la aplicación puede lanzarse desde el propio IDE o mediante Gradle:
+
+\begin{lstlisting}[language=Bash]
+cd EmergencyApp
+.\gradlew.bat assembleDebug
+\end{lstlisting}
+
+En la práctica, la ejecución diaria se realiza desde Android Studio, ya que facilita la selección del dispositivo, la depuración y la gestión de permisos. El comando anterior resulta útil para verificar que el módulo compila correctamente desde línea de comandos.
+
+En conjunto, esta organización permite compilar cada subsistema de forma independiente y reproducible, manteniendo separados el backend, la interfaz web y la aplicación móvil.

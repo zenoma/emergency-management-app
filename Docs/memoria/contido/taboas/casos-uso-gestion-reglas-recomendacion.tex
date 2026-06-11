@@ -1,0 +1,189 @@
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{12.1cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  \textbf{CU-42} & \textbf{Consultar reglas de recomendación} \\
+  \hline
+  Descripción & Un coordinador consulta la regla de recomendación asociada a un tipo de emergencia para conocer qué recursos y prioridades aplica el sistema al calcular sugerencias automáticas. \\
+  \hline
+  Precondición & El coordinador debe estar autenticado y debe existir una regla configurada para el tipo de emergencia seleccionado. \\
+  \hline
+  Secuencia normal &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  1 & El coordinador accede al apartado de reglas de recomendación. \\
+  \hline
+  2 & El coordinador selecciona el tipo de emergencia que desea revisar. \\
+  \hline
+  3 & El sistema carga la regla configurada para ese tipo de emergencia. \\
+  \hline
+  4 & El sistema muestra los parámetros de la regla, incluyendo recursos, distancia máxima y prioridad. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  Postcondición & La configuración de recomendación queda visible para su consulta o edición. \\
+  \hline
+  Excepciones &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  3 & Si no existe una regla para ese tipo de emergencia, el sistema muestra un estado vacío o sin configuración. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  \end{tabular}
+  \caption{Tabla caso de uso 42}
+  \label{tab:CU-42}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{12.1cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  \textbf{CU-43} & \textbf{Modificar una regla de recomendación} \\
+  \hline
+  Descripción & Un coordinador modifica la configuración de una regla de recomendación desde un formulario estructurado para ajustar la lógica de asignación automática de recursos. \\
+  \hline
+  Precondición & El coordinador debe estar autenticado y la regla que desea modificar debe existir. \\
+  \hline
+  Secuencia normal &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  1 & El coordinador abre el editor de reglas. \\
+  \hline
+  2 & El coordinador modifica el número de equipos, vehículos, distancia o la organización preferente. \\
+  \hline
+  3 & El sistema genera la nueva configuración interna de la regla. \\
+  \hline
+  4 & El sistema valida el contenido antes de guardar los cambios. \\
+  \hline
+  5 & El sistema persiste la regla actualizada. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  Postcondición & La regla queda actualizada y lista para ser utilizada por el motor de recomendaciones. \\
+  \hline
+  Excepciones &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  4 & Si los datos no son válidos, el sistema no guarda la regla y devuelve un error de validación. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  \end{tabular}
+  \caption{Tabla caso de uso 43}
+  \label{tab:CU-43}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{12.1cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  \textbf{CU-44} & \textbf{Modificar la prioridad de una regla} \\
+  \hline
+  Descripción & Un coordinador ajusta la prioridad de una regla de recomendación para controlar el orden en que el sistema aplica las diferentes configuraciones disponibles para un tipo de emergencia. \\
+  \hline
+  Precondición & El coordinador debe estar autenticado y la regla debe existir en el sistema. \\
+  \hline
+  Secuencia normal &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  1 & El coordinador abre la regla que desea priorizar. \\
+  \hline
+  2 & El coordinador selecciona una prioridad nueva. \\
+  \hline
+  3 & El sistema guarda el valor de prioridad actualizado. \\
+  \hline
+  4 & El motor de recomendación usará esa prioridad en futuras evaluaciones. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  Postcondición & La prioridad de la regla queda registrada y afecta al orden de evaluación. \\
+  \hline
+  Excepciones &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  3 & Si el valor de prioridad no es válido, el sistema no realiza la actualización. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  \end{tabular}
+  \caption{Tabla caso de uso 44}
+  \label{tab:CU-44}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{12.1cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  \textbf{CU-45} & \textbf{Consultar reglas por tipología de emergencia} \\
+  \hline
+  Descripción & Un coordinador filtra la configuración de recomendación por tipo de emergencia para trabajar únicamente con las reglas aplicables al incidente que está gestionando. \\
+  \hline
+  Precondición & El coordinador debe estar autenticado y debe existir al menos un tipo de emergencia disponible en el sistema. \\
+  \hline
+  Secuencia normal &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  1 & El coordinador abre el apartado de reglas de recomendación. \\
+  \hline
+  2 & El coordinador selecciona un tipo de emergencia concreto. \\
+  \hline
+  3 & El sistema recupera las reglas asociadas a esa tipología. \\
+  \hline
+  4 & El sistema muestra únicamente la configuración aplicable al tipo seleccionado. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  Postcondición & El coordinador dispone del conjunto de reglas filtrado por tipología. \\
+  \hline
+  Excepciones &
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{|l|p{10.2cm}|}
+  \hline
+  \rowcolor{udcpink!25}
+  Paso & Acción \\
+  \hline
+  3 & Si no existen reglas para esa tipología, el sistema muestra una lista vacía. \\
+  \hline
+  \end{tabular} \\
+  \hline
+  \end{tabular}
+  \caption{Tabla caso de uso 45}
+  \label{tab:CU-45}
+\end{table}

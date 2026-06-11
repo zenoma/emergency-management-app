@@ -1,0 +1,26 @@
+\rowcolors{2}{white}{udcgray!25}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{ p{2cm}| p{3cm}| p{2cm}| p{5.5cm} }
+  \caption{Casos de uso de gestión de usuarios}
+  \label{tab:cu-gestion-usuarios} \\
+
+  \rowcolor{udcpink!25}
+  \textbf{Identificador} & \textbf{Caso de uso} & \textbf{Estado} & \textbf{Descripción} \\\hline
+  \endfirsthead
+  \multicolumn{4}{c}{\tablename\ \thetable{} -- {\small \textit{(vén da páxina anterior)}}} \\
+  \rowcolor{udcpink!25}
+  \textbf{Identificador} & \textbf{Caso de uso} & \textbf{Estado} & \textbf{Descripción} \\\hline
+  \endhead
+  \multicolumn{4}{c}{\dotfill{\small \textit{(continúa na páxina seguinte)}}\dotfill} \\
+  \endfoot
+  \endlastfoot
+
+  CU-01 & Registro de usuario & Actualizado & Un usuario se puede dar de alta para utilizar la aplicación, quedando asociado al rol \texttt{USER}. Este caso se ha modificado para cubrir los nuevos roles de la aplicación. \\
+  CU-02 & Identificación de usuario & Heredado & Un usuario registrado podrá autenticarse para utilizar las funcionalidades de la aplicación. \\
+  CU-03 & Ver perfil de usuario & Actualizado & Un usuario autenticado podrá visualizar sus datos y cambiar su contraseña. Este caso se ha ampliado para adaptar la información de perfil.  \\
+  CU-04 & Cerrar sesión & Heredado & Un usuario autenticado podrá cerrar sesión para salir de la aplicación. \\
+  CU-05 & Cambiar contraseña & Heredado & Un usuario autenticado podrá cambiar su propia contraseña. \\
+  CU-06 & Actualizar permisos & Heredado & Un coordinador puede cambiar los permisos de otros usuarios registrados en la aplicación \\
+
+\end{longtable}

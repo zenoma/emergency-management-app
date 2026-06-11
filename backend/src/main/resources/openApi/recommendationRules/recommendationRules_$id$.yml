@@ -2,7 +2,7 @@ put:
   summary: Update a recommendation rule
   operationId: putRecommendationRule
   tags:
-    - EmergencyManagement
+    - RecommendationRulesManagement
   security:
     - bearerAuth: [ ]
   parameters:
