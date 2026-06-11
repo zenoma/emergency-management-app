@@ -1,286 +1,133 @@
 package es.udc.emergencyproject.backend.integration.services;
 
 import es.udc.emergencyproject.backend.IntegrationTest;
+import es.udc.emergencyproject.backend.model.entities.organization.Organization;
+import es.udc.emergencyproject.backend.model.entities.organization.OrganizationType;
+import es.udc.emergencyproject.backend.model.entities.resource.vehicle.Vehicle;
+import es.udc.emergencyproject.backend.model.exceptions.AlreadyDismantledException;
+import es.udc.emergencyproject.backend.model.exceptions.InstanceNotFoundException;
 import es.udc.emergencyproject.backend.model.services.personal.PersonalManagementFacade;
-import org.springframework.beans.factory.annotation.Autowired;
+import es.udc.emergencyproject.backend.model.services.resources.ResourceManagementFacade;
+import es.udc.emergencyproject.backend.utils.OrganizationOM;
+import es.udc.emergencyproject.backend.utils.OrganizationTypeOM;
+import jakarta.validation.ConstraintViolationException;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class VehicleServiceImplTest extends IntegrationTest {
+@RequiredArgsConstructor
+class VehicleServiceImplTest extends IntegrationTest {
 
-  private final Long INVALID_VEHICLE_ID = -1L;
+  private final PersonalManagementFacade personalManagementFacade;
+  private final ResourceManagementFacade resourceManagementFacade;
 
-  @Autowired
-  private PersonalManagementFacade personalManagementFacade;
-//
-//  @Test
-//  void givenInvalidId_whenFindVehicleById_thenReturnInstanceNotFoundException() {
-//
-//    Assertions.assertThrows(InstanceNotFoundException.class, () ->
-//            personalManagementFacade.findVehicleById(INVALID_VEHICLE_ID)
-//        , "InstanceNotFoundException error was expected");
-//  }
-//
-//  @Test
-//  void givenValidData_whenCreateVehicle_thenCreateVehicle() throws InstanceNotFoundException {
-//    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
-//        OrganizationTypeOM.withDefaultValues().getName());
-//    Organization organization = OrganizationOM.withDefaultValues();
-//    organization.setOrganizationType(organizationType);
-//    organization = personalManagementFacade.createOrganization(organization);
-//
-//    Vehicle vehicle = VehicleOM.withDefaultValues();
-//    vehicle = personalManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//
-//    Assertions.assertEquals(vehicle, personalManagementFacade.findVehicleById(vehicle.getId()));
-//  }
-//
-//  @Test
-//  void givenValidData_whenFindByOrganizationID_thenVehiclesFound() throws InstanceNotFoundException {
-//    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
-//        OrganizationTypeOM.withDefaultValues().getName());
-//    Organization organization = OrganizationOM.withDefaultValues();
-//    organization.setOrganizationType(organizationType);
-//    organization = personalManagementFacade.createOrganization(organization);
-//
-//    Vehicle vehicle = VehicleOM.withDefaultValues();
-//    vehicle = personalManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//
-//    ArrayList<Vehicle> vehicles = new ArrayList<>();
-//    vehicles.add(vehicle);
-//
-//    Assertions.assertEquals(vehicles,
-//        personalManagementFacade.findVehiclesByOrganizationId(vehicle.getOrganization().getId()));
-//  }
-//
-//
-//  @Test
-//  void givenInvalidData_whenCallCreate_thenReturnConstraintViolationException() {
-//    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
-//        OrganizationTypeOM.withDefaultValues().getName());
-//    Organization organization = OrganizationOM.withDefaultValues();
-//    organization.setOrganizationType(organizationType);
-//    organization = personalManagementFacade.createOrganization(organization);
-//
-//    Long id = organization.getId();
-//    Assertions.assertThrows(ConstraintViolationException.class, () ->
-//            personalManagementFacade.createVehicle("", "", id)
-//        , "ConstraintViolationException error was expected");
-//  }
-//
-//  @Test
-//  void givenInvalidOrganizationId_whenCallCreate_thenReturnInstanceNotFoundException() {
-//
-//    Assertions.assertThrows(InstanceNotFoundException.class, () ->
-//            personalManagementFacade.createVehicle("", "", 1L)
-//        , "InstanceNotFoundException error was expected");
-//  }
-//
-//
-//  @Test
-//  void givenValidId_whenDismantle_thenDismantleSuccessfully()
-//      throws InstanceNotFoundException, AlreadyExistException, AlreadyDismantledException {
-//    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
-//        OrganizationTypeOM.withDefaultValues().getName());
-//    Organization organization = OrganizationOM.withDefaultValues();
-//    organization.setOrganizationType(organizationType);
-//    organization = personalManagementFacade.createOrganization(organization);
-//
-//    Vehicle vehicle = VehicleOM.withDefaultValues();
-//    vehicle = personalManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//
-//    personalManagementFacade.dismantleVehicleById(vehicle.getId());
-//
-//    Assertions.assertNotNull(personalManagementFacade.findVehicleById(vehicle.getId()).getDismantleAt(),
-//        "Expected result must be not empty");
-//  }
-//
-//
-//  @Test
-//  void givenVehiclePlate_whenUpdate_thenConstraintViolationException()
-//      throws InstanceNotFoundException, AlreadyExistException {
-//    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
-//        OrganizationTypeOM.withDefaultValues().getName());
-//    Organization organization = OrganizationOM.withDefaultValues();
-//    organization.setOrganizationType(organizationType);
-//    organization = personalManagementFacade.createOrganization(organization);
-//
-//    Vehicle vehicle = VehicleOM.withDefaultValues();
-//    vehicle = personalManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//
-//    vehicle.setVehiclePlate("");
-//
-//    Long id = vehicle.getId();
-//    String vehiclePlate = vehicle.getVehiclePlate();
-//    String type = vehicle.getType();
-//    Assertions.assertThrows(ConstraintViolationException.class, () ->
-//            personalManagementFacade.updateVehicle(id, vehiclePlate, type),
-//        "ConstraintViolationException error was expected");
-//  }
-//
-//
-//  @Test
-//  void givenInvalidId_whenUpdate_thenInstanceNotFoundException() {
-//
-//    Assertions.assertThrows(InstanceNotFoundException.class, () -> personalManagementFacade.updateVehicle(-1L, "", ""),
-//        "InstanceNotFoundException error was expected");
-//  }
-//
-//  @Test
-//  void givenValidCode_whenUpdate_thenUpdateSuccessfully()
-//      throws InstanceNotFoundException, AlreadyExistException, AlreadyDismantledException {
-//    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
-//        OrganizationTypeOM.withDefaultValues().getName());
-//    Organization organization = OrganizationOM.withDefaultValues();
-//    organization.setOrganizationType(organizationType);
-//    organization = personalManagementFacade.createOrganization(organization);
-//
-//    Vehicle vehicle = VehicleOM.withDefaultValues();
-//    vehicle = personalManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//    vehicle.setVehiclePlate("New Name");
-//
-//    Vehicle updateVehicle = personalManagementFacade.updateVehicle(vehicle.getId(), vehicle.getVehiclePlate(),
-//        vehicle.getType());
-//    Assertions.assertEquals(vehicle, updateVehicle);
-//  }
-//
-//
-//  @Test
-//  void givenVehicles_whenFindVehiclesByOrganizationId_thenVehiclesFound()
-//      throws InstanceNotFoundException, AlreadyDismantledException {
-//    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
-//        OrganizationTypeOM.withDefaultValues().getName());
-//    Organization organization = OrganizationOM.withDefaultValues();
-//    organization.setOrganizationType(organizationType);
-//    organization = personalManagementFacade.createOrganization(organization);
-//
-//    Vehicle vehicle = VehicleOM.withDefaultValues();
-//    vehicle = personalManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//    personalManagementFacade.dismantleVehicleById(vehicle.getId());
-//
-//    Vehicle vehicle2 = VehicleOM.withDefaultValues();
-//    vehicle2.setVehiclePlate("11111abc");
-//    vehicle2 = personalManagementFacade.createVehicle(vehicle2.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//
-//    ArrayList<Vehicle> vehicles = new ArrayList<>();
-//    vehicles.add(vehicle2);
-//    vehicles.add(vehicle);
-//
-//    Assertions.assertEquals(vehicles,
-//        personalManagementFacade.findVehiclesByOrganizationId(vehicle.getOrganization().getId()));
-//  }
-//
-//  @Test
-//  void givenVehicles_whenFindActivesByOrganizationID_thenVehiclesFound()
-//      throws InstanceNotFoundException, AlreadyDismantledException {
-//    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
-//        OrganizationTypeOM.withDefaultValues().getName());
-//    Organization organization = OrganizationOM.withDefaultValues();
-//    organization.setOrganizationType(organizationType);
-//    organization = personalManagementFacade.createOrganization(organization);
-//
-//    Vehicle vehicle = VehicleOM.withDefaultValues();
-//    vehicle = personalManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//    personalManagementFacade.dismantleVehicleById(vehicle.getId());
-//
-//    Vehicle vehicle2 = VehicleOM.withDefaultValues();
-//    vehicle2.setVehiclePlate("11111abc");
-//    vehicle2 = personalManagementFacade.createVehicle(vehicle2.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//
-//    ArrayList<Vehicle> vehicles = new ArrayList<>();
-//    vehicles.add(vehicle2);
-//
-//    Assertions.assertEquals(vehicles,
-//        personalManagementFacade.findActiveVehiclesByOrganizationId(vehicle.getOrganization().getId()));
-//  }
-//
-//  @Test
-//  void givenVehicles_whenFindAllVehicles_thenAllVehiclesFound()
-//      throws InstanceNotFoundException, AlreadyExistException, AlreadyDismantledException {
-//    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
-//        OrganizationTypeOM.withDefaultValues().getName());
-//    Organization organization = OrganizationOM.withDefaultValues();
-//    organization.setOrganizationType(organizationType);
-//    organization = personalManagementFacade.createOrganization(organization);
-//
-//    Vehicle vehicle = VehicleOM.withDefaultValues();
-//    vehicle = personalManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//    personalManagementFacade.dismantleVehicleById(vehicle.getId());
-//
-//    Vehicle vehicle2 = VehicleOM.withDefaultValues();
-//    vehicle2.setVehiclePlate("22222ABC");
-//    vehicle2 = personalManagementFacade.createVehicle(vehicle2.getVehiclePlate(), vehicle2.getType(),
-//        organization.getId());
-//
-//    Organization organization2 = OrganizationOM.withOrganizationTypeAndRandomNames("Organization 2");
-//    organization2.setOrganizationType(organizationType);
-//    organization2 = personalManagementFacade.createOrganization(organization2);
-//
-//    Vehicle vehicle3 = VehicleOM.withDefaultValues();
-//    vehicle3.setVehiclePlate("44444ABC");
-//    vehicle3 = personalManagementFacade.createVehicle(vehicle3.getVehiclePlate(), vehicle3.getType(),
-//        organization2.getId());
-//    personalManagementFacade.dismantleVehicleById(vehicle3.getId());
-//
-//    ArrayList<Vehicle> vehicles = new ArrayList<>();
-//
-//    vehicles.add(vehicle2);
-//    vehicles.add(vehicle);
-//    vehicles.add(vehicle3);
-//
-//    Assertions.assertEquals(vehicles, personalManagementFacade.findAllVehicles());
-//  }
-//
-//
-//  @Test
-//  void givenVehicle_whenFindAllActiveVehicles_thenActiveVehiclesFound()
-//      throws InstanceNotFoundException, AlreadyDismantledException {
-//    OrganizationType organizationType = personalManagementFacade.createOrganizationType(
-//        OrganizationTypeOM.withDefaultValues().getName());
-//    Organization organization = OrganizationOM.withDefaultValues();
-//    organization.setOrganizationType(organizationType);
-//    organization = personalManagementFacade.createOrganization(organization);
-//
-//    Vehicle vehicle = VehicleOM.withDefaultValues();
-//    vehicle = personalManagementFacade.createVehicle(vehicle.getVehiclePlate(), vehicle.getType(),
-//        organization.getId());
-//    personalManagementFacade.dismantleVehicleById(vehicle.getId());
-//
-//    Vehicle vehicle2 = VehicleOM.withDefaultValues();
-//    vehicle2.setVehiclePlate("11111ABC");
-//    vehicle2 = personalManagementFacade.createVehicle(vehicle2.getVehiclePlate(), vehicle2.getType(),
-//        organization.getId());
-//
-//    Organization organization2 = OrganizationOM.withOrganizationTypeAndRandomNames("Organization 2");
-//    organization2.setOrganizationType(organizationType);
-//    organization2 = personalManagementFacade.createOrganization(organization2);
-//
-//    Vehicle vehicle3 = VehicleOM.withDefaultValues();
-//    vehicle3.setVehiclePlate("22222ABC");
-//    vehicle3 = personalManagementFacade.createVehicle(vehicle3.getVehiclePlate(), vehicle3.getType(),
-//        organization.getId());
-//    personalManagementFacade.dismantleVehicleById(vehicle3.getId());
-//
-//    Vehicle vehicle4 = VehicleOM.withDefaultValues();
-//    vehicle4.setVehiclePlate("333333ABC");
-//    vehicle4 = personalManagementFacade.createVehicle(vehicle4.getVehiclePlate(), vehicle4.getType(),
-//        organization.getId());
-//
-//    ArrayList<Vehicle> vehicles = new ArrayList<>();
-//
-//    vehicles.add(vehicle2);
-//    vehicles.add(vehicle4);
-//
-//    Assertions.assertEquals(vehicles, personalManagementFacade.findAllActiveVehicles());
-//  }
+  private Organization createDefaultOrganization() {
+    OrganizationType type = personalManagementFacade.createOrganizationType(
+        OrganizationTypeOM.withDefaultValues().getName());
+    Organization org = OrganizationOM.withDefaultValues();
+    org.setOrganizationType(type);
+    return personalManagementFacade.createOrganization(org);
+  }
 
+  @Test
+  void givenValidData_whenCreateVehicle_thenCreated() throws InstanceNotFoundException {
+    Organization organization = createDefaultOrganization();
+    Vehicle vehicle = resourceManagementFacade.createVehicle("12345ABC", "Car", organization.getId());
+    Assertions.assertNotNull(vehicle.getId());
 
+    Vehicle found = resourceManagementFacade.findVehicleById(vehicle.getId());
+    Assertions.assertEquals(vehicle.getVehiclePlate(), found.getVehiclePlate());
+  }
+
+  @Test
+  void givenInvalidId_whenFindVehicleById_thenThrows() {
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> resourceManagementFacade.findVehicleById(-1L));
+  }
+
+  @Test
+  void givenValidData_whenUpdateVehicle_thenUpdated() throws InstanceNotFoundException {
+    Organization organization = createDefaultOrganization();
+    Vehicle vehicle = resourceManagementFacade.createVehicle("12345ABC", "Car", organization.getId());
+    resourceManagementFacade.updateVehicle(vehicle.getId(), "NEWPLATE", "Truck");
+    Vehicle updated = resourceManagementFacade.findVehicleById(vehicle.getId());
+    Assertions.assertEquals("NEWPLATE", updated.getVehiclePlate());
+    Assertions.assertEquals("Truck", updated.getType());
+  }
+
+  @Test
+  void givenInvalidData_whenUpdateVehicle_thenConstraintViolation() throws InstanceNotFoundException {
+    Organization organization = createDefaultOrganization();
+    Vehicle vehicle = resourceManagementFacade.createVehicle("12345ABC", "Car", organization.getId());
+    Assertions.assertThrows(ConstraintViolationException.class,
+        () -> resourceManagementFacade.updateVehicle(vehicle.getId(), "", ""));
+  }
+
+  @Test
+  void givenValidId_whenDismantleVehicle_thenDismantled() throws InstanceNotFoundException {
+    Organization organization = createDefaultOrganization();
+    Vehicle vehicle = resourceManagementFacade.createVehicle("12345ABC", "Car", organization.getId());
+    resourceManagementFacade.dismantleVehicleById(vehicle.getId());
+    Assertions.assertNotNull(resourceManagementFacade.findVehicleById(vehicle.getId()).getDismantleAt());
+  }
+
+  @Test
+  void givenAlreadyDismantled_whenDismantleAgain_thenThrows() throws InstanceNotFoundException {
+    Organization organization = createDefaultOrganization();
+    Vehicle vehicle = resourceManagementFacade.createVehicle("12345ABC", "Car", organization.getId());
+    resourceManagementFacade.dismantleVehicleById(vehicle.getId());
+    Assertions.assertThrows(AlreadyDismantledException.class,
+        () -> resourceManagementFacade.dismantleVehicleById(vehicle.getId()));
+  }
+
+  @Test
+  void givenVehiclesInOrganization_whenFindByOrganization_thenFound() throws InstanceNotFoundException {
+    Organization organization = createDefaultOrganization();
+    resourceManagementFacade.createVehicle("11111AA", "Car", organization.getId());
+    resourceManagementFacade.createVehicle("22222BB", "Van", organization.getId());
+
+    List<Vehicle> vehicles = resourceManagementFacade.findVehiclesByOrganizationId(organization.getId());
+    Assertions.assertEquals(2, vehicles.size());
+  }
+
+  @Test
+  void givenVehicles_whenFindActiveByOrganization_thenOnlyActive() throws InstanceNotFoundException {
+    Organization organization = createDefaultOrganization();
+    resourceManagementFacade.createVehicle("11111AA", "Car", organization.getId());
+    Vehicle toDismantle = resourceManagementFacade.createVehicle("22222BB", "Van", organization.getId());
+    resourceManagementFacade.dismantleVehicleById(toDismantle.getId());
+
+    List<Vehicle> active = resourceManagementFacade.findActiveVehiclesByOrganizationId(organization.getId());
+    Assertions.assertEquals(1, active.size());
+  }
+
+  @Test
+  void givenVehicles_whenFindAllVehicles_thenAllFound() throws InstanceNotFoundException {
+    Organization organization = createDefaultOrganization();
+    Vehicle v1 = resourceManagementFacade.createVehicle("11111AA", "Car", organization.getId());
+    Vehicle v2 = resourceManagementFacade.createVehicle("22222BB", "Van", organization.getId());
+
+    List<Vehicle> all = resourceManagementFacade.findAllVehicles();
+    Assertions.assertTrue(all.stream().anyMatch(v -> v.getId().equals(v1.getId())));
+    Assertions.assertTrue(all.stream().anyMatch(v -> v.getId().equals(v2.getId())));
+  }
+
+  @Test
+  void givenVehicles_whenFindAllActive_thenOnlyActive() throws InstanceNotFoundException {
+    Organization organization = createDefaultOrganization();
+    resourceManagementFacade.createVehicle("11111AA", "Car", organization.getId());
+    Vehicle toDismantle = resourceManagementFacade.createVehicle("22222BB", "Van", organization.getId());
+    resourceManagementFacade.dismantleVehicleById(toDismantle.getId());
+
+    List<Vehicle> active = resourceManagementFacade.findAllActiveVehicles();
+    Assertions.assertTrue(active.stream().anyMatch(v -> v.getVehiclePlate().equals("11111AA")));
+    Assertions.assertTrue(active.stream().noneMatch(v -> v.getVehiclePlate().equals("22222BB")));
+  }
+
+  @Test
+  void givenInvalidOrganization_whenCreateVehicle_thenThrows() {
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> resourceManagementFacade.createVehicle("12345ABC", "Car", 9999L));
+  }
 }
