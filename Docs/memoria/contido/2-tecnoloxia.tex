@@ -6,7 +6,7 @@
 \section{Lenguajes}
 
 \subsection{Java}
-Java \cite{java} sigue siendo el lenguaje principal del backend por su madurez, su integración natural con Spring y su adecuación al tipo de lógica que requiere la aplicación.
+Java \cite{java} sigue siendo el lenguaje principal del backend por su madurez, su integración natural con Spring y su adecuación al tipo de lógica que requiere la aplicación. 
 
 \subsection{SQL}
 \acrfull{sql} \cite{sql} se mantiene como base para definir y consultar los datos persistidos.
@@ -66,15 +66,17 @@ Gracias a esta aproximación, se garantiza que la API esté bien documentada y q
 Material UI \cite{materialui} continúa proporcionando los componentes visuales principales de la aplicación web.
 
 \subsection{React Map GL}
-React Map GL \cite{reactmapgl} se elimina como dependencia explícita porque la integración cartográfica se centraliza sobre MapLibre \cite{maplibre}. Esta sustitución reduce dependencia de una capa anterior y unifica el tratamiento del mapa sobre una tecnología más abierta y alineada con el resto del proyecto.
-La razón principal de esta eliminación es que React Map GL es una capa de abstracción sobre Mapbox GL, y dado que se ha decidido no usar Mapbox como proveedor de mapas, sino optar por MapLibre, resulta más coherente trabajar directamente con esta última. Esto simplifica la arquitectura y evita depender de una librería que está diseñada específicamente para Mapbox, lo que podría generar incompatibilidades o limitaciones al usar MapLibre.
+React Map GL \cite{reactmapgl} sigue utilizándose en combinación con MapLibre \cite{maplibre} para integrar la cartografía en la interfaz web. Esta combinación permite mantener una capa de representación ya conocida y, al mismo tiempo, apoyarse en una solución abierta y coherente con el resto del proyecto.
+
+\subsection{MapTiler}
+MapTiler \cite{maptiler} se incorpora como proveedor del estilo cartográfico utilizado en la visualización de mapas web. Su uso permite disponer de una base visual consistente para el mapa sin depender de la infraestructura de Mapbox.
 
 \subsection{Open Weather Map}
 Open Weather Map \cite{openweathermap} se mantiene como fuente externa de información meteorológica útil en el contexto de emergencias.
 
 \subsection{Mapbox}
-Mapbox \cite{mapbox} se descarta como solución principal para reducir la dependencia de claves API y de planes de prueba o gratuitos. En este trabajo, la visualización geográfica se apoya en MapLibre, que se adapta mejor al enfoque abierto del proyecto.
-La causa de esta eliminación es que Mapbox, aunque es una plataforma potente y con muchas funcionalidades, requiere una clave API para su uso, lo que puede generar limitaciones en el desarrollo y despliegue de la aplicación, especialmente si se busca un enfoque más abierto y sin restricciones. MapLibre, por otro lado, es una bifurcación de Mapbox GL que se mantiene como proyecto de código abierto y no requiere claves API para su uso básico.
+Mapbox \cite{mapbox} no se utiliza como proveedor principal de mapas para reducir la dependencia de claves API y de planes de uso restringidos. En este trabajo, la visualización geográfica se apoya en MapLibre, que encaja mejor con el enfoque abierto del proyecto.
+Esta decisión evita depender de una plataforma orientada a servicios cerrados y facilita un uso más flexible de la capa cartográfica.
 
 \section{Pruebas}
 
@@ -109,9 +111,6 @@ Git \cite{git} se mantiene como sistema de control de versiones del proyecto.
 \subsection{Apache Maven}
 Apache Maven \cite{maven} sigue siendo la base del ciclo de construcción del backend y también soporta la generación de OpenAPI.
 
-\subsection{Create React App}
-Create React App \cite{create-react-app} permanece como base de arranque del proyecto web.
-
 \section{Sistemas de gestión de base de datos}
 
 \subsection{H2}
@@ -129,8 +128,8 @@ PostGIS \cite{postgis} sigue siendo esencial para soportar las operaciones geoes
 \subsection{Tomcat}
 Tomcat \cite{tomcat} se mantiene como contenedor de ejecución del backend.
 
-\subsection{Webpack}
-Webpack \cite{webpack} continúa formando parte de la cadena de construcción de la interfaz web.
+\subsection{Vite}
+Vite \cite{vite} continúa formando parte de la cadena de construcción de la interfaz web.
 
 \subsection{Serve}
 Serve \cite{serve} se conserva como herramienta sencilla para servir la versión compilada del frontend durante pruebas o despliegues locales.
@@ -139,7 +138,7 @@ Serve \cite{serve} se conserva como herramienta sencilla para servir la versión
 
 \subsection{Kotlin}
 Kotlin \cite{kotlin} se incorpora como lenguaje principal de la aplicación Android por su concisión, su interoperabilidad con Java y su buena integración con el ecosistema Android.
-Este lenguaje se elige por su capacidad para reducir la cantidad de código redundante, lo que facilita el desarrollo y mantenimiento de la aplicación móvil. Además, Kotlin es totalmente interoperable con Java, lo que permite reutilizar parte del código del backend o compartir modelos de datos si es necesario. También, Kotlin tiene un fuerte soporte por parte de Google para el desarrollo de Android, lo que garantiza acceso a las últimas funcionalidades y mejoras en la plataforma móvil.
+Este lenguaje se elige por su capacidad para reducir la cantidad de código redundante, lo que facilita el desarrollo y mantenimiento de la aplicación móvil. Además, Kotlin es totalmente interoperable con Java, lo que permite reutilizar código y compartir modelos de datos cuando resulta conveniente. También cuenta con un fuerte soporte por parte de Google para el desarrollo de Android, lo que garantiza acceso a las últimas funcionalidades y mejoras en la plataforma móvil.
 
 \subsection{Gradle}
 Gradle \cite{gradle} se añade como sistema de construcción habitual en Android, ya que facilita la gestión de módulos, dependencias y variantes de compilación. Al igual que Maven, Gradle permite definir tareas personalizadas para compilar, probar y empaquetar la aplicación móvil, lo que es esencial para un proyecto con múltiples componentes y dependencias. Esta herramienta de construcción es un estándar en el desarrollo de Android y se integra perfectamente con Android Studio, lo que mejora la eficiencia del desarrollo y la gestión de dependencias.

@@ -7,20 +7,20 @@
 
 El diseño parte de una idea principal: el sistema debe permitir coordinar emergencias, recursos y avisos de forma consistente, sin duplicar responsabilidades entre capas. Para ello, el backend concentra el modelo de dominio y las reglas de negocio; el frontend web actúa como interfaz de gestión principal; y la aplicación Android adapta parte de esas funcionalidades a un contexto móvil, manteniendo el acceso a la información operativa y a las acciones más frecuentes.
 
-En la evolución respecto al trabajo previo \cite{TFGAdrianGarcia2025} se han incorporado nuevas funcionalidades, especialmente en torno a las asignaciones, el envío de notificaciones y la generación de recomendaciones basadas en reglas. Sin embargo, la estructura general de la interfaz y del dominio se mantiene en lineas generales, porque el objetivo no era redefinir la aplicación completa sino ampliar su alcance funcional sobre una base ya establecida. Gracias a que existía una base escalable y bien organizada, se han podido añadir nuevas funcionalidades sin necesidad de reestructurar el código existente, lo que ha facilitado la evolución del proyecto.
+En la evolución respecto al trabajo previo \cite{TFGAdrianGarcia2025} se han incorporado nuevas funcionalidades, especialmente en torno a las asignaciones, el envío de notificaciones y la generación de recomendaciones basadas en reglas. Sin embargo, la estructura general de la interfaz y del dominio se mantiene en líneas generales, porque el objetivo no era redefinir la aplicación completa sino ampliar su alcance funcional sobre una base ya establecida. Gracias a que existía una base escalable y bien organizada, se han podido añadir nuevas funcionalidades sin necesidad de reestructurar el código existente, lo que ha facilitado la evolución del proyecto.
 
 \section{Resumen de patrones usados}
 Parte de la arquitectura y de las decisiones de diseño utilizadas en este proyecto han sido heredadas y adaptadas a partir del trabajo previo desarrollado. Esta reutilización no solo permite mantener una continuidad tecnológica, sino también reducir la complejidad de desarrollo al apoyarse en una base arquitectónica ya consolidada.
 
 Entre los patrones heredados destaca especialmente la organización en capas, utilizada tanto en el backend como en el frontend, permitiendo separar claramente las responsabilidades de presentación, lógica de negocio y persistencia de datos. Esta división facilita el mantenimiento del código, mejora la modularidad y simplifica la evolución futura de la aplicación. Del mismo modo, se mantiene una estructura basada en el patrón Modelo-Vista-Controlador (MVC), especialmente en la parte de interfaz, favoreciendo una separación clara entre la representación visual, la gestión del estado y la interacción con el usuario.
 
-También se utilizan mecanismos de abstracción y desacoplamiento como la inyección de dependencias, que facilita la reutilización de componentes y reduce el acoplamiento entre módulos, o el uso de objetos específicos para la transferencia de información entre capas, permitiendo encapsular y estructurar adecuadamente los datos intercambiados dentro del sistema. A mayores, se conservan patrones orientados al acceso y manipulación de datos, contribuyendo a aislar la lógica de persistencia del resto de la aplicación y mejorando la mantenibilidad general del proyecto.
+También se utilizan mecanismos de abstracción y desacoplamiento como la inyección de dependencias, que facilita la reutilización de componentes y reduce el acoplamiento entre módulos, o el uso de objetos específicos para la transferencia de información entre capas, permitiendo encapsular y estructurar adecuadamente los datos intercambiados dentro del sistema. Además, se conservan patrones orientados al acceso y manipulación de datos, contribuyendo a aislar la lógica de persistencia del resto de la aplicación y mejorando la mantenibilidad general del proyecto.
 
 Junto a estos patrones heredados, se han incorporado otros vinculados a la lógica de recomendación del backend y a la comunicación asíncrona y navegación de la aplicación Android. A continuación se resumen los principales patrones añadidos.
 
 \begin{itemize}
 
-    \item \textbf{API-first con OpenAPI:} En este proyecto se ha adoptado un diseño \textit{API-first}, definiendo primero el contrato de la API en un fichero YAML con OpenAPI y generando a partir de él parte de los controladores y los DTOs del backend mediante el plugin de Maven de OpenAPI. Gracias a esto se ha generado la documentación mediante Swagger de forma automática, lo que facilita la sincronización entre la implementación y la documentación, y reduce errores de desalineación entre ambos. Este enfoque ha permitido que se generen contratos a los que la aplicación web y la aplicación Android puedan adaptarse de forma consistente, lo que ha sido especialmente útil para integrar nuevas funcionalidades sin necesidad de modificar manualmente los controladores o los contratos de datos.
+    \item \textbf{API-first con OpenAPI:} En este proyecto se ha adoptado un diseño \textit{API-first}, definiendo primero el contrato de la API en un fichero YAML con OpenAPI y generando a partir de él las interfaces de controladores y los DTOs del backend mediante el plugin de Maven de OpenAPI. Gracias a esto se ha generado la documentación mediante Swagger de forma automática, lo que facilita la sincronización entre la implementación y la documentación y reduce errores de desalineación entre ambos. Este enfoque ha permitido que los contratos de la API se generen de forma consistente, lo que ha sido especialmente útil para integrar nuevas funcionalidades sin necesidad de modificar manualmente los contratos de datos.
 
     \item \textbf{Chain of Responsibility:} En el backend, la lógica de recomendaciones se apoya en este patrón, ya que las reglas se evalúan de forma secuencial hasta encontrar la primera que cumple la condición buscada. Cada regla actúa como un eslabón de la cadena y, cuando satisface el criterio, devuelve la propuesta asociada sin continuar con las siguientes.
 
@@ -45,7 +45,7 @@ El modelado utilizado en esta memoria sigue una perspectiva C4 \cite{C4Model}, c
   \label{fig:c4-contextual}
 \end{figure}
 
-En la figura \ref{fig:c4-contextual} se muestra la relación general entre los usuarios y los distintos sistemas que puede interactuar. En esta vista de contexto se aprecia que el sistema central es el backend, que expone una \acrshort{api} \acrshort{rest} consumida tanto por el frontend web como por la aplicación Android. Además, el backend se integra con servicios externos como \acrshort{fcm} para notificaciones push y con una base de datos PostGIS para persistencia geoespacial. Los usuarios interactúan principalmente con el frontend web para gestión y consulta, mientras que la aplicación Android ofrece acceso móvil a información operativa y acciones frecuentes. 
+En la figura \ref{fig:c4-contextual} se muestra la relación general entre los usuarios y los distintos sistemas con los que interactúa la aplicación. En esta vista de contexto se aprecia que el sistema central es el backend, que expone una \acrshort{api} \acrshort{rest} consumida tanto por el frontend web como por la aplicación Android. Además, el backend se integra con servicios externos como \acrshort{fcm} para notificaciones push y con una base de datos PostGIS para persistencia geoespacial. Los usuarios interactúan principalmente con el frontend web para gestión y consulta, mientras que la aplicación Android ofrece acceso móvil a información operativa y acciones frecuentes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Subsistema Backend %
@@ -54,7 +54,7 @@ En la figura \ref{fig:c4-contextual} se muestra la relación general entre los u
 
 \subsection{Objetivos}
 
-El backend tiene como objetivo coordinar el estado de las emergencias, recursos, asignaciones y avisos. Debe exponer una \acrshort{api} \acrshort{rest} que permita al frontend web y a la aplicación Android consultar información operativa, gestionar emergencias, crear asignaciones, enviar avisos y configurar reglas de recomendación. Además, el backend debe garantizar la seguridad mediante autenticación y autorización, así como registrar históricos de todas las operaciones que se realicen para trazabilidad y auditoría.
+El backend tiene como objetivo coordinar el estado de las emergencias, recursos, asignaciones y avisos. Debe exponer una \acrshort{api} \acrshort{rest} que permita al frontend web y a la aplicación Android consultar información operativa, gestionar emergencias, crear asignaciones, enviar avisos y configurar reglas de recomendación. Además, el backend debe garantizar la seguridad mediante autenticación y autorización, así como registrar históricos de las operaciones relevantes para trazabilidad y auditoría.
 
 \subsection{Arquitectura}
 
@@ -73,7 +73,7 @@ En la figura \ref{fig:c4-container-backend} se aprecia el contenedor backend y s
 
 \subsubsection{Diagrama de entidades}
 
-El modelo de dominio se ha ampliado de forma notable respecto al trabajo previo, se ha utilizado el color verde para resaltar las nuevas entidades. La figura \ref{fig:modelo-dominio} resume la estructura persistente actual y permite observar cómo el dominio ha pasado de estar centrado en incendios, recursos y avisos a incorporar de forma explícita emergencias, asignaciones, reglas de recomendación y una gestión de históricos más detallada.
+El modelo de dominio se ha ampliado de forma notable respecto al trabajo previo. Se ha utilizado el color verde para resaltar las nuevas entidades. La figura \ref{fig:modelo-dominio} resume la estructura persistente actual y permite observar cómo el dominio ha pasado de estar centrado en incendios, recursos y avisos a incorporar de forma explícita emergencias, asignaciones, reglas de recomendación y una gestión de históricos más detallada.
 
 \begin{figure}[H]
   \centering
@@ -143,9 +143,9 @@ La recomendación semiautomática de recursos se apoya en \textit{EmergencyTypeR
 
 \subsubsection{Diseño de controladores}
 
-Una de las diferencias más importantes es que los controladores se generan a partir de la especificación \textit{OpenAPI}. En la etapa anterior la definición de endpoints dependía de clases controladoras creadas manualmente, mientras que aquí se parte de la descripción de la API y el código generado proporciona la base de los controladores y de los contratos de entrada y salida. 
+Una de las diferencias más importantes es que los controladores se generan a partir de la especificación \textit{OpenAPI}. En la etapa anterior la definición de endpoints dependía de clases controladoras creadas manualmente, mientras que aquí se parte de la descripción de la API y el código generado proporciona la base de las interfaces de controladores y de los contratos de entrada y salida.
 
-Es importante aclarar que se han migrado todos los endpoints existentes a esta nueva forma de trabajo, lo que ha supuesto un esfuerzo de adaptación pero ha permitido mantener la coherencia en el resto del proyecto. Esta migración es agnóstica respecto a la estructura interna del backend, ya que el código generado se integra con las fachadas y servicios de lógica de negocio sin necesidad de modificar su organización. 
+Es importante aclarar que se han migrado los endpoints existentes a esta nueva forma de trabajo, lo que ha supuesto un esfuerzo de adaptación pero ha permitido mantener la coherencia en el resto del proyecto. Esta migración es agnóstica respecto a la estructura interna del backend, ya que el código generado se integra con las fachadas y servicios de lógica de negocio sin necesidad de modificar su organización.
 
 Este enfoque reduce errores de sincronización entre documentación e implementación, y facilita que los cambios en la API se propaguen de forma consistente. Los controladores siguen siendo responsables de exponer la operación HTTP, pero la estructura general, los tipos de petición y respuesta y parte de la firma de los endpoints quedan alineados con el contrato definido en \textit{OpenAPI}.
 
@@ -156,7 +156,7 @@ Este enfoque reduce errores de sincronización entre documentación e implementa
   \label{fig:swagger-collection}
 \end{figure}
 
-En la figura \ref{fig:swagger-collection} se muestran la documetación generada mediante Swagger, que refleja los bloques de gestión de organización, de emergencias y de recommendación. El resto de bloques también se ha documentado, pero se han omitido en la imagen para no saturar la vista. Aquí se puede observar las ventajas de este enfoque, ya que la documentación se genera de forma automática a partir del contrato definido en OpenAPI, lo que garantiza que siempre esté sincronizada con la implementación real de los endpoints. Además, esta vista permite comprobar de forma centralizada los recursos disponibles, los métodos HTTP asociados y la estructura general de la interfaz pública del backend. También se observa en la documentación los endpoints que requieren autenticación y los que son accesibles para usuarios anónimos, lo que refleja la política de seguridad implementada. La política de seguridad se ha definido siguiendo el paradigma de seguridad basada en roles, lo que permite controlar el acceso a cada endpoint según el rol del usuario autenticado.
+En la figura \ref{fig:swagger-collection} se muestra la documentación generada mediante Swagger, que refleja los bloques de gestión de organización, de emergencias y de recomendación. El resto de bloques también se ha documentado, pero se han omitido en la imagen para no saturar la vista. Aquí se pueden observar las ventajas de este enfoque, ya que la documentación se genera de forma automática a partir del contrato definido en OpenAPI, lo que ayuda a mantenerla sincronizada con la implementación real de los endpoints. Además, esta vista permite comprobar de forma centralizada los recursos disponibles, los métodos HTTP asociados y la estructura general de la interfaz pública del backend. También se observan en la documentación los endpoints que requieren autenticación y los que son accesibles para usuarios anónimos, lo que refleja la política de seguridad implementada.
 
 
 \subsubsection{Gestión de errores e internalización}
@@ -165,7 +165,7 @@ La gestión de errores se centraliza en \textit{GlobalControllerExceptionHandler
 
 \subsubsection{Control de acceso}
 
-La configuración de seguridad se define en \textit{SecurityConfig}. El backend funciona con sesión sin estado y filtro JWT. Se autorizan explícitamente los endpoints según rol: usuarios anónimos pueden iniciar sesión, registrarse y consultar parte de la información pública; los roles de miembro, gestor y coordinador acceden a recursos y emergencias según permisos; y las operaciones de coordinación quedan restringidas a coordinadores.
+La configuración de seguridad se define en \textit{SecurityConfig}. El backend se configura para funcionar con sesión sin estado y filtro JWT. Se autorizan explícitamente algunos endpoints según rol: usuarios anónimos pueden iniciar sesión, registrarse y consultar parte de la información pública; los roles de miembro, gestor y coordinador acceden a recursos y emergencias según permisos; y las operaciones de coordinación quedan restringidas a coordinadores.
 
 Este bloque también se ha mantenido prácticamente sin cambios estructurales, porque la política de permisos seguía siendo válida para la evolución de la aplicación. La aplicación también registra dispositivos móviles mediante \textit{MobileDevice}, lo que permite enlazar el usuario con su token FCM y habilitar notificaciones push.
 
@@ -195,7 +195,7 @@ El frontend mantiene la organización por capas ya utilizada en la etapa anterio
   \label{fig:c4-container-frontend}
 \end{figure}
 
-En la el diagrama de arquitectura del frontend \ref{fig:c4-container-frontend} se representa como un contenedor React con su capa de estado, acceso a servicios, internacionalización y componentes de interfaz. También se observa su interacción con el backend y con los servicios externos utilizados para mapas. Se ha utilizado el color verde para resaltar los componentes nuevos o significativamente modificados respecto al trabajo previo.
+En el diagrama de arquitectura del frontend \ref{fig:c4-container-frontend} se representa un contenedor React con su capa de estado, acceso a servicios, internacionalización y componentes de interfaz. También se observa su interacción con el backend y con los servicios externos utilizados para mapas. Se ha utilizado el color verde para resaltar los componentes nuevos o significativamente modificados respecto al trabajo previo.
 
 En la parte inferior está el método de acceso a la \acrshort{api} del backend, implementado con \acrshort{rtkquery}. Encima se sitúan los componentes de interfaz, construidos con React y Material UI. El estado de sesión y el tema visual se guardan en Redux, mientras que la internacionalización se resuelve con \textit{react-i18next}. La configuración global de rutas se concentra en \textit{App.jsx}, donde se protegen pantallas según el estado de autenticación y el rol de usuario.
 
@@ -210,7 +210,7 @@ Este enfoque reduce repetición y hace que cada feature declare solo la parte qu
 
 \subsection{Capa de componentes de interfaz}
 
-Como se puede ver en la imagen \ref{fig:c4-container-frontend}, la interfaz se divide por dominios funcionales. \textit{Dashboard} reúne el mapa, la información meteorológica y el panel de avisos, y se mantiene como una de las piezas centrales de la aplicación. \textit{LandingMap} dibuja cuadrantes y emergencias sobre MapLibre, con iconos distintos según el tipo de emergencia y recursos desplegados. \textit{Notice} y \textit{MyNoticesList} muestran avisos con sus imágenes y estados, y \textit{CoordinatorNoticesView} añade acciones de aceptación, rechazo y borrado.
+Como se puede ver en la imagen \ref{fig:c4-container-frontend}, la interfaz se divide por dominios funcionales. \textit{Dashboard} reúne el mapa, la información meteorológica y el panel de avisos, y se mantiene como una de las piezas centrales de la aplicación. \textit{LandingMap} dibuja cuadrantes y emergencias sobre MapLibre, con estilos servidos por MapTiler, e iconos distintos según el tipo de emergencia y recursos desplegados. \textit{Notice} y \textit{MyNoticesList} muestran avisos con sus imágenes y estados, y \textit{CoordinatorNoticesView} añade acciones de aceptación, rechazo y borrado.
 
 La gestión de emergencias se divide en vistas como \textit{EmergencyManagementView}, \textit{EmergencyDetailScreen} y \textit{EmergencyHistoryView}. Las asignaciones disponen de vistas propias para creación, listado y detalle. La pantalla de creación de asignaciones permite seleccionar emergencia, cuadrante y recurso, y valida que la combinación sea coherente con la estructura de la emergencia. Del mismo modo, la vista de reglas de recomendación permite al coordinador seleccionar un tipo de emergencia, cargar las reglas asociadas, editar su prioridad y modificar el JSON que define el comportamiento del motor semiautomático.
 
@@ -221,7 +221,7 @@ En la práctica, el trabajo realizado en esta capa se ha centrado en ampliar com
 
 La internacionalización se basa en archivos de traducción para inglés, español y gallego. Los textos de la interfaz y los mensajes de error usan claves compartidas entre componentes, y el idioma activo se propaga en las peticiones al backend.
 
-También se ha migrado a \textit{MapLibre}, una librería open source que permite prescindir de planes gratuitos o limitados. A mayores se usan librerías como \textit{Material UI} y \textit{dayjs}. Estas integraciones ya estaban presentes en la etapa anterior y se han mantenido porque encajan bien con la evolución del sistema y permiten incorporar nuevas funcionalidades sin rehacer la base del frontend.
+También se ha migrado a \textit{MapLibre}, una librería open source que permite prescindir de planes gratuitos o limitados, y se ha mantenido MapTiler como proveedor de estilos cartográficos. Además, se usan librerías como \textit{Material UI} y \textit{dayjs}. Estas integraciones ya estaban presentes en la etapa anterior y se han mantenido porque encajan bien con la evolución del sistema y permiten incorporar nuevas funcionalidades sin rehacer la base del frontend.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Subsistema Android %
@@ -240,7 +240,7 @@ Para mantener la sesión y ciertos parámetros de uso, la aplicación almacena l
 
 \subsection{Arquitectura}
 
-La arquitectura de la aplicación Android se organiza en torno a una actividad principal que actúa como contenedor de la experiencia completa. Desde esa actividad se resuelve la navegación entre pantallas, que se construyen principalmente con Jetpack Compose, aunque en algunos casos se mantienen fragments o activities para flujos específicos. 
+La aplicación Android combina una actividad principal con pantallas implementadas en Compose y flujos concretos basados en Activities y Fragments. Desde esa actividad se resuelve la navegación entre pantallas y se mantiene el acceso centralizado al estado de sesión y a las funciones principales.
 
 La aplicación se apoya en una capa de acceso a red centralizada en \textit{HttpClient}, que se encarga de gestionar las peticiones al backend, incluyendo la lectura del token JWT desde preferencias compartidas y la gestión de hosts locales para facilitar el desarrollo. Todas las pantallas reutilizan esa capa para evitar duplicar lógica de conexión, lectura del token y tratamiento del contenido JSON.
 
@@ -262,7 +262,7 @@ La aplicación se ha diseñado para ser modular y escalable, de forma que nuevas
   \label{fig:c4-container-android}
 \end{figure}
 
-En la figura \ref{fig:c4-container-android} se muestra la aplicación Android como un contenedor que agrupa navegación, pantallas Compose, acceso a red, localización, Firebase Messaging e integración con mapas. La vista deja claro que el móvil consume el backend y complementa la interacción con notificaciones y servicios externos.
+En la figura \ref{fig:c4-container-android} se muestra la aplicación Android como un contenedor que agrupa navegación, pantallas Compose, accesos puntuales basados en Activities y Fragments, acceso a red, localización, Firebase Messaging e integración con mapas. La vista deja claro que el móvil consume el backend y complementa la interacción con notificaciones y servicios externos.
 
 \subsection{Capa de acceso al servicio}
 
@@ -271,7 +271,7 @@ Las peticiones se realizan mediante \textit{HttpClient}, que resuelve GET y POST
 Las pantallas consumen los mismos recursos del backend que el frontend web, por lo que la capa de acceso se limita a transformar el JSON recibido en estructuras manejables desde Kotlin. En la práctica, esta capa actúa como un adaptador entre el backend y la UI móvil: abstrae la construcción de URLs, reutiliza el token almacenado en preferencias compartidas y centraliza la lógica de reintento sobre varios hosts locales. Esto evita que cada pantalla tenga que implementar su propia comunicación y hace que el acceso a datos sea homogéneo en toda la aplicación.
 
 
-Como se puede observar en el siguiente diagrama de secuencia \ref{fig:secuencia-httpclient}, cuando el usuario quiere obtener información sobre las emergencias y los recursos asignados a dicha emergencia el sistema android realiza una serie de llamadas a la capa REST del backend, a través de la capa de acceso a servicios, para obtener la información necesaria y mostrarla en la interfaz de usuario. El proceso comienza con la pantalla de emergencias, que solicita al backend la lista de emergencias activas. Una vez que el usuario selecciona una emergencia específica, la aplicación realiza una nueva llamada para obtener el detalle de esa emergencia, incluyendo su localización y los cuadrantes asociados. Si la emergencia tiene localización por punto, se realiza una consulta adicional para determinar el cuadrante correspondiente. Finalmente, se recuperan las asignaciones vinculadas a ese cuadrante para mostrar los recursos desplegados en esa emergencia. Este flujo de llamadas garantiza que la información mostrada al usuario esté siempre actualizada y refleje el estado real del sistema operativo gestionado por el backend. 
+Como se puede observar en el siguiente diagrama de secuencia \ref{fig:secuencia-httpclient}, cuando el usuario quiere obtener información sobre las emergencias y los recursos asignados a dicha emergencia, el sistema Android realiza una serie de llamadas a la capa REST del backend, a través de la capa de acceso a servicios, para obtener la información necesaria y mostrarla en la interfaz de usuario. El proceso comienza con la pantalla de emergencias, que solicita al backend la lista de emergencias activas. Una vez que el usuario selecciona una emergencia específica, la aplicación realiza una nueva llamada para obtener el detalle de esa emergencia, incluyendo su localización y los cuadrantes asociados. Si la emergencia tiene localización por punto, se realiza una consulta adicional para determinar el cuadrante correspondiente. Finalmente, se recuperan las asignaciones vinculadas a ese cuadrante para mostrar los recursos desplegados en esa emergencia. Este flujo de llamadas garantiza que la información mostrada al usuario esté siempre actualizada y refleje el estado real del sistema gestionado por el backend.
 
 
 \begin{figure}[H]
@@ -295,7 +295,7 @@ En esta capa también destaca el comportamiento del menú lateral: si el usuario
 
 El envío de avisos se gestiona en \textit{SendNoticeFragment}, donde se combinan captura de imagen, obtención de localización y envío al backend. Esa pantalla refleja bien el objetivo de la app móvil: acercar al usuario acciones directas y relacionadas con su situación física. 
 
-Otro aspecto relevante de la interfaz Android es la gestión de notificaciones push. Para explicar este proceso se ha incluido un diagrama de secuencia \ref{fig:secuencia-fcm} el flujo desde que el backend envía una notificación FCM hasta que el usuario interactúa con ella. El proceso comienza con el backend generando una asignación y el AssignmentService enviando una notificación FCM al dispositivo asociado al usuario asignado. La aplicación Android recibe esa notificación a través de \textit{AppFirebaseMessagingService}, que crea una notificación del sistema con el contenido recibido. Cuando el usuario pulsa sobre la notificación, la aplicación redirige al usuario a la pantalla de detalle de la emergencia asociada a esa asignación, permitiéndole consultar la información relevante y aceptar la asignación si lo desea. Este flujo garantiza que los usuarios estén informados en tiempo real sobre las asignaciones que les afectan y puedan reaccionar de forma inmediata desde su dispositivo móvil. 
+Otro aspecto relevante de la interfaz Android es la gestión de notificaciones push. Para explicar este proceso se ha incluido un diagrama de secuencia \ref{fig:secuencia-fcm} que resume el flujo desde que el backend envía una notificación FCM hasta que el usuario interactúa con ella. El proceso comienza con el backend generando una asignación y el \textit{AssignmentService} enviando una notificación FCM al dispositivo asociado al usuario asignado. La aplicación Android recibe esa notificación a través de \textit{AppFirebaseMessagingService}, que crea una notificación del sistema con el contenido recibido. Cuando el usuario pulsa sobre la notificación, la aplicación redirige al usuario a la pantalla de detalle de la emergencia asociada a esa asignación, permitiéndole consultar la información relevante y aceptar la asignación si lo desea. Este flujo garantiza que los usuarios estén informados en tiempo real sobre las asignaciones que les afectan y puedan reaccionar de forma inmediata desde su dispositivo móvil.
 
 \begin{figure}[H]
   \centering
@@ -307,4 +307,4 @@ Otro aspecto relevante de la interfaz Android es la gestión de notificaciones p
 
 \subsection{Internacionalización y librerías externas}
 
-La internacionalización móvil se apoya en recursos de cadenas y en un helper propio para persistir el idioma activo. La aplicación también integra Firebase Messaging, MapLibre, Glide y Proj4J, además de utilidades para transformar coordenadas entre sistemas geográficos y proyectados. 
+La internacionalización móvil se apoya en recursos de cadenas y en un \textit{helper} propio para persistir el idioma activo. La aplicación también integra Firebase Messaging, MapLibre, Glide y Proj4J, además de utilidades para transformar coordenadas entre sistemas geográficos y proyectados.
