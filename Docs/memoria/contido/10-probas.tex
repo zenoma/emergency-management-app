@@ -1,7 +1,7 @@
 \chapter{Pruebas}
 \label{chap:probas}
 
-\lettrine{L}{as} pruebas de software constituyen un pilar fundamental para garantizar la calidad, la corrección y la estabilidad del sistema desarrollado. En este proyecto se ha adoptado un enfoque de pruebas automatizadas tanto para el backend como para el frontend, combinando distintos niveles de prueba según la naturaleza de cada subsistema. Para la aplicación Android, dadas las limitaciones de automatización en el entorno de desarrollo, se ha optado por un plan de pruebas manuales. Este capítulo describe la metodología empleada, las tecnologías utilizadas y el detalle de las pruebas realizadas en cada subsistema.
+\lettrine{L}{as} pruebas de software constituyen un pilar fundamental para garantizar la calidad, la corrección y la estabilidad del sistema desarrollado. En este proyecto se ha adoptado un enfoque de pruebas automatizadas para los tres subsistemas, combinando distintos niveles de prueba según la naturaleza de cada uno. Este capítulo describe la metodología empleada, las tecnologías utilizadas y el detalle de las pruebas realizadas en cada subsistema.
 
 \section{Backend}
 
@@ -34,14 +34,16 @@ Esta configuración de las pruebas de integración permite validar la lógica de
 
 \subsection{Cobertura de las pruebas}
 
-En esta imagen \ref{fig:coverage} se muestra la cobertura de las pruebas unitarias e integración del backend. La cobertura es un indicador que aporta confianza pero no garantiza la ausencia de errores, por lo que se ha complementado con un análisis de casos límite y validaciones de negocio en las pruebas de integración. Se ha tratado de alcanzar una cobertura elevada en la capa de servicios mediante una batería de tests de integración que validan tanto los flujos normales como los casos de error, asegurando que la lógica de negocio se comporta correctamente en un entorno realista con una base de datos real. 
-
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{imaxes/coverage.png}
   \caption{Cobertura de las pruebas del backend}
   \label{fig:coverage}
 \end{figure}
+
+En esta imagen \ref{fig:coverage} se muestra la cobertura de las pruebas unitarias e integración del backend. La cobertura es un indicador que aporta confianza pero no garantiza la ausencia de errores, por lo que se ha complementado con un análisis de casos límite y validaciones de negocio en las pruebas de integración. Se ha tratado de alcanzar una cobertura elevada en la capa de servicios mediante una batería de tests de integración que validan tanto los flujos normales como los casos de error, asegurando que la lógica de negocio se comporta correctamente en un entorno realista con una base de datos real. 
+
+
 
 \section{Frontend}
 
@@ -71,4 +73,42 @@ Esta batería de tests automatizados aporta tres beneficios principales. En prim
 Además de las pruebas automatizadas, se ha complementado la validación con un plan de pruebas manuales exhaustivas de la interfaz, que permiten validar la experiencia de usuario, la usabilidad y el comportamiento visual en diferentes dispositivos y navegadores. Dado que el frontend presenta una interfaz gráfica compleja con mapas interactivos y componentes dinámicos, las pruebas manuales cubren aspectos que las pruebas automatizadas no alcanzan, como la correcta visualización del mapa, la respuesta a eventos de usuario y la navegación entre pantallas.
 
 \section{Aplicación Android}
+
+Para la aplicación Android se ha adoptado una estrategia de pruebas automatizadas que aprovecha las librerías de testing ya presentes en el proyecto sin añadir dependencias adicionales. Siguiendo la clasificación estándar de Android, que distingue entre pruebas locales (ejecutadas en la JVM del equipo de desarrollo) y pruebas instrumentadas (ejecutadas en un dispositivo o emulador), se han implementado dos niveles de prueba que cubren tanto la lógica pura de utilidades como la interacción con componentes de la plataforma.
+
+\subsection{Pruebas unitarias locales}
+
+Las pruebas unitarias locales verifican componentes que no dependen del \textit{framework} de Android o cuyas dependencias son puramente de lógica. Se ejecutan directamente sobre la JVM del desarrollador, lo que las hace extremadamente rápidas y no requieren ni emulador ni dispositivo físico. 
+
+Todas estas pruebas se ejecutan con JUnit 4, que es la versión incluida en las dependencias del proyecto. Al ser pruebas que se ejecutan en la JVM local, no requieren configuraciones adicionales ni emulador, y pueden lanzarse desde Android Studio o mediante Gradle con la tarea \texttt{testDebugUnitTest}.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imaxes/coverage-android.png}
+  \caption{Cobertura de las pruebas unitarias locales}
+  \label{fig:android-coverage}
+\end{figure}
+
+Como se puede ver en los porcentajes de cobertura de la imagen \ref{fig:android-coverage}, estas pruebas unitarias locales alcanzan valores elevados. Estas utilidades y sus pruebas son fundamentales para garantizar la corrección de operaciones críticas como el tratamiento de coordenadas geográficas, la gestión de fechas y horas, y la persistencia de datos en SharedPreferences. 
+
+\subsection{Pruebas instrumentadas de integración}
+
+Las pruebas instrumentadas verifican el comportamiento de las actividades de Android en un entorno real (emulador o dispositivo físico). A diferencia de las pruebas unitarias locales, que se ejecutan directamente sobre la JVM del desarrollador y no tienen acceso al \textit{framework} de Android, las pruebas instrumentadas se despliegan en un dispositivo o emulador donde se instala el APK de la aplicación junto con un APK de test. Esto permite que las pruebas interactúen con el ciclo de vida de las actividades, las preferencias compartidas y los \texttt{Intent} extras, validando el comportamiento real de la aplicación en un contexto de ejecución auténtico.
+
+Estas pruebas utilizan \texttt{ActivityScenario} de AndroidX Test para lanzar y controlar el ciclo de vida de las actividades, y se ejecutan con el runner \texttt{AndroidJUnit4} que proporciona \texttt{androidx.test.ext:junit}. Desde Android Studio pueden lanzarse seleccionando cualquiera de las clases en el directorio \texttt{src/androidTest/} y ejecutándolas con \texttt{Run}, o desde línea de comandos con la tarea de Gradle \texttt{connectedDebugAndroidTest}.
+
+Se han diseñado pruebas instrumentadas para cada una de las actividades del proyecto, cubriendo la validación de la correcta recepción y manejo de los \texttt{Intent} que las lanzan, la persistencia de datos en \texttt{SharedPreferences} y la respuesta a eventos del ciclo de vida. 
+
+Estas pruebas son fundamentales para garantizar que la aplicación se comporta correctamente en dispositivos reales, que las actividades responden a los \texttt{Intent} esperados y que la persistencia de datos funciona como se espera. Al ejecutarse en un emulador o dispositivo físico con el \textit{framework} de Android completo, estas pruebas detectan problemas que las pruebas unitarias locales no pueden identificar, como el correcto parseo de JSON, el manejo de extras opcionales en los \texttt{Intent} y la gestión del ciclo de vida ante cambios de configuración.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imaxes/coverage-android-instrumento.png}
+  \caption{Cobertura de las pruebas de la aplicación Android}
+  \label{fig:android-coverage-instrumento}
+\end{figure}
+
+La imagen \ref{fig:android-coverage-instrumento} muestra el reporte que se obtiene tras ejecutar las pruebas instrumentadas. Estas pruebas aportan una capa adicional de confianza al validar el comportamiento real de la aplicación en un entorno auténtico.
 
