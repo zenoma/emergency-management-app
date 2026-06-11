@@ -1,7 +1,7 @@
 \chapter{Pruebas}
 \label{chap:probas}
 
-\lettrine{L}{as} pruebas de software constituyen un pilar fundamental para garantizar la calidad, la corrección y la estabilidad del sistema desarrollado. En este proyecto se ha adoptado un enfoque de pruebas automatizadas para la capa de negocio del backend, mientras que para el frontend y la aplicación Android se ha optado por un plan de pruebas manuales dada la naturaleza de las interfaces de usuario y las limitaciones de entorno. Este capítulo describe la metodología empleada, las tecnologías utilizadas y el detalle de las pruebas realizadas en cada subsistema.
+\lettrine{L}{as} pruebas de software constituyen un pilar fundamental para garantizar la calidad, la corrección y la estabilidad del sistema desarrollado. En este proyecto se ha adoptado un enfoque de pruebas automatizadas tanto para el backend como para el frontend, combinando distintos niveles de prueba según la naturaleza de cada subsistema. Para la aplicación Android, dadas las limitaciones de automatización en el entorno de desarrollo, se ha optado por un plan de pruebas manuales. Este capítulo describe la metodología empleada, las tecnologías utilizadas y el detalle de las pruebas realizadas en cada subsistema.
 
 \section{Backend}
 
@@ -45,10 +45,30 @@ En esta imagen \ref{fig:coverage} se muestra la cobertura de las pruebas unitari
 
 \section{Frontend}
 
+Para el frontend se ha adoptado una estrategia de pruebas automatizadas centrada en dos niveles: la lógica pura de la aplicación (funciones de validación, transformación de coordenadas y reductores de estado) y el renderizado de componentes clave. 
 
+Las pruebas se han implementado con Vitest, el ejecutor de tests nativo de Vite. Para el renderizado de componentes se ha empleado React Testing Library, que fomenta pruebas centradas en el comportamiento observable desde la perspectiva del usuario en lugar de detalles de implementación interna.
+
+Se han creado tests distribuidos en las siguientes categorías:
+
+\begin{itemize}
+  \item \textbf{Lógica pura:} funciones de validación de formularios (email, teléfono, DNI), formateo de fechas y transformación de coordenadas geográficas a UTM (y viceversa). Estos tests verifican la corrección de la lógica de negocio en el frontend sin necesidad de montar componentes ni depender del navegador, lo que los hace extremadamente rápidos y fiables.
+  \item \textbf{Reductores de estado:} pruebas sobre los slices de Redux (\texttt{LoginSlice}, \texttt{themeSlice}) que validan el estado inicial, las transiciones de estado y los selectores.
+  \item \textbf{Componentes de interfaz:} renderizado de componentes clave como \texttt{EmergencyTypeIcon} (mapeo de nombres de emergencia a iconos), \texttt{BackButton}, \texttt{NotFoundPage} y \texttt{TeamNotFoundPage}. Estos tests verifican que los componentes se renderizan sin errores, que muestran los elementos esperados (iconos, enlaces, imágenes) y que responden correctamente a las propiedades recibidas.
+\end{itemize}
+
+La siguiente imagen \ref{fig:vitest} muestra la ejecución completa de los tests del frontend con Vitest:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imaxes/vitest.png}
+  \caption{Ejecución de los tests del frontend con Vitest}
+  \label{fig:vitest}
+\end{figure}
+
+Esta batería de tests automatizados aporta tres beneficios principales. En primer lugar, permite detectar de forma temprana regresiones en la lógica de validación y formateo, que son propensas a errores silenciosos. En segundo lugar, garantiza que los componentes críticos se renderizan correctamente tras cambios en las dependencias o en la estructura del código. Por último, al ejecutarse con Vitest, se integran en el flujo de desarrollo con una ejecución rápida que no interrumpe el trabajo del desarrollador.
+
+Además de las pruebas automatizadas, se ha complementado la validación con un plan de pruebas manuales exhaustivas de la interfaz, que permiten validar la experiencia de usuario, la usabilidad y el comportamiento visual en diferentes dispositivos y navegadores. Dado que el frontend presenta una interfaz gráfica compleja con mapas interactivos y componentes dinámicos, las pruebas manuales cubren aspectos que las pruebas automatizadas no alcanzan, como la correcta visualización del mapa, la respuesta a eventos de usuario y la navegación entre pantallas.
 
 \section{Aplicación Android}
-
-
-
 
