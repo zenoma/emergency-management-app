@@ -1,11 +1,14 @@
 package es.udc.emergencyproject.backend.model.services;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
+import es.udc.emergencyproject.backend.model.entities.mobiledevice.MobileDeviceRepository;
 import es.udc.emergencyproject.backend.model.entities.user.User;
 import es.udc.emergencyproject.backend.model.entities.user.UserRepository;
 import es.udc.emergencyproject.backend.model.entities.user.UserRole;
@@ -33,6 +36,9 @@ class UserServiceImplTest {
   private final Long INVALID_USER_ID = -1L;
   @Mock
   UserRepository userRepository;
+
+  @Mock
+  MobileDeviceRepository mobileDeviceRepository;
 
   @InjectMocks
   UserServiceImpl userService;
@@ -345,6 +351,46 @@ class UserServiceImplTest {
         () -> userService.updateRole(user.getId(), targetUser.getId(), UserRole.COORDINATOR),
         "User has not enough permission");
 
+  }
+
+  @Test
+  void whenFindAllUsers_thenReturnList() {
+    List<User> users = UserOM.withRandomNames(3);
+    when(userRepository.findAllByOrderByDniAsc()).thenReturn(users);
+
+    List<User> result = userService.findAllUsers();
+    Assertions.assertEquals(3, result.size());
+  }
+
+  @Test
+  void givenValidUserId_whenRegisterMobileDevice_thenRegistered()
+      throws InstanceNotFoundException {
+    User user = UserOM.withDefaultValues();
+    user.setId(1L);
+    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+    when(mobileDeviceRepository.findByUserId(1L)).thenReturn(Optional.empty());
+
+    assertDoesNotThrow(() -> userService.registerMobileDevice(1L, "fcm-token-123"));
+  }
+
+  @Test
+  void givenExistingDevice_whenRegisterMobileDevice_thenUpdated()
+      throws InstanceNotFoundException {
+    User user = UserOM.withDefaultValues();
+    user.setId(1L);
+    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+    when(mobileDeviceRepository.findByUserId(1L))
+        .thenReturn(Optional.of(new es.udc.emergencyproject.backend.model.entities.mobiledevice.MobileDevice()));
+
+    assertDoesNotThrow(() -> userService.registerMobileDevice(1L, "new-fcm-token"));
+  }
+
+  @Test
+  void givenInvalidUserId_whenRegisterMobileDevice_thenThrows() {
+    when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+    assertThrows(InstanceNotFoundException.class,
+        () -> userService.registerMobileDevice(999L, "token"));
   }
 
 

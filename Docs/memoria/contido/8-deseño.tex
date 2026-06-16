@@ -7,7 +7,7 @@
 
 El diseño parte de una idea principal: el sistema debe permitir coordinar emergencias, recursos y avisos de forma consistente, sin duplicar responsabilidades entre capas. Para ello, el backend concentra el modelo de dominio y las reglas de negocio; el frontend web actúa como interfaz de gestión principal; y la aplicación Android adapta parte de esas funcionalidades a un contexto móvil, manteniendo el acceso a la información operativa y a las acciones más frecuentes.
 
-En la evolución respecto al trabajo previo \cite{TFGAdrianGarcia2025} se han incorporado nuevas funcionalidades, especialmente en torno a las asignaciones, el envío de notificaciones y la generación de recomendaciones basadas en reglas. Sin embargo, la estructura general de la interfaz y del dominio se mantiene en líneas generales, porque el objetivo no era redefinir la aplicación completa sino ampliar su alcance funcional sobre una base ya establecida. Gracias a que existía una base escalable y bien organizada, se han podido añadir nuevas funcionalidades sin necesidad de reestructurar el código existente, lo que ha facilitado la evolución del proyecto.
+En la evolución respecto al trabajo previo \cite{TFGAdrianGarcia2025} se han incorporado nuevas funcionalidades, especialmente en torno a las asignaciones, el envío de notificaciones y la generación de recomendaciones basadas en reglas. Sin embargo, la estructura general de la interfaz y del dominio se mantiene en líneas generales, porque el objetivo no era redefinir la aplicación completa sino ampliar su alcance funcional sobre una base ya establecida. Gracias a que existía una base escalable y bien organizada, se han podido añadir nuevas funcionalidades sin necesidad de reestructurar completamente el sistema, si que se han tenido que realizar modificaciones, pero estas no han sido tan complejas o problemáticas como podrían haber sido si se hubiera partido de un diseño completamente nuevo. 
 
 \section{Resumen de patrones usados}
 Parte de la arquitectura y de las decisiones de diseño utilizadas en este proyecto han sido heredadas y adaptadas a partir del trabajo previo desarrollado. Esta reutilización no solo permite mantener una continuidad tecnológica, sino también reducir la complejidad de desarrollo al apoyarse en una base arquitectónica ya consolidada.
@@ -24,7 +24,7 @@ Junto a estos patrones heredados, se han incorporado otros vinculados a la lógi
 
     \item \textbf{Chain of Responsibility:} En el backend, la lógica de recomendaciones se apoya en este patrón, ya que las reglas se evalúan de forma secuencial hasta encontrar la primera que cumple la condición buscada. Cada regla actúa como un eslabón de la cadena y, cuando satisface el criterio, devuelve la propuesta asociada sin continuar con las siguientes.
 
-    \item \textbf{Observer:} En Android, la integración con \textit{Firebase Messaging} se ajusta a este patrón, porque el dispositivo se suscribe mediante su token FCM y recibe notificaciones cuando el backend emite eventos relevantes. Esta comunicación por eventos permite desacoplar el emisor de la notificación del receptor.
+    \item \textbf{Observer:} Este patrón aparece en varios puntos del proyecto. En Android, la integración con \textit{Firebase Messaging} se ajusta a este patrón, porque el dispositivo se suscribe mediante su token FCM y recibe notificaciones cuando el backend emite eventos relevantes. En el frontend, Redux sigue el mismo principio: los componentes se suscriben alstore y se actualizan automáticamente cuando el estado global cambia, sin que el emisor de la acción tenga que conocer los suscriptores. Esta comunicación por eventos permite desacoplar el emisor del receptor en ambos entornos.
 
     \item \textbf{Jetpack Compose:} En la parte Android se ha adoptado este enfoque declarativo para la interfaz, junto con una navegación por destinos mediante \textit{NavHost}. La aplicación sigue además un diseño de cliente ligero, apoyándose en el backend para la lógica de negocio y reservando para el móvil la composición de pantallas, la navegación y la interacción con el usuario.
 
@@ -32,7 +32,7 @@ Junto a estos patrones heredados, se han incorporado otros vinculados a la lógi
 
 \section{Arquitectura general}
 
-La aplicación se organiza como un sistema cliente-servidor con tres subsistemas diferenciados. El backend implementa la lógica central del dominio y expone una \acrshort{api} \acrshort{rest}; el frontend web consume esa \acrshort{api} como una \acrshort{spa}; y Android actúa como cliente móvil independiente, reutilizando el mismo backend.
+La aplicación se organiza como un sistema cliente-servidor con tres subsistemas diferenciados. El backend implementa la lógica central del dominio y expone una \acrshort{api} \acrshort{rest}; el frontend web consume esa \acrshort{api} como una aplicación \acrshort{spa}; y Android actúa como cliente móvil independiente, reutilizando el mismo backend.
 
 Esta división permite que cada subsistema evolucione con una responsabilidad clara. El backend no depende de la tecnología de interfaz, el frontend web no contiene reglas de negocio relevantes y la aplicación Android adapta el consumo de datos a su navegación y a sus pantallas móviles.
 
@@ -67,13 +67,18 @@ La estructura del backend sigue un esquema clásico de Spring Boot. En la capa d
   \label{fig:c4-container-backend}
 \end{figure}
 
-En la figura \ref{fig:c4-container-backend} se aprecia el contenedor backend y su descomposición en controladores, servicios fachada, modelo de dominio, repositorios, seguridad y gestión de históricos. La vista resume la estructura interna sin entrar en componentes más finos. Se ha utilizado el color verde para resaltar los componentes nuevos o significativamente modificados respecto al trabajo previo.
+En la figura \ref{fig:c4-container-backend} se aprecia el contenedor backend y su descomposición en controladores, servicios fachada, modelo de dominio, repositorios, seguridad y gestión de históricos. La vista resume la estructura interna sin entrar en componentes más finos. 
+
+Se ha utiliado el color verde para los nuevos componentes añadidos respecto al trabajo previo, la gestión de registros y  el motor de reglas de recomendación. Los otros componentes ya existían pero se han ampliado notablemente para dar soporte a las nuevas funcionalidades, como la gestión de asignaciones, la vinculación de emergencias a cuadrantes. Por ejemplo, el componente de dominio ha sido ampliado con nuevas entidades y relaciones, mientras que los servicios fachada han incorporado operaciones para gestionar asignaciones y reglas de recomendación.
+
+
+
 
 \subsection{Modelo del dominio}
 
 \subsubsection{Diagrama de entidades}
 
-El modelo de dominio se ha ampliado de forma notable respecto al trabajo previo. Se ha utilizado el color verde para resaltar las nuevas entidades. La figura \ref{fig:modelo-dominio} resume la estructura persistente actual y permite observar cómo el dominio ha pasado de estar centrado en incendios, recursos y avisos a incorporar de forma explícita emergencias, asignaciones, reglas de recomendación y una gestión de históricos más detallada.
+El modelo de dominio se ha ampliado de forma notable respecto al trabajo previo. Se ha utilizado el color verde para resaltar las nuevas entidades. El diagrama de entidad \ref{fig:modelo-dominio} resume la estructura persistente actual y permite observar cómo el dominio ha pasado de estar centrado en incendios, recursos y avisos a incorporar de forma explícita emergencias, asignaciones, reglas de recomendación y una gestión de históricos más detallada.
 
 \begin{figure}[H]
   \centering
@@ -82,7 +87,7 @@ El modelo de dominio se ha ampliado de forma notable respecto al trabajo previo.
   \label{fig:modelo-dominio}
 \end{figure}
 
-En la figura \ref{fig:modelo-dominio} se observan las entidades persistentes principales y sus relaciones. Frente al trabajo previo, la entidad \textit{Fire} ha sido sustituida por \textit{Emergency}, que amplía el concepto de incidencia y mantiene atributos como descripción, tipo, índice, fechas de creación y resolución, además de admitir tanto localización por punto como vinculación a cuadrantes. Esta ampliación refleja mejor el funcionamiento real de la aplicación, ya que ahora una emergencia puede gestionarse por cuadrantes o por coordenadas.
+Frente al trabajo previo, la entidad \textit{Fire} ha sido sustituida por \textit{Emergency}, que amplía el concepto de incidencia y mantiene atributos como descripción, tipo, índice, fechas de creación y resolución, además de admitir tanto localización por punto como vinculación a cuadrantes. Esta ampliación refleja mejor el funcionamiento real de la aplicación, ya que ahora una emergencia puede gestionarse por cuadrantes o por coordenadas.
 
 Otra diferencia relevante es la aparición de \textit{EmergencyQuadrant}, que conserva la relación histórica entre emergencias y cuadrantes con su fecha de vinculación. En la etapa anterior esta información ya existía vinculada al incendio, pero aquí se ha decidido darle una entidad propia para reflejar mejor la evolución de las emergencias a lo largo del tiempo y su relación con los cuadrantes. 
 
@@ -116,7 +121,7 @@ La mayoría de entidades siguen utilizando claves primarias autogeneradas, lo qu
 
 Se mantiene la política de carga perezosa en las relaciones que pueden crecer en tamaño, como usuarios de un equipo o cuadrantes de una emergencia, pero ahora esa decisión cobra más importancia porque el número de asociaciones ha aumentado. En particular, las relaciones de asignaciones, logs y reglas de recomendación añaden nuevas rutas de navegación entre entidades que conviene cargar solo cuando resultan necesarias.
 
-También se han reforzado las validaciones de Bean Validation y las restricciones funcionales derivadas del propio modelo. Esto afecta tanto a entidades ya existentes, como \textit{Resource} o \textit{User}, como a las nuevas entidades relacionadas con asignaciones y recomendaciones. En \textit{Resource} se centralizan pequeñas reglas de coherencia, por ejemplo el borrado de \textit{deployAt} cuando el recurso vuelve al estado disponible, lo que reduce la dispersión de lógica repetida.
+También se han reforzado las validaciones de Bean Validation, se han añadido restricciones de unicidad y se han definido enumeraciones para campos con valores limitados, como el estado de asignaciones o el tipo de emergencia. Esto afecta tanto a entidades ya existentes, como \textit{Resource} o \textit{User}, como a las nuevas entidades relacionadas con asignaciones y recomendaciones. En \textit{Resource} se centralizan pequeñas reglas de coherencia, por ejemplo el borrado de \textit{deployAt} cuando el recurso vuelve al estado disponible, lo que reduce la dispersión de lógica repetida.
 
 Otro cambio relevante es que en el trabajo anterior la parte de históricos se organizaba por tipo de recurso, con entidades específicas para cada uno. Actualmente se ha optado por un modelo más unificado con \textit{AssignmentLog}, que registra eventos relacionados con asignaciones, emergencias y cuadrantes sin necesidad de separar por tipo de recurso.
 
@@ -156,18 +161,18 @@ Este enfoque reduce errores de sincronización entre documentación e implementa
   \label{fig:swagger-collection}
 \end{figure}
 
-En la figura \ref{fig:swagger-collection} se muestra la documentación generada mediante Swagger, que refleja los bloques de gestión de organización, de emergencias y de recomendación. El resto de bloques también se ha documentado, pero se han omitido en la imagen para no saturar la vista. Aquí se pueden observar las ventajas de este enfoque, ya que la documentación se genera de forma automática a partir del contrato definido en OpenAPI, lo que ayuda a mantenerla sincronizada con la implementación real de los endpoints. Además, esta vista permite comprobar de forma centralizada los recursos disponibles, los métodos HTTP asociados y la estructura general de la interfaz pública del backend. También se observan en la documentación los endpoints que requieren autenticación y los que son accesibles para usuarios anónimos, lo que refleja la política de seguridad implementada.
+En la figura \ref{fig:swagger-collection} se muestra la documentación generada mediante Swagger, que refleja los bloques de gestión de organización, de emergencias y de recomendación. El resto de bloques también se ha documentado, pero se han omitido por limitaciones de espacio. Aquí se pueden observar las ventajas de este enfoque, ya que la documentación se genera de forma automática a partir del contrato definido en OpenAPI, lo que ayuda a mantenerla sincronizada con la implementación real de los endpoints. Además, esta vista permite comprobar de forma centralizada los recursos disponibles, los métodos HTTP asociados y la estructura general de la interfaz pública del backend. También se observan en la documentación los endpoints que requieren autenticación y los que son accesibles para usuarios anónimos, lo que refleja la política de seguridad implementada.
 
 
 \subsubsection{Gestión de errores e internalización}
 
-La gestión de errores se centraliza en \textit{GlobalControllerExceptionHandler}. Allí se traducen excepciones de instancia, de dominio y de validación a respuestas HTTP adecuadas y mensajes localizados. Este mecanismo viene del trabajo previo y apenas ha necesitado modificaciones estructurales, ya que sigue siendo útil para homogeneizar la respuesta ante errores y para mantener la internacionalización de mensajes.
+La gestión de errores se centraliza en la clase \textit{GlobalControllerExceptionHandler}. Allí se traducen excepciones de instancia, de dominio y de validación a respuestas HTTP adecuadas y mensajes localizados. Este mecanismo viene del trabajo previo que con pequeñas adaptaciones se ha mantenido en la evolución de la aplicación. La internacionalización de mensajes se realiza mediante ficheros de propiedades, y el idioma activo se propaga desde el frontend o la aplicación Android a través de cabeceras HTTP. 
 
 \subsubsection{Control de acceso}
 
-La configuración de seguridad se define en \textit{SecurityConfig}. El backend se configura para funcionar con sesión sin estado y filtro JWT. Se autorizan explícitamente algunos endpoints según rol: usuarios anónimos pueden iniciar sesión, registrarse y consultar parte de la información pública; los roles de miembro, gestor y coordinador acceden a recursos y emergencias según permisos; y las operaciones de coordinación quedan restringidas a coordinadores.
+La configuración de seguridad se define en la clase \textit{SecurityConfig}. El backend se configura para funcionar con sesión sin estado y token JWT. Se autorizan explícitamente algunos endpoints según rol: usuarios anónimos pueden iniciar sesión, registrarse y consultar parte de la información pública; los roles de miembro, gestor y coordinador acceden a recursos y emergencias según permisos; y las operaciones de coordinación quedan restringidas a coordinadores.
 
-Este bloque también se ha mantenido prácticamente sin cambios estructurales, porque la política de permisos seguía siendo válida para la evolución de la aplicación. La aplicación también registra dispositivos móviles mediante \textit{MobileDevice}, lo que permite enlazar el usuario con su token FCM y habilitar notificaciones push.
+Este bloque también se ha mantenido prácticamente sin cambios estructurales, porque la política de permisos seguía siendo válida para la evolución de la aplicación. La aplicación también registra dispositivos móviles mediante la clase \textit{MobileDevice}, lo que permite enlazar el usuario con su token FCM y habilitar notificaciones push.
 
 \subsection{Librerías y servicios externos}
 
@@ -178,16 +183,6 @@ Además de la persistencia y la seguridad, el backend integra varias librerías 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Subsistema Frontend}
 
-\subsection{Objetivos}
-
-El frontend web ofrece la interfaz principal de gestión y consulta. Respecto a la etapa anterior, no se han producido cambios sustanciales en la arquitectura general, sino una ampliación de vistas y funcionalidades que se ha apoyado en la base ya existente. La aplicación debe seguir permitiendo autenticación, navegación por módulos, visualización de emergencias sobre mapa, gestión de recursos, asignaciones, avisos y reglas de recomendación, además de adaptarse a distintos roles sin romper la experiencia de uso.
-
-La aplicación se ha mantenido como una \acrshort{spa} para evitar recargas completas de página y facilitar una interacción continua con mapas, tablas y formularios. Esta decisión sigue siendo adecuada porque permite ampliar pantallas y flujos sin rediseñar la estructura general del cliente.
-
-\subsection{Arquitectura}
-
-El frontend mantiene la organización por capas ya utilizada en la etapa anterior. El componente \textit{QueryApi} engloba la comunicación con el backend y con servicios externos, mientras que los componentes de interfaz se organizan por funcionalidad. Esta estructura no ha cambiado de forma significativa, pero ha permitido añadir nuevas vistas de forma incremental sin afectar al resto de la aplicación.
-
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{imaxes/c4/c4_container_frontend.png}
@@ -195,33 +190,11 @@ El frontend mantiene la organización por capas ya utilizada en la etapa anterio
   \label{fig:c4-container-frontend}
 \end{figure}
 
-En el diagrama de arquitectura del frontend \ref{fig:c4-container-frontend} se representa un contenedor React con su capa de estado, acceso a servicios, internacionalización y componentes de interfaz. También se observa su interacción con el backend y con los servicios externos utilizados para mapas. Se ha utilizado el color verde para resaltar los componentes nuevos o significativamente modificados respecto al trabajo previo.
+La interfaz se organiza por dominios funcionales reflejados en el diagrama \ref{fig:c4-container-frontend} y se apoya en un store Redux que separa el estado de sesión, el tema visual y los datos de dominio (emergencias, asignaciones, recursos) en slices independientes. Los componentes nuevos o modificados aparecen resaltados en verde.
 
-En la parte inferior está el método de acceso a la \acrshort{api} del backend, implementado con \acrshort{rtkquery}. Encima se sitúan los componentes de interfaz, construidos con React y Material UI. El estado de sesión y el tema visual se guardan en Redux, mientras que la internacionalización se resuelve con \textit{react-i18next}. La configuración global de rutas se concentra en \textit{App.jsx}, donde se protegen pantallas según el estado de autenticación y el rol de usuario.
+El mapa (\textit{LandingMap}) representa cada emergencia con un icono y color distintos según su tipología (incendio, inundación, derrumbe, riesgo industrial) y su estado (activa, resuelta). Los cuadrantes se dibujan como polígonos semitransparentes con borde y relleno diferenciados según si están vinculados a una emergencia activa, y los recursos desplegados se muestran como marcadores adicionales sobre el cuadrante correspondiente. Toda la capa cartográfica se apoya en MapLibre con estilos servidos por MapTiler.
 
-El login guarda el token en el estado global y en \textit{localStorage}, lo que permite restaurar la sesión al recargar la aplicación. Esa misma base de diseño facilita que las nuevas funcionalidades se integren como rutas o features adicionales sin modificar el esqueleto principal.
-
-\subsection{Capa de acceso al servicio}
-
-La capa de acceso a servicios está construida sobre una instancia base de \textit{createApi}. Esa base añade automáticamente el token JWT y el idioma activo en las cabeceras. A partir de ella se inyectan endpoints concretos para emergencias, asignaciones, organizaciones, usuarios, avisos, clima y reglas de recomendación.
-
-Este enfoque reduce repetición y hace que cada feature declare solo la parte que necesita. Además, las mutaciones invalidan etiquetas para refrescar de forma automática las vistas dependientes. En este trabajo esta capa se ha mantenido prácticamente igual en cuanto a estructura, pero se ha ampliado con nuevos endpoints asociados a asignaciones, reglas de recomendación y pantallas móviles, lo que ha sido posible gracias a la separación previa entre acceso a datos y componentes de interfaz.
-
-
-\subsection{Capa de componentes de interfaz}
-
-Como se puede ver en la imagen \ref{fig:c4-container-frontend}, la interfaz se divide por dominios funcionales. \textit{Dashboard} reúne el mapa, la información meteorológica y el panel de avisos, y se mantiene como una de las piezas centrales de la aplicación. \textit{LandingMap} dibuja cuadrantes y emergencias sobre MapLibre, con estilos servidos por MapTiler, e iconos distintos según el tipo de emergencia y recursos desplegados. \textit{Notice} y \textit{MyNoticesList} muestran avisos con sus imágenes y estados, y \textit{CoordinatorNoticesView} añade acciones de aceptación, rechazo y borrado.
-
-La gestión de emergencias se divide en vistas como \textit{EmergencyManagementView}, \textit{EmergencyDetailScreen} y \textit{EmergencyHistoryView}. Las asignaciones disponen de vistas propias para creación, listado y detalle. La pantalla de creación de asignaciones permite seleccionar emergencia, cuadrante y recurso, y valida que la combinación sea coherente con la estructura de la emergencia. Del mismo modo, la vista de reglas de recomendación permite al coordinador seleccionar un tipo de emergencia, cargar las reglas asociadas, editar su prioridad y modificar el JSON que define el comportamiento del motor semiautomático.
-
-En la práctica, el trabajo realizado en esta capa se ha centrado en ampliar componentes existentes y en añadir pantallas nuevas, no en cambiar la organización general. Por eso, el esfuerzo principal ha estado en refinar las vistas, integrar las nuevas funcionalidades y mantener el aspecto funcional con el frontend ya desarrollado anteriormente.
-
-
-\subsection{Internacionalización y librerías externas}
-
-La internacionalización se basa en archivos de traducción para inglés, español y gallego. Los textos de la interfaz y los mensajes de error usan claves compartidas entre componentes, y el idioma activo se propaga en las peticiones al backend.
-
-También se ha migrado a \textit{MapLibre}, una librería open source que permite prescindir de planes gratuitos o limitados, y se ha mantenido MapTiler como proveedor de estilos cartográficos. Además, se usan librerías como \textit{Material UI} y \textit{dayjs}. Estas integraciones ya estaban presentes en la etapa anterior y se han mantenido porque encajan bien con la evolución del sistema y permiten incorporar nuevas funcionalidades sin rehacer la base del frontend.
+La vista de creación de asignaciones presenta tres selectores encadenados: emergencia, cuadrante (solo si la emergencia lo admite) y recurso disponible. Al seleccionar la emergencia, el frontend filtra los cuadrantes vinculados a ella y, al elegir un recurso, valida visualmente que no esté ocupado mostrando su estado en la interfaz antes de enviar la petición. La vista de reglas de recomendación expone un editor JSON con resaltado de sintaxis básico y validación local antes del envío, además de controles para reordenar la prioridad de las reglas mediante arrastre. Los listados de emergencias, asignaciones y avisos incorporan filtros combinados por tipo, estado y fechas, todos gestionados como parámetros de ruta para mantener el estado del filtro entre navegaciones.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Subsistema Android %

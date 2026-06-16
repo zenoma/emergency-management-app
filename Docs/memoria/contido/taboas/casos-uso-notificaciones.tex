@@ -1,140 +1,135 @@
 \begin{table}[H]
-  \centering
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{12.1cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  \textbf{CU-49} & \textbf{Recibir notificación de nueva asignación} \\
-  \hline
-  Descripción & Un miembro de equipo recibe una notificación móvil cuando se crea una asignación pendiente sobre uno de sus recursos para poder acceder rápidamente a la intervención. Este caso se ha ampliado para soportar la app móvil y el flujo inmediato de aviso. \\
-  \hline
-  Precondición & El usuario debe tener un dispositivo móvil registrado y la plataforma debe disponer de la configuración de notificaciones activada. \\
-  \hline
-  Secuencia normal &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  1 & El sistema crea una nueva asignación para un recurso de equipo. \\
-  \hline
-  2 & El servicio de notificaciones recopila los dispositivos móviles autorizados. \\
-  \hline
-  3 & El sistema envía una notificación con la ruta de acceso a la asignación. \\
-  \hline
-  4 & El usuario abre la notificación y accede a la pantalla correspondiente. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  Postcondición & El destinatario conoce de forma inmediata que tiene una nueva asignación pendiente. \\
-  \hline
-  Excepciones &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  2 & Si el dispositivo no tiene token válido o la configuración no está disponible, el sistema no envía la notificación. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  \end{tabular}
-  \caption{Tabla caso de uso 49}
-  \label{tab:CU-49}
+  \begin{minipage}[t]{0.5\textwidth}
+    \centering
+    \resizebox{\textwidth}{!}{
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabular}{|l|p{9cm}|}
+    \hline
+    \rowcolor{udcpink!25}
+    \textbf{CU-49} & \textbf{Recibir notificación de nueva asignación} \\
+    \hline
+    Descripción & Un miembro de equipo recibe una notificación móvil cuando se crea una asignación pendiente sobre uno de sus recursos para poder acceder rápidamente a la intervención. Este caso se ha ampliado para soportar la app móvil y el flujo inmediato de aviso. \\
+    \hline
+    Precondición & El usuario debe tener un dispositivo móvil registrado y la plataforma debe disponer de la configuración de notificaciones activada. \\
+    \hline
+    Secuencia normal &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    1 & El sistema crea una nueva asignación para un recurso de equipo. \\
+    \hline
+    2 & El servicio de notificaciones recopila los dispositivos móviles autorizados. \\
+    \hline
+    3 & El sistema envía una notificación con la ruta de acceso a la asignación. \\
+    \hline
+    4 & El usuario abre la notificación y accede a la pantalla correspondiente. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    Postcondición & El destinatario conoce de forma inmediata que tiene una nueva asignación pendiente. \\
+    \hline
+    Excepciones &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    2 & Si el dispositivo no tiene token válido o la configuración no está disponible, el sistema no envía la notificación. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Caso de uso 49}
+    \label{tab:CU-49}
+  \end{minipage}%
+  \begin{minipage}[t]{0.5\textwidth}
+    \centering
+    \resizebox{\textwidth}{!}{
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabular}{|l|p{9cm}|}
+    \hline
+    \rowcolor{udcpink!25}
+    \textbf{CU-50} & \textbf{Recibir notificación por cambio de estado de una asignación} \\
+    \hline
+    Descripción & Un miembro de equipo o un gestor recibe una notificación cuando una asignación cambia a aceptada, liberada o completada para tener visible al instante el estado operativo del recurso. Este caso se ha ampliado para reflejar el seguimiento del ciclo de vida. \\
+    \hline
+    Precondición & La asignación debe existir y el usuario destinatario debe disponer de notificaciones móviles habilitadas. \\
+    \hline
+    Secuencia normal &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    1 & El estado de una asignación cambia en la aplicación. \\
+    \hline
+    2 & El sistema determina qué usuarios deben ser avisados según el tipo de cambio. \\
+    \hline
+    3 & El servicio de notificaciones envía el aviso correspondiente. \\
+    \hline
+    4 & El usuario recibe la notificación con el nuevo estado y la referencia de la asignación. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    Postcondición & Los usuarios autorizados conocen el nuevo estado de la asignación sin acceder manualmente a la aplicación. \\
+    \hline
+    Excepciones &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    3 & Si no hay destinatarios válidos, la notificación no se envía. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Caso de uso 50}
+    \label{tab:CU-50}
+  \end{minipage}%
 \end{table}
 
 \begin{table}[H]
-  \centering
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{12.1cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  \textbf{CU-50} & \textbf{Recibir notificación por cambio de estado de una asignación} \\
-  \hline
-  Descripción & Un miembro de equipo o un gestor recibe una notificación cuando una asignación cambia a aceptada, liberada o completada para tener visible al instante el estado operativo del recurso. Este caso se ha ampliado para reflejar el seguimiento del ciclo de vida. \\
-  \hline
-  Precondición & La asignación debe existir y el usuario destinatario debe disponer de notificaciones móviles habilitadas. \\
-  \hline
-  Secuencia normal &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  1 & El estado de una asignación cambia en la aplicación. \\
-  \hline
-  2 & El sistema determina qué usuarios deben ser avisados según el tipo de cambio. \\
-  \hline
-  3 & El servicio de notificaciones envía el aviso correspondiente. \\
-  \hline
-  4 & El usuario recibe la notificación con el nuevo estado y la referencia de la asignación. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  Postcondición & Los usuarios autorizados conocen el nuevo estado de la asignación sin acceder manualmente a la aplicación. \\
-  \hline
-  Excepciones &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  3 & Si no hay destinatarios válidos, la notificación no se envía. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  \end{tabular}
-  \caption{Tabla caso de uso 50}
-  \label{tab:CU-50}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{12.1cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  \textbf{CU-51} & \textbf{Recibir notificación de reasignación operativa} \\
-  \hline
-  Descripción & Un coordinador o un miembro de equipo recibe un aviso cuando una modificación en la emergencia o en el cuadrante afecta a una asignación ya creada y requiere revisión. Este caso se ha ampliado para mantener la coherencia del trabajo en campo. \\
-  \hline
-  Precondición & Debe existir una asignación previa y la modificación debe afectar al contexto operativo de esa asignación. \\
-  \hline
-  Secuencia normal &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  1 & El sistema detecta un cambio en la emergencia o en el cuadrante asociado. \\
-  \hline
-  2 & El sistema identifica las asignaciones que se ven afectadas. \\
-  \hline
-  3 & El servicio de notificaciones construye el mensaje de aviso. \\
-  \hline
-  4 & El usuario recibe la notificación y puede actuar sobre la asignación. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  Postcondición & Los usuarios afectados reciben el aviso para ajustar la operativa en curso. \\
-  \hline
-  Excepciones &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  2 & Si no se identifican asignaciones afectadas, el sistema no genera notificación alguna. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  \end{tabular}
-  \caption{Tabla caso de uso 51}
-  \label{tab:CU-51}
+    \centering
+    \resizebox{0.45\textwidth}{!}{
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabular}{|l|p{9cm}|}
+    \hline
+    \rowcolor{udcpink!25}
+    \textbf{CU-51} & \textbf{Recibir notificación de reasignación operativa} \\
+    \hline
+    Descripción & Un coordinador o un miembro de equipo recibe un aviso cuando una modificación en la emergencia o en el cuadrante afecta a una asignación ya creada y requiere revisión. Este caso se ha ampliado para mantener la coherencia del trabajo en campo. \\
+    \hline
+    Precondición & Debe existir una asignación previa y la modificación debe afectar al contexto operativo de esa asignación. \\
+    \hline
+    Secuencia normal &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    1 & El sistema detecta un cambio en la emergencia o en el cuadrante asociado. \\
+    \hline
+    2 & El sistema identifica las asignaciones que se ven afectadas. \\
+    \hline
+    3 & El servicio de notificaciones construye el mensaje de aviso. \\
+    \hline
+    4 & El usuario recibe la notificación y puede actuar sobre la asignación. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    Postcondición & Los usuarios afectados reciben el aviso para ajustar la operativa en curso. \\
+    \hline
+    Excepciones &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    2 & Si no se identifican asignaciones afectadas, el sistema no genera notificación alguna. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Caso de uso 51}
+    \label{tab:CU-51}
 \end{table}

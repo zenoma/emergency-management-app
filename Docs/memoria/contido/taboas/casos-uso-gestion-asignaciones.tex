@@ -1,293 +1,284 @@
 \begin{table}[H]
-  \centering
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{12.1cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  \textbf{CU-36} & \textbf{Crear una asignación de recurso} \\
-  \hline
-  Descripción & Un coordinador crea una asignación operativa para vincular un recurso disponible a una emergencia activa, con o sin cuadrante asociado. El sistema debe comprobar que la emergencia existe, que el recurso no está ocupado y, si la emergencia se gestiona por cuadrantes, que el cuadrante seleccionado pertenece a dicha emergencia. \\
-  \hline
-  Precondición & El coordinador debe estar registrado e identificado en la aplicación. Debe existir una emergencia activa y un recurso disponible. Si la emergencia está vinculada a cuadrantes, debe seleccionarse uno válido. \\
-  \hline
-  Secuencia normal &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  1 & El coordinador selecciona la emergencia y, si procede, el cuadrante afectado. \\
-  \hline
-  2 & El coordinador selecciona un equipo o un vehículo disponible. \\
-  \hline
-  3 & El coordinador introduce observaciones opcionales sobre la actuación. \\
-  \hline
-  4 & El sistema valida que la emergencia, el cuadrante y el recurso son coherentes. \\
-  \hline
-  5 & El sistema guarda la asignación y la deja en estado pendiente. \\
-  \hline
-  6 & El sistema notifica a los usuarios móviles vinculados al recurso asignado. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  Postcondición & La asignación queda registrada en la aplicación y pasa a estar disponible para su seguimiento o aceptación. \\
-  \hline
-  Excepciones &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  4 & Si la emergencia no existe, el recurso está ocupado o el cuadrante no pertenece a la emergencia, el sistema no crea la asignación. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  \end{tabular}
-  \caption{Tabla caso de uso 36}
-  \label{tab:CU-36}
+  \begin{minipage}[t]{0.5\textwidth}
+    \centering
+    \resizebox{\textwidth}{!}{
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabular}{|l|p{9cm}|}
+    \hline
+    \rowcolor{udcpink!25}
+    \textbf{CU-36} & \textbf{Crear una asignación de recurso} \\
+    \hline
+    Descripción & Un coordinador crea una asignación operativa para vincular un recurso disponible a una emergencia activa, con o sin cuadrante asociado. El sistema debe comprobar que la emergencia existe, que el recurso no está ocupado y, si la emergencia se gestiona por cuadrantes, que el cuadrante seleccionado pertenece a dicha emergencia. \\
+    \hline
+    Precondición & El coordinador debe estar registrado e identificado en la aplicación. Debe existir una emergencia activa y un recurso disponible. Si la emergencia está vinculada a cuadrantes, debe seleccionarse uno válido. \\
+    \hline
+    Secuencia normal &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    1 & El coordinador selecciona la emergencia y, si procede, el cuadrante afectado. \\
+    \hline
+    2 & El coordinador selecciona un equipo o un vehículo disponible. \\
+    \hline
+    3 & El coordinador introduce observaciones opcionales sobre la actuación. \\
+    \hline
+    4 & El sistema valida que la emergencia, el cuadrante y el recurso son coherentes. \\
+    \hline
+    5 & El sistema guarda la asignación y la deja en estado pendiente. \\
+    \hline
+    6 & El sistema notifica a los usuarios móviles vinculados al recurso asignado. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    Postcondición & La asignación queda registrada en la aplicación y pasa a estar disponible para su seguimiento o aceptación. \\
+    \hline
+    Excepciones &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    4 & Si la emergencia no existe, el recurso está ocupado o el cuadrante no pertenece a la emergencia, el sistema no crea la asignación. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Caso de uso 36}
+    \label{tab:CU-36}
+  \end{minipage}%
+  \begin{minipage}[t]{0.5\textwidth}
+    \centering
+    \resizebox{\textwidth}{!}{
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabular}{|l|p{9cm}|}
+    \hline
+    \rowcolor{udcpink!25}
+    \textbf{CU-37} & \textbf{Consultar y filtrar asignaciones} \\
+    \hline
+    Descripción & Un coordinador o un miembro de equipo consulta las asignaciones asociadas a una emergencia, a un recurso o a un cuadrante para revisar su estado, sus fechas de gestión y las notas operativas. \\
+    \hline
+    Precondición & El usuario debe estar autenticado y debe existir al menos una asignación para el ámbito consultado. \\
+    \hline
+    Secuencia normal &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    1 & El usuario accede al apartado de asignaciones. \\
+    \hline
+    2 & El usuario aplica filtros por emergencia, recurso o cuadrante. \\
+    \hline
+    3 & El sistema recupera y muestra las asignaciones que coinciden con los filtros. \\
+    \hline
+    4 & El usuario abre una asignación para ver su detalle operativo. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    Postcondición & Las asignaciones quedan visualizadas para su seguimiento o gestión. \\
+    \hline
+    Excepciones &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    3 & Si no existen resultados para los filtros seleccionados, el sistema muestra una lista vacía. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Caso de uso 37}
+    \label{tab:CU-37}
+  \end{minipage}%
 \end{table}
 
 \begin{table}[H]
-  \centering
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{12.1cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  \textbf{CU-37} & \textbf{Consultar y filtrar asignaciones} \\
-  \hline
-  Descripción & Un coordinador o un miembro de equipo consulta las asignaciones asociadas a una emergencia, a un recurso o a un cuadrante para revisar su estado, sus fechas de gestión y las notas operativas. \\
-  \hline
-  Precondición & El usuario debe estar autenticado y debe existir al menos una asignación para el ámbito consultado. \\
-  \hline
-  Secuencia normal &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  1 & El usuario accede al apartado de asignaciones. \\
-  \hline
-  2 & El usuario aplica filtros por emergencia, recurso o cuadrante. \\
-  \hline
-  3 & El sistema recupera y muestra las asignaciones que coinciden con los filtros. \\
-  \hline
-  4 & El usuario abre una asignación para ver su detalle operativo. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  Postcondición & Las asignaciones quedan visualizadas para su seguimiento o gestión. \\
-  \hline
-  Excepciones &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  3 & Si no existen resultados para los filtros seleccionados, el sistema muestra una lista vacía. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  \end{tabular}
-  \caption{Tabla caso de uso 37}
-  \label{tab:CU-37}
+  \begin{minipage}[t]{0.5\textwidth}
+    \centering
+    \resizebox{\textwidth}{!}{
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabular}{|l|p{9cm}|}
+    \hline
+    \rowcolor{udcpink!25}
+    \textbf{CU-38} & \textbf{Aceptar una asignación de equipo} \\
+    \hline
+    Descripción & Un miembro de equipo acepta una asignación pendiente asociada a su recurso para iniciar la intervención. Al aceptar, el recurso pasa a estado ocupado o desplegado y la asignación queda marcada con la fecha de aceptación. \\
+    \hline
+    Precondición & El miembro de equipo debe estar identificado, la asignación debe existir y su estado debe ser pendiente. \\
+    \hline
+    Secuencia normal &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    1 & El miembro de equipo abre el detalle de la asignación recibida. \\
+    \hline
+    2 & El miembro revisa la información de la emergencia y del recurso. \\
+    \hline
+    3 & El miembro confirma la aceptación de la asignación. \\
+    \hline
+    4 & El sistema registra la aceptación y actualiza el estado del recurso. \\
+    \hline
+    5 & El sistema notifica el cambio de estado a los usuarios autorizados. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    Postcondición & La asignación queda aceptada y el recurso permanece desplegado hasta que se libere o se complete la intervención. \\
+    \hline
+    Excepciones &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    4 & Si la asignación ya no está en estado pendiente, el sistema no permite la aceptación. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Caso de uso 38}
+    \label{tab:CU-38}
+  \end{minipage}%
+  \begin{minipage}[t]{0.5\textwidth}
+    \centering
+    \resizebox{\textwidth}{!}{
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabular}{|l|p{9cm}|}
+    \hline
+    \rowcolor{udcpink!25}
+    \textbf{CU-39} & \textbf{Liberar una asignación activa} \\
+    \hline
+    Descripción & Un miembro de equipo o un coordinador libera una asignación aceptada para indicar que el recurso deja de estar desplegado antes de que la emergencia finalice. \\
+    \hline
+    Precondición & La asignación debe existir, estar aceptada y el usuario debe tener permisos para gestionarla. \\
+    \hline
+    Secuencia normal &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    1 & El usuario abre la asignación en curso. \\
+    \hline
+    2 & El usuario selecciona la opción de liberar el recurso. \\
+    \hline
+    3 & El sistema registra el cambio de estado a liberada. \\
+    \hline
+    4 & El sistema devuelve el recurso a estado disponible. \\
+    \hline
+    5 & El sistema notifica el cambio a los usuarios móviles asociados. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    Postcondición & El recurso vuelve a estar disponible y la asignación conserva la trazabilidad del cambio. \\
+    \hline
+    Excepciones &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    3 & Si la asignación no está aceptada, el sistema no permite liberarla. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Caso de uso 39}
+    \label{tab:CU-39}
+  \end{minipage}%
 \end{table}
 
 \begin{table}[H]
-  \centering
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{12.1cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  \textbf{CU-38} & \textbf{Aceptar una asignación de equipo} \\
-  \hline
-  Descripción & Un miembro de equipo acepta una asignación pendiente asociada a su recurso para iniciar la intervención. Al aceptar, el recurso pasa a estado ocupado o desplegado y la asignación queda marcada con la fecha de aceptación. \\
-  \hline
-  Precondición & El miembro de equipo debe estar identificado, la asignación debe existir y su estado debe ser pendiente. \\
-  \hline
-  Secuencia normal &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  1 & El miembro de equipo abre el detalle de la asignación recibida. \\
-  \hline
-  2 & El miembro revisa la información de la emergencia y del recurso. \\
-  \hline
-  3 & El miembro confirma la aceptación de la asignación. \\
-  \hline
-  4 & El sistema registra la aceptación y actualiza el estado del recurso. \\
-  \hline
-  5 & El sistema notifica el cambio de estado a los usuarios autorizados. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  Postcondición & La asignación queda aceptada y el recurso permanece desplegado hasta que se libere o se complete la intervención. \\
-  \hline
-  Excepciones &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  4 & Si la asignación ya no está en estado pendiente, el sistema no permite la aceptación. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  \end{tabular}
-  \caption{Tabla caso de uso 38}
-  \label{tab:CU-38}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{12.1cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  \textbf{CU-39} & \textbf{Liberar una asignación activa} \\
-  \hline
-  Descripción & Un miembro de equipo o un coordinador libera una asignación aceptada para indicar que el recurso deja de estar desplegado antes de que la emergencia finalice. \\
-  \hline
-  Precondición & La asignación debe existir, estar aceptada y el usuario debe tener permisos para gestionarla. \\
-  \hline
-  Secuencia normal &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  1 & El usuario abre la asignación en curso. \\
-  \hline
-  2 & El usuario selecciona la opción de liberar el recurso. \\
-  \hline
-  3 & El sistema registra el cambio de estado a liberada. \\
-  \hline
-  4 & El sistema devuelve el recurso a estado disponible. \\
-  \hline
-  5 & El sistema notifica el cambio a los usuarios móviles asociados. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  Postcondición & El recurso vuelve a estar disponible y la asignación conserva la trazabilidad del cambio. \\
-  \hline
-  Excepciones &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  3 & Si la asignación no está aceptada, el sistema no permite liberarla. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  \end{tabular}
-  \caption{Tabla caso de uso 39}
-  \label{tab:CU-39}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{12.1cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  \textbf{CU-40} & \textbf{Completar una asignación} \\
-  \hline
-  Descripción & Un coordinador marca una asignación como completada cuando la intervención ha terminado y el recurso ya puede considerarse fuera del operativo. \\
-  \hline
-  Precondición & La asignación debe existir y encontrarse en estado aceptado. El coordinador debe estar autenticado. \\
-  \hline
-  Secuencia normal &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  1 & El coordinador abre el detalle de la asignación. \\
-  \hline
-  2 & El coordinador confirma que la intervención ha finalizado. \\
-  \hline
-  3 & El sistema registra la asignación como completada. \\
-  \hline
-  4 & El sistema libera el recurso y actualiza su disponibilidad. \\
-  \hline
-  5 & El sistema conserva el histórico para futuras consultas. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  Postcondición & La asignación queda cerrada y el recurso vuelve a estar disponible. \\
-  \hline
-  Excepciones &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  3 & Si la asignación no está aceptada, el sistema no permite marcarla como completada. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  \end{tabular}
-  \caption{Tabla caso de uso 40}
-  \label{tab:CU-40}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{12.1cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  \textbf{CU-41} & \textbf{Eliminar una asignación pendiente} \\
-  \hline
-  Descripción & Un coordinador elimina una asignación pendiente cuando detecta un error de planificación o un cambio en la operativa antes de que el recurso haya empezado a actuar. \\
-  \hline
-  Precondición & La asignación debe existir, estar en estado pendiente y el coordinador debe disponer de permisos para su gestión. \\
-  \hline
-  Secuencia normal &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  1 & El coordinador localiza la asignación pendiente. \\
-  \hline
-  2 & El coordinador selecciona la opción de eliminar. \\
-  \hline
-  3 & El sistema comprueba que la asignación no haya sido aceptada. \\
-  \hline
-  4 & El sistema marca la asignación como eliminada o retirada. \\
-  \hline
-  5 & El sistema conserva el histórico de la acción. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  Postcondición & La asignación deja de estar disponible para su seguimiento operativo. \\
-  \hline
-  Excepciones &
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{|l|p{10.2cm}|}
-  \hline
-  \rowcolor{udcpink!25}
-  Paso & Acción \\
-  \hline
-  3 & Si la asignación ya está aceptada o en curso, el sistema no permite su eliminación. \\
-  \hline
-  \end{tabular} \\
-  \hline
-  \end{tabular}
-  \caption{Tabla caso de uso 41}
-  \label{tab:CU-41}
+  \begin{minipage}[t]{0.5\textwidth}
+    \centering
+    \resizebox{\textwidth}{!}{
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabular}{|l|p{9cm}|}
+    \hline
+    \rowcolor{udcpink!25}
+    \textbf{CU-40} & \textbf{Completar una asignación} \\
+    \hline
+    Descripción & Un coordinador marca una asignación como completada cuando la intervención ha terminado y el recurso ya puede considerarse fuera del operativo. \\
+    \hline
+    Precondición & La asignación debe existir y encontrarse en estado aceptado. El coordinador debe estar autenticado. \\
+    \hline
+    Secuencia normal &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    1 & El coordinador abre el detalle de la asignación. \\
+    \hline
+    2 & El coordinador confirma que la intervención ha finalizado. \\
+    \hline
+    3 & El sistema registra la asignación como completada. \\
+    \hline
+    4 & El sistema libera el recurso y actualiza su disponibilidad. \\
+    \hline
+    5 & El sistema conserva el histórico para futuras consultas. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    Postcondición & La asignación queda cerrada y el recurso vuelve a estar disponible. \\
+    \hline
+    Excepciones &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    3 & Si la asignación no está aceptada, el sistema no permite marcarla como completada. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Caso de uso 40}
+    \label{tab:CU-40}
+  \end{minipage}%
+  \begin{minipage}[t]{0.5\textwidth}
+    \centering
+    \resizebox{\textwidth}{!}{
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabular}{|l|p{9cm}|}
+    \hline
+    \rowcolor{udcpink!25}
+    \textbf{CU-41} & \textbf{Eliminar una asignación pendiente} \\
+    \hline
+    Descripción & Un coordinador elimina una asignación pendiente cuando detecta un error de planificación o un cambio en la operativa antes de que el recurso haya empezado a actuar. \\
+    \hline
+    Precondición & La asignación debe existir, estar en estado pendiente y el coordinador debe disponer de permisos para su gestión. \\
+    \hline
+    Secuencia normal &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    1 & El coordinador localiza la asignación pendiente. \\
+    \hline
+    2 & El coordinador selecciona la opción de eliminar. \\
+    \hline
+    3 & El sistema comprueba que la asignación no haya sido aceptada. \\
+    \hline
+    4 & El sistema marca la asignación como eliminada o retirada. \\
+    \hline
+    5 & El sistema conserva el histórico de la acción. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    Postcondición & La asignación deja de estar disponible para su seguimiento operativo. \\
+    \hline
+    Excepciones &
+    \begin{tabular}{|l|p{5.5cm}|}
+    \rowcolors{2}{white}{udcgray!25}
+    Paso \cellcolor{udcpink!25} & Acción \cellcolor{udcpink!25} \\
+    \hline
+    3 & Si la asignación ya está aceptada o en curso, el sistema no permite su eliminación. \\
+    \hline
+    \end{tabular} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Caso de uso 41}
+    \label{tab:CU-41}
+  \end{minipage}%
 \end{table}
