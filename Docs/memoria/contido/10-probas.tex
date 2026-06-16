@@ -15,7 +15,9 @@ Las pruebas unitarias se han implementado con JUnit 5 y Mockito. Este último pe
 
 Para la creación de entidades de prueba se emplea el patrón \textit{Object Mother}, que proporciona fábricas estáticas con valores por defecto y métodos de personalización, facilitando la creación estándar y a la vez flexible de objetos sin saturar cada prueba con lógica de inicialización.
 
-La siguiente imagen \ref{fig:object-mother} muestra un ejemplo de clase que sigue el patrón Object Mother para la entidad \texttt{Organization}, con métodos estáticos para generar instancias preconfiguradas y personalizables. Este patrón tiene numerosas ventajas como la reutilización de código, mantenibilidad y legibilidad alta y promueve la separación de la creación de datos para las pruebas con las pruebas en sí.
+La siguiente figura \ref{fig:object-mother} muestra un ejemplo de clase que sigue el patrón Object Mother para la entidad \texttt{Organization}, con métodos estáticos para generar instancias preconfiguradas y personalizables. Este patrón tiene numerosas ventajas como la reutilización de código, mantenibilidad y legibilidad alta y promueve la separación de la creación de datos para las pruebas con las pruebas en sí. 
+
+En concreto se puede observar que la clase \texttt{OrganizationMother} proporciona un método \texttt{withDefaultValues()} que devuelve una instancia de \texttt{Organization} con valores por defecto, y un método \texttt{withNames(List names)} que permite personalizar el nombre de la organización. Esto permite a las pruebas crear rápidamente instancias válidas de \texttt{Organization} sin repetir código de inicialización en cada test. También existe un método \texttt{withOrganizationTypeAndRandomNames(String name)} que permite crear una organización con un tipo específico y nombres aleatorios, lo que es útil para pruebas que requieren variabilidad en los datos.
 
 \begin{figure}[H]
   \centering
@@ -43,6 +45,7 @@ Esta configuración de las pruebas de integración permite validar la lógica de
 
 En esta imagen \ref{fig:coverage} se muestra la cobertura de las pruebas unitarias e integración del backend. La cobertura es un indicador que aporta confianza pero no garantiza la ausencia de errores, por lo que se ha complementado con un análisis de casos límite y validaciones de negocio en las pruebas de integración. Se ha tratado de alcanzar una cobertura elevada en la capa de servicios mediante una batería de tests de integración que validan tanto los flujos normales como los casos de error, asegurando que la lógica de negocio se comporta correctamente en un entorno realista con una base de datos real. 
 
+Los servicios que no alcanzaron una cobertura del 100\% fueron aquellos que cuentan con una gran cantidad de validaciones de negocio y reglas complejas, como \texttt{AssignmentService} y \texttt{EmergencyService}. En estos casos, se priorizó la cobertura de los flujos críticos y de los casos de error más relevantes, dejando algunas ramas menos probables sin cubrir.
 
 
 \section{Frontend}
@@ -55,11 +58,11 @@ Se han creado tests distribuidos en las siguientes categorías:
 
 \begin{itemize}
   \item \textbf{Lógica pura:} funciones de validación de formularios (email, teléfono, DNI), formateo de fechas y transformación de coordenadas geográficas a UTM (y viceversa). Estos tests verifican la corrección de la lógica de negocio en el frontend sin necesidad de montar componentes ni depender del navegador, lo que los hace extremadamente rápidos y fiables.
-  \item \textbf{Reductores de estado:} pruebas sobre los slices de Redux (\texttt{LoginSlice}, \texttt{themeSlice}) que validan el estado inicial, las transiciones de estado y los selectores.
+  \item \textbf{Reductores de estado:} pruebas sobre los componentes de Redux (\texttt{LoginSlice}, \texttt{themeSlice}) que validan el estado inicial, las transiciones de estado y los selectores.
   \item \textbf{Componentes de interfaz:} renderizado de componentes clave como \texttt{EmergencyTypeIcon} (mapeo de nombres de emergencia a iconos), \texttt{BackButton}, \texttt{NotFoundPage} y \texttt{TeamNotFoundPage}. Estos tests verifican que los componentes se renderizan sin errores, que muestran los elementos esperados (iconos, enlaces, imágenes) y que responden correctamente a las propiedades recibidas.
 \end{itemize}
 
-La siguiente imagen \ref{fig:vitest} muestra la ejecución completa de los tests del frontend con Vitest:
+La siguiente figura \ref{fig:vitest} muestra la ejecución completa de los tests del frontend con Vitest:
 
 \begin{figure}[H]
   \centering
@@ -94,7 +97,7 @@ Como se puede ver en los porcentajes de cobertura de la imagen \ref{fig:android-
 
 \subsection{Pruebas instrumentadas de integración}
 
-Las pruebas instrumentadas verifican el comportamiento de las actividades de Android en un entorno real (emulador o dispositivo físico). A diferencia de las pruebas unitarias locales, que se ejecutan directamente sobre la JVM del desarrollador y no tienen acceso al \textit{framework} de Android, las pruebas instrumentadas se despliegan en un dispositivo o emulador donde se instala el APK de la aplicación junto con un APK de test. Esto permite que las pruebas interactúen con el ciclo de vida de las actividades, las preferencias compartidas y los \texttt{Intent} extras, validando el comportamiento real de la aplicación en un contexto de ejecución auténtico.
+Las pruebas instrumentadas verifican el comportamiento de las actividades de Android en un entorno real (emulador o dispositivo físico). A diferencia de las pruebas unitarias locales, que se ejecutan directamente sobre la JVM del desarrollador y no tienen acceso al \textit{framework} de Android, las pruebas instrumentadas se despliegan en un dispositivo o emulador donde se instala el APK de la aplicación junto con un APK de test. Esto permite que las pruebas interactúen con el ciclo de vida de las actividades, las preferencias compartidas y los \texttt{Intent} extras, validando el comportamiento real de la aplicación en un contexto de ejecución auténtico. Los \texttt{Intent} son fundamentales en Android para la comunicación entre actividades y servicios, son el mecanismo principal para lanzar nuevas pantallas y pasar datos entre ellas, y estas pruebas aseguran que los \texttt{Intent} se reciben y manejan correctamente, incluyendo la validación de los datos que transportan.
 
 Estas pruebas utilizan \texttt{ActivityScenario} de AndroidX Test para lanzar y controlar el ciclo de vida de las actividades, y se ejecutan con el runner \texttt{AndroidJUnit4} que proporciona \texttt{androidx.test.ext:junit}. Desde Android Studio pueden lanzarse seleccionando cualquiera de las clases en el directorio \texttt{src/androidTest/} y ejecutándolas con \texttt{Run}, o desde línea de comandos con la tarea de Gradle \texttt{connectedDebugAndroidTest}.
 
@@ -106,9 +109,17 @@ Estas pruebas son fundamentales para garantizar que la aplicación se comporta c
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{imaxes/coverage-android-instrumento.png}
-  \caption{Cobertura de las pruebas de la aplicación Android}
+  \caption{Resultado de las pruebas de la aplicación Android}
   \label{fig:android-coverage-instrumento}
 \end{figure}
 
 La imagen \ref{fig:android-coverage-instrumento} muestra el reporte que se obtiene tras ejecutar las pruebas instrumentadas. Estas pruebas aportan una capa adicional de confianza al validar el comportamiento real de la aplicación en un entorno auténtico.
+
+
+
+\section{Conclusión de las pruebas}
+
+En conclusión, la estrategia de pruebas adoptada en este proyecto combina pruebas unitarias, de integración y de interfaz para garantizar la calidad y estabilidad del sistema en sus tres subsistemas: backend, frontend y aplicación Android. La automatización de las pruebas permite detectar regresiones de forma temprana, mientras que las pruebas manuales complementan la validación de la experiencia de usuario y la usabilidad. La cobertura de pruebas alcanzada, junto con la validación de casos límite y flujos críticos, proporciona un alto nivel de confianza en la corrección y robustez del sistema desarrollado.
+
+No se ha pretendido un sistema con cobertura del 100\%, sino un conjunto de pruebas que cubran los flujos críticos y los casos de error más relevantes, priorizando la calidad y la mantenibilidad del código. La combinación de pruebas automatizadas y manuales asegura que el sistema cumple con los requisitos funcionales y no funcionales, ofreciendo una experiencia de usuario satisfactoria y un comportamiento estable en producción.
 

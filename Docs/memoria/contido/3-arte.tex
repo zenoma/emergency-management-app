@@ -3,53 +3,44 @@
 
 \lettrine{E}{n este capítulo} se realiza un análisis de las aplicaciones y herramientas existentes que pueden aportar soluciones para abordar la problemática comentada en este proyecto.
 
-El objetivo no es ofrecer una revisión exhaustiva, sino actualizar el estado de las alternativas ya tratadas en el trabajo previo \cite{TFGAdrianGarcia2025} y añadir otras herramientas que, por su evolución reciente o por su encaje funcional, resultan relevantes para valorar la propuesta de este proyecto.
+El objetivo es actualizar el estado de las alternativas ya tratadas en el trabajo previo \cite{TFGAdrianGarcia2025} y añadir otras herramientas que, por su evolución reciente o por su encaje funcional, resultan relevantes para valorar la propuesta de este proyecto. Además, en la sección \ref{sec:arte-public} se analiza una iniciativa pública autonómica reciente que guarda relación directa con el dominio abordado.
 
 \section{Aplicaciones analizadas}
 \label{sec:arte-tfg}
 El análisis del estado del arte se estructura en tres dimensiones principales: gestión de incidencias y coordinación, cartografía y monitorización, y participación ciudadana y avisos públicos. Estas dimensiones reflejan los aspectos clave que la solución propuesta busca integrar para ofrecer una plataforma completa de gestión de emergencias.
 
-Se ha revisado que las aplicaciones que ya han sido comentadas en el trabajo previo \cite{TFGAdrianGarcia2025} no han sufrido cambios significativos en su enfoque o funcionalidades. Como el alcance de la solución se ha ampliado, se han investigado nuevas herramientas que cuenten con una solución móvil, ya que es un aspecto clave en la propuesta de este proyecto y se ha reforzado en esta nueva etapa. 
+Se ha verificado que las aplicaciones analizadas en el trabajo previo \cite{TFGAdrianGarcia2025} no han sufrido cambios significativos en su enfoque o funcionalidades principales, por lo que la valoración realizada entonces se mantiene vigente. Como el alcance de la solución se ha ampliado, se han investigado nuevas herramientas que cuenten con aplicación móvil, ya que es un aspecto clave en la propuesta de este proyecto. Para cada aplicación analizada se indica, además de sus capacidades, si dispone de app móvil nativa.
 
 \subsection{Gestión de incidencias y coordinación}
 
 \subsubsection{Jira}
-
-Jira \cite{jira} es una plataforma de gestión de incidencias y proyectos útil para crear, priorizar y asignar tickets. Sin embargo, no aporta representación geoespacial nativa, por lo que su encaje en emergencias es parcial.
+Jira \cite{jira} es una plataforma de gestión de incidencias y proyectos útil para crear, priorizar y asignar tickets. No ha experimentado cambios relevantes desde el análisis del trabajo previo. Dispone de aplicación móvil (Jira Mobile) para seguimiento de tareas, pero no aporta representación geoespacial nativa, por lo que su encaje en emergencias es parcial.
 
 \subsubsection{Asana}
-
-Asana \cite{asana} ofrece gestión de tareas, prioridades y colaboración en equipo. Su principal carencia para este caso es que no integra mapas ni soporte geográfico.
+Asana \cite{asana} ofrece gestión de tareas, prioridades y colaboración en equipo. Se mantiene sin variaciones significativas respecto a lo descrito en el trabajo previo. Cuenta con app móvil para gestionar tareas desde el dispositivo, pero no integra mapas ni soporte geográfico, lo que limita su utilidad en contextos de emergencia.
 
 \subsubsection{Microsoft Teams}
-
-Microsoft Teams \cite{microsoft_teams} ayuda a organizar equipos y comunicación, pero no ofrece geolocalización ni procesos específicos para emergencias.
+Microsoft Teams \cite{microsoft_teams} ayuda a organizar equipos y comunicación. No se han identificado cambios sustanciales desde el trabajo previo. Posee aplicación móvil con funcionalidades de chat y videollamada, pero no ofrece geolocalización ni procesos específicos para emergencias.
 
 \subsubsection{Odoo}
-
-Odoo \cite{odoo} es flexible y modular, pero requiere personalización para ajustarse a flujos de coordinación de emergencias y a soporte geográfico.
+Odoo \cite{odoo} es un sistema modular de planificación de recursos empresariales. Su funcionalidad y enfoque se mantienen estables desde el análisis anterior. Incluye app móvil para acceso a módulos, pero requiere personalización para ajustarse a flujos de coordinación de emergencias y a soporte geográfico.
 
 \subsection{Cartografía y monitorización}
 
 \subsubsection{Global Forest Watch - Fires}
-
-Global Forest Watch Fires \cite{gfw_fires} aporta cartografía y alertas sobre incendios a partir de datos satelitales, pero no está pensada para coordinar recursos humanos ni para participación ciudadana.
+Global Forest Watch Fires \cite{gfw_fires} aporta cartografía y alertas sobre incendios a partir de datos satelitales. Su oferta se mantiene sin cambios destacables. No dispone de aplicación móvil nativa; su acceso es exclusivamente web, lo que limita su uso en campo. No está pensada para coordinar recursos humanos ni para participación ciudadana.
 
 \subsubsection{InciWeb}
-
-InciWeb \cite{inciweb} centraliza información sobre incidentes y grandes incendios con mapas e informes, pero no incorpora avisos colaborativos ni gestión táctica de equipos.
+InciWeb \cite{inciweb} centraliza información sobre incidentes y grandes incendios con mapas e informes. No se han detectado cambios funcionales relevantes. Ofrece una versión web adaptada a móviles pero no una app nativa. No incorpora avisos colaborativos ni gestión táctica de equipos.
 
 \subsubsection{Google Maps}
-
-Google Maps \cite{google_maps} permite mostrar alertas geoespaciales y ofrece una cartografía muy amplia, aunque no resuelve por sí mismo la gestión de despliegue ni el flujo de incidentes.
+Google Maps \cite{google_maps} permite mostrar alertas geoespaciales y ofrece una cartografía muy amplia. Su funcionalidad básica no ha cambiado respecto al trabajo previo. Cuenta con una app móvil madura, aunque no resuelve por sí mismo la gestión de despliegue ni el flujo de incidentes.
 
 \subsubsection{PCAM Gestión}
-
-PCAM Gestión \cite{pcam_gestion} ofrece avisos, asignación de personal y notificaciones en el ámbito de la protección civil, aunque con capacidades geoespaciales limitadas.
+PCAM Gestión \cite{pcam_gestion} ofrece avisos, asignación de personal y notificaciones en el ámbito de la protección civil. Se mantiene sin cambios reseñables desde el análisis anterior. Dispone de aplicación móvil para consulta de avisos, aunque sus capacidades geoespaciales siguen siendo limitadas.
 
 \subsubsection{XeoCode Lite}
-
-XeoCode Lite \cite{xeocode_lite} es una herramienta interna y privada de la Xunta de Galicia. Permite consultar el origen y evolución de incendios, recursos asignados y cartografía asociada, pero no expone información funcional al público ni permite participación ciudadana directa.
+XeoCode Lite \cite{xeocode_lite} es una herramienta interna y privada de la Xunta de Galicia. No ha sufrido cambios en su modelo de acceso ni en sus funcionalidades. No existe una app móvil pública; su uso está restringido al personal autorizado mediante acceso web. Permite consultar el origen y evolución de incendios, recursos asignados y cartografía asociada, pero no expone información al público ni permite participación ciudadana directa.
 
 \subsection{Participación ciudadana y avisos públicos}
 
@@ -62,7 +53,7 @@ XeoCode Lite \cite{xeocode_lite} es una herramienta interna y privada de la Xunt
   \label{fig:LíneaVerde}
 \end{figure}
 
-Línea Verde \cite{linea_verde} es una plataforma municipal de participación ciudadana y gestión de incidencias. Está bien orientada a comunicación con la administración, pero su foco es urbano y no operativo para emergencias.
+Línea Verde \cite{linea_verde} es una plataforma municipal de participación ciudadana y gestión de incidencias, disponible tanto en web como en aplicación móvil. Está bien orientada a la comunicación con la administración, pero su foco es urbano (averías en mobiliario público, limpieza, etc.) y no operativo para emergencias. Carece de funcionalidades de coordinación táctica de recursos.
 
 \subsubsection{S.O.S Emergencias}
 
@@ -73,11 +64,41 @@ Línea Verde \cite{linea_verde} es una plataforma municipal de participación ci
   \label{fig:SOSEmergencias}
 \end{figure}
 
-S.O.S Emergencias \cite{sos_emergencias} es una aplicación móvil orientada a la notificación y gestión básica de emergencias. Aporta una aproximación más directa al ámbito de alertas, aunque no integra una visión completa de coordinación geoespacial y despliegue de recursos.
+S.O.S Emergencias \cite{sos_emergencias} forma parte de una plataforma integral desarrollada por NavegaGPS, creada por bomberos e informáticos, que incluye una central de control y gestión, un navegador GPS para vehículos de emergencia y una app profesional para el personal de intervención. La app ciudadana gratuita permite llamar a los servicios de emergencia con envío automático de la ubicación y está diseñada para personas con discapacidad auditiva o del habla (mediante pictogramas), discapacidad visual (Google TalkBack) y adaptada para violencia de género.
+
+No obstante, su despliegue territorial se limita principalmente a la provincia de Málaga a través de la Diputación y el Consorcio Provincial de Bomberos, y carece de una visión completa de coordinación geoespacial multi-riesgo y despliegue de recursos más allá del ámbito de bomberos.
+
+\subsubsection{112 Andalucía}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/112andalucia.png}
+  \caption{Vista de la app 112 Andalucía}
+  \label{fig:Andalucia112}
+\end{figure}
+
+112 Andalucía \cite{andalucia112} es una aplicación móvil gratuita desarrollada por la Dirección General de Emergencias y Protección Civil de la Junta de Andalucía. Permite contactar con el centro de coordinación de emergencias 112 mediante llamada de voz o chat, enviando simultáneamente las coordenadas GPS del usuario para agilizar la localización. También ofrece envío de fotos y archivos, atención multilingüe, notificaciones y consejos en zonas con emergencias activas.
+
+Internamente, la aplicación emplea el estándar europeo \acrfull{pemea} \cite{pemea_etsi} para las comunicaciones por chat.
+
+Esta app está limitada al ámbito territorial andaluz y no tiene aplicación web ni funcionalidades de gestión de organizaciones o coordinación táctica de recursos. Su enfoque es ciudadano y de notificación de emergencias, sin integrar capacidades de despliegue operativo.
+
+\subsubsection{AlertCops}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{imaxes/arte/AlertCops.png}
+  \caption{App AlertCops}
+  \label{fig:AlertCops}
+\end{figure}
+
+AlertCops \cite{alertcops} es una aplicación móvil gratuita del Ministerio del Interior de España, gestionada por la Policía Nacional y la Guardia Civil, que permite a los ciudadanos comunicarse directamente con las fuerzas de seguridad mediante chat o botón SOS, con envío automático de la ubicación y grabación de audio. Ofrece también funciones de acompañamiento, notificaciones de avisos en zonas concretas, alarma sonora y un servicio de guardián para eventos, entre otras.
+
+Aunque dispone de cobertura nacional, su orientación principal es la seguridad ciudadana y la respuesta policial, no la coordinación de emergencias multi-riesgo. Carece de aplicación web, de gestión de organizaciones y de funcionalidades de despliegue táctico de recursos como cuadrantes o asignación de equipos, aspectos que constituyen el núcleo de la propuesta de este trabajo.
 
 \section{Iniciativas públicas recientes}
 \label{sec:arte-public}
-En un comunicado, la Xunta de Galicia ha anunciado la ampliación de mecanismos de detección temprana de incendios forestales mediante la creación de una nueva app para la ciudadanía junto con el uso de cámaras de videovigilancia \cite{xunta_deteccion_incendios_2026}.
+En un comunicado de la fecha 23 de marzo de 2026 \cite{xunta_deteccion_incendios_2026}, la Xunta de Galicia ha anunciado la ampliación de mecanismos de detección temprana de incendios forestales mediante la creación de una nueva app para la ciudadanía junto con el uso de cámaras de videovigilancia.
 
 Esta aplicación combina un canal para notificaciones tempranas, sensores y cámaras para observación remota y procesamiento automatizado con IA para priorizar alertas y detectar anomalías. Todo ello ayuda a la notificación y coordinación de emergencias en tiempo real.
 
@@ -85,12 +106,14 @@ Funcionalmente esta nueva app presenta un solapamiento funcional notable con el 
 
 Algunas diferencias clave respecto a la solución inicial son que la aplicación añade una capa de hardware y vigilancia (cámaras/sensores) y está diseñada para integrarse en procedimientos administrativos y operativos a escala autonómica. Por otro lado, aquella primera propuesta aporta un énfasis en la coordinación táctica, como la asignación de recursos, la gestión por cuadrantes y el soporte a decisiones de despliegue en campo.
 
-Como comentario crítico, cabe destacar la coincidencia temática que resalta la relevancia del problema abordado en la propuesta previa y demuestra que las soluciones planteadas tienen aplicación real. Ambas aproximaciones son complementarias y evidencian la necesidad de soluciones integrales que aborden todo el ciclo de gestión de emergencias, desde la detección hasta la coordinación en campo.
-
 \section{Conclusión}
+\label{sec:arte-conclusion}
+
 Las aplicaciones analizadas ofrecen soluciones parciales en las tres dimensiones de interés: gestión de avisos, representación geoespacial y coordinación de equipos. Ninguna de las herramientas revisadas integra de forma nativa las tres capacidades con enfoque ciudadano-operativo y despliegue de recursos; esto evidencia el hueco funcional que aborda la propuesta de este trabajo.
 
-La tabla comparativa 3.1 resume las funcionalidades analizadas para resaltar fortalezas y carencias de cada alternativa:
+Cabe destacar la coincidencia temática con la iniciativa autonómica reciente descrita en la sección \ref{sec:arte-public}, lo que resalta la relevancia del problema abordado y demuestra que las soluciones planteadas tienen aplicación real. Ambas aproximaciones son complementarias y evidencian la necesidad de soluciones integrales que aborden todo el ciclo de gestión de emergencias, desde la detección hasta la coordinación en campo.
+
+La tabla comparativa \ref{tab:comparativa} resume las funcionalidades analizadas para resaltar fortalezas y carencias de cada alternativa:
 
 \begin{table}[H]
   \centering
@@ -119,6 +142,8 @@ La tabla comparativa 3.1 resume las funcionalidades analizadas para resaltar for
       \textit{PCAM Gestión} & \checkmark &  & \checkmark &  & \checkmark & \checkmark & \checkmark & \checkmark \\
       \textit{XeoCode Lite} & \checkmark & ? & \checkmark & ? & ? & ? & ? & ? \\
       \textit{Xunta (nueva app)} & \checkmark & \checkmark &  & \checkmark &  & \checkmark &  & \checkmark \\
+      \textit{112 Andalucía} & \checkmark &  &  & \checkmark &  & \checkmark & \checkmark & \checkmark \\
+      \textit{AlertCops} & \checkmark &  &  & \checkmark &  & \checkmark &  & \checkmark \\
     \end{tabular}}    
     \caption{Tabla comparativa entre aplicaciones}
     \label{tab:comparativa}
