@@ -32,44 +32,21 @@ En los tres casos es necesario disponer de Git para clonar el repositorio. El re
 
 Para la puesta en producción, se recomienda configurar un entorno de despliegue con Docker para el backend y la base de datos, y utilizar servicios como Firebase Hosting para el frontend y Google Play Store para la aplicación Android. Esto viene explicado con más detalle en el apéndice \ref{sec:instalacion}, donde se incluyen las instrucciones de instalación y despliegue de cada subsistema.
 
-\section{Estructura}
+\section{Estructura del repositorio}
 
-El repositorio se organiza en tres bloques principales: \textit{backend/}, \textit{frontend/} y \textit{EmergencyApp/}. Esta separación permite trabajar de forma independiente sobre la lógica de negocio, la interfaz web y la aplicación Android, manteniendo una frontera clara entre cada subsistema. A continuación se muestran los diagramas de estructura de cada uno de ellos.
+El repositorio se organiza en tres directorios raíz, cada uno correspondiente a un subsistema: \textit{backend/}, \textit{frontend/} y \textit{EmergencyApp/}. A continuación se describe la organización dentro de cada uno de ellos y los ficheros más relevantes.
 
 \subsection{Backend}
 
-El directorio \textit{backend/} contiene la aplicación Spring Boot y sigue la estructura habitual de Maven. El código fuente principal se encuentra en \textit{backend/src/main/java}, mientras que los recursos se localizan en \textit{backend/src/main/resources}. Dentro de esta última ruta destacan \textit{openApi/}, donde se define el contrato de la API en YAML, y \textit{db/}, donde se encuentran los scripts SQL de creación e inicialización de la base de datos. El fichero \textit{docker-compose.yaml} también forma parte de este módulo y se utiliza para arrancar la base de datos local.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.5\textwidth]{imaxes/files_backend.png}
-  \caption{Estructura de los archivos del backend}
-  \label{fig:backend-struct}
-\end{figure}
-
-La implementación backend se organiza por capas. En \textit{rest/controllers} se encuentran los controladores expuestos por la API; en \textit{rest/mappers}, los adaptadores entre entidades y DTOs; en \textit{rest/common}, la gestión global de errores; en \textit{rest/config}, la configuración de seguridad y JWT; y en \textit{model}, las entidades, repositorios, excepciones y servicios de negocio. Tras la generación de OpenAPI, los ficheros producidos se ubican en \textit{target/generated-sources/openapi}, por lo que no forman parte del código mantenido manualmente.
+El directorio \textit{backend/} es un proyecto Maven convencional. El código fuente principal se encuentra en \textit{src/main/java}, los recursos (configuración de Spring, scripts DDL, plantillas) en \textit{src/main/resources}, y los tests en \textit{src/test/java}. Dentro de \textit{resources} destacan dos subdirectorios propios del proyecto: \textit{openApi/}, que contiene el contrato YAML de la API, y \textit{db/}, con los scripts de creación e inicialización de la base de datos. El fichero \textit{docker-compose.yaml} se encuentra también en \textit{resources} y permite levantar PostgreSQL con PostGIS en un contenedor. El \textit{pom.xml} declarado en la raíz gestiona las dependencias, el plugin de OpenAPI y el resto de librerías del backend.
 
 \subsection{Frontend}
 
-El directorio \textit{frontend/} contiene la aplicación web construida con React. La carpeta \textit{src/} agrupa la lógica principal: \textit{api/} contiene la capa de acceso a datos con RTK Query, \textit{features/} organiza las pantallas por dominio funcional, \textit{app/} concentra la configuración global del almacén y de utilidades compartidas, \textit{locales/} contiene las traducciones y \textit{features/map/} reúne la lógica cartográfica. Esta estructura favorece que cada funcionalidad se mantenga encapsulada y reutilizable.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.3\textwidth]{imaxes/files_frontend.png}
-  \caption{Estructura de los archivos del frontend}
-  \label{fig:frontend-struct}
-\end{figure}
+El directorio \textit{frontend/} contiene la aplicación React con Vite. El código fuente se ubica en \textit{src/}, con subdirectorios por funcionalidad: \textit{api/} para el acceso al backend mediante RTK Query, \textit{features/} para las pantallas agrupadas por dominio, \textit{app/} para la configuración del almacén Redux y utilidades compartidas, \textit{locales/} para los ficheros de traducción (ES/GL) y \textit{features/map/} para la lógica cartográfica con MapLibre. En la raíz se encuentran \textit{package.json} con las dependencias, \textit{vite.config.js} para la configuración del empaquetador y \textit{index.html} como punto de entrada.
 
 \subsection{Aplicación Android}
 
-El directorio \textit{EmergencyApp/} contiene la aplicación Android. El módulo principal está en \textit{EmergencyApp/app/}, donde \textit{src/main/java} agrupa el código Kotlin, \textit{src/main/res} almacena recursos, iconos y cadenas, y \textit{AndroidManifest.xml} define la configuración básica de la aplicación. Dentro del código fuente, la organización se reparte entre \textit{ui/} para las pantallas, \textit{net/} para el cliente HTTP, \textit{messaging/} para Firebase Messaging, \textit{data/dto/} para los modelos de intercambio y \textit{util/} para utilidades específicas como el tratamiento de coordenadas o la gestión de fechas.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.4\textwidth]{imaxes/files_android.png}
-  \caption{Estructura de los archivos de la aplicación Android}
-  \label{fig:android-struct}
-\end{figure}
+El directorio \textit{EmergencyApp/} es un proyecto Gradle. El módulo principal está en \textit{app/}, que contiene \textit{src/main/java} con el código Kotlin, \textit{src/main/res} con los recursos (cadenas, iconos) y el \textit{AndroidManifest.xml}. Dentro del código fuente, los paquetes se organizan por responsabilidad técnica: \textit{ui/} para las pantallas con Jetpack Compose, \textit{net/} para el cliente HTTP con Ktor, \textit{messaging/} para la integración con Firebase Cloud Messaging, \textit{data/dto/} para los objetos de intercambio con la API y \textit{util/} para funciones auxiliares. Los ficheros \textit{build.gradle.kts} de la raíz y del módulo \textit{app/} gestionan las dependencias del proyecto.
 
 \section{Instrucciones de compilación}
 

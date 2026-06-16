@@ -283,4 +283,35 @@ class OrganizationServiceImplTest {
 
   }
 
+  @Test
+  void givenValidId_whenFindOrganizationById_thenFound() throws InstanceNotFoundException {
+    Organization found = organizationService.findOrganizationById(defaultOrganization.getId());
+    Assertions.assertNotNull(found);
+  }
+
+  @Test
+  void givenInvalidId_whenFindOrganizationById_thenThrows() {
+    when(organizationRepository.findById(any())).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> organizationService.findOrganizationById(999L));
+  }
+
+  @Test
+  void givenValidId_whenFindOrganizationTypeById_thenFound() throws InstanceNotFoundException {
+    OrganizationType type = OrganizationTypeOM.withDefaultValues();
+    when(organizationTypeRepository.findById(any())).thenReturn(Optional.of(type));
+
+    OrganizationType found = organizationService.findOrganizationTypeById(1L);
+    Assertions.assertNotNull(found);
+  }
+
+  @Test
+  void givenInvalidId_whenFindOrganizationTypeById_thenThrows() {
+    when(organizationTypeRepository.findById(any())).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(InstanceNotFoundException.class,
+        () -> organizationService.findOrganizationTypeById(999L));
+  }
+
 }
