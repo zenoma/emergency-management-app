@@ -111,7 +111,7 @@ export default function QuadrantDataGrid({ childToParent, excludedQuadrantIds })
       {error ? (
         <h1>{t("generic-error")}</h1>
       ) : isLoading ? (
-        <div>Loading</div>
+        <div>{t("loading")}</div>
       ) : quadrants ? (
         <DataGrid
           {...data}

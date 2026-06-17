@@ -31,25 +31,25 @@ export const SwitchLanguajeDropdown = () => {
         <Select
           id="language-selector"
           value={language}
-          label="Languaje"
+          label={t("language")}
           onChange={handleChange}
         >
           <MenuItem value={"en"}>
             <Box sx={{ maxWidth: "20px", display: "flex" }}>
-              <img alt="English Flag" src={enFlag} />
-              <Typography sx={{ margin: "5px" }}>English</Typography>
+              <img alt={t("lang-en")} src={enFlag} />
+              <Typography sx={{ margin: "5px" }}>{t("lang-en")}</Typography>
             </Box>
           </MenuItem>
           <MenuItem value={"es"}>
             <Box sx={{ maxWidth: "20px", display: "flex" }}>
-              <img alt="Bandera Española" src={esFlag} />
-              <Typography sx={{ margin: "5px" }}>Español</Typography>
+              <img alt={t("lang-es")} src={esFlag} />
+              <Typography sx={{ margin: "5px" }}>{t("lang-es")}</Typography>
             </Box>
           </MenuItem>
           <MenuItem value={"gl"}>
             <Box sx={{ maxWidth: "20px", display: "flex" }}>
-              <img alt="Bandera Gallega" src={glFlag} />
-              <Typography sx={{ margin: "5px" }}>Galego</Typography>
+              <img alt={t("lang-gl")} src={glFlag} />
+              <Typography sx={{ margin: "5px" }}>{t("lang-gl")}</Typography>
             </Box>
           </MenuItem>
         </Select>

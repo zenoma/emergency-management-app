@@ -29,7 +29,7 @@ export default function TeamNotFoundPage() {
       <Box
         component="img"
         src={TeamNotFound}
-        alt="Team not found"
+        alt={t("my-team-not-found-tittle")}
         sx={{
           maxWidth: 500,
           width: "100%",

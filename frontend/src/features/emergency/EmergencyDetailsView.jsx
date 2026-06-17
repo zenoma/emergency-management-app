@@ -816,14 +816,14 @@ export default function EmergencyDetailsView() {
             >
               <Typography variant="h6">{t("quadrant-link")}</Typography>
               <Box sx={{ mt: 1, mb: 2 }}>
-                <FormLabel component="legend">{t('link-mode-label') || 'Link mode'}</FormLabel>
+                <FormLabel component="legend">{t('link-mode-label', 'Link mode')}</FormLabel>
                 {(() => {
                   const hasQuadrants = data && data.quadrantInfo && data.quadrantInfo.length > 0;
                   const hasLocation = data && data.location != null;
                   return (
                     <RadioGroup row value={linkMode} onChange={(e) => setLinkMode(e.target.value)}>
-                      <FormControlLabel value="QUADRANT" control={<Radio />} label={t('link-mode-quadrant') || 'Quadrant'} disabled={hasLocation} />
-                      <FormControlLabel value="POINT" control={<Radio />} label={t('link-mode-point') || 'Point'} disabled={hasQuadrants} />
+                      <FormControlLabel value="QUADRANT" control={<Radio />} label={t('link-mode-quadrant', 'Quadrant')} disabled={hasLocation} />
+                      <FormControlLabel value="POINT" control={<Radio />} label={t('link-mode-point', 'Point')} disabled={hasQuadrants} />
                     </RadioGroup>
                   );
                 })()}
@@ -852,7 +852,7 @@ export default function EmergencyDetailsView() {
                             <TableCell component="th" scope="row">{row.nombre}</TableCell>
                             <TableCell>{row.id}</TableCell>
                             <TableCell align="center">
-                              <IconButton aria-label={t('remove-quadrant') || 'Remove quadrant'} size="small" color="error" onClick={(e) => { e.stopPropagation(); handleResolveQuadrantOpenClick(row.id); }}>
+                              <IconButton aria-label={t('remove-quadrant', 'Remove quadrant')} size="small" color="error" onClick={(e) => { e.stopPropagation(); handleResolveQuadrantOpenClick(row.id); }}>
                                 <DeleteIcon fontSize="small" />
                               </IconButton>
                             </TableCell>
@@ -871,10 +871,10 @@ export default function EmergencyDetailsView() {
                 </>
               ) : (
                 <>
-                  <Typography variant="subtitle1">{t('point-link-title') || 'Link to point'}</Typography>
+                  <Typography variant="subtitle1">{t('point-link-title', 'Link to point')}</Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
                     {data && data.location == null ? (
-                      <Button variant="contained" onClick={() => setOpenPointPicker(true)}>{t('select-point-on-map') || 'Select point on map'}</Button>
+                      <Button variant="contained" onClick={() => setOpenPointPicker(true)}>{t('select-point-on-map', 'Select point on map')}</Button>
                     ) : (
                       <Button variant="text" onClick={() => { navigate('/emergency-point', { state: { emergencyId: emergencyId } }); }}>
                         {quadrantByCoordinates?.name || quadrantByCoordinates?.nombre || t('quadrant-name-unknown') || '-'}
@@ -944,7 +944,7 @@ export default function EmergencyDetailsView() {
 
       {/* Point picker dialog (reuse CoordinatesMap) */}
       <Dialog fullWidth={true} maxWidth={"md"} open={openPointPicker} onClose={() => setOpenPointPicker(false)}>
-        <DialogTitle sx={{ color: "primary.light" }}>{t('select-point-on-map') || 'Select point on map'}</DialogTitle>
+        <DialogTitle sx={{ color: "primary.light" }}>{t('select-point-on-map', 'Select point on map')}</DialogTitle>
         <DialogContent sx={{ height: '60vh', width: '100%' }}>
           <Box sx={{ height: '100%', width: '100%' }}>
             <CoordinatesMap childToParent={(childdata) => {
@@ -971,18 +971,18 @@ export default function EmergencyDetailsView() {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenPointPicker(false)}>{t('cancel') || 'Cancel'}</Button>
+          <Button onClick={() => setOpenPointPicker(false)}>{t('cancel', 'Cancel')}</Button>
         </DialogActions>
       </Dialog>
 
       {/* Confirmation dialog before linking the selected point */}
       <Dialog open={openPointConfirm} onClose={() => { setOpenPointConfirm(false); setPendingProjPoint(null); }}>
-        <DialogTitle>{t('confirm-link-point-title') || 'Confirm link point'}</DialogTitle>
+        <DialogTitle>{t('confirm-link-point-title', 'Confirm link point')}</DialogTitle>
         <DialogContent>
-          <Typography>{t('confirm-link-point-text') || 'Do you want to link the emergency to the selected point?'}</Typography>
+          <Typography>{t('confirm-link-point-text', 'Do you want to link the emergency to the selected point?')}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => { setOpenPointConfirm(false); setPendingProjPoint(null); }}>{t('cancel') || 'Cancel'}</Button>
+          <Button onClick={() => { setOpenPointConfirm(false); setPendingProjPoint(null); }}>{t('cancel', 'Cancel')}</Button>
           <Button variant="contained" onClick={() => {
             if (!pendingProjPoint) return;
             const projX = pendingProjPoint.x;
@@ -1001,7 +1001,7 @@ export default function EmergencyDetailsView() {
                 setOpenPointConfirm(false);
                 setPendingProjPoint(null);
               });
-          }}>{t('confirm') || 'Confirm'}</Button>
+          }}>{t('confirm', 'Confirm')}</Button>
         </DialogActions>
       </Dialog>
 

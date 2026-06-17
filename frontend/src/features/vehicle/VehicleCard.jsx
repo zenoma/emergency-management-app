@@ -11,8 +11,11 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import OrganizationDetailsCard from "../organization/OrganizationDetailsCard";
 
+import { useTranslation } from "react-i18next";
+
 export default function VehicleCard(props) {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleClickToOpen = () => {
     setOpen(true);
@@ -36,7 +39,7 @@ export default function VehicleCard(props) {
         margin={1}
         sx={{ fontWeight: "bold", color: "primary.light" }}
       >
-        Detalles de equipo
+        {t("vehicle-details")}
       </Typography>
       <Typography
         variant="h6"
@@ -47,7 +50,7 @@ export default function VehicleCard(props) {
           color: "secondary.light",
         }}
       >
-        Código de equipo:
+        {t("vehicle-code-label")}
       </Typography>
       <Typography variant="h6" margin={1}  sx={{ display: "inline" }}>
         {props.data["code"]}
@@ -61,7 +64,7 @@ export default function VehicleCard(props) {
           color: "secondary.light",
         }}
       >
-        Organización asociada :
+        {t("vehicle-organization-label")}
       </Typography>
       <Typography variant="h6" margin={1} sx={{ display: "inline-block" }}>
         {props.data["organization"]["name"]}
@@ -77,7 +80,7 @@ export default function VehicleCard(props) {
         </DialogContent>
         <DialogActions sx={{ background: "#FAFAFA" }}>
           <Button onClick={handleToClose} color="primary" autoFocus>
-            Close
+            {t("close")}
           </Button>
         </DialogActions>
       </Dialog>

@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { DateRangePicker, DateTimePicker } from "@mui/x-data-pickers";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { useTranslation } from "react-i18next";
 
 function DateTimeRangePicker() {
+  const { t } = useTranslation();
   const [startDateTime, setStartDateTime] = useState(null);
   const [endDateTime, setEndDateTime] = useState(null);
 
@@ -18,13 +20,13 @@ function DateTimeRangePicker() {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DateTimePicker
-        label="Start Date and Time"
+        label={t("start-date-time")}
         value={startDateTime}
         onChange={handleStartDateTimeChange}
         renderInput={(params) => <TextField {...params} />}
       />
       <DateTimePicker
-        label="End Date and Time"
+        label={t("end-date-time")}
         value={endDateTime}
         onChange={handleEndDateTimeChange}
         renderInput={(params) => <TextField {...params} />}

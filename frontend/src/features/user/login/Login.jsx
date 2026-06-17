@@ -81,7 +81,7 @@ export default function Login() {
           margin="normal"
           autoComplete="current-email"
           error={!isValidEmail && email !== ""}
-          helperText={!isValidEmail && email !== "" ? "Not valid email!" : " "}
+          helperText={!isValidEmail && email !== "" ? t("not-valid-email") : " "}
           variant="standard"
           value={email}
           onChange={(e) => handleChange(e)}
@@ -104,7 +104,7 @@ export default function Login() {
           disabled={!isValidEmail}
           onClick={(e) => handleClick(e)}
         >
-          Log in
+          {t("login")}
         </Button>
       </FormControl>
     </Paper>

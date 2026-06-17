@@ -5,9 +5,11 @@ import { Marker } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Icon from "../../app/assets/images/pin.png";
 import { transformCoordinates } from "../../app/utils/coordinatesTransformations";
+import { useTranslation } from "react-i18next";
 
 
 export default function CoordinatesMap({ childToParent }) {
+  const { t } = useTranslation();
   const [cursor] = useState("auto");
 
   const MAP_STYLE = "https://api.maptiler.com/maps/topo-v2/style.json?key=3GSLdy5VE4yLq4OhlyYJ"
@@ -64,7 +66,7 @@ export default function CoordinatesMap({ childToParent }) {
         longitude={mouseCoords.lng}
         anchor="bottom"
       >
-        <img src={Icon} alt="map icon" width="20" />
+        <img src={Icon} alt={t("map-icon")} width="20" />
       </Marker>
     </Map>
   );

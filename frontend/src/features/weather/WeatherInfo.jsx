@@ -84,7 +84,7 @@ const WeatherInfo = (props) => {
                 mb: 1,
             }}>
                 {data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1)}
-                <img src={iconurl} alt="weather-icon" />
+                <img src={iconurl} alt={t("weather-icon")} />
             </Typography>
 
             <Divider sx={{ mb: 1.5 }} />

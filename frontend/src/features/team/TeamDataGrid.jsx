@@ -101,7 +101,7 @@ export default function TeamDataGrid({ childToParent }) {
       {error ? (
         <h1>{t("generic-error")}</h1>
       ) : isLoading ? (
-        <div>Loading</div>
+        <div>{t("loading")}</div>
       ) : teams ? (
         <DataGrid
           {...data}

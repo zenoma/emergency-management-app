@@ -159,11 +159,11 @@ export default function Login() {
                 margin="dense"
                 value={dni}
                 error={!isValidDni && dni !== ""}
-                helperText={
-                  !isValidDni && dni !== ""
-                    ? "Must have 8 numbers and a letter"
-                    : " "
-                }
+                  helperText={
+                    !isValidDni && dni !== ""
+                      ? t("signup-password-validation")
+                      : " "
+                  }
                 onChange={(e) => handleChange(e)}
                 required
                 variant="standard"
@@ -178,11 +178,11 @@ export default function Login() {
                 margin="dense"
                 value={phoneNumber}
                 error={!isValidPhoneNumber && phoneNumber !== ""}
-                helperText={
-                  !isValidPhoneNumber && phoneNumber !== ""
-                    ? `Must have 9 digits`
-                    : " "
-                }
+                  helperText={
+                    !isValidPhoneNumber && phoneNumber !== ""
+                      ? t("signup-dni-validation")
+                      : " "
+                  }
                 onChange={(e) => handleChange(e)}
                 required
                 variant="standard"
@@ -196,9 +196,9 @@ export default function Login() {
                 margin="dense"
                 autoComplete="current-email"
                 error={!isValidEmail && email !== ""}
-                helperText={
-                  !isValidEmail && email !== "" ? "Not valid email!" : " "
-                }
+                  helperText={
+                    !isValidEmail && email !== "" ? t("not-valid-email") : " "
+                  }
                 value={email}
                 onChange={(e) => handleChange(e)}
                 variant="standard"

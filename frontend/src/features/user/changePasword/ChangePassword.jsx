@@ -70,7 +70,7 @@ export default function ChangePassword() {
           </FormLabel>
           <TextField
             id="old-password"
-            label="Contraseña Vieja"
+            label={t("old-password")}
             type="password"
             margin="normal"
             autoComplete="current-password"
@@ -80,7 +80,7 @@ export default function ChangePassword() {
           />
           <TextField
             id="new-password"
-            label="Nueva Contraseña"
+            label={t("new-password")}
             type="password"
             autoComplete="current-password"
             variant="standard"
@@ -95,7 +95,7 @@ export default function ChangePassword() {
             onClick={(e) => handleClick(e)}
             variant="contained"
           >
-            Enviar
+            {t("send")}
           </Button>
         </FormControl>
       </form>

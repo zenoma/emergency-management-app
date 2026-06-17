@@ -118,13 +118,13 @@ export default function AssignmentManagementView() {
       })
       .catch((e) => {
         console.error('createAssignment error', e);
-        let msg = 'Unknown error';
+        let msg = t("unknown-error", "Unknown error");
         if (e?.data) {
           try { msg = typeof e.data === 'string' ? e.data : JSON.stringify(e.data); } catch (_) { msg = String(e.data); }
         } else if (e?.error) {
           msg = e.error;
         } else if (e?.status) {
-          msg = `Status ${e.status}`;
+          msg = `${t("status")} ${e.status}`;
         } else if (e?.message) {
           msg = e.message;
         }

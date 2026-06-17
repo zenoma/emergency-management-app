@@ -199,7 +199,7 @@ export default function MyNoticesList() {
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogContent>
           {selectedImage && <img src={`${URL}/images/${selectedNoticeId}/${selectedImage}`}
-            alt="Imagen" style={{ maxWidth: "100%" }} />}
+            alt={t("notice-image")} style={{ maxWidth: "100%" }} />}
         </DialogContent>
       </Dialog>
     </Paper >
