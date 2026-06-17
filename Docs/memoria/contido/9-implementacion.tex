@@ -30,7 +30,7 @@ La aplicación Android necesita Android Studio con el SDK 34, y hay que añadir 
 
 En los tres casos es necesario disponer de Git para clonar el repositorio. El resto de dependencias se gestionan automáticamente al compilar cada módulo, por lo que no es necesario instalarlas manualmente.
 
-Para la puesta en producción, se recomienda configurar un entorno de despliegue con Docker para el backend y la base de datos, y utilizar servicios como Firebase Hosting para el frontend y Google Play Store para la aplicación Android. Esto viene explicado con más detalle en el apéndice \ref{sec:instalacion}, donde se incluyen las instrucciones de instalación y despliegue de cada subsistema.
+Para la puesta en producción, se recomienda configurar un entorno de despliegue con Docker para el backend y la base de datos, y utilizar servicios como Firebase Hosting para el frontend y Google Play Store para la aplicación Android. Esto se explica con más detalle en el apéndice \ref{sec:instalacion}, donde se incluyen las instrucciones de instalación y despliegue de cada subsistema.
 
 \section{Estructura del repositorio}
 
@@ -38,7 +38,7 @@ El repositorio se organiza en tres directorios raíz, cada uno correspondiente a
 
 \subsection{Backend}
 
-El directorio \textit{backend/} es un proyecto Maven convencional. El código fuente principal se encuentra en \textit{src/main/java}, los recursos (configuración de Spring, scripts DDL, plantillas) en \textit{src/main/resources}, y los tests en \textit{src/test/java}. Dentro de \textit{resources} destacan dos subdirectorios propios del proyecto: \textit{openApi/}, que contiene el contrato YAML de la API, y \textit{db/}, con los scripts de creación e inicialización de la base de datos. El fichero \textit{docker-compose.yaml} se encuentra también en \textit{resources} y permite levantar PostgreSQL con PostGIS en un contenedor. El \textit{pom.xml} declarado en la raíz gestiona las dependencias, el plugin de OpenAPI y el resto de librerías del backend.
+El directorio \textit{backend/} es un proyecto Maven convencional. El código fuente principal se encuentra en \textit{src/main/java}, los recursos (configuración de Spring, scripts DDL, plantillas) en \textit{src/main/resources}, y los tests en \textit{src/test/java}. Dentro de \textit{resources} destacan dos subdirectorios propios del proyecto: \textit{openApi/}, que contiene el contrato YAML de la API, y \textit{db/}, con los scripts de creación e inicialización de la base de datos. El fichero \textit{docker-compose.yaml} se encuentra también en \textit{resources} y permite levantar PostgreSQL con PostGIS en un contenedor. El \textit{pom.xml} situado en la raíz gestiona las dependencias, el plugin de OpenAPI y el resto de librerías del backend.
 
 \subsection{Frontend}
 
