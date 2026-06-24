@@ -13,21 +13,25 @@ En esta fase del trabajo se ha partido de la base funcional y tecnológica ya ex
 La figura \ref{fig:Arquitectura} resume la arquitectura general de la solución y permite ver cómo se comunican las distintas capas del sistema. A partir de esa base, el proyecto mantiene la estructura cliente-servidor del trabajo previo, pero amplía su alcance para cubrir un escenario multi-dispositivo más completo.
 
 \begin{figure}[H]
-  \includegraphics[width=1\textwidth]{imaxes/diagrama-arquitectura.png}
+  \includegraphics[width=1.1\textwidth]{imaxes/diagrama-arquitectura.png}
   \caption{Arquitectura de la solución}
   \label{fig:Arquitectura}
 \end{figure}
+
+\newpage
 
 La solución mantiene la base cliente-servidor ya empleada en el trabajo previo \cite{TFGAdrianGarcia2025}, en el que la arquitectura se concentraba en un backend encargado de la lógica de negocio y un frontend web orientado a la interacción con el usuario. En este proyecto, esa base se amplía para dar soporte a una plataforma multi-dispositivo más completa, tal y como se aprecia en la figura \ref{fig:Arquitectura}.
 
 En la capa web, el frontend sigue actuando como interfaz principal de gestión y está construido sobre React y Redux, con RTK Query como mecanismo de acceso a la \acrshort{api} \acrshort{rest}. Aquí se encuentran la visualización de las nuevas emergencias y su clasificación, la gestión de asignaciones y la generación de recomendaciones de asignaciones mediante reglas. Además, el frontend incorpora la representación cartográfica con MapLibre, el proveedor de estilos MapTiler y la consulta de información meteorológica con OpenWeatherMap para enriquecer la toma de decisiones.
 
-En el backend se centraliza la lógica de negocio y las capas de persistencia con Spring Boot y Spring Data, apoyadas en Hibernate y \acrfull{jpa}. Sobre él se apoyan también los procesos de validación, recomendación y trazabilidad operativa. La base de datos se implementa con PostgreSQL y PostGIS para dar soporte a la información relacional y geoespacial, mientras que Docker se utiliza para facilitar el despliegue y la reproducción del entorno. A mayores, se incorpora la declaración de los endpoints de la \acrshort{api} \acrshort{rest} con OpenAPI y Swagger, lo que permite generar documentación y clientes de manera automática.
+En el backend se centraliza la lógica de negocio y las capas de persistencia con Spring Boot y Spring Data, apoyadas en Hibernate y \acrfull{jpa}. Sobre él se apoyan también los procesos de validación, recomendación y trazabilidad operativa. La base de datos se implementa con PostgreSQL y PostGIS para dar soporte a la información relacional y geoespacial, mientras que Docker se utiliza para facilitar el despliegue y la reproducción del entorno. Además, se incorpora la declaración de los endpoints de la \acrshort{api} \acrshort{rest} con OpenAPI y Swagger, lo que permite generar documentación y clientes de manera automática.
 
 Como ampliación se incorpora una aplicación Android desarrollada en Kotlin y Jetpack Compose, que reutiliza la misma \acrshort{api} \acrshort{rest} para consultar emergencias, asignaciones y recursos. Además, la mensajería con \acrfull{fcm} permite que el backend notifique eventos relevantes a los dispositivos móviles, cerrando el flujo de comunicación entre la capa de gestión y la app de campo. La comunicación entre el backend y el frontend web se realiza a través de una \acrshort{api} \acrshort{rest}, mientras que la comunicación con la aplicación Android se apoya en una combinación de \acrshort{api} \acrshort{rest} para consultas y \acrshort{fcm} para notificaciones asíncronas.
 
 Esta arquitectura distribuida permite que cada tecnología cumpla un papel concreto: el backend concentra la lógica de negocio y la gestión de datos, la base de datos asegura la persistencia y el soporte geoespacial, el frontend web ofrece una gestión centralizada y visualización avanzada, y la aplicación Android proporciona acceso rápido a las funcionalidades clave para los usuarios de campo. Gracias a esta segregación de responsabilidades, el sistema es capaz de evolucionar y adaptarse a nuevas necesidades sin comprometer la estabilidad ni la escalabilidad de la solución.
 
+
+\newpage
 
 \section{Metodología e iteraciones}
 

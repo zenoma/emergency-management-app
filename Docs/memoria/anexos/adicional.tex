@@ -234,7 +234,7 @@ El frontend web es una aplicación de una sola página (\acrshort{spa}) desarrol
 \subsubsection{Usuario no identificado}
 \label{sec:web-anon}
 
-\paragraph{Dashboard}
+\textbf{Dashboard}
 
 Al iniciar la aplicación se muestra la vista inicial o \textit{dashboard}. El navegador solicitará permisos de ubicación para mostrar los datos relevantes a la posición del usuario. En esta vista se puede ver el mapa con los cuadrantes activos (polígonos sobre el territorio), la información meteorológica de la localización del usuario y un formulario para realizar avisos de nuevas emergencias, con la opción de añadir una imagen. Para enviar un aviso, basta con rellenar el formulario inferior derecho, adjuntar opcionalmente una imagen y pulsar el botón \textbf{CREAR AVISO}.
 
@@ -245,7 +245,7 @@ Al iniciar la aplicación se muestra la vista inicial o \textit{dashboard}. El n
   \label{fig:web-dashboard}
 \end{figure}
 
-\paragraph{Registro de usuario}
+\textbf{Registro de usuario}
 
 Desde el \textit{dashboard} se puede acceder a la pantalla de registro \ref{fig:web-signup} pulsando el icono superior derecho y seleccionando \textit{Registrarse}. El formulario solicita nombre, apellidos, DNI, teléfono, correo electrónico y contraseña. Tras enviarlo, el usuario queda registrado con el rol \texttt{USER} y puede identificarse en la aplicación.
 
@@ -256,7 +256,7 @@ Desde el \textit{dashboard} se puede acceder a la pantalla de registro \ref{fig:
   \label{fig:web-signup}
 \end{figure}
 
-\paragraph{Identificación de usuario}
+\textbf{Identificación de usuario}
 
 Un usuario registrado puede identificarse en la pantalla de inicio de sesión \ref{fig:web-login} introduciendo su correo y contraseña. Tras el inicio de sesión exitoso, se accede a la vista de perfil.
 
@@ -281,7 +281,7 @@ En la vista de perfil \ref{fig:web-profile} se muestran los datos del usuario (n
 
 El usuario (rol \texttt{USER}) puede ver su perfil, crear avisos y consultar el estado de los avisos que ha enviado. No tiene acceso a la gestión de equipos, vehículos ni emergencias.
 
-\paragraph{Menú de navegación}
+\textbf{Menú de navegación}
 
 Al pulsar el icono del menú en la parte superior izquierda se despliega un panel de navegación que permite acceder a las distintas secciones de la aplicación. El menú incluye la opción de poder ver los \textit{Avisos enviados}. En la parte inferior se encuentran los controles de cambio de tema (claro/oscuro) y selección de idioma (español, inglés o gallego).
 
@@ -292,7 +292,7 @@ Al pulsar el icono del menú en la parte superior izquierda se despliega un pane
   \label{fig:web-user-menu}
 \end{figure}
 
-\paragraph{Vista de avisos}
+\textbf{Vista de avisos}
 
 En esta vista \ref{fig:web-my-notices} se muestran los avisos que el usuario ha enviado, incluyendo el estado (pendiente, aceptado, rechazado), la descripción y las imágenes adjuntas. Pulsando sobre una imagen se abre un diálogo de vista ampliada.
 
@@ -309,7 +309,7 @@ En esta vista \ref{fig:web-my-notices} se muestran los avisos que el usuario ha 
 
 El miembro de equipo (rol \texttt{MEMBER}) puede visualizar la información de su equipo, incluyendo los miembros, el código y el estado del equipo. No puede gestionar emergencias ni recursos. 
 
-\paragraph{Menú de navegación}
+\textbf{Menú de navegación}
 
 Al pulsar el icono del menú en la parte superior izquierda se despliega un panel de navegación que permite acceder a las distintas secciones de la aplicación. El menú incluye opciones para \textit{Mis avisos} y \textit{Mi equipo}.
 
@@ -320,7 +320,7 @@ Al pulsar el icono del menú en la parte superior izquierda se despliega un pane
   \label{fig:web-member-menu}
 \end{figure}
 
-\paragraph{Mi equipo}
+\textbf{Mi equipo}
 
 Si el usuario está asignado a un equipo, esta vista \ref{fig:web-my-team} muestra la información del equipo (código, estado) y la lista de sus miembros. Si no tiene equipo asignado, se muestra un mensaje indicándolo.
 
@@ -338,7 +338,7 @@ Si el usuario está asignado a un equipo, esta vista \ref{fig:web-my-team} muest
 
 El jefe de equipo (rol \texttt{MANAGER}) puede gestionar equipos y vehículos dentro de las organizaciones y administrar emergencias.
 
-\paragraph{Menú de navegación}
+\textbf{Menú de navegación}
 
 Al pulsar el icono del menú en la parte superior izquierda se despliega un panel de navegación que permite acceder a las distintas secciones de la aplicación. Este panel contiene todas las opciones del miembro de equipo, además de la entrada \textit{Gestión de emergencias} y \textit{Gestión de organizaciones}.
 
@@ -350,7 +350,7 @@ Al pulsar el icono del menú en la parte superior izquierda se despliega un pane
 \end{figure}
 
 
-\paragraph{Vista de organizaciones}
+\textbf{Vista de organizaciones}
 
 En la vista \ref{fig:web-organizations} se muestran las organizaciones registradas, filtrables por tipo (brigada, patrulla de vigilancia, etc.). Al seleccionar una organización se accede al detalle con sus equipos y vehículos.
 
@@ -361,7 +361,7 @@ En la vista \ref{fig:web-organizations} se muestran las organizaciones registrad
   \label{fig:web-organizations}
 \end{figure}
 
-\paragraph{Gestión de equipos y vehículos}
+\textbf{Gestión de equipos y vehículos}
 
 En esta vista \ref{fig:web-org-teams-vehicles} aparecen, lado a lado, los equipos y los vehículos pertenecientes a la organización seleccionada, con información de su estado (disponible/ocupado). El jefe de equipo dispone de botones para crear nuevos equipos, editar su código, eliminar (desmantelar) equipos, y añadir o eliminar miembros del equipo.
 
@@ -372,7 +372,7 @@ En esta vista \ref{fig:web-org-teams-vehicles} aparecen, lado a lado, los equipo
   \label{fig:web-org-teams-vehicles}
 \end{figure}
 
-\paragraph{Vista de gestión de emergencias}
+\textbf{Vista de gestión de emergencias}
 
 En la figura \ref{fig:web-emergencies} se muestra un listado completo de todas las emergencias activas y resueltas, con información de tipo, índice de gravedad, fecha de creación y estado. El jefe de equipo puede no puede crear nuevas emergencias, pero sí puede vincular cuadrantes y asignar recursos a las emergencias existentes.
 
@@ -384,7 +384,7 @@ En la figura \ref{fig:web-emergencies} se muestra un listado completo de todas l
 \end{figure}
 
 
-\paragraph{Vista en tiempo real de la emergencia}
+\textbf{Vista en tiempo real de la emergencia}
 
 Esta vista \ref{fig:web-emergency-details} muestra la información completa de la emergencia: tipo, índice de gravedad (CERO, UNO, DOS, TRES), descripción, ubicación en el mapa, cuadrantes vinculados y recomendaciones de recursos. El jefe de equipo puede realizar las siguientes acciones: vincular o desvincular cuadrantes a la emergencia, vincular una ubicación puntual (si la emergencia no está asociada a cuadrantes) y editar la descripción, tipo e índice de la emergencia.
 
@@ -395,7 +395,7 @@ Esta vista \ref{fig:web-emergency-details} muestra la información completa de l
   \label{fig:web-emergency-details}
 \end{figure}
 
-\paragraph{Histórico de una emergencia resuelta}
+\textbf{Histórico de una emergencia resuelta}
 
 En esta vista \ref{fig:web-emergency-history} se presentan los detalles de una emergencia que ya ha sido resuelta, incluyendo la información de los cuadrantes vinculados y el histórico de asignaciones realizadas durante la emergencia. El jefe de equipo puede consultar el estado final de cada asignación y los recursos utilizados. A mayores, se puede ver las estadísticas de la emergencia, como hectáreas afectadas, recursos desplegados y cuadrantes afectados.
 
@@ -421,7 +421,7 @@ El coordinador (rol \texttt{COORDINATOR}) tiene acceso completo a todas las func
   \label{fig:web-coordinator-menu}
 \end{figure}
 
-\paragraph{Gestión de usuarios}
+\textbf{Gestión de usuarios}
 
 El coordinador puede ver todos los usuarios registrados \ref{fig:web-user-management} y modificar sus roles mediante botones de flecha ascendente (promocionar) y descendente (despromocionar). Los roles disponibles son \texttt{USER}, \texttt{MEMBER}, \texttt{MANAGER} y \texttt{COORDINATOR}.
 
@@ -432,7 +432,7 @@ El coordinador puede ver todos los usuarios registrados \ref{fig:web-user-manage
   \label{fig:web-user-management}
 \end{figure}
 
-\paragraph{Creación de organizaciones}
+\textbf{Creación de organizaciones}
 
 En la vista de organizaciones \ref{fig:web-create-organization}, el coordinador dispone de un botón adicional \textit{Crear organización} que abre un formulario para registrar una nueva organización indicando nombre, código, dirección, tipo y ubicación geográfica.
 
@@ -443,7 +443,7 @@ En la vista de organizaciones \ref{fig:web-create-organization}, el coordinador 
   \label{fig:web-create-organization}
 \end{figure}
 
-\paragraph{Creación de emergencias}
+\textbf{Creación de emergencias}
 
 En la vista de emergencias \ref{fig:web-create-emergency}, el coordinador dispone de un botón adicional \textit{Crear emergencia} que abre un formulario para registrar una nueva emergencia indicando tipo, índice de gravedad y descripción. La ubicación de la emergencia se puede seleccionar en el mapa o mediante coordenadas.
 
@@ -455,7 +455,7 @@ En la vista de emergencias \ref{fig:web-create-emergency}, el coordinador dispon
 \end{figure}
 
 
-\paragraph{Gestión de avisos}
+\textbf{Gestión de avisos}
 
 En esta vista \ref{fig:web-notices-management}, el coordinador puede ver todos los avisos enviados por los usuarios, con información de estado, descripción y fecha. Los avisos pueden ser aceptados, rechazados o eliminados.
 
@@ -466,24 +466,26 @@ En esta vista \ref{fig:web-notices-management}, el coordinador puede ver todos l
   \label{fig:web-notices-management}
 \end{figure}
 
-\paragraph{Gestión de asignaciones}
+\textbf{Gestión de asignaciones}
 
 El coordinador puede crear, visualizar \ref{fig:web-assignment-management} y gestionar las asignaciones de recursos (equipos y vehículos) a emergencias y cuadrantes. Para crear una asignación \ref{fig:web-assignment-creation}, se selecciona el botón de \textbf{Crear asignación} y luego se rellena el formulario indicando la emergencia, el cuadrante (si procede), el tipo de recurso (equipo/vehículo) y el recurso concreto. Se pueden añadir notas opcionales. 
 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{imaxes/manual-usuario/gestion-asignaciones.png}
-  \caption{Vista de la gestión de asignaciones}
-  \label{fig:web-assignment-management}
-\end{figure}
-
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{imaxes/manual-usuario/crear-asignacion.png}
-  \caption{Vista de la creación de asignaciones}
-  \label{fig:web-assignment-creation}
+  \begin{subfigure}{0.4\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/gestion-asignaciones.png}
+    \caption{Vista de la gestión de asignaciones}
+    \label{fig:web-assignment-management}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.4\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/crear-asignacion.png}
+    \caption{Vista de la creación de asignaciones}
+    \label{fig:web-assignment-creation}
+  \end{subfigure}
+  \caption{Pantallas de gestión y creación de asignaciones}
+  \label{fig:web-assignment-screens}
 \end{figure}
 
 En el detalle de la asignación \ref{fig:web-assignment-details} se muestra el mapa (si hay cuadrante), la información del emergencia, del recurso y del cuadrante, junto con el estado actual de la asignación. Las acciones disponibles dependen del estado: \textbf{PENDIENTE} (se puede aceptar, desplegando el recurso, o eliminar), \textbf{ACEPTADA} (se puede liberar, retirando el recurso, o marcar como completada) y \textbf{COMPLETADA} o \textbf{LIBERADA} (estado final, sin acciones disponibles). 
@@ -505,7 +507,7 @@ A mayores, desde la vista de información de la emergencia el Coordinador puede 
 \end{figure}
 
 
-\paragraph{Reglas de recomendación}
+\textbf{Reglas de recomendación}
 
 El coordinador, en la vista de gestión de recomendaciones \ref{fig:web-recommendation-rules}, puede configurar las reglas de recomendación automática de recursos para cada tipo de emergencia. Las reglas incluyen: prioridad, número de equipos recomendados, número de vehículos recomendados, distancia máxima y tipo de organización preferida.
 
@@ -525,72 +527,83 @@ El coordinador, en la vista de gestión de recomendaciones \ref{fig:web-recommen
 \subsection{Aplicación Android}
 \label{sec:manual-android}
 
-La aplicación Android es un cliente ligero que consume la API REST del backend. Está desarrollada con Jetpack Compose y MapLibre para la visualización cartográfica.
+La aplicación Android es un cliente ligero que consume la API REST del backend. Este cliente sirve para un acceso más inmediato y práctico desde dispositivos móviles, permitiendo a los usuarios enviar avisos, recibir notificaciones y consultar información de emergencias y recursos en tiempo real.
 
 % ---- NO IDENTIFICADO ----
 \subsubsection{Usuario no identificado}
 \label{sec:and-anon}
 
-\paragraph{Pantalla de mapa principal}
+\textbf{Pantalla de mapa principal}
 
-Al abrir la aplicación se muestra el mapa interactivo con los cuadrantes activos y los marcadores de incendios activos. El mapa utiliza MapLibre con datos cartográficos de OpenStreetMap y permite la navegación por gestos (zoom, desplazamiento). Los cuadrantes con incendios activos se muestran como polígonos rojos. Los marcadores de incendios usan iconos según el tipo de emergencia.
-
-\begin{figure}[H]
-  \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Mapa principal Android]}}\\[4pt]
-    \textit{Captura de la pantalla de mapa en la app Android}\vspace{3cm}}}
-  \caption{Pantalla de mapa principal}
-  \label{fig:and-map}
-\end{figure}
-
-\paragraph{Envío de avisos}
-
-Desde el botón inferior \textit{Enviar} o desde el menú lateral, se accede a la pantalla de envío de avisos. El usuario puede tomar una foto con la cámara, escribir una descripción y enviar el aviso. La aplicación obtiene automáticamente las coordenadas GPS del dispositivo. No es necesario estar identificado para enviar un aviso.
+Al abrir la aplicación se muestra el mapa interactivo \ref{fig:and-dashboard}con los cuadrantes activos y los marcadores de emergencias activas. Los cuadrantes con emergencias activas se muestran como polígonos rojos. Los marcadores de emergencias usan iconos según el tipo de emergencia.
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Enviar aviso Android]}}\\[4pt]
-    \textit{Captura de la pantalla de envío de aviso}\vspace{3cm}}}
-  \caption{Pantalla de envío de aviso}
-  \label{fig:and-send-notice}
+  \includegraphics[width=0.4\textwidth]{imaxes/manual-usuario/app-dashboard.png}
+  \caption{Vista de la pantalla principal de la aplicación Android}  
+  \label{fig:and-dashboard}
 \end{figure}
 
-\paragraph{Inicio de sesión y registro}
 
-Desde el menú lateral, el usuario no identificado puede acceder a las pantallas de inicio de sesión y registro. El formulario de registro solicita nombre, apellidos, correo, contraseña, DNI y teléfono.
+\textbf{Inicio de sesión, registro y perfil}
+
+Desde el menú lateral, el usuario no identificado puede acceder a las pantallas de inicio de sesión y registro. En la vista de registro \ref{fig:and-signup} se solicita nombre, apellidos, correo electrónico, contraseña, DNI y teléfono. Tras registrarse, el usuario puede iniciar sesión en la aplicación.
+
+En la vista de inicio de sesión \ref{fig:and-login} se solicita correo electrónico y contraseña. Tras iniciar sesión, el usuario accede a la vista de perfil \ref{fig:and-profile}, donde se muestran los datos del usuario, su rol, su email, su teléfono, su DNI, y opciones para seleccionar el idioma de la aplicación (español, inglés o gallego) y cerrar sesión.
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Inicio de sesión Android]}}\\[4pt]
-    \textit{Captura de la pantalla de inicio de sesión}\vspace{3cm}}}
-  \caption{Pantalla de inicio de sesión}
-  \label{fig:and-login}
+  \begin{subfigure}{0.3\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-signup.png}
+    \caption{Pantalla de registro}
+    \label{fig:and-signup}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.3\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-login.png}
+    \caption{Pantalla de inicio de sesión}
+    \label{fig:and-login}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.3\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-profile.png}
+    \caption{Pantalla de perfil de usuario}
+    \label{fig:and-profile}
+  \end{subfigure}
+  \caption{Pantallas de autenticación y perfil de la aplicación Android}
+  \label{fig:and-auth-screens}
 \end{figure}
+
+
+\textbf{Envío, consulta y detalle de avisos}
+
+Desde el botón inferior \textit{Enviar} o desde el menú lateral, se accede a la pantalla de envío de avisos \ref{fig:and-send-notice}. El usuario puede tomar una foto con la cámara, escribir una descripción y enviar el aviso. La aplicación obtiene automáticamente las coordenadas GPS del dispositivo. No es necesario estar identificado para enviar un aviso.
+
+Además, el usuario identificado puede consultar sus propios avisos \ref{fig:and-my-notices}, con filtro por estado. Cada tarjeta muestra la imagen (si existe), la descripción, el estado y la fecha. Al pulsar sobre un aviso se accede a su detalle \ref{fig:and-notice-detail}, donde se puede ver la imagen a tamaño completo, la descripción, las coordenadas, el cuadrante asociado y el estado del aviso.
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Registro Android]}}\\[4pt]
-    \textit{Captura de la pantalla de registro}\vspace{3cm}}}
-  \caption{Pantalla de registro de usuario}
-  \label{fig:and-signup}
+  \begin{subfigure}{0.3\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-aviso.png}
+    \caption{Envío de aviso}
+    \label{fig:and-send-notice}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.3\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-mis-aviso.png}
+    \caption{Mis avisos}
+    \label{fig:and-my-notices}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.3\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-detalle-aviso.png}
+    \caption{Detalle de aviso}
+    \label{fig:and-notice-detail}
+  \end{subfigure}
+  \caption{Pantallas de envío, consulta y detalle de avisos}
+  \label{fig:and-notice-screens}
 \end{figure}
 
-\paragraph{Perfil de usuario}
-
-\begin{figure}[H]
-  \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Perfil Android]}}\\[4pt]
-    \textit{Captura de la pantalla de perfil de usuario}\vspace{3cm}}}
-  \caption{Pantalla de perfil de usuario}
-  \label{fig:and-profile}
-\end{figure}
-
-En el perfil se muestran los datos del usuario, su rol, y opciones para seleccionar el idioma de la aplicación (español, inglés o gallego) y cerrar sesión.
 
 % ---- USER ----
 \subsubsection{Usuario registrado}
@@ -598,135 +611,102 @@ En el perfil se muestran los datos del usuario, su rol, y opciones para seleccio
 
 Además de las funcionalidades anteriores, el usuario identificado con rol \texttt{USER} puede consultar sus propios avisos.
 
-\paragraph{Mis avisos}
-
-Se muestran todos los avisos enviados por el usuario, con filtro por estado. Cada tarjeta muestra la imagen (si existe), la descripción, el estado y la fecha.
-
-\begin{figure}[H]
-  \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Mis avisos Android]}}\\[4pt]
-    \textit{Captura de la lista de avisos del usuario}\vspace{3cm}}}
-  \caption{Lista de avisos del usuario}
-  \label{fig:and-my-notices}
-\end{figure}
-
-\paragraph{Detalle de aviso}
-
-Al pulsar sobre un aviso se accede a su detalle, donde se puede ver la imagen a tamaño completo, la descripción, las coordenadas, el cuadrante asociado y el estado.
-
-\begin{figure}[H]
-  \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Detalle de aviso Android]}}\\[4pt]
-    \textit{Captura del detalle de un aviso}\vspace{3cm}}}
-  \caption{Detalle de aviso}
-  \label{fig:and-notice-detail}
-\end{figure}
-
 % ---- ROL AVANZADO (no USER) ----
 \subsubsection{Rol con permisos avanzados}
 \label{sec:and-advanced}
 
-Los usuarios con roles superiores a \texttt{USER} (\texttt{MEMBER}, \texttt{MANAGER} o \texttt{COORDINATOR}) pueden acceder a funcionalidades adicionales a través del menú lateral y la barra inferior de navegación.
+Los usuarios con roles superiores a \texttt{USER} (\texttt{MEMBER}, \texttt{MANAGER} o \texttt{COORDINATOR}) pueden acceder a funcionalidades adicionales a través del menú lateral y la barra inferior de navegación. Estas funcionalidades son ver el equipo al que pertenece, consultar las asignaciones activas, ver las organizaciones registradas y acceder a la lista de emergencias activas.
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Menú lateral Android]}}\\[4pt]
-    \textit{Captura del menú lateral con opciones avanzadas}\vspace{3cm}}}
-  \caption{Menú lateral con todas las opciones disponibles}
-  \label{fig:and-drawer}
+  \includegraphics[width=0.4\textwidth]{imaxes/manual-usuario/app-user-dashboard.png}
+  \caption{Vista de la pantalla de dashboard del usuario}  
+  \label{fig:and-user-dashboard}
 \end{figure}
 
-\paragraph{Mi equipo}
+\textbf{Mi equipo}
 
-Muestra la información del equipo al que pertenece el usuario (código, estado, organización) y la lista de sus miembros. Incluye un botón para navegar a las asignaciones activas del equipo.
+La vista del Mi equipo \ref{fig:and-team-detail} muestra la información del equipo al que pertenece el usuario (código, estado, organización) y la lista de sus miembros. Incluye un botón para navegar a las asignaciones activas del equipo.
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Mi equipo Android]}}\\[4pt]
-    \textit{Captura de la pantalla de mi equipo}\vspace{3cm}}}
-  \caption{Pantalla de mi equipo}
-  \label{fig:and-my-team}
+  \includegraphics[width=0.4\textwidth]{imaxes/manual-usuario/app-detalle-equipo.png}
+  \caption{Vista de la pantalla de detalle del equipo}  
+  \label{fig:and-team-detail}
 \end{figure}
 
-\paragraph{Mis asignaciones}
 
-Se listan las asignaciones activas (pendientes o aceptadas) del equipo. Las asignaciones en estado \texttt{PENDIENTE} tienen un botón \textit{Aceptar} que despliega el recurso y registra el evento en el sistema.
+\textbf{Mis asignaciones}
+
+Se listan las asignaciones activas (pendientes o aceptadas) del equipo \ref{fig:and-assignments}. Las asignaciones en estado \texttt{PENDIENTE} tienen un botón \textit{Aceptar} que despliega el recurso y registra el evento en el sistema.
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Asignaciones Android]}}\\[4pt]
-    \textit{Captura de la lista de asignaciones del equipo}\vspace{3cm}}}
-  \caption{Lista de asignaciones del equipo}
+  \includegraphics[width=0.4\textwidth]{imaxes/manual-usuario/app-asignacion.png}
+  \caption{Vista de la pantalla de asignaciones del equipo}  
   \label{fig:and-assignments}
 \end{figure}
 
-\paragraph{Organizaciones}
+\textbf{Organizaciones y detalle}
 
-Se muestran las organizaciones registradas, filtrables por tipo y con búsqueda por texto. Al pulsar una organización se accede a su detalle.
+Se muestran las organizaciones registradas \ref{fig:and-organizations}, filtrables por tipo y con búsqueda por texto. Al pulsar una organización se accede a su detalle \ref{fig:and-organization-resources}, donde se muestra la información de la organización, sus equipos (con código y estado) y sus vehículos (con matrícula, tipo y estado).
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Organizaciones Android]}}\\[4pt]
-    \textit{Captura de la lista de organizaciones}\vspace{3cm}}}
-  \caption{Lista de organizaciones}
-  \label{fig:and-organizations}
+  \begin{subfigure}{0.45\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-organizacion.png}
+    \caption{Organizaciones}
+    \label{fig:and-organizations}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.45\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-recursos.png}
+    \caption{Recursos de la organización}
+    \label{fig:and-organization-resources}
+  \end{subfigure}
+  \caption{Pantallas de organizaciones y sus recursos}
+  \label{fig:and-organization-screens}
 \end{figure}
 
-\paragraph{Detalle de organización}
+\textbf{Emergencias activas y detalle}
 
-En el detalle se muestra la información de la organización, sus equipos (con código y estado) y sus vehículos (con matrícula, tipo y estado).
+Las emergencias activas \ref{fig:and-emergencies} se listan con icono de tipo, índice de gravedad, descripción, cuadrante y fecha, y se pueden buscar por descripción u ordenar por fecha de creación. Al pulsar sobre una emergencia se accede a su detalle \ref{fig:and-emergency-detail}, donde se muestra la información completa (tipo, índice, descripción, ubicación, cuadrantes afectados) y, si está vinculada a cuadrantes, la lista de estos.
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Detalle organización Android]}}\\[4pt]
-    \textit{Captura del detalle de una organización}\vspace{3cm}}}
-  \caption{Detalle de organización}
-  \label{fig:and-organization-detail}
+  \begin{subfigure}{0.45\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-emergencias.png}
+    \caption{Emergencias activas}
+    \label{fig:and-emergencies}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.45\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-detalle-emergencia.png}
+    \caption{Detalle de emergencia}
+    \label{fig:and-emergency-detail}
+  \end{subfigure}
+  \caption{Pantallas de lista y detalle de emergencias}
+  \label{fig:and-emergency-list}
 \end{figure}
 
-\paragraph{Emergencias activas}
+\textbf{Recursos de cuadrante}
 
-Se listan todas las emergencias activas, con icono de tipo, índice de gravedad, descripción, cuadrante y fecha. Se pueden buscar por descripción y ordenar por fecha de creación.
-
-\begin{figure}[H]
-  \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Emergencias Android]}}\\[4pt]
-    \textit{Captura de la lista de emergencias activas}\vspace{3cm}}}
-  \caption{Lista de emergencias activas}
-  \label{fig:and-emergencies}
-\end{figure}
-
-\paragraph{Detalle de emergencia}
-
-Muestra la información completa de la emergencia (tipo, índice, descripción, ubicación, cuadrantes afectados) y, si la emergencia está vinculada a cuadrantes, la lista de cuadrantes afectados. Pulsando sobre un cuadrante se accede a los recursos asignados.
+Si se tratara de una emergencia vinculada a cuadrantes, al pulsar sobre un cuadrante se accede a la vista de la lista de cuadrantes\ref{fig:and-emergency-detail-quadrant}. Si se selecciona un cuadrante, se puede observar el detalle de la emergencia de ese cuadrante \ref{fig:and-emergency-detail-quadrant-resource}, donde se muestran los recursos asignados al cuadrante y su estado. Desde esta vista, el usuario puede ver el detalle de cada recurso asignado.
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Detalle emergencia Android]}}\\[4pt]
-    \textit{Captura del detalle de una emergencia}\vspace{3cm}}}
-  \caption{Detalle de emergencia}
-  \label{fig:and-emergency-detail}
-\end{figure}
-
-\paragraph{Recursos de cuadrante}
-
-Muestra los equipos y vehículos asignados a un cuadrante concreto dentro de una emergencia específica, incluyendo su estado y fechas de despliegue.
-
-\begin{figure}[H]
-  \centering
-  \fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}
-    {\Large\textbf{[IMAGEN: Recursos de cuadrante Android]}}\\[4pt]
-    \textit{Captura de los recursos asignados a un cuadrante}\vspace{3cm}}}
-  \caption{Recursos asignados a un cuadrante}
-  \label{fig:and-quadrant-resources}
+  \begin{subfigure}{0.45\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-detalle-emergencia-cuadrante.png}
+    \caption{Lista de cuadrantes de una emergencia}
+    \label{fig:and-emergency-detail-quadrant}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.45\textwidth}
+    \includegraphics[width=\textwidth]{imaxes/manual-usuario/app-detalle-emergencia-cuadrante-recurso.png}
+    \caption{Detalle de emergencia de un cuadrante}
+    \label{fig:and-emergency-detail-quadrant-resource}
+  \end{subfigure}
+  \caption{Pantallas de cuadrantes y recursos asociados a una emergencia}
+  \label{fig:and-emergency-quadrant}
 \end{figure}
 

@@ -103,6 +103,7 @@ Este bloque agrupa los casos de uso CU-42 a CU-45, que permiten consultar y modi
 
 \input{contido/taboas/casos-uso-gestion-reglas-recomendacion}
 
+\newpage
 \subsection{Recomendación de recursos}
 
 Este bloque recoge los casos de uso CU-46 a CU-48, que explotan la configuración de reglas para ofrecer una propuesta concreta de medios disponibles (cada uno en su propia tabla). Así, el sistema permite consultar recomendaciones de recursos para una emergencia, generar recomendaciones con criterios operativos y crear una asignación desde una recomendación.
@@ -117,6 +118,7 @@ Este bloque recoge los casos de uso CU-49 a CU-51, que informan al personal oper
 
 
 
+\newpage
 \section{Modelo de casos de uso}
 
 A continuación se muestran los diagramas que contienen los casos de usos identificados
@@ -160,7 +162,7 @@ En el diagrama \ref{fig:diagrama-gestion-recursos} aparecen los actores relacion
 
 El diagrama \ref{fig:diagrama-gestion-emergencias} recoge los actores que activan los casos de uso relacionados con la gestión de emergencias. En este bloque se agrupan las acciones de creación, actualización, consulta y resolución de emergencias, junto con la vinculación y retirada de cuadrantes. 
 
-Las relaciones entre casos de uso reflejan la lógica operativa del bloque: CU-23 (vincular emergencia a cuadrantes) extiende a CU-18 (dar de alta), ya que la vinculación solo tiene sentido una vez creada la emergencia; a su vez, CU-24 (retirar cuadrante) extiende a CU-23, pues para la retirada de un cuadrante es necesaria una vinculación previa. Por otra parte, los casos CU-19 (resolver), CU-20 (actualizar), CU-22 (cambiar índice), CU-23 (vincular) y CU-24 (retirar) incluyen a CU-21 (listar emergencias), que proporciona la base de datos necesaria para ejecutar cualquiera de esas operaciones. Adicionalmente, CU-19 (resolver) incluye a CU-40 (completar asignación), ya que al resolver una emergencia deben cerrarse las asignaciones activas asociadas.
+Las relaciones entre casos de uso reflejan la lógica operativa del bloque: CU-23 (vincular emergencia a cuadrantes) extiende a CU-18 (dar de alta), ya que la vinculación solo tiene sentido una vez creada la emergencia, y a su vez CU-24 (retirar cuadrante) extiende a CU-23, pues para la retirada de un cuadrante es necesaria una vinculación previa. Por otra parte, los casos CU-19 (resolver), CU-20 (actualizar), CU-22 (cambiar índice), CU-23 (vincular) y CU-24 (retirar) incluyen a CU-21 (listar emergencias), que proporciona la base de datos necesaria para ejecutar cualquiera de esas operaciones. Adicionalmente, CU-19 (resolver) incluye a CU-40 (completar asignación), ya que al resolver una emergencia deben cerrarse las asignaciones activas asociadas.
 
 Este es el bloque central del sistema, pues en torno a la gestión de emergencias se orquestan la mayoría de las funcionalidades. Un aviso validado se convierte en una emergencia gracias a un coordinador, que a su vez puede vincular esa emergencia a una organización concreta. A partir de ahí, el coordinador puede asignar recursos a la emergencia, ya sea de forma manual o a través de recomendaciones automáticas, y gestionar el despliegue operativo sobre el terreno. Además, la información meteorológica y los registros históricos se asocian a cada emergencia para contextualizar su evolución y facilitar la toma de decisiones. Con cada acción de vinculación o asignación se generan notificaciones para mantener informados a los usuarios implicados, lo que refuerza la coordinación y el seguimiento de cada incidente. 
 

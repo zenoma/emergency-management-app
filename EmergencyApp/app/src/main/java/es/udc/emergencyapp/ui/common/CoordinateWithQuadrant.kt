@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
@@ -24,30 +24,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import es.udc.emergencyapp.net.HttpClient
+import es.udc.emergencyapp.util.transformProjectedToGeographic
 import es.udc.emergencyapp.util.transformWgs84ToUtm29
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/**
- * Displays coordinates and the quadrant name obtained from backend /quadrants/findByCoordinates.
- * lon/lat passed here are expected in geographic WGS84 (lon, lat) or already projected coordinates.
- */
+
 @Composable
 fun CoordinateWithQuadrantChip(lon: Double?, lat: Double?, showCoordinates: Boolean = true) {
     val ctx = LocalContext.current
     val lonVal = lon ?: Double.NaN
     val latVal = lat ?: Double.NaN
-    val lonText = if (lonVal.isNaN()) "-" else "%.6f".format(lonVal)
-    val latText = if (latVal.isNaN()) "-" else "%.6f".format(latVal)
+
+    val isProjected = kotlin.math.abs(lonVal) > 1000000 || kotlin.math.abs(latVal) > 1000000
+    val (displayLon, displayLat) = if (isProjected && !lonVal.isNaN() && !latVal.isNaN()) {
+        transformProjectedToGeographic(lonVal, latVal)
+    } else Pair(lonVal, latVal)
+
+    val lonText = if (displayLon.isNaN()) "-" else "%.6f".format(displayLon)
+    val latText = if (displayLat.isNaN()) "-" else "%.6f".format(displayLat)
 
     var quadrantName by remember(lonVal, latVal) { mutableStateOf<String?>(null) }
-    var loading by remember(lonVal, latVal) { mutableStateOf(false) }
+    var loading by remember(lonVal, latVal) { mutableStateOf(true) }
 
     LaunchedEffect(lonVal, latVal) {
-        if (lonVal.isNaN() || latVal.isNaN()) return@LaunchedEffect
-        loading = true
+        if (lonVal.isNaN() || latVal.isNaN()) {
+            loading = false
+            return@LaunchedEffect
+        }
         try {
-            val (px, py) = if (kotlin.math.abs(lonVal) > 1000000 || kotlin.math.abs(latVal) > 1000000) {
+            val (px, py) = if (isProjected) {
                 Pair(lonVal, latVal)
             } else {
                 transformWgs84ToUtm29(lonVal, latVal)
@@ -89,9 +95,8 @@ fun CoordinateWithQuadrantChip(lon: Double?, lat: Double?, showCoordinates: Bool
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.size(4.dp))
-                    Text(text = quadrantName ?: "-", style = MaterialTheme.typography.subtitle1)
+                    Text(text = "...", style = MaterialTheme.typography.subtitle1)
                 }
-                Text(text = "$lonText, $latText", style = MaterialTheme.typography.caption)
             }
         }
     } else {
