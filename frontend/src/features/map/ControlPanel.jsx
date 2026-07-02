@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 // Layer id patterns by category
 const layerSelector = {
@@ -34,6 +35,7 @@ function StyleControls(props) {
     roads: true,
     labels: true,
   });
+  const { t } = useTranslation();
 
   useEffect(() => {
     const filter = (layerId) => getLayerFilter(categories, layerId);
@@ -46,15 +48,15 @@ function StyleControls(props) {
 
   return (
     <div className="control-panel">
-      <h3>Custom Cursor</h3>
-      <p>Customize the cursor based on interactivity.</p>
+      <h3>{t("custom-cursor")}</h3>
+      <p>{t("custom-cursor-desc")}</p>
       <div className="source-link">
         <a href="https://github.com/visgl/react-map-gl/tree/7.0-release/examples/custom-cursor" target="_new">
           View Code ↗
         </a>
       </div>
       <hr />
-      <p>Clickable layers</p>
+      <p>{t("clickable-layers")}</p>
       {Object.keys(layerSelector).map((name) => (
         <Checkbox key={name} name={name} value={categories[name]} onChange={toggleLayer} />
       ))}

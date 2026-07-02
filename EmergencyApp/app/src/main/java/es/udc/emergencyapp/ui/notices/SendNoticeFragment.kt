@@ -48,11 +48,11 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -63,12 +63,8 @@ import com.bumptech.glide.load.model.LazyHeaders
 import es.udc.emergencyapp.MainActivity
 import es.udc.emergencyapp.R
 import es.udc.emergencyapp.ui.setContentWithSystemBars
+import es.udc.emergencyapp.util.transformWgs84ToUtm29
 import org.json.JSONObject
-import org.locationtech.proj4j.CRSFactory
-import org.locationtech.proj4j.CoordinateReferenceSystem
-import org.locationtech.proj4j.CoordinateTransform
-import org.locationtech.proj4j.CoordinateTransformFactory
-import org.locationtech.proj4j.ProjCoordinate
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -83,7 +79,11 @@ class SendNoticeFragment : Fragment() {
     private val takePictureLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (!success || photoUri == null) {
-                Toast.makeText(requireContext(), getString(R.string.failed_to_take_photo), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.failed_to_take_photo),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 renderSendNotice()
             }
@@ -92,14 +92,22 @@ class SendNoticeFragment : Fragment() {
     private val requestCameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) startCameraCapture()
-            else Toast.makeText(requireContext(), getString(R.string.camera_permission_denied), Toast.LENGTH_SHORT)
+            else Toast.makeText(
+                requireContext(),
+                getString(R.string.camera_permission_denied),
+                Toast.LENGTH_SHORT
+            )
                 .show()
         }
 
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) fetchLocation()
-            else Toast.makeText(requireContext(), getString(R.string.location_permission_denied), Toast.LENGTH_SHORT)
+            else Toast.makeText(
+                requireContext(),
+                getString(R.string.location_permission_denied),
+                Toast.LENGTH_SHORT
+            )
                 .show()
         }
 
@@ -148,7 +156,11 @@ class SendNoticeFragment : Fragment() {
             takePictureLauncher.launch(photoUri)
         } catch (e: Exception) {
             Log.w("SendNotice", "Failed to start camera capture", e)
-            Toast.makeText(requireContext(), getString(R.string.failed_to_start_camera), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.failed_to_start_camera),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -166,50 +178,35 @@ class SendNoticeFragment : Fragment() {
 
             val lm =
                 requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            var best: Location? = null
+
+            // Fast fallback from last-known
             try {
-                val providers = lm.getProviders(true)
-                Log.d("SendNotice", "Available providers: $providers")
-                for (p in providers) {
-                    try {
-                        val l = lm.getLastKnownLocation(p)
-                        if (l != null && (best == null || l.time > best.time)) best = l
-                    } catch (se: SecurityException) {
-                        Log.w("SendNotice", "No permission for provider $p", se)
-                    } catch (ie: Exception) {
-                        Log.w("SendNotice", "Failed reading provider $p", ie)
-                    }
+                val gps = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                val net = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                val fast = listOfNotNull(gps, net).maxByOrNull { it.time }
+                if (fast != null) {
+                    lastLocation = fast
+                    locationTextOverride = null
                 }
-            } catch (e: Exception) {
-                Log.w("SendNotice", "Failed to iterate providers", e)
-            }
-
-            // fallback try specific providers
-            if (best == null) {
-                try {
-                    val gps = try {
-                        lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    } catch (_: Exception) {
-                        null
-                    }
-                    val net = try {
-                        lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                    } catch (_: Exception) {
-                        null
-                    }
-                    best = listOfNotNull(gps, net).maxByOrNull { it.time }
-                } catch (e: Exception) {
-                    Log.w("SendNotice", "Fallback lastKnownLocation failed", e)
-                }
-            }
-
-            if (best != null) {
-                lastLocation = best
-                // clear any previous override (permission message)
-                locationTextOverride = null
-            }
-            // re-render UI with updated location
+            } catch (_: Exception) {}
             renderSendNotice()
+
+            // Actively request a fresh GPS fix (overrides last-known when received)
+            try {
+                val listener = object : android.location.LocationListener {
+                    override fun onLocationChanged(loc: Location) {
+                        lastLocation = loc
+                        locationTextOverride = null
+                        requireActivity().runOnUiThread { renderSendNotice() }
+                        try { lm.removeUpdates(this) } catch (_: Exception) {}
+                    }
+                    @Deprecated("Deprecated in API 29")
+                    override fun onStatusChanged(provider: String?, status: Int, extras: android.os.Bundle?) {}
+                    override fun onProviderEnabled(provider: String) {}
+                    override fun onProviderDisabled(provider: String) {}
+                }
+                lm.requestSingleUpdate(LocationManager.GPS_PROVIDER, listener, null)
+            } catch (_: Exception) {}
         } catch (e: Exception) {
             Log.w("SendNotice", "Failed to fetch location", e)
             renderSendNotice()
@@ -219,11 +216,19 @@ class SendNoticeFragment : Fragment() {
     private fun onSendClicked(body: String) {
         body.trim()
         if (body.isEmpty()) {
-            Toast.makeText(requireContext(), getString(R.string.enter_description), Toast.LENGTH_SHORT)
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.enter_description),
+                Toast.LENGTH_SHORT
+            )
                 .show(); return
         }
         if (lastLocation == null) {
-            Toast.makeText(requireContext(), getString(R.string.send_notice_error_no_location), Toast.LENGTH_SHORT)
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.send_notice_error_no_location),
+                Toast.LENGTH_SHORT
+            )
                 .show(); return
         }
         // read photo bytes
@@ -245,7 +250,7 @@ class SendNoticeFragment : Fragment() {
         try {
             rawLon = lastLocation!!.longitude
             rawLat = lastLocation!!.latitude
-            v1 = es.udc.emergencyapp.util.transformWgs84ToUtm29(rawLon, rawLat)
+            v1 = transformWgs84ToUtm29(rawLon, rawLat)
         } catch (e: Exception) {
             Log.w("SendNotice", "Debug transform failed", e)
         }
@@ -363,7 +368,7 @@ class SendNoticeFragment : Fragment() {
                             }
                             conn2.outputStream.use { out ->
                                 out.write((twoHyphens + boundary + lineEnd).toByteArray())
-                                out.write(("Content-Disposition: form-data; name=\"image\"; filename=\"photo.jpg\"" + lineEnd).toByteArray())
+                                out.write(("Content-Disposition: form-data; name=\"image\"; filename=\"photo.jpg\"$lineEnd").toByteArray())
                                 out.write(("Content-Type: image/jpeg" + lineEnd + lineEnd).toByteArray())
                                 out.write(photoBytes)
                                 out.write(lineEnd.toByteArray())
@@ -413,19 +418,35 @@ class SendNoticeFragment : Fragment() {
                                 .show()
                         } catch (e: Exception) {
                             Log.w("SendNotice", "Failed to show confirmation dialog", e)
-                            Toast.makeText(requireContext(), getString(R.string.notice_sent_via, usedHost ?: ""), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.notice_sent_via, usedHost ?: ""),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     } else if (successCode in 200..299) {
-                        Toast.makeText(requireContext(), getString(R.string.notice_sent_via, usedHost ?: ""), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.notice_sent_via, usedHost ?: ""),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
-                        Toast.makeText(requireContext(), getString(R.string.failed_to_send, successCode, usedHost ?: ""), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.failed_to_send, successCode, usedHost ?: ""),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             } catch (e: Exception) {
                 Log.w("SendNotice", "Exception sending notice", e)
                 requireActivity().runOnUiThread {
                     val msg = e.localizedMessage ?: e.toString()
-                    Toast.makeText(requireContext(), getString(R.string.failed_to_send_notice, msg), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.failed_to_send_notice, msg),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }.start()
@@ -434,26 +455,6 @@ class SendNoticeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         composeViewRef = null
-    }
-
-    private fun transformWgs84ToUtm29(lon: Double, lat: Double): Pair<Double, Double> {
-        return try {
-            val ctFactory = CoordinateTransformFactory()
-            val crsFactory = CRSFactory()
-            val srcCRS: CoordinateReferenceSystem = crsFactory.createFromName("EPSG:4326")
-            val tgtCRS: CoordinateReferenceSystem = crsFactory.createFromParameters(
-                null,
-                "+proj=utm +zone=29 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
-            )
-            val transform: CoordinateTransform = ctFactory.createTransform(srcCRS, tgtCRS)
-            val srcCoord = ProjCoordinate(lon, lat)
-            val dstCoord = ProjCoordinate()
-            transform.transform(srcCoord, dstCoord)
-            Pair(dstCoord.x, dstCoord.y)
-        } catch (e: Exception) {
-            Log.w("SendNotice", "Coordinate transform failed, returning WGS84", e)
-            Pair(lon, lat)
-        }
     }
 
     @Composable
@@ -474,7 +475,10 @@ class SendNoticeFragment : Fragment() {
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (lon != null && lat != null) {
-                        es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip(lon = lon, lat = lat)
+                        es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip(
+                            lon = lon,
+                            lat = lat
+                        )
                     } else {
                         Icon(imageVector = Icons.Default.LocationOn, contentDescription = null)
                         Spacer(modifier = Modifier.size(6.dp))
@@ -482,7 +486,10 @@ class SendNoticeFragment : Fragment() {
                     }
                 }
                 IconButton(onClick = { onTakePhoto() }) {
-                    Icon(imageVector = Icons.Default.CameraAlt, contentDescription = stringResource(R.string.notice_take_photo))
+                    Icon(
+                        imageVector = Icons.Default.CameraAlt,
+                        contentDescription = stringResource(R.string.notice_take_photo)
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -600,7 +607,10 @@ class SendNoticeFragment : Fragment() {
                                 modifier = Modifier.size(48.dp)
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text(text = stringResource(R.string.notice_no_photo_selected), color = Color.Gray)
+                            Text(
+                                text = stringResource(R.string.notice_no_photo_selected),
+                                color = Color.Gray
+                            )
                         }
                     }
                 }
@@ -635,7 +645,13 @@ class SendNoticeFragment : Fragment() {
                     },
                     photoUri = photoUri,
                     locationText = locationTextOverride
-                        ?: lastLocation?.let { getString(R.string.notice_location_format, it.latitude, it.longitude) }
+                        ?: lastLocation?.let {
+                            getString(
+                                R.string.notice_location_format,
+                                it.latitude,
+                                it.longitude
+                            )
+                        }
                         ?: getString(R.string.notice_location_unavailable),
                     lon = lastLocation?.longitude,
                     lat = lastLocation?.latitude

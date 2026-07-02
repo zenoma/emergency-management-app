@@ -222,7 +222,7 @@ export default function PersistentDrawerLeft() {
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
+            aria-label={t("open-drawer")}
             onClick={handleDrawerOpen}
             edge="start"
             sx={{ mr: 2, ...(open && { display: "none" }) }}
@@ -271,9 +271,9 @@ export default function PersistentDrawerLeft() {
           )}
           {token && (
             <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
+              <Tooltip title={t("open-settings")}>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar alt={t("user-avatar")} src="/static/images/avatar/2.jpg" />
                 </IconButton>
               </Tooltip>
               <Menu

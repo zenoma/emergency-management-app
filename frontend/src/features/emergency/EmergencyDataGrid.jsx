@@ -36,6 +36,7 @@ import { selectToken, selectUser } from "../user/login/LoginSlice";
 import formatDate from '../../utils/formatDate';
 
 function LocationSummaryCell({ location, quadrantCount, locale, loadingLabel }) {
+  const { t } = useTranslation();
   const hasLocation = location != null && location.lon != null && location.lat != null;
   const { data: quadrant, isError } = useGetQuadrantByCoordinatesQuery(
     hasLocation ? { lon: location.lon, lat: location.lat } : { lon: null, lat: null },
@@ -53,7 +54,7 @@ function LocationSummaryCell({ location, quadrantCount, locale, loadingLabel }) 
   }
 
   if (quadrantCount > 0) {
-    return `${quadrantCount} ${locale === "es" ? "cuadrantes" : "quadrants"}`;
+    return t("quadrants-count", { count: quadrantCount, defaultValue: `${quadrantCount} quadrants` });
   }
 
   return '-';
@@ -301,7 +302,7 @@ export default function EmergencyDataGrid() {
   }
 
   const statusFilterModel = {
-    items: [{ columnField: "emergencyIndex", operatorValue: 'isAnyOf', value: ['CERO', 'UNO', 'DOS', 'TRES'], label: 'Extinguido' }]
+    items: [{ columnField: "emergencyIndex", operatorValue: 'isAnyOf', value: ['CERO', 'UNO', 'DOS', 'TRES'] }]
   };
 
   const [filterModel, setFilterModel] = useState(statusFilterModel);
@@ -315,7 +316,7 @@ export default function EmergencyDataGrid() {
       {error ? (
         <h1>{t("generic-error")}</h1>
       ) : isLoading ? (
-        <div>Loading</div>
+        <div>{t("loading")}</div>
       ) : emergencies ? (
         <Box
           sx={{

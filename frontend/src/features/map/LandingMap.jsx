@@ -13,6 +13,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 import { useSelector } from "react-redux"
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from "react-i18next";
 import Map, { Layer, NavigationControl, Source, Marker } from "react-map-gl/maplibre";
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useLocation, useNavigate } from "react-router-dom";
@@ -35,6 +36,7 @@ export default function LandingMap(props) {
   const token = useSelector(selectToken);
   const navigate = useNavigate();
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const quadrants = props.quadrants;
   const [interactiveLayerIds, setInteractiveLayerIds] = useState([]);
@@ -382,7 +384,7 @@ export default function LandingMap(props) {
           return (
             <Marker key={`em-${f.properties.id}`} longitude={lon} latitude={lat} anchor="center">
               <div style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'auto' }}>
-                <img src={asset} alt="em" style={{ width: 24, height: 24 }} />
+                <img src={asset} alt={t("emergency-marker")} style={{ width: 24, height: 24 }} />
               </div>
             </Marker>
           );

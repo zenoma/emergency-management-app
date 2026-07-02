@@ -103,10 +103,10 @@ export default function OrganizationTable(props) {
     updateOrganization(payload)
       .unwrap()
       .then(() => {
-        toast.success("Organización actualizada satisfactoriamente");
+        toast.success(t("organization-updated-successfully"));
       })
       .catch((error) =>
-        toast.error("No se ha podido actualizar la organización")
+        toast.error(t("organization-updated-error"))
       );
 
     handleCloseEdit();
@@ -155,10 +155,10 @@ export default function OrganizationTable(props) {
     deleteOrganizationById(payload)
       .unwrap()
       .then(() => {
-        toast.success("Organización borrada satisfactoriamente");
+        toast.success(t("organization-deleted-successfully"));
       })
       .catch((error) =>
-        toast.error("No se ha podido borrar la organización")
+        toast.error(t("organization-deleted-error"))
       );
 
     handleCloseDelete();
@@ -190,7 +190,7 @@ export default function OrganizationTable(props) {
   return (
     <Paper sx={{ overflow: "hidden" }}>
       <TableContainer sx={{ minWidth: 600, maxHeight: 500 }}>
-        <Table stickyHeader aria-label="sticky table">
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               {columns.map((column) => (
@@ -283,9 +283,9 @@ export default function OrganizationTable(props) {
           {t("organization-deleted-dialog")}
         </DialogTitle>
         <DialogActions>
-          <Button onClick={handleCloseDelete}>Cancelar</Button>
+          <Button onClick={handleCloseDelete}>{t("cancel")}</Button>
           <Button onClick={handleDeleteClick} color="error" autoFocus>
-            Aceptar
+            {t("confirm")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -298,7 +298,7 @@ export default function OrganizationTable(props) {
               <Grid item xs={6}>
                 <TextField
                   id="code"
-                  label="Código"
+                  label={t("code")}
                   type="text"
                   autoComplete="current-code"
                   margin="normal"
@@ -312,7 +312,7 @@ export default function OrganizationTable(props) {
               <Grid item xs={6}>
                 <TextField
                   id="name"
-                  label="Nombre"
+                  label={t("name")}
                   type="text"
                   autoComplete="current-name"
                   margin="normal"
@@ -327,7 +327,7 @@ export default function OrganizationTable(props) {
               <Grid item xs={12}>
                 <TextField
                   id="headquartersAddress"
-                  label="Dirección de la organización"
+                  label={t("organization-address")}
                   type="text"
                   autoComplete="current-name"
                   margin="normal"
@@ -343,8 +343,8 @@ export default function OrganizationTable(props) {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseEdit}>Cancelar</Button>
-          <Button onClick={(e) => handleEditClick(e)}>Editar</Button>
+          <Button onClick={handleCloseEdit}>{t("cancel")}</Button>
+          <Button onClick={(e) => handleEditClick(e)}>{t("edit")}</Button>
         </DialogActions>
       </Dialog>
     </Paper>

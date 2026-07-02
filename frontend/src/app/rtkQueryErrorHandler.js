@@ -1,5 +1,6 @@
 import { isRejected } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
+import i18n from "../i18n";
 
 export const rtkQueryErrorLogger = (api) => (next) => (action) => {
   // Log basic lifecycle events for RTK Query actions so we can see when
@@ -31,7 +32,7 @@ export const rtkQueryErrorLogger = (api) => (next) => (action) => {
 
     if (status === 500) {
       console.error(action);
-      toast.error("500: Internal Server Error");
+      toast.error(i18n.t("server-error"));
     } else if (status === 404) {
       // Suppress noisy toasts for expected 404s in some flows.
       // - GET /assignments/{id} after deletion returns 404 -> ignore
@@ -49,7 +50,7 @@ export const rtkQueryErrorLogger = (api) => (next) => (action) => {
           console.debug('Ignored 404 (quadrant by coordinates)');
         }
       } else {
-        toast.error('404: Not found');
+        toast.error(i18n.t("not-found-error"));
       }
     } else if (data) {
       if (data.fieldErrors && data.fieldErrors.length > 0) {

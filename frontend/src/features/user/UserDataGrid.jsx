@@ -108,7 +108,7 @@ export default function UserDataGrid({ childToParent, hideRoles = [] }) {
         refetch();
       })
       .catch((error) =>
-        toast.error(error?.data?.errorMessage || "Error")
+        toast.error(error?.data?.errorMessage || t("generic-error"))
       );
 
   }
@@ -129,7 +129,7 @@ export default function UserDataGrid({ childToParent, hideRoles = [] }) {
         refetch();
       })
       .catch((error) =>
-        toast.error(error?.data?.errorMessage || "Error")
+        toast.error(error?.data?.errorMessage || t("generic-error"))
       );
   }
 
@@ -260,7 +260,7 @@ export default function UserDataGrid({ childToParent, hideRoles = [] }) {
       {error ? (
         <h1>{t("generic-error")}</h1>
       ) : isLoading ? (
-        <div>Loading</div>
+        <div>{t("loading")}</div>
       ) : users ? (
         <DataGrid
           {...data}

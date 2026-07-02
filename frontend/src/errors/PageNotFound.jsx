@@ -8,9 +8,9 @@ export default function NotFoundPage() {
 
   return (
     <div>
-      <img src={PageNotFoundImage} alt="PageNotFound" />
+      <img src={PageNotFoundImage} alt={t("page-not-found")} />
       <p style={{ textAlign: "center" }}>
-        <Link to="/">{t("go-to-home") || "Go to Home"}</Link>
+        <Link to="/">{t("go-to-home")}</Link>
       </p>
     </div>
   );

@@ -297,7 +297,7 @@ export default function EmergencyHistoryView() {
                 </Box>
                 {emergencyData && emergencyData.location && (!emergencyData.quadrantInfo || emergencyData.quadrantInfo.length === 0) ? (
                   <Paper variant="outlined" sx={{ p: 2, mt: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>{t('linked-point-info') || 'Linked Point'}</Typography>
+                    <Typography variant="subtitle1" sx={{ mb: 1 }}>{t('linked-point-info', 'Linked Point')}</Typography>
                     <Divider sx={{ mb: 1 }} />
                     {(() => {
                       try {
@@ -313,14 +313,14 @@ export default function EmergencyHistoryView() {
                               <ListItemIcon>
                                 <PublicIcon color="primary" />
                               </ListItemIcon>
-                              <ListItemText primary={t('geographic-coordinates') || 'Geographic coords'} secondary={`${geo.longitude.toFixed(6)}, ${geo.latitude.toFixed(6)}`} />
+                              <ListItemText primary={t('geographic-coordinates', 'Geographic coords')} secondary={`${geo.longitude.toFixed(6)}, ${geo.latitude.toFixed(6)}`} />
                             </ListItem>
                             <ListItem>
                               <ListItemIcon>
                                 <MapIcon color="primary" />
                               </ListItemIcon>
                               <ListItemText
-                                primary={t('quadrant-name') || 'Quadrant'}
+                                primary={t('quadrant-name', 'Quadrant')}
                                 secondary={
                                   quadrantIdFromCoords ? (
                                     // navigate to quadrant-history with the currently selected date range and emergency id
@@ -349,7 +349,7 @@ export default function EmergencyHistoryView() {
                           </List>
                         );
                       } catch (e) {
-                        return <Typography variant="body2">{t('coordinate-conversion-error') || 'Failed to transform coordinates'}</Typography>;
+                        return <Typography variant="body2">{t('coordinate-conversion-error', 'Failed to transform coordinates')}</Typography>;
                       }
                     })()}
                   </Paper>

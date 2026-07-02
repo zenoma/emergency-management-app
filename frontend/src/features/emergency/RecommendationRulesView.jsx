@@ -31,10 +31,10 @@ export default function RecommendationRulesView() {
   const userRole = useSelector(selectUser)?.userRole;
   const locale = i18n.language;
   const priorityOptions = [
-    { label: "CERO", value: 0 },
-    { label: "UNO", value: 1 },
-    { label: "DOS", value: 2 },
-    { label: "TRES", value: 3 },
+    { label: t("priority-0", "CERO"), value: 0 },
+    { label: t("priority-1", "UNO"), value: 1 },
+    { label: t("priority-2", "DOS"), value: 2 },
+    { label: t("priority-3", "TRES"), value: 3 },
   ];
   const [selectedTypeId, setSelectedTypeId] = useState("");
   const [selectedRuleId, setSelectedRuleId] = useState("");
@@ -192,7 +192,7 @@ export default function RecommendationRulesView() {
                     >
                       <ListItemText
                         primary={`#${rule.id}`}
-                        secondary={`Priority ${rule.priority}`}
+                        secondary={`${t("priority")} ${rule.priority}`}
                       />
                     </ListItemButton>
                   ))}

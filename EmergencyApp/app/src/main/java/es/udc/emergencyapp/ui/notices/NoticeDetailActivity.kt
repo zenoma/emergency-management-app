@@ -39,8 +39,6 @@ import es.udc.emergencyapp.AppTheme
 import es.udc.emergencyapp.R
 import es.udc.emergencyapp.data.dto.NoticeDto
 import es.udc.emergencyapp.ui.setContentWithSystemBars
-import es.udc.emergencyapp.util.transformProjectedToGeographic
-
 class NoticeDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -165,16 +163,7 @@ fun NoticeDetailScreen(notice: NoticeDto) {
                 Spacer(modifier = Modifier.size(8.dp))
 
                 notice.coordinates?.let { c ->
-                    val lonRaw = c.lon ?: Double.NaN
-                    val latRaw = c.lat ?: Double.NaN
-                    val (lon, lat) = if (kotlin.math.abs(lonRaw) > 1000000 || kotlin.math.abs(latRaw) > 1000000) {
-                        transformProjectedToGeographic(lonRaw, latRaw)
-                    } else Pair(lonRaw, latRaw)
-
-                    if (lon.isNaN()) "-" else "${"%.6f".format(lon)}"
-                    if (lat.isNaN()) "-" else "${"%.6f".format(lat)}"
-
-                    es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip(lon = lon, lat = lat)
+                    es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip(lon = c.lon, lat = c.lat)
                 } ?: run {
                     Text(text = stringResource(R.string.coordinates_not_provided))
                 }

@@ -16,9 +16,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import org.locationtech.proj4j.CRSFactory
-import org.locationtech.proj4j.CoordinateTransformFactory
-import org.locationtech.proj4j.ProjCoordinate
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
@@ -95,7 +92,7 @@ fun MapScreen(modifier: Modifier = Modifier) {
                     "https://api.maptiler.com/maps/topo-v2/style.json?key=3GSLdy5VE4yLq4OhlyYJ"
                 map.setStyle(styleUrl) { style ->
                     Thread {
-                        val hostsToTry = listOf(
+                        listOf(
                             "http://10.0.2.2:8080",
                             "http://10.0.2.2:8000",
                             "http://10.0.3.2:8000",
@@ -104,8 +101,14 @@ fun MapScreen(modifier: Modifier = Modifier) {
                         )
 
                         // Use HttpClient convenience overload that reads jwt from SharedPreferences
-                        val quadrantsJson = es.udc.emergencyapp.net.HttpClient.getFromHosts("/quadrants/active", ctx).first
-                        val emergenciesJson = es.udc.emergencyapp.net.HttpClient.getFromHosts("/emergencies", ctx).first
+                        val quadrantsJson = es.udc.emergencyapp.net.HttpClient.getFromHosts(
+                            "/quadrants/active",
+                            ctx
+                        ).first
+                        val emergenciesJson = es.udc.emergencyapp.net.HttpClient.getFromHosts(
+                            "/emergencies",
+                            ctx
+                        ).first
                         val jsonToUse = transformToWGS84GeoJson(quadrantsJson)
 
                         (ctx as? android.app.Activity)?.runOnUiThread {
@@ -292,22 +295,35 @@ private fun addOrUpdateEmergencySource(
                     else -> null
                 }
                 if (loc == null) continue
-                val lonRaw = if (loc.has("lon")) loc.optDouble("lon", Double.NaN) else if (loc.has("x")) loc.optDouble("x", Double.NaN) else Double.NaN
-                val latRaw = if (loc.has("lat")) loc.optDouble("lat", Double.NaN) else if (loc.has("y")) loc.optDouble("y", Double.NaN) else Double.NaN
+                val lonRaw = if (loc.has("lon")) loc.optDouble(
+                    "lon",
+                    Double.NaN
+                ) else if (loc.has("x")) loc.optDouble("x", Double.NaN) else Double.NaN
+                val latRaw = if (loc.has("lat")) loc.optDouble(
+                    "lat",
+                    Double.NaN
+                ) else if (loc.has("y")) loc.optDouble("y", Double.NaN) else Double.NaN
                 if (lonRaw.isNaN() || latRaw.isNaN()) continue
 
-                val (finalLon, finalLat) = if (kotlin.math.abs(lonRaw) > 1000000 || kotlin.math.abs(latRaw) > 1000000) {
+                val (finalLon, finalLat) = if (kotlin.math.abs(lonRaw) > 1000000 || kotlin.math.abs(
+                        latRaw
+                    ) > 1000000
+                ) {
                     es.udc.emergencyapp.util.transformProjectedToGeographic(lonRaw, latRaw)
                 } else Pair(lonRaw, latRaw)
 
-                val typeKey = if (e.has("emergencyTypeName")) e.optString("emergencyTypeName") else if (e.has("type")) e.optString("type") else ""
+                val typeKey =
+                    if (e.has("emergencyTypeName")) e.optString("emergencyTypeName") else if (e.has(
+                            "type"
+                        )
+                    ) e.optString("type") else ""
                 // Use centralized utility to decide which drawable/icon name to use on the map
                 val iconName = es.udc.emergencyapp.util.emergencyTypeMapKey(typeKey)
 
                 val feature = org.json.JSONObject()
                 feature.put("type", "Feature")
                 val props = org.json.JSONObject()
-                    props.put("id", e.optInt("id", -1))
+                props.put("id", e.optInt("id", -1))
                 props.put("title", e.optString("description", ""))
                 props.put("icon", iconName)
                 feature.put("properties", props)
@@ -350,13 +366,13 @@ private fun transformToWGS84GeoJson(raw: String?): String? {
     if (raw == null) return null
     return try {
         val trimmed = raw.trim()
-    fun transformPoint(x: Double, y: Double): org.json.JSONArray {
-        val (lon, lat) = es.udc.emergencyapp.util.transformProjectedToGeographic(x, y)
-        val ja = org.json.JSONArray()
-        ja.put(lon)
-        ja.put(lat)
-        return ja
-    }
+        fun transformPoint(x: Double, y: Double): org.json.JSONArray {
+            val (lon, lat) = es.udc.emergencyapp.util.transformProjectedToGeographic(x, y)
+            val ja = org.json.JSONArray()
+            ja.put(lon)
+            ja.put(lat)
+            return ja
+        }
 
         if (trimmed.startsWith("[")) {
             val arr = org.json.JSONArray(raw)
@@ -392,8 +408,8 @@ private fun transformToWGS84GeoJson(raw: String?): String? {
                 features
             ); fc.toString()
         } else {
-        val obj = org.json.JSONObject(raw)
-        if (obj.has("features")) obj.toString() else null
+            val obj = org.json.JSONObject(raw)
+            if (obj.has("features")) obj.toString() else null
         }
     } catch (e: Exception) {
         android.util.Log.w("MapScreen", "Failed to transform quadrants geojson to WGS84", e)

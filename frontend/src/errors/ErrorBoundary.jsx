@@ -1,5 +1,6 @@
 import React from "react";
 import { Alert, Box, Button, Typography } from "@mui/material";
+import { withTranslation } from "react-i18next";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -20,6 +21,8 @@ class ErrorBoundary extends React.Component {
   };
 
   render() {
+    const { t } = this.props;
+
     if (this.state.hasError) {
       return (
         <Box
@@ -34,15 +37,14 @@ class ErrorBoundary extends React.Component {
         >
           <Alert severity="error" sx={{ mb: 2, maxWidth: 500 }}>
             <Typography variant="h6" gutterBottom>
-              {this.props.title || "Something went wrong"}
+              {this.props.title || t("error-boundary-title")}
             </Typography>
             <Typography variant="body2">
-              {this.props.message ||
-                "An unexpected error occurred. Please try again."}
+              {this.props.message || t("error-boundary-message")}
             </Typography>
           </Alert>
           <Button variant="contained" onClick={this.handleReset}>
-            {this.props.retryLabel || "Try again"}
+            {this.props.retryLabel || t("error-boundary-retry")}
           </Button>
         </Box>
       );
@@ -52,4 +54,4 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-export default ErrorBoundary;
+export default withTranslation()(ErrorBoundary);

@@ -249,7 +249,7 @@ export default function CoordinatorNoticesView() {
   ];
 
   const statusFilterModel = {
-    items: [{ columnField: "status", operatorValue: 'equals', value: 'PENDING', label: 'Pending' }]
+    items: [{ columnField: "status", operatorValue: 'equals', value: 'PENDING' }]
   };
 
   const [filterModel, setFilterModel] = useState(statusFilterModel);
@@ -308,7 +308,7 @@ export default function CoordinatorNoticesView() {
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogContent>
           {selectedImage && <img src={`${URL}/images/${selectedNoticeId}/${selectedImage}`}
-            alt="Imagen" style={{ maxWidth: "100%" }} />}
+            alt={t("notice-image")} style={{ maxWidth: "100%" }} />}
         </DialogContent>
       </Dialog>
     </Paper >

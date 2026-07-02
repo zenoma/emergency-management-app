@@ -41,6 +41,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.google.gson.Gson
 import es.udc.emergencyapp.R
 import es.udc.emergencyapp.data.dto.NoticeDto
+import es.udc.emergencyapp.ui.common.CoordinateWithQuadrantChip
 import es.udc.emergencyapp.ui.common.StatusChip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -106,16 +107,7 @@ fun MyNoticesScreen() {
                                         "y"
                                     ) else Double.NaN
                                 if (!lonRaw.isNaN() && !latRaw.isNaN()) {
-                                    val (finalLon, finalLat) = if (kotlin.math.abs(lonRaw) > 1000000 || kotlin.math.abs(
-                                            latRaw
-                                        ) > 1000000
-                                    ) {
-                                        es.udc.emergencyapp.util.transformProjectedToGeographic(
-                                            lonRaw,
-                                            latRaw
-                                        )
-                                    } else Pair(lonRaw, latRaw)
-                                    es.udc.emergencyapp.data.dto.CoordinatesDto(finalLon, finalLat)
+                                    es.udc.emergencyapp.data.dto.CoordinatesDto(lonRaw, latRaw)
                                 } else null
                             } else null
 
@@ -389,6 +381,14 @@ fun MyNoticesScreen() {
                                             color = Color.White,
                                             style = MaterialTheme.typography.body2
                                         )
+                                        n.coordinates?.let { c ->
+                                            Spacer(modifier = Modifier.size(8.dp))
+                                            CoordinateWithQuadrantChip(
+                                                lon = c.lon,
+                                                lat = c.lat,
+                                                showCoordinates = false
+                                            )
+                                        }
                                     }
                                 }
                             }
