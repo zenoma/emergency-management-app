@@ -9,34 +9,7 @@
     \end{frame}
 
 
-\subsection{Tecnologías}
-    \begin{frame}[c,shrink]{Tecnologías empleadas}
-        \begin{block}{Heredadas del TFG}
-            \begin{itemize}
-                \item Java / Spring Boot, Spring Data, JPA / Hibernate.
-                \item React + Redux + RTK Query + Material UI.
-                \item MapLibre + MapTiler.
-                \item PostgreSQL + PostGIS.
-                \item Open Weather Map.
-            \end{itemize}
-        \end{block}
-        \begin{block}{Nuevas incorporaciones}
-            \begin{itemize}
-                \item OpenAPI / API-first (generación automática de DTOs y controladores).
-                \item Kotlin + Jetpack Compose para Android.
-                \item Firebase Cloud Messaging (notificaciones push).
-                \item Testcontainers.
-                \item Motor de reglas en JSONB.
-            \end{itemize}
-        \end{block}
-    \end{frame}
 
-\subsection{Diagramas C4}
-    \begin{frame}[c]{C4 - Diagrama de contexto}
-        \begin{figure}
-            \includegraphics[width=0.9\textwidth]{images/c4_contextual.png}
-        \end{figure}
-    \end{frame}
 
 
 
@@ -71,6 +44,13 @@
         \end{block}
     \end{frame}
 
+\subsection{Diagramas C4}
+    \begin{frame}[c]{C4 - Diagrama de contexto}
+        \begin{figure}
+            \includegraphics[width=0.9\textwidth]{images/c4_contextual.png}
+        \end{figure}
+    \end{frame}
+
 \subsection{Diseño}
     \begin{frame}[c,shrink]{Backend - Modelo de dominio(1/2)}
         \begin{figure}
@@ -95,13 +75,6 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}[c,shrink]{Backend - Lógica de negocio}  
-        \begin{figure}
-            \includegraphics[width=0.90\textwidth]{images/diagrama-negocio.png}
-        \end{figure}
-    \end{frame}
-
-
     \begin{frame}[c]{Backend - DAOs y Repositorios}
         \begin{figure}
             \centering
@@ -109,10 +82,17 @@
         \end{figure}
     \end{frame}
 
+
+    \begin{frame}[c,shrink]{Backend - Lógica de negocio}  
+        \begin{figure}
+            \includegraphics[width=0.90\textwidth]{images/diagrama-negocio.png}
+        \end{figure}
+    \end{frame}
+
+
     \begin{frame}[c]{Backend - Controladores REST}
         \begin{figure}
             \includegraphics[width=0.65\textwidth]{images/swagger.png}
-            \caption{Imagen resumen de los Endpoints implementados.}
         \end{figure}
     \end{frame}
 
@@ -134,16 +114,6 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}[c]{Internacionalización y localización}
-        Los tres módulos soportan \textbf{español}, \textbf{inglés} y \textbf{gallego}:
-        \begin{itemize}
-            \item \textbf{Backend:} Ficheros \texttt{messages.properties} con \texttt{MessageSource} de Spring.
-            \item \textbf{Frontend:} Librería \texttt{i18next} con detección automática de idioma.
-            \item \textbf{Android:} \texttt{LocaleHelper} con persistencia en preferencias.
-        \end{itemize}
-    \end{frame}
-
-   
 
 \subsection{Pruebas}
     \begin{frame}[c,shrink]{Estrategia de pruebas}
