@@ -1,6 +1,6 @@
 # Emergency Coordination App
 
-Aplicacion web y app Android para la coordinacion de emergencias de incendios forestales. Permite gestionar incendios, cuadrantes, equipos, vehiculos, organizaciones y avisos en tiempo real con soporte geoespacial completo.
+Aplicacion web y app Android para la coordinacion de emergencias en el territorio Gallego. Permite gestionar emergencias, cuadrantes, equipos, vehiculos, organizaciones y avisos en tiempo real con soporte geoespacial completo.
 
 ## MEMORIA FINAL
 
